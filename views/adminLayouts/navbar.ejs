@@ -1,0 +1,152 @@
+<body>
+    <div class="screen-overlay"></div>
+    <aside class="navbar-aside" id="offcanvas_aside">
+        <div class="aside-top">
+            <a href="index.html" class="brand-wrap ">
+                <img src="/admin/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+            </a>
+            <div>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+            </div>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item " id="dashboardMenuItem">
+                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                        <span class="text">Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_bag"></i>
+                        <span class="text">Products</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/product/listproduct">Products</a>
+                        <a href="/admin/product/addproduct">Add Product</a>
+                        <a href="/admin/product/unlistproduct">Unlist Product</a>
+                     
+                    </div>
+                </li>
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_cart"></i>
+                        <span class="text">Orders</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/orderList">Order list</a>
+                        <!-- <a href="">Order detail</a> -->
+                        
+                    </div>
+                </li>
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href=""> <i class="icon material-icons md-category"></i>
+                        <span class="text">Category</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/category/listcategories">Categories List</a>
+                        <a href="/admin/category/addcategory">Add Category</a>
+                        <a href="/admin/category/unlistcategories">Unlist Category</a>
+                    </div>
+                </li>
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href="page-form-product-1.html"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Users</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="/admin/userlist">Users List</a>
+                       
+                    </div>
+                </li>
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href="page-transactions-1.html">
+                        <i class="icon material-icons md-trending_up"></i>
+                        <span class="text">Sales</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="">Sale Report</a>
+                    </div>
+                </li>
+                
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href="page-transactions-1.html">
+                        <i class="icon material-icons md-local_offer"></i>
+                        <span class="text">Coupons</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="">Add Coupon</a>
+                    </div>
+                </li>
+                
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" href="page-transactions-1.html">
+                        <i class="icon material-icons md-attach_money"></i>
+                        <span class="text">Offers</span>
+                    </a>
+                    <div class="submenu">
+                        <a href="">Add Offers</a>
+                    </div>
+                </li>
+                
+                <li class="menu-item" id="dashboardMenuItem">
+                    <a class="menu-link" disabled href="#">
+                        <i class="icon material-icons md-image"></i>
+                        <span class="text">Banners</span>
+                    </a>
+                </li>
+                
+                </li>
+                <li class="menu-item" id="dashboardMenuItem">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
+                        <span class="text">Account</span>
+                    </a>
+                    
+                </li>
+            </ul>
+
+            <hr>
+            <ul class="menu-aside" id="dashboardMenuItem">
+                <li class="menu-item has-submenu">
+                    <a class="menu-link" href="#"> <i class="icon material-icons md-settings"></i>
+                        <span class="text">Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <br>
+            <br>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="/admin/imgs/theme/flag-us.png" alt="English">English</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/admin/imgs/people/avatar2.jpg" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>

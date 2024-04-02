@@ -1,0 +1,84 @@
+<%- include('../adminLayouts/header.ejs') %>
+<%- include('../adminLayouts/navbar.ejs') %>
+
+<section class="content-main">
+    <div class="container">
+        <div class="content-header">
+            <h2 class="content-title">Manage Products</h2>
+        </div>
+        <!-- Heading Box for Unlisted Products -->
+        <div class="row mt-4">
+           
+                    <div class="card-body text-center">
+                        <h3 class="card-title">Unlisted Products:</h3>
+                    
+            </div>
+        </div>
+        <!-- List Products -->
+        <div class="row">
+            <% product.forEach((item, index) => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="card product-card ">
+                        <img src="/uploads/product/resized/<%= item.productImage[0] %>" class="card-img-top" alt="Product Image">
+                        <div class="card-body text-center">
+                            <h5 class="card-title"><%= index + 1 %>. <%= item.name %></h5>
+                            <p class="card-text">Category Name:<%= item.category.categoryName %></p>
+                            <p class="card-text">Price:₹<%= item.price %></p>
+                            <p class="card-text">Stock Count:<%= item.stockCount %></p>
+                            <p class="card-text">Size:<%= item.size %></p>
+                            <button class="btn btn-danger btn-lg btn-list" data-product-id="<%= item._id %>">List</button>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<%- include('../adminLayouts/footer.ejs') %>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const listButtons = document.querySelectorAll('.btn-list');
+
+        listButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+
+                Swal.fire({
+                    title: 'Are you sure you want to list this product?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, List it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.put(`/admin/product/listProduct/${productId}`)
+                            .then(response => {
+                                // Handle success response
+                                Swal.fire({
+                                    title: 'Product Listed Successfully!',
+                                    icon: 'success'
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        window.location.href = response.data.url; // Redirect to the URL received from the server
+                                    },); // Add a time delay for redirecting
+                                });
+                            })
+                            .catch(error => {
+                                // Handle error
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An error occurred while listing the product.',
+                                    icon: 'error'
+                                });
+                                console.error('Error:', error);
+                            });
+                    }
+                });
+            });
+        });
+    });
+</script>

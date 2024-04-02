@@ -1,0 +1,76 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+
+        <main class="main">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="/" rel="nofollow">Home</a>
+                        <span></span> <%= pageTitle %>
+                    </div>
+                </div>
+            </div>
+            
+            <section class="pt-150 pb-150">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 m-auto">
+                            <div class="row">
+                                <div class="col-lg-5 m-auto">
+                                    <div
+                                        class="login_wrap widget-taber-content p-30 background-white border-radius-20 mb-md-5 mb-lg-0 mb-sm-5">
+                                        <div class="padding_eight_all bg-white">
+                                            <div class="heading_s1">
+                                                <h3 class="mb-30">Login</h3>
+                                            </div>
+                                            <form method="post" action="/login" id="loginForm">
+                                                <div class="form-group">
+                                                    <input type="text" name="email" placeholder="Enter Your Email">
+                                                </div>
+                                                <div class="form-group">
+                                                <div class="error-message" id="emailError"></div> 
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" name="password" placeholder="Enter Password">
+                                                    <i class="fas fa-eye toggle-password"></i>
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <div class="error-message" id="passwordError"></div> 
+                                                    </div>
+                                           
+
+                                                <div class="login_footer form-group">
+                                                   <div class="chek-form">
+                                                <div class="custome-checkbox">
+                                                    <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" checked="">
+                                                    <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
+                                                </div>
+                                            </div> 
+                                                    <a class="text-muted" href="#">Forgot password?</a>
+                                                </div>
+                                                <div class="form-group text-center">
+                                                    <button type="submit"
+                                                        class="btn btn-fill-out btn-block hover-up rounded-pill"
+                                                        name="login">Log in</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+                <!-- Include SweetAlert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/js/loginForm.js"></script>
+        
+      
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/preloader.ejs') %>
+                <%- include('../layouts/script.ejs') %>

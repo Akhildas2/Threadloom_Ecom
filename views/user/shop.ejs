@@ -1,0 +1,304 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+    
+
+        <main class="main">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="/" rel="nofollow">Home</a>
+                        <span></span>
+                            Shop
+                    </div>
+                </div>
+            </div>
+            <section class="mt-50 mb-50">
+                <div class="container">
+                    <div class="row flex-row-reverse">
+                        <div class="col-lg-9">
+                            <div class="shop-product-fillter style-2">
+                                <div class="totall-product">
+                                    <p> We found <strong class="text-brand">688</strong> items for you!</p>
+                                </div>
+                                <div class="sort-by-product-area">
+                                    <div class="sort-by-cover mr-10">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps"></i>Show:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <li><a class="active" href="#">50</a></li>
+                                                <li><a href="#">100</a></li>
+                                                <li><a href="#">150</a></li>
+                                                <li><a href="#">200</a></li>
+                                                <li><a href="#">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="sort-by-cover">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <li><a class="active" href="#">Featured</a></li>
+                                                <li><a href="#">Price: Low to High</a></li>
+                                                <li><a href="#">Price: High to Low</a></li>
+                                                <li><a href="#">Release Date</a></li>
+                                                <li><a href="#">Avg. Rating</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-content wow fadeIn animated" id="myTabContent">
+                                <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                                    <div class="row product-grid-4">
+                                        <% for(let i=0; i<products.length; i++) { %>
+                                        <div class="col-lg-4">
+                                            <div class="product-cart-wrap mb-30">
+                                                <div class="product-img-action-wrap">
+                                                    <div class="product-img product-img-zoom">
+                                                        
+                                                        <a href="/productdetails/<%= products[i]._id %>">
+                                                            <img class="default-img"  src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                            alt="">
+                                                            <img class="hover-img"  src="/uploads/product/resized/<%= products[i].productImage[1] %>"
+                                                            alt="">
+                                                            
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-action-1">
+                                                        <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal"
+                                                            data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
+                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
+                                                                class="fi-rs-shuffle"></i></a>
+                                                    </div>
+                                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                                        <% if(products[i].isNew) { %>
+                                                            <span class="new">New</span>
+                                                            <% } %>
+                                                                <% if(products[i].isHot) { %>
+                                                                    <span class="hot">Hot</span>
+                                                                    <% } %>
+                                                                        <% if(products[i].isBestSeller) { %>
+                                                                            <span class="best">Best Sell</span>
+                                                                            <% } %>
+                                                    </div>
+                                                </div>
+                                                <div class="product-content-wrap">
+                                                    <div class="product-category">
+                                                        <a href="/productdetails/<%= products[i]._id %>">
+                                                        <% if (products[i].category) { %>
+                                                            <p> <%= products[i].category.categoryName %>
+                                                            </p>
+                                                            <% } else { %>
+                                                                <p>Category: Not specified</p>
+                                                                <% } %></a>
+                                                    </div>
+                                                    <h2><a href="/productdetails/<%= products[i]._id %>"><%= products[i].name%></a></h2>
+                                                    <div class="rating-result" title="90%">
+                                                        <span>
+                                                            <span>90%</span>
+                                                        </span>
+                                                    </div>
+                                                    <div class="product-price">
+                                                        <span>₹<%= products[i].price  %> </span>
+                                                        <% if(products[i].price) { %>
+                                                            <span class="old-price">₹<%=
+                                                                    products[i].price %></span>
+                                                            <% } %>
+                                                    </div>
+                                                    <div class="product-action-1 show">
+                                                        <button aria-label="Add To Cart" class="action-btn hover-up"
+                                                            onclick="addToCart('<%= products[i]._id %>')">
+                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--pagination-->
+                            <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-start">
+                                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                                        <li class="page-item"><a class="page-link" href="#"><i
+                                                    class="fi-rs-angle-double-small-right"></i></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                            <div class="widget-category mb-30">
+                                <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                                <ul class="categories">
+                                    <% products.forEach(function(product) { %>
+                                        <li><a href="#"><%= product.category.categoryName%></a></li>
+                                    <% }); %>
+                                </ul>
+                            </div>
+                            <!-- Fillter By Price -->
+                            <div class="sidebar-widget price_range range mb-30">
+                                <div class="widget-header position-relative mb-20 pb-10">
+                                    <h5 class="widget-title mb-10">Fill by price</h5>
+                                    <div class="bt-1 border-color-1"></div>
+                                </div>
+                                <div class="price-filter">
+                                    <div class="price-filter-inner">
+                                        <div id="slider-range"></div>
+                                        <div class="price_slider_amount">
+                                            <div class="label-input">
+                                                <span>Range:</span><input type="text" id="amount" name="price"
+                                                    placeholder="Add Your Price" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- <div class="list-group">
+                                    <div class="list-group-item mb-10 mt-10">
+                                        <label class="fw-900">Color</label>
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox1" value="">
+                                            <label class="form-check-label" for="exampleCheckbox1"><span>Red
+                                                    (56)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox2" value="">
+                                            <label class="form-check-label" for="exampleCheckbox2"><span>Green
+                                                    (78)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox3" value="">
+                                            <label class="form-check-label" for="exampleCheckbox3"><span>Blue
+                                                    (54)</span></label>
+                                        </div>
+                                        <label class="fw-900 mt-15">Item Condition</label>
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox11" value="">
+                                            <label class="form-check-label" for="exampleCheckbox11"><span>New
+                                                    (1506)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox21" value="">
+                                            <label class="form-check-label" for="exampleCheckbox21"><span>Refurbished
+                                                    (27)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox31" value="">
+                                            <label class="form-check-label" for="exampleCheckbox31"><span>Used
+                                                    (45)</span></label>
+                                        </div>
+                                    </div>
+                                </div> -->
+                                <a href="#" class="btn btn-sm btn-default"><i
+                                        class="fi-rs-filter mr-5"></i> Fillter</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/preloader.ejs') %>
+                <%- include('../layouts/script.ejs') %>
+
+
+
+
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                <script>
+                    function addToCart(productId) {
+                        // Assuming you want to add 1 quantity by default
+                        const quantity = 1;
+                        fetch('/cart/addToCart/' + productId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ productId, quantity }),
+                        })
+                            .then(response => {
+                                if (response.redirected) {
+                                    return Swal.fire({
+                                        title: 'Login Required',
+                                        text: 'You must be logged in to add items to your cart.',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Login',
+                                        cancelButtonText: 'Cancel',
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = '/login';
+                                        } else {
+                                            throw new Error('Action cancelled');
+                                        }
+                                    });
+                                }
+                                return response.json();
+                            })
+
+                            .then(data => {
+                                if (data.status) {
+                                    // Show a success message using SweetAlert2
+                                    Swal.fire({
+                                        title: 'Success!',
+                                        text: 'Product added to cart.',
+                                        icon: 'success',
+                                        timer: 3000, // 3 seconds
+                                        timerProgressBar: true, // Show a progress bar
+                                        showConfirmButton: false, // Hide the confirm button
+                                    }).then(() => {
+                                        // Redirect to cart or update the cart UI here
+                                        window.location.href = data.URL;
+                                    });
+                                } else {
+                                    // Handle errors
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: data.message,
+                                        icon: 'error',
+                                    });
+                                }
+                            })
+                            .catch(err => {
+                                if (!err.data.success) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: err.response.data.message,
+                                    });
+                                } else {
+                                    console.error(err);
+                                }
+                            });
+                    }
+
+                </script>

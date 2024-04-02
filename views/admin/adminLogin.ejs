@@ -1,0 +1,49 @@
+<%- include('../adminLayouts/header.ejs') %>
+
+<body>
+    <div class="nav-item">
+        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+    </div>
+    <main>
+       
+        <section class="content-main mt-80 mb-80">
+            <div class="card mx-auto card-login">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Admin Login</h4>
+                    <form method="post" id="adminLogin" action="/admin"  novalidate>
+                        <div class="mb-3">
+                            <input class="form-control" name="email" placeholder="Enter email" type="email">
+                            <span id="emailError" class="text-danger"></span> <!-- Error message container for email -->
+                        </div>
+                        <!-- form-group// -->
+                        <div class="mb-3">
+                            <input class="form-control" name="password" placeholder="Enter Password" type="password">
+                            <span id="passwordError" class="text-danger"></span> <!-- Error message container for password -->
+                        </div>
+                        <!-- form-group// -->
+                        <div class="mb-3">
+                            
+                            <label class="form-check">
+                                <input type="checkbox" class="form-check-input" checked="">
+                                <span class="form-check-label">Remember</span>
+                            </label>
+                        </div>
+                        <!-- form-group form-check .// -->
+                        <div class="mb-4">
+                            <button type="submit" class="btn btn-primary w-100"> Login </button>
+                        </div>
+                        <!-- form-group// -->
+                    </form>
+                    
+                </div>
+            </div>
+        </section>
+      
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js" integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+         <!-- Include SweetAlert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="/admin/js/adminLoginForm.js"></script>
+
+
+<%- include('../adminLayouts/footer.ejs') %>

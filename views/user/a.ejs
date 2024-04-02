@@ -1,0 +1,1832 @@
+<%- include('../layouts/header.ejs') %>
+<%- include('../layouts/navbar.ejs') %>
+
+<main class="main">
+    <div class="container">
+        <div class="row">
+            <!-- Filter Section -->
+            <div class="col-lg-3 col-md-12">
+                <div class="widget-category mb-30">
+                    <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                    <ul class="categories">
+                        <li><a href="shop-grid-right.html">Shoes & Bags</a></li>
+                        <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
+                        <li><a href="shop-grid-right.html">Dresses</a></li>
+                        <li><a href="shop-grid-right.html">Swimwear</a></li>
+                        <li><a href="shop-grid-right.html">Beauty</a></li>
+                        <li><a href="shop-grid-right.html">Jewelry & Watch</a></li>
+                        <li><a href="shop-grid-right.html">Accessories</a></li>
+                    </ul>
+                </div>
+                  <!-- Fillter By Price -->
+                  <div class="sidebar-widget price_range range mb-30">
+                    <div class="widget-header position-relative mb-20 pb-10">
+                        <h5 class="widget-title mb-10">Fill by price</h5>
+                        <div class="bt-1 border-color-1"></div>
+                    </div>
+                    <div class="price-filter">
+                        <div class="price-filter-inner">
+                            <div id="slider-range"></div>
+                            <div class="price_slider_amount">
+                                <div class="label-input">
+                                    <span>Range:</span><input type="text" id="amount" name="price"
+                                        placeholder="Add Your Price" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+            <!-- Product Details Section -->
+            <div class="col-lg-9 col-md-12">
+                <div class="product-list mb-50">
+                    <% for(let i=0; i<products.length; i++) { %>
+                        <div class="product-cart-wrap">
+                            <div class="product-img-action-wrap">
+                                <div class="product-img product-img-zoom">
+                                    <div class="product-img-inner">
+                                        <a href="/productdetails/<%= products[i]._id %>">
+                                            <img class="default-img"
+                                                src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                alt="">
+                                            <img class="hover-img"
+                                                src="/uploads/product/resized/<%= products[i].productImage[1] %>"
+                                                alt="">
+
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="product-action-1">
+                                    <a aria-label="Quick view" class="action-btn hover-up"
+                                        data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                        <i class="fi-rs-search"></i></a>
+                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                        href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                    <a aria-label="Compare" class="action-btn hover-up"
+                                        href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                </div>
+                                <div class="product-badges product-badges-position product-badges-mrg">
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <% if(products[i].isNew) { %>
+                                            <span class="new">New</span>
+                                            <% } %>
+                                                <% if(products[i].isHot) { %>
+                                                    <span class="hot">Hot</span>
+                                                    <% } %>
+                                                        <% if(products[i].isBestSeller) { %>
+                                                            <span class="best">Best Sell</span>
+                                                            <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-content-wrap">
+                                <div class="product-category">
+                                    <a href="/productdetails/<%= products[i]._id %>">
+                                        <% if (products[i].category) { %>
+                                            <p>
+                                                <%= products[i].category.categoryName %>
+                                            </p>
+                                            <% } else { %>
+                                                <p>Category: Not specified</p>
+                                                <% } %>
+                                    </a>
+                                </div>
+                                <h2><a href="/productdetails/<%= products[i]._id %>">
+                                        <%= products[i].name%>
+                                    </a></h2>
+                                <div class="product-price">
+                                    <span>₹<%= products[i].price %> </span>
+                                    <% if(products[i].price) { %>
+                                        <span class="old-price">₹<%= products[i].price %></span>
+                                        <% } %>
+                                </div>
+                                <p class="mt-15">
+                                    <%= products[i].description %>
+                                </p>
+                                <div class="product-action-1 show">
+                                    <a aria-label="Buy now" class="action-btn" href="shop-cart.html"><i
+                                            class="fi-rs-shopping-bag-add"></i>Add to Cart</a>
+                                    <div class="rating-result" title="90%">
+                                        <span>
+                                            <span>90%</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                        </div>
+                    <% } %>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item"><a class="page-link" href="#"><i
+                                        class="fi-rs-angle-double-small-right"></i></a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<%- include('../layouts/footer.ejs') %>
+<%- include('../layouts/preloader.ejs') %>
+<%- include('../layouts/script.ejs') %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+
+
+
+
+
+        <main class="main">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="/" rel="nofollow">Home</a>
+                        <span></span>
+                Shop
+                    </div>
+                </div>
+            </div>
+            <section class="mt-50 mb-50">
+                <div class="container">
+                    <div class="row flex-row-reverse">
+                        <div class="col-lg-9">
+                            <div class="shop-product-fillter style-2">
+                                <div class="totall-product">
+                                    <p> We found <strong class="text-brand">688</strong> items for you!</p>
+                                </div>
+                                <div class="sort-by-product-area">
+                                    <div class="sort-by-cover mr-10">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps"></i>Show:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span> 50 <i class="fi-rs-angle-small-down"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <li><a class="active" href="#">50</a></li>
+                                                <li><a href="#">100</a></li>
+                                                <li><a href="#">150</a></li>
+                                                <li><a href="#">200</a></li>
+                                                <li><a href="#">All</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="sort-by-cover">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                            </div>
+                                        </div>
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <li><a class="active" href="#">Featured</a></li>
+                                                <li><a href="#">Price: Low to High</a></li>
+                                                <li><a href="#">Price: High to Low</a></li>
+                                                <li><a href="#">Release Date</a></li>
+                                                <li><a href="#">Avg. Rating</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-list mb-50">
+                                <% for(let i=0; i<products.length; i++) { %>
+                                    <div class="product-cart-wrap">
+                                        <div class="product-img-action-wrap">
+                                            <div class="product-img product-img-zoom">
+                                                <div class="product-img-inner">
+                                                    <a href="/productdetails/<%= products[i]._id %>">
+                                                        <img class="default-img"
+                                                            src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                            alt="">
+                                                        <img class="hover-img"
+                                                            src="/uploads/product/resized/<%= products[i].productImage[1] %>"
+                                                            alt="">
+
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="product-action-1">
+                                                <a aria-label="Quick view" class="action-btn hover-up"
+                                                    data-bs-toggle="modal" data-bs-target="#quickViewModal">
+                                                    <i class="fi-rs-search"></i></a>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Compare" class="action-btn hover-up"
+                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            </div>
+                                            <div class="product-badges product-badges-position product-badges-mrg">
+                                                <div class="product-badges product-badges-position product-badges-mrg">
+                                                    <% if(products[i].isNew) { %>
+                                                        <span class="new">New</span>
+                                                        <% } %>
+                                                            <% if(products[i].isHot) { %>
+                                                                <span class="hot">Hot</span>
+                                                                <% } %>
+                                                                    <% if(products[i].isBestSeller) { %>
+                                                                        <span class="best">Best Sell</span>
+                                                                        <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="product-content-wrap">
+                                            <div class="product-category">
+                                                <a href="/productdetails/<%= products[i]._id %>">
+                                                    <% if (products[i].category) { %>
+                                                        <p>
+                                                            <%= products[i].category.categoryName %>
+                                                        </p>
+                                                        <% } else { %>
+                                                            <p>Category: Not specified</p>
+                                                            <% } %>
+                                                </a>
+                                            </div>
+                                            <h2><a href="/productdetails/<%= products[i]._id %>">
+                                                    <%= products[i].name%>
+                                                </a></h2>
+                                            <div class="product-price">
+                                                <span>₹<%= products[i].price %> </span>
+                                                <% if(products[i].price) { %>
+                                                    <span class="old-price">₹<%= products[i].price %></span>
+                                                    <% } %>
+                                            </div>
+                                            <p class="mt-15">
+                                                <%= products[i].description %>
+                                            </p>
+                                            <div class="product-action-1 show">
+                                                <a aria-label="Buy now" class="action-btn" href="shop-cart.html"><i
+                                                        class="fi-rs-shopping-bag-add"></i>Add to Cart</a>
+                                                <div class="rating-result" title="90%">
+                                                    <span>
+                                                        <span>90%</span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                            </div>
+                            <!--pagination-->
+                            <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-start">
+                                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                                        <li class="page-item"><a class="page-link" href="#"><i
+                                                    class="fi-rs-angle-double-small-right"></i></a></li>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                        <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                            <div class="widget-category mb-30">
+                                <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                                <ul class="categories">
+                                    <li><a href="shop-grid-right.html">Shoes & Bags</a></li>
+                                    <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
+                                    <li><a href="shop-grid-right.html">Dresses</a></li>
+                                    <li><a href="shop-grid-right.html">Swimwear</a></li>
+                                    <li><a href="shop-grid-right.html">Beauty</a></li>
+                                    <li><a href="shop-grid-right.html">Jewelry & Watch</a></li>
+                                    <li><a href="shop-grid-right.html">Accessories</a></li>
+                                </ul>
+                            </div>
+                            <!-- Fillter By Price -->
+                            <div class="sidebar-widget price_range range mb-30">
+                                <div class="widget-header position-relative mb-20 pb-10">
+                                    <h5 class="widget-title mb-10">Fill by price</h5>
+                                    <div class="bt-1 border-color-1"></div>
+                                </div>
+                                <div class="price-filter">
+                                    <div class="price-filter-inner">
+                                        <div id="slider-range"></div>
+                                        <div class="price_slider_amount">
+                                            <div class="label-input">
+                                                <span>Range:</span><input type="text" id="amount" name="price"
+                                                    placeholder="Add Your Price" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="list-group">
+                                    <div class="list-group-item mb-10 mt-10">
+                                        <label class="fw-900">Color</label>
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox1" value="">
+                                            <label class="form-check-label" for="exampleCheckbox1"><span>Red
+                                                    (56)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox2" value="">
+                                            <label class="form-check-label" for="exampleCheckbox2"><span>Green
+                                                    (78)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox3" value="">
+                                            <label class="form-check-label" for="exampleCheckbox3"><span>Blue
+                                                    (54)</span></label>
+                                        </div>
+                                        <label class="fw-900 mt-15">Item Condition</label>
+                                        <div class="custome-checkbox">
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox11" value="">
+                                            <label class="form-check-label" for="exampleCheckbox11"><span>New
+                                                    (1506)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox21" value="">
+                                            <label class="form-check-label" for="exampleCheckbox21"><span>Refurbished
+                                                    (27)</span></label>
+                                            <br>
+                                            <input class="form-check-input" type="checkbox" name="checkbox"
+                                                id="exampleCheckbox31" value="">
+                                            <label class="form-check-label" for="exampleCheckbox31"><span>Used
+                                                    (45)</span></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="shop-grid-right.html" class="btn btn-sm btn-default"><i
+                                        class="fi-rs-filter mr-5"></i> Fillter</a>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/preloader.ejs') %>
+                <%- include('../layouts/script.ejs') %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <main class="main">
+                    <div class="page-header breadcrumb-wrap">
+                        <div class="container">
+                            <div class="breadcrumb">
+                                <a href="index.html" rel="nofollow">Home</a>
+                                <span></span> Shop
+                                <span></span> Checkout
+                            </div>
+                        </div>
+                    </div>
+                    <section class="mt-50 mb-50">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-lg-6 mb-sm-15">
+                                    <div class="toggle_info">
+                                        <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
+                                    </div>
+                                    <div class="panel-collapse collapse login_form" id="loginform">
+                                        <div class="panel-body">
+                                            <p class="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                            <form method="post">
+                                                <div class="form-group">
+                                                    <input type="text" name="email" placeholder="Username Or Email">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" name="password" placeholder="Password">
+                                                </div>
+                                                <div class="login_footer form-group">
+                                                    <div class="chek-form">
+                                                        <div class="custome-checkbox">
+                                                            <input class="form-check-input" type="checkbox" name="checkbox" id="remember" value="">
+                                                            <label class="form-check-label" for="remember"><span>Remember me</span></label>
+                                                        </div>
+                                                    </div>
+                                                    <a href="#">Forgot password?</a>
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn btn-md" name="login">Log in</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="toggle_info">
+                                        <span><i class="fi-rs-label mr-10"></i><span class="text-muted">Have a coupon?</span> <a href="#coupon" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to enter your code</a></span>
+                                    </div>
+                                    <div class="panel-collapse collapse coupon_form " id="coupon">
+                                        <div class="panel-body">
+                                            <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
+                                            <form method="post">
+                                                <div class="form-group">
+                                                    <input type="text" placeholder="Enter Coupon Code...">
+                                                </div>
+                                                <div class="form-group">
+                                                    <button class="btn  btn-md" name="login">Apply Coupon</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="divider mt-50 mb-50"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-25">
+                                        <h4>Billing Details</h4>
+                                    </div>
+                                    <form method="post">
+                                        <div class="form-group">
+                                            <input type="text" required="" name="fname" placeholder="First name *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" required="" name="lname" placeholder="Last name *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="cname" placeholder="Company Name">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="custom_select">
+                                                <select class="form-control select-active">
+                                                    <option value="">Select an option...</option>
+                                                    <option value="AX">Aland Islands</option>
+                                                    <option value="AF">Afghanistan</option>
+                                                    <option value="AL">Albania</option>
+                                                    <option value="DZ">Algeria</option>
+                                                    <option value="AD">Andorra</option>
+                                                    <option value="AO">Angola</option>
+                                                    <option value="AI">Anguilla</option>
+                                                    <option value="AQ">Antarctica</option>
+                                                    <option value="AG">Antigua and Barbuda</option>
+                                                    <option value="AR">Argentina</option>
+                                                    <option value="AM">Armenia</option>
+                                                    <option value="AW">Aruba</option>
+                                                    <option value="AU">Australia</option>
+                                                    <option value="AT">Austria</option>
+                                                    <option value="AZ">Azerbaijan</option>
+                                                    <option value="BS">Bahamas</option>
+                                                    <option value="BH">Bahrain</option>
+                                                    <option value="BD">Bangladesh</option>
+                                                    <option value="BB">Barbados</option>
+                                                    <option value="BY">Belarus</option>
+                                                    <option value="PW">Belau</option>
+                                                    <option value="BE">Belgium</option>
+                                                    <option value="BZ">Belize</option>
+                                                    <option value="BJ">Benin</option>
+                                                    <option value="BM">Bermuda</option>
+                                                    <option value="BT">Bhutan</option>
+                                                    <option value="BO">Bolivia</option>
+                                                    <option value="BQ">Bonaire, Saint Eustatius and Saba</option>
+                                                    <option value="BA">Bosnia and Herzegovina</option>
+                                                    <option value="BW">Botswana</option>
+                                                    <option value="BV">Bouvet Island</option>
+                                                    <option value="BR">Brazil</option>
+                                                    <option value="IO">British Indian Ocean Territory</option>
+                                                    <option value="VG">British Virgin Islands</option>
+                                                    <option value="BN">Brunei</option>
+                                                    <option value="BG">Bulgaria</option>
+                                                    <option value="BF">Burkina Faso</option>
+                                                    <option value="BI">Burundi</option>
+                                                    <option value="KH">Cambodia</option>
+                                                    <option value="CM">Cameroon</option>
+                                                    <option value="CA">Canada</option>
+                                                    <option value="CV">Cape Verde</option>
+                                                    <option value="KY">Cayman Islands</option>
+                                                    <option value="CF">Central African Republic</option>
+                                                    <option value="TD">Chad</option>
+                                                    <option value="CL">Chile</option>
+                                                    <option value="CN">China</option>
+                                                    <option value="CX">Christmas Island</option>
+                                                    <option value="CC">Cocos (Keeling) Islands</option>
+                                                    <option value="CO">Colombia</option>
+                                                    <option value="KM">Comoros</option>
+                                                    <option value="CG">Congo (Brazzaville)</option>
+                                                    <option value="CD">Congo (Kinshasa)</option>
+                                                    <option value="CK">Cook Islands</option>
+                                                    <option value="CR">Costa Rica</option>
+                                                    <option value="HR">Croatia</option>
+                                                    <option value="CU">Cuba</option>
+                                                    <option value="CW">CuraÇao</option>
+                                                    <option value="CY">Cyprus</option>
+                                                    <option value="CZ">Czech Republic</option>
+                                                    <option value="DK">Denmark</option>
+                                                    <option value="DJ">Djibouti</option>
+                                                    <option value="DM">Dominica</option>
+                                                    <option value="DO">Dominican Republic</option>
+                                                    <option value="EC">Ecuador</option>
+                                                    <option value="EG">Egypt</option>
+                                                    <option value="SV">El Salvador</option>
+                                                    <option value="GQ">Equatorial Guinea</option>
+                                                    <option value="ER">Eritrea</option>
+                                                    <option value="EE">Estonia</option>
+                                                    <option value="ET">Ethiopia</option>
+                                                    <option value="FK">Falkland Islands</option>
+                                                    <option value="FO">Faroe Islands</option>
+                                                    <option value="FJ">Fiji</option>
+                                                    <option value="FI">Finland</option>
+                                                    <option value="FR">France</option>
+                                                    <option value="GF">French Guiana</option>
+                                                    <option value="PF">French Polynesia</option>
+                                                    <option value="TF">French Southern Territories</option>
+                                                    <option value="GA">Gabon</option>
+                                                    <option value="GM">Gambia</option>
+                                                    <option value="GE">Georgia</option>
+                                                    <option value="DE">Germany</option>
+                                                    <option value="GH">Ghana</option>
+                                                    <option value="GI">Gibraltar</option>
+                                                    <option value="GR">Greece</option>
+                                                    <option value="GL">Greenland</option>
+                                                    <option value="GD">Grenada</option>
+                                                    <option value="GP">Guadeloupe</option>
+                                                    <option value="GT">Guatemala</option>
+                                                    <option value="GG">Guernsey</option>
+                                                    <option value="GN">Guinea</option>
+                                                    <option value="GW">Guinea-Bissau</option>
+                                                    <option value="GY">Guyana</option>
+                                                    <option value="HT">Haiti</option>
+                                                    <option value="HM">Heard Island and McDonald Islands</option>
+                                                    <option value="HN">Honduras</option>
+                                                    <option value="HK">Hong Kong</option>
+                                                    <option value="HU">Hungary</option>
+                                                    <option value="IS">Iceland</option>
+                                                    <option value="IN">India</option>
+                                                    <option value="ID">Indonesia</option>
+                                                    <option value="IR">Iran</option>
+                                                    <option value="IQ">Iraq</option>
+                                                    <option value="IM">Isle of Man</option>
+                                                    <option value="IL">Israel</option>
+                                                    <option value="IT">Italy</option>
+                                                    <option value="CI">Ivory Coast</option>
+                                                    <option value="JM">Jamaica</option>
+                                                    <option value="JP">Japan</option>
+                                                    <option value="JE">Jersey</option>
+                                                    <option value="JO">Jordan</option>
+                                                    <option value="KZ">Kazakhstan</option>
+                                                    <option value="KE">Kenya</option>
+                                                    <option value="KI">Kiribati</option>
+                                                    <option value="KW">Kuwait</option>
+                                                    <option value="KG">Kyrgyzstan</option>
+                                                    <option value="LA">Laos</option>
+                                                    <option value="LV">Latvia</option>
+                                                    <option value="LB">Lebanon</option>
+                                                    <option value="LS">Lesotho</option>
+                                                    <option value="LR">Liberia</option>
+                                                    <option value="LY">Libya</option>
+                                                    <option value="LI">Liechtenstein</option>
+                                                    <option value="LT">Lithuania</option>
+                                                    <option value="LU">Luxembourg</option>
+                                                    <option value="MO">Macao S.A.R., China</option>
+                                                    <option value="MK">Macedonia</option>
+                                                    <option value="MG">Madagascar</option>
+                                                    <option value="MW">Malawi</option>
+                                                    <option value="MY">Malaysia</option>
+                                                    <option value="MV">Maldives</option>
+                                                    <option value="ML">Mali</option>
+                                                    <option value="MT">Malta</option>
+                                                    <option value="MH">Marshall Islands</option>
+                                                    <option value="MQ">Martinique</option>
+                                                    <option value="MR">Mauritania</option>
+                                                    <option value="MU">Mauritius</option>
+                                                    <option value="YT">Mayotte</option>
+                                                    <option value="MX">Mexico</option>
+                                                    <option value="FM">Micronesia</option>
+                                                    <option value="MD">Moldova</option>
+                                                    <option value="MC">Monaco</option>
+                                                    <option value="MN">Mongolia</option>
+                                                    <option value="ME">Montenegro</option>
+                                                    <option value="MS">Montserrat</option>
+                                                    <option value="MA">Morocco</option>
+                                                    <option value="MZ">Mozambique</option>
+                                                    <option value="MM">Myanmar</option>
+                                                    <option value="NA">Namibia</option>
+                                                    <option value="NR">Nauru</option>
+                                                    <option value="NP">Nepal</option>
+                                                    <option value="NL">Netherlands</option>
+                                                    <option value="AN">Netherlands Antilles</option>
+                                                    <option value="NC">New Caledonia</option>
+                                                    <option value="NZ">New Zealand</option>
+                                                    <option value="NI">Nicaragua</option>
+                                                    <option value="NE">Niger</option>
+                                                    <option value="NG">Nigeria</option>
+                                                    <option value="NU">Niue</option>
+                                                    <option value="NF">Norfolk Island</option>
+                                                    <option value="KP">North Korea</option>
+                                                    <option value="NO">Norway</option>
+                                                    <option value="OM">Oman</option>
+                                                    <option value="PK">Pakistan</option>
+                                                    <option value="PS">Palestinian Territory</option>
+                                                    <option value="PA">Panama</option>
+                                                    <option value="PG">Papua New Guinea</option>
+                                                    <option value="PY">Paraguay</option>
+                                                    <option value="PE">Peru</option>
+                                                    <option value="PH">Philippines</option>
+                                                    <option value="PN">Pitcairn</option>
+                                                    <option value="PL">Poland</option>
+                                                    <option value="PT">Portugal</option>
+                                                    <option value="QA">Qatar</option>
+                                                    <option value="IE">Republic of Ireland</option>
+                                                    <option value="RE">Reunion</option>
+                                                    <option value="RO">Romania</option>
+                                                    <option value="RU">Russia</option>
+                                                    <option value="RW">Rwanda</option>
+                                                    <option value="ST">São Tomé and Príncipe</option>
+                                                    <option value="BL">Saint Barthélemy</option>
+                                                    <option value="SH">Saint Helena</option>
+                                                    <option value="KN">Saint Kitts and Nevis</option>
+                                                    <option value="LC">Saint Lucia</option>
+                                                    <option value="SX">Saint Martin (Dutch part)</option>
+                                                    <option value="MF">Saint Martin (French part)</option>
+                                                    <option value="PM">Saint Pierre and Miquelon</option>
+                                                    <option value="VC">Saint Vincent and the Grenadines</option>
+                                                    <option value="SM">San Marino</option>
+                                                    <option value="SA">Saudi Arabia</option>
+                                                    <option value="SN">Senegal</option>
+                                                    <option value="RS">Serbia</option>
+                                                    <option value="SC">Seychelles</option>
+                                                    <option value="SL">Sierra Leone</option>
+                                                    <option value="SG">Singapore</option>
+                                                    <option value="SK">Slovakia</option>
+                                                    <option value="SI">Slovenia</option>
+                                                    <option value="SB">Solomon Islands</option>
+                                                    <option value="SO">Somalia</option>
+                                                    <option value="ZA">South Africa</option>
+                                                    <option value="GS">South Georgia/Sandwich Islands</option>
+                                                    <option value="KR">South Korea</option>
+                                                    <option value="SS">South Sudan</option>
+                                                    <option value="ES">Spain</option>
+                                                    <option value="LK">Sri Lanka</option>
+                                                    <option value="SD">Sudan</option>
+                                                    <option value="SR">Suriname</option>
+                                                    <option value="SJ">Svalbard and Jan Mayen</option>
+                                                    <option value="SZ">Swaziland</option>
+                                                    <option value="SE">Sweden</option>
+                                                    <option value="CH">Switzerland</option>
+                                                    <option value="SY">Syria</option>
+                                                    <option value="TW">Taiwan</option>
+                                                    <option value="TJ">Tajikistan</option>
+                                                    <option value="TZ">Tanzania</option>
+                                                    <option value="TH">Thailand</option>
+                                                    <option value="TL">Timor-Leste</option>
+                                                    <option value="TG">Togo</option>
+                                                    <option value="TK">Tokelau</option>
+                                                    <option value="TO">Tonga</option>
+                                                    <option value="TT">Trinidad and Tobago</option>
+                                                    <option value="TN">Tunisia</option>
+                                                    <option value="TR">Turkey</option>
+                                                    <option value="TM">Turkmenistan</option>
+                                                    <option value="TC">Turks and Caicos Islands</option>
+                                                    <option value="TV">Tuvalu</option>
+                                                    <option value="UG">Uganda</option>
+                                                    <option value="UA">Ukraine</option>
+                                                    <option value="AE">United Arab Emirates</option>
+                                                    <option value="GB">United Kingdom (UK)</option>
+                                                    <option value="US">USA (US)</option>
+                                                    <option value="UY">Uruguay</option>
+                                                    <option value="UZ">Uzbekistan</option>
+                                                    <option value="VU">Vanuatu</option>
+                                                    <option value="VA">Vatican</option>
+                                                    <option value="VE">Venezuela</option>
+                                                    <option value="VN">Vietnam</option>
+                                                    <option value="WF">Wallis and Futuna</option>
+                                                    <option value="EH">Western Sahara</option>
+                                                    <option value="WS">Western Samoa</option>
+                                                    <option value="YE">Yemen</option>
+                                                    <option value="ZM">Zambia</option>
+                                                    <option value="ZW">Zimbabwe</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="billing_address" required="" placeholder="Address *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="billing_address2" required="" placeholder="Address line2">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="city" placeholder="City / Town *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="state" placeholder="State / County *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="zipcode" placeholder="Postcode / ZIP *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="phone" placeholder="Phone *">
+                                        </div>
+                                        <div class="form-group">
+                                            <input required="" type="text" name="email" placeholder="Email address *">
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <div class="custome-checkbox">
+                                                    <input class="form-check-input" type="checkbox" name="checkbox" id="createaccount">
+                                                    <label class="form-check-label label_info" data-bs-toggle="collapse" href="#collapsePassword" data-target="#collapsePassword" aria-controls="collapsePassword" for="createaccount"><span>Create an account?</span></label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="collapsePassword" class="form-group create-account collapse in">
+                                            <input required="" type="password" placeholder="Password" name="password">
+                                        </div>
+                                        <div class="ship_detail">
+                                            <div class="form-group">
+                                                <div class="chek-form">
+                                                    <div class="custome-checkbox">
+                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="differentaddress">
+                                                        <label class="form-check-label label_info" data-bs-toggle="collapse" data-target="#collapseAddress" href="#collapseAddress" aria-controls="collapseAddress" for="differentaddress"><span>Ship to a different address?</span></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="collapseAddress" class="different_address collapse in">
+                                                <div class="form-group">
+                                                    <input type="text" required="" name="fname" placeholder="First name *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" required="" name="lname" placeholder="Last name *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input required="" type="text" name="cname" placeholder="Company Name">
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="custom_select">
+                                                        <select class="form-control select-active">
+                                                            <option value="">Select an option...</option>
+                                                            <option value="AX">Aland Islands</option>
+                                                            <option value="AF">Afghanistan</option>
+                                                            <option value="AL">Albania</option>
+                                                            <option value="DZ">Algeria</option>
+                                                            <option value="AD">Andorra</option>
+                                                            <option value="AO">Angola</option>
+                                                            <option value="AI">Anguilla</option>
+                                                            <option value="AQ">Antarctica</option>
+                                                            <option value="AG">Antigua and Barbuda</option>
+                                                            <option value="AR">Argentina</option>
+                                                            <option value="AM">Armenia</option>
+                                                            <option value="AW">Aruba</option>
+                                                            <option value="AU">Australia</option>
+                                                            <option value="AT">Austria</option>
+                                                            <option value="AZ">Azerbaijan</option>
+                                                            <option value="BS">Bahamas</option>
+                                                            <option value="BH">Bahrain</option>
+                                                            <option value="BD">Bangladesh</option>
+                                                            <option value="BB">Barbados</option>
+                                                            <option value="BY">Belarus</option>
+                                                            <option value="PW">Belau</option>
+                                                            <option value="BE">Belgium</option>
+                                                            <option value="BZ">Belize</option>
+                                                            <option value="BJ">Benin</option>
+                                                            <option value="BM">Bermuda</option>
+                                                            <option value="BT">Bhutan</option>
+                                                            <option value="BO">Bolivia</option>
+                                                            <option value="BQ">Bonaire, Saint Eustatius and Saba</option>
+                                                            <option value="BA">Bosnia and Herzegovina</option>
+                                                            <option value="BW">Botswana</option>
+                                                            <option value="BV">Bouvet Island</option>
+                                                            <option value="BR">Brazil</option>
+                                                            <option value="IO">British Indian Ocean Territory</option>
+                                                            <option value="VG">British Virgin Islands</option>
+                                                            <option value="BN">Brunei</option>
+                                                            <option value="BG">Bulgaria</option>
+                                                            <option value="BF">Burkina Faso</option>
+                                                            <option value="BI">Burundi</option>
+                                                            <option value="KH">Cambodia</option>
+                                                            <option value="CM">Cameroon</option>
+                                                            <option value="CA">Canada</option>
+                                                            <option value="CV">Cape Verde</option>
+                                                            <option value="KY">Cayman Islands</option>
+                                                            <option value="CF">Central African Republic</option>
+                                                            <option value="TD">Chad</option>
+                                                            <option value="CL">Chile</option>
+                                                            <option value="CN">China</option>
+                                                            <option value="CX">Christmas Island</option>
+                                                            <option value="CC">Cocos (Keeling) Islands</option>
+                                                            <option value="CO">Colombia</option>
+                                                            <option value="KM">Comoros</option>
+                                                            <option value="CG">Congo (Brazzaville)</option>
+                                                            <option value="CD">Congo (Kinshasa)</option>
+                                                            <option value="CK">Cook Islands</option>
+                                                            <option value="CR">Costa Rica</option>
+                                                            <option value="HR">Croatia</option>
+                                                            <option value="CU">Cuba</option>
+                                                            <option value="CW">CuraÇao</option>
+                                                            <option value="CY">Cyprus</option>
+                                                            <option value="CZ">Czech Republic</option>
+                                                            <option value="DK">Denmark</option>
+                                                            <option value="DJ">Djibouti</option>
+                                                            <option value="DM">Dominica</option>
+                                                            <option value="DO">Dominican Republic</option>
+                                                            <option value="EC">Ecuador</option>
+                                                            <option value="EG">Egypt</option>
+                                                            <option value="SV">El Salvador</option>
+                                                            <option value="GQ">Equatorial Guinea</option>
+                                                            <option value="ER">Eritrea</option>
+                                                            <option value="EE">Estonia</option>
+                                                            <option value="ET">Ethiopia</option>
+                                                            <option value="FK">Falkland Islands</option>
+                                                            <option value="FO">Faroe Islands</option>
+                                                            <option value="FJ">Fiji</option>
+                                                            <option value="FI">Finland</option>
+                                                            <option value="FR">France</option>
+                                                            <option value="GF">French Guiana</option>
+                                                            <option value="PF">French Polynesia</option>
+                                                            <option value="TF">French Southern Territories</option>
+                                                            <option value="GA">Gabon</option>
+                                                            <option value="GM">Gambia</option>
+                                                            <option value="GE">Georgia</option>
+                                                            <option value="DE">Germany</option>
+                                                            <option value="GH">Ghana</option>
+                                                            <option value="GI">Gibraltar</option>
+                                                            <option value="GR">Greece</option>
+                                                            <option value="GL">Greenland</option>
+                                                            <option value="GD">Grenada</option>
+                                                            <option value="GP">Guadeloupe</option>
+                                                            <option value="GT">Guatemala</option>
+                                                            <option value="GG">Guernsey</option>
+                                                            <option value="GN">Guinea</option>
+                                                            <option value="GW">Guinea-Bissau</option>
+                                                            <option value="GY">Guyana</option>
+                                                            <option value="HT">Haiti</option>
+                                                            <option value="HM">Heard Island and McDonald Islands</option>
+                                                            <option value="HN">Honduras</option>
+                                                            <option value="HK">Hong Kong</option>
+                                                            <option value="HU">Hungary</option>
+                                                            <option value="IS">Iceland</option>
+                                                            <option value="IN">India</option>
+                                                            <option value="ID">Indonesia</option>
+                                                            <option value="IR">Iran</option>
+                                                            <option value="IQ">Iraq</option>
+                                                            <option value="IM">Isle of Man</option>
+                                                            <option value="IL">Israel</option>
+                                                            <option value="IT">Italy</option>
+                                                            <option value="CI">Ivory Coast</option>
+                                                            <option value="JM">Jamaica</option>
+                                                            <option value="JP">Japan</option>
+                                                            <option value="JE">Jersey</option>
+                                                            <option value="JO">Jordan</option>
+                                                            <option value="KZ">Kazakhstan</option>
+                                                            <option value="KE">Kenya</option>
+                                                            <option value="KI">Kiribati</option>
+                                                            <option value="KW">Kuwait</option>
+                                                            <option value="KG">Kyrgyzstan</option>
+                                                            <option value="LA">Laos</option>
+                                                            <option value="LV">Latvia</option>
+                                                            <option value="LB">Lebanon</option>
+                                                            <option value="LS">Lesotho</option>
+                                                            <option value="LR">Liberia</option>
+                                                            <option value="LY">Libya</option>
+                                                            <option value="LI">Liechtenstein</option>
+                                                            <option value="LT">Lithuania</option>
+                                                            <option value="LU">Luxembourg</option>
+                                                            <option value="MO">Macao S.A.R., China</option>
+                                                            <option value="MK">Macedonia</option>
+                                                            <option value="MG">Madagascar</option>
+                                                            <option value="MW">Malawi</option>
+                                                            <option value="MY">Malaysia</option>
+                                                            <option value="MV">Maldives</option>
+                                                            <option value="ML">Mali</option>
+                                                            <option value="MT">Malta</option>
+                                                            <option value="MH">Marshall Islands</option>
+                                                            <option value="MQ">Martinique</option>
+                                                            <option value="MR">Mauritania</option>
+                                                            <option value="MU">Mauritius</option>
+                                                            <option value="YT">Mayotte</option>
+                                                            <option value="MX">Mexico</option>
+                                                            <option value="FM">Micronesia</option>
+                                                            <option value="MD">Moldova</option>
+                                                            <option value="MC">Monaco</option>
+                                                            <option value="MN">Mongolia</option>
+                                                            <option value="ME">Montenegro</option>
+                                                            <option value="MS">Montserrat</option>
+                                                            <option value="MA">Morocco</option>
+                                                            <option value="MZ">Mozambique</option>
+                                                            <option value="MM">Myanmar</option>
+                                                            <option value="NA">Namibia</option>
+                                                            <option value="NR">Nauru</option>
+                                                            <option value="NP">Nepal</option>
+                                                            <option value="NL">Netherlands</option>
+                                                            <option value="AN">Netherlands Antilles</option>
+                                                            <option value="NC">New Caledonia</option>
+                                                            <option value="NZ">New Zealand</option>
+                                                            <option value="NI">Nicaragua</option>
+                                                            <option value="NE">Niger</option>
+                                                            <option value="NG">Nigeria</option>
+                                                            <option value="NU">Niue</option>
+                                                            <option value="NF">Norfolk Island</option>
+                                                            <option value="KP">North Korea</option>
+                                                            <option value="NO">Norway</option>
+                                                            <option value="OM">Oman</option>
+                                                            <option value="PK">Pakistan</option>
+                                                            <option value="PS">Palestinian Territory</option>
+                                                            <option value="PA">Panama</option>
+                                                            <option value="PG">Papua New Guinea</option>
+                                                            <option value="PY">Paraguay</option>
+                                                            <option value="PE">Peru</option>
+                                                            <option value="PH">Philippines</option>
+                                                            <option value="PN">Pitcairn</option>
+                                                            <option value="PL">Poland</option>
+                                                            <option value="PT">Portugal</option>
+                                                            <option value="QA">Qatar</option>
+                                                            <option value="IE">Republic of Ireland</option>
+                                                            <option value="RE">Reunion</option>
+                                                            <option value="RO">Romania</option>
+                                                            <option value="RU">Russia</option>
+                                                            <option value="RW">Rwanda</option>
+                                                            <option value="ST">São Tomé and Príncipe</option>
+                                                            <option value="BL">Saint Barthélemy</option>
+                                                            <option value="SH">Saint Helena</option>
+                                                            <option value="KN">Saint Kitts and Nevis</option>
+                                                            <option value="LC">Saint Lucia</option>
+                                                            <option value="SX">Saint Martin (Dutch part)</option>
+                                                            <option value="MF">Saint Martin (French part)</option>
+                                                            <option value="PM">Saint Pierre and Miquelon</option>
+                                                            <option value="VC">Saint Vincent and the Grenadines</option>
+                                                            <option value="SM">San Marino</option>
+                                                            <option value="SA">Saudi Arabia</option>
+                                                            <option value="SN">Senegal</option>
+                                                            <option value="RS">Serbia</option>
+                                                            <option value="SC">Seychelles</option>
+                                                            <option value="SL">Sierra Leone</option>
+                                                            <option value="SG">Singapore</option>
+                                                            <option value="SK">Slovakia</option>
+                                                            <option value="SI">Slovenia</option>
+                                                            <option value="SB">Solomon Islands</option>
+                                                            <option value="SO">Somalia</option>
+                                                            <option value="ZA">South Africa</option>
+                                                            <option value="GS">South Georgia/Sandwich Islands</option>
+                                                            <option value="KR">South Korea</option>
+                                                            <option value="SS">South Sudan</option>
+                                                            <option value="ES">Spain</option>
+                                                            <option value="LK">Sri Lanka</option>
+                                                            <option value="SD">Sudan</option>
+                                                            <option value="SR">Suriname</option>
+                                                            <option value="SJ">Svalbard and Jan Mayen</option>
+                                                            <option value="SZ">Swaziland</option>
+                                                            <option value="SE">Sweden</option>
+                                                            <option value="CH">Switzerland</option>
+                                                            <option value="SY">Syria</option>
+                                                            <option value="TW">Taiwan</option>
+                                                            <option value="TJ">Tajikistan</option>
+                                                            <option value="TZ">Tanzania</option>
+                                                            <option value="TH">Thailand</option>
+                                                            <option value="TL">Timor-Leste</option>
+                                                            <option value="TG">Togo</option>
+                                                            <option value="TK">Tokelau</option>
+                                                            <option value="TO">Tonga</option>
+                                                            <option value="TT">Trinidad and Tobago</option>
+                                                            <option value="TN">Tunisia</option>
+                                                            <option value="TR">Turkey</option>
+                                                            <option value="TM">Turkmenistan</option>
+                                                            <option value="TC">Turks and Caicos Islands</option>
+                                                            <option value="TV">Tuvalu</option>
+                                                            <option value="UG">Uganda</option>
+                                                            <option value="UA">Ukraine</option>
+                                                            <option value="AE">United Arab Emirates</option>
+                                                            <option value="GB">United Kingdom (UK)</option>
+                                                            <option value="US">USA (US)</option>
+                                                            <option value="UY">Uruguay</option>
+                                                            <option value="UZ">Uzbekistan</option>
+                                                            <option value="VU">Vanuatu</option>
+                                                            <option value="VA">Vatican</option>
+                                                            <option value="VE">Venezuela</option>
+                                                            <option value="VN">Vietnam</option>
+                                                            <option value="WF">Wallis and Futuna</option>
+                                                            <option value="EH">Western Sahara</option>
+                                                            <option value="WS">Western Samoa</option>
+                                                            <option value="YE">Yemen</option>
+                                                            <option value="ZM">Zambia</option>
+                                                            <option value="ZW">Zimbabwe</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" name="billing_address" required="" placeholder="Address *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="text" name="billing_address2" required="" placeholder="Address line2">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input required="" type="text" name="city" placeholder="City / Town *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input required="" type="text" name="state" placeholder="State / County *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input required="" type="text" name="zipcode" placeholder="Postcode / ZIP *">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-20">
+                                            <h5>Additional information</h5>
+                                        </div>
+                                        <div class="form-group mb-30">
+                                            <textarea rows="5" placeholder="Order notes"></textarea>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="order_review">
+                                        <div class="mb-20">
+                                            <h4>Your Orders</h4>
+                                        </div>
+                                        <div class="table-responsive order_table text-center">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th colspan="2">Product</th>
+                                                        <th>Total</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="image product-thumbnail"><img src="assets/imgs/shop/product-1-1.jpg" alt="#"></td>
+                                                        <td>
+                                                            <h5><a href="shop-product-full.html">Yidarton Women Summer Blue</a></h5> <span class="product-qty">x 2</span>
+                                                        </td>
+                                                        <td>$180.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="image product-thumbnail"><img src="assets/imgs/shop/product-2-1.jpg" alt="#"></td>
+                                                        <td>
+                                                            <h5><a href="shop-product-full.html">LDB MOON Women Summe</a></h5> <span class="product-qty">x 1</span>
+                                                        </td>
+                                                        <td>$65.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="image product-thumbnail"><img src="assets/imgs/shop/product-3-1.jpg" alt="#"></td>
+                                                        <td><i class="ti-check-box font-small text-muted mr-10"></i>
+                                                            <h5><a href="shop-product-full.html">Women's Short Sleeve Loose</a></h5> <span class="product-qty">x 1</span>
+                                                        </td>
+                                                        <td>$35.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>SubTotal</th>
+                                                        <td class="product-subtotal" colspan="2">$280.00</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Shipping</th>
+                                                        <td colspan="2"><em>Free Shipping</em></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total</th>
+                                                        <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900">$280.00</span></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                        <div class="payment_method">
+                                            <div class="mb-25">
+                                                <h5>Payment</h5>
+                                            </div>
+                                            <div class="payment_option">
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
+                                                    <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                                                    <div class="form-group collapse in" id="bankTranfer">
+                                                        <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
+                                                    </div>
+                                                </div>
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="">
+                                                    <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Check Payment</label>
+                                                    <div class="form-group collapse in" id="checkPayment">
+                                                        <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
+                                                    </div>
+                                                </div>
+                                                <div class="custome-radio">
+                                                    <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
+                                                    <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Paypal</label>
+                                                    <div class="form-group collapse in" id="paypal">
+                                                        <p class="text-muted mt-5">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <section class="content-main">
+                    <div class="content-header">
+                      <div>
+                        <h2 class="content-title card-title">Order List</h2>
+                        <p>Lorem ipsum dolor sit amet.</p>
+                      </div>
+                      <div>
+                        <input
+                          type="text"
+                          placeholder="Search order ID"
+                          class="form-control bg-white"
+                        />
+                      </div>
+                    </div>
+                    <div class="card mb-4">
+                      <header class="card-header">
+                        <div class="row gx-3">
+                          <div class="col-lg-4 col-md-6 me-auto">
+                            <input
+                              type="text"
+                              placeholder="Search..."
+                              class="form-control"
+                            />
+                          </div>
+                          <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                              <option>Status</option>
+                              <option>Active</option>
+                              <option>Disabled</option>
+                              <option>Show all</option>
+                            </select>
+                          </div>
+                          <div class="col-lg-2 col-6 col-md-3">
+                            <select class="form-select">
+                              <option>Show 20</option>
+                              <option>Show 30</option>
+                              <option>Show 40</option>
+                            </select>
+                          </div>
+                        </div>
+                      </header>
+                      <!-- card-header end// -->
+                      <div class="card-body">
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <thead>
+                              <tr>
+                                <th>#ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Total</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Date</th>
+                                <th scope="col" class="text-end">Action</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>0901</td>
+                                <td><b>Marvin McKinney</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="2c414d5e5a45426c49544d415c4049024f4341"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$9.00</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-warning"
+                                    >Pending</span
+                                  >
+                                </td>
+                                <td>03.12.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2323</td>
+                                <td><b>Leslie Alexander</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="dcb0b9afb0b5b99cb9a4bdb1acb0b9f2bfb3b1"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$46.61</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-warning"
+                                    >Pending</span
+                                  >
+                                </td>
+                                <td>21.02.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>1233</td>
+                                <td><b>Esther Howard</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="a1c4d2d5c9c4d3e1c4d9c0ccd1cdc48fc2cecc"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$12.00</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-danger"
+                                    >Canceled</span
+                                  >
+                                </td>
+                                <td>03.07.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>1233</td>
+                                <td><b>Esther Howard</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="3a5f494e525f487a5f425b574a565f14595557"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$12.00</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-danger"
+                                    >Canceled</span
+                                  >
+                                </td>
+                                <td>03.07.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2323</td>
+                                <td><b>Jenny Wilson</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="d3b9b6bdbdaa93b6abb2bea3bfb6fdb0bcbe"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$589.99</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>22.05.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2112</td>
+                                <td><b>Marvin McKinney</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="214c405357484f614459404c514d440f424e4c"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$16.58</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>23.04.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>7897</td>
+                                <td><b>Albert Flores</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="91f0fdf3f4e3e5d1f4e9f0fce1fdf4bff2fefc"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$10.00</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>13.03.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2323</td>
+                                <td><b>Wade Warren</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="cbbcaaafae8baeb3aaa6bba7aee5a8a4a6"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$105.55</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>23.09.2019</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2324</td>
+                                <td><b>Jane Cooper</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="5c363d32391c39243d312c3039723f3331"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$710.68</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>28.04.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2325</td>
+                                <td><b>Savannah Nguyen</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="4a392b3c2b24242b220a2f322b273a262f64292527"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$710.68</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>23.03.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2326</td>
+                                <td><b>Guy Hawkins</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="4621333f06233e272b362a236825292b"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$767.50</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>28.04.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2327</td>
+                                <td><b>Darrell Steward</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="6c080d1e1e09002c09140d011c0009420f0301"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$406.27</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>14.07.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2328</td>
+                                <td><b>Jane Cooper</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="cfa5aea1aa8faab7aea2bfa3aae1aca0a2"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$601.13</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>18.03.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>2329</td>
+                                <td><b>Darlene Robertson</b></td>
+                                <td>
+                                  <a
+                                    href="/cdn-cgi/l/email-protection"
+                                    class="__cf_email__"
+                                    data-cfemail="c5a1a0b7aca0aba085a0bda4a8b5a9a0eba6aaa8"
+                                    >[email&#160;protected]</a
+                                  >
+                                </td>
+                                <td>$948.55</td>
+                                <td>
+                                  <span class="badge rounded-pill alert-success"
+                                    >Received</span
+                                  >
+                                </td>
+                                <td>03.07.2022</td>
+                                <td class="text-end">
+                                  <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                  <div class="dropdown">
+                                    <a
+                                      href="#"
+                                      data-bs-toggle="dropdown"
+                                      class="btn btn-light rounded btn-sm font-sm"
+                                    >
+                                      <i class="material-icons md-more_horiz"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                      <a class="dropdown-item" href="#">View detail</a>
+                                      <a class="dropdown-item" href="#">Edit info</a>
+                                      <a class="dropdown-item text-danger" href="#"
+                                        >Delete</a
+                                      >
+                                    </div>
+                                  </div>
+                                  <!-- dropdown //end -->
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <!-- table-responsive //end -->
+                      </div>
+                      <!-- card-body end// -->
+                    </div>
+                    <!-- card end// -->
+                    <div class="pagination-area mt-15 mb-50">
+                      <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                          <li class="page-item active">
+                            <a class="page-link" href="#">01</a>
+                          </li>
+                          <li class="page-item"><a class="page-link" href="#">02</a></li>
+                          <li class="page-item"><a class="page-link" href="#">03</a></li>
+                          <li class="page-item">
+                            <a class="page-link dot" href="#">...</a>
+                          </li>
+                          <li class="page-item"><a class="page-link" href="#">16</a></li>
+                          <li class="page-item">
+                            <a class="page-link" href="#"
+                              ><i class="material-icons md-chevron_right"></i
+                            ></a>
+                          </li>
+                        </ul>
+                      </nav>
+                    </div>
+                  </section>

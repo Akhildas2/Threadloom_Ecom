@@ -1,0 +1,66 @@
+<%- include('../layouts/header.ejs') %>
+<%- include('../layouts/navbar.ejs') %>
+<style>
+    .containers {
+    background-color: #f0f8ff; /* Light Blue background color for the container */
+    padding: 20px;
+}
+
+.order-confirmation {
+    background-color: #d4edda; /* Light Green background color for the order confirmation section */
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.order-confirmation h2 {
+    color: #14ee47; /* Dark Green color for the headings */
+}
+
+
+
+</style>
+<br>
+<div class="container">
+    <div class="order-confirmation text-center"> <!-- Added text-center class -->
+        <h2 class="my-4"><i class="fas fa-check-circle" style="color: green;"></i> Order Confirmation</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <h3>Order Information</h3>
+                <p><strong>Order ID:</strong> <%= order._id %></p>
+                <p><strong>Date:</strong> <%= new Date(order.createdAt).toLocaleDateString() %></p>
+                <p><strong>Status:</strong> <%= order.status %></p>
+                <p><strong>Total:</strong> $<%= order.total.toFixed(2) %></p>
+            </div>
+            <div class="col-md-4">
+                <h3>User Information</h3>
+                <p><strong>Name:</strong> <%= order.user.name %></p>
+                <p><strong>Email:</strong> <%= order.user.email %></p>
+                <p><strong>Phone Number:</strong> <%= order.address.mobileNumber %></p>
+
+            </div>
+        
+            <div class="col-md-4">
+                <h3>Address</h3>
+                <p><strong>HouseNo:</strong> <%= order.address.houseNo %></p>
+                <p><strong>Area:</strong> <%= order.address.area %></p>
+                <p><strong>City:</strong> <%= order.address.city %></p>
+                <p><strong>State:</strong> <%= order.address.state %></p>
+                <p><strong>Pincode:</strong> <%= order.address.pincode %></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <a href="/shop" class="btn btn-primary">Continue Shopping</a>
+            </div>
+        </div>
+    </div>
+</div>
+<br>
+
+
+
+<br>
+
+<%- include('../layouts/footer.ejs') %>
+<%- include('../layouts/script.ejs') %>

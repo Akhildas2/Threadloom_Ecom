@@ -1,0 +1,367 @@
+<%- include('../adminLayouts/header.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header">
+                    <h2 class="content-title card-title">Edit Product</h2>
+                </div>
+                <h4 class="content-title card-title">Edit an existing product</h4>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data"  class="product-form">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    value="<%= product.name %>">
+                                <div class="error-message" id="name-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" name="description"
+                                    rows="3"><%= product.description %></textarea>
+                                <div class="error-message" id="description-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="price">Price</label>
+                                <input type="number" class="form-control" id="price" name="price"
+                                    value="<%= product.price %>">
+                                <div class="error-message" id="price-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="">-----Choose gender-----</option>
+                                    <option value="Men" <%=product.gender==='Men' ? ' selected' : '' %>>Men</option>
+                                    <option value="Women" <%=product.gender==='Women' ? ' selected' : '' %>>Women
+                                    </option>
+                                    <option value="Kids" <%=product.gender==='Kids' ? ' selected' : '' %>>Kids</option>
+                                </select>
+                                <div class="error-message" id="gender-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select class="form-control" id="category" name="category">
+                                    <% categories.forEach(cat=> { %>
+                                        <% if (product.category.categoryName===cat.categoryName) { %>
+                                            <option value="<%= cat._id %>" selected>
+                                                <%= cat.categoryName %>
+                                            </option>
+                                            <% } else { %>
+                                                <option value="<%= cat._id %>">
+                                                    <%= cat.categoryName %>
+                                                </option>
+                                                <% } %>
+                                                    <% }); %>
+                                </select>
+
+                                <div class="error-message" id="category-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="stockCount">Stock Count</label>
+                                <input type="number" class="form-control" id="stockCount" name="stockCount"
+                                    value="<%= product.stockCount %>">
+                                <div class="error-message" id="stockCount-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="size">Size</label>
+                                <select class="form-control" id="size" name="size">
+                                    <option value="">-----Choose size-----</option>
+                                    <option value="S" <%=product.size==='S' ? 'selected' : '' %>>S</option>
+                                    <option value="M" <%=product.size==='M' ? 'selected' : '' %>>M</option>
+                                    <option value="L" <%=product.size==='L' ? 'selected' : '' %>>L</option>
+                                    <option value="XL" <%=product.size==='XL' ? 'selected' : '' %>>XL</option>
+                                    <option value="XXL" <%=product.size==='XXL' ? 'selected' : '' %>>XXL</option>
+                                </select>
+                                <div class="error-message" id="size-error"></div>
+                            </div>
+
+                            <br>
+
+                            <div class="form-group ">
+                                <label for="productImages" style="display: block; text-align: center;">Product
+                                    Images</label>
+                                <br>
+                                <div class='wrapper'>
+                                    <div class="upload">
+                                        <div class="upload-wrapper">
+                                            <div class="upload-img">
+                                                <!-- image here -->
+                                            </div>
+                                            <div class="upload-info">
+                                                <p>
+                                                    <span class="upload-info-value">0</span> file(s) uploaded.
+                                                </p>
+                                            </div>
+                                            <div class="upload-area">
+                                                <div class="upload-area-img">
+
+                                                </div>
+                                                <p class="upload-area-text">Select images or <span>browse</span>.</p>
+                                            </div>
+                                            <input type="file" class="visually-hidden" id="productImages"
+                                                name="productImages" accept="image/*" multiple>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <br>
+                                <button type="submit" class="btn btn-primary"
+                                    style="display: block; margin: 0 auto;">Save Changes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="card mt-4">
+
+            <div class="card-body">
+                <div class="category-grid d-flex flex-wrap justify-content-center">
+                    <% for (let i=0; i < product.productImage.length; i++) { %>
+                        <div class="category-box mr-3 mb-3">
+                            <div class="category-info">
+                                <img src="/uploads/product/resized/<%= product.productImage[i] %>"
+                                    id="currentPhoto<%= i %>" alt="Current Photo <%= i+1 %>" class="img-fluid"
+                                    style="cursor: pointer; width:200px;height:200px;">
+                            </div>
+                            <div class="d-flex align-items-center justify-content-center w-100">
+
+                                <!-- Delete button -->
+                                <button onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>')"
+                                    class="btn btn-danger ml-2" aria-label="Delete Image <%= i+1 %>">Delete</button>
+                            </div>
+
+                        </div>
+
+                        <% } %>
+                            <div class="error-message" id="productImages-error"></div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <%- include('../adminLayouts/footer.ejs') %>
+
+
+
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <!-- Add Axios -->
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.3.js"
+                integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+            <script>
+                // Define regular expressions and error messages
+                const priceRegex = /^\d+(\.\d{1,2})?$/;
+
+                let addedFiles = [];
+
+
+                $(document).ready(function () {
+                    $(".upload-area").click(function () {
+                        $('#productImages').trigger('click');
+                    });
+
+                    $('#productImages').change(function (event) {
+                        if (event.target.files) {
+                            let filesAmount = event.target.files.length;
+                            $('.upload-img').html("");
+
+                            for (let i = 0; i < filesAmount; i++) {
+                                let reader = new FileReader();
+                                reader.onload = function (event) {
+                                    let html = `
+                        <div class="uploaded-img">
+                            <img src="${event.target.result}">
+                            <button type="button" class="remove-btn" data-index="${i}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                                    $(".upload-img").append(html);
+                                }
+                                reader.readAsDataURL(event.target.files[i]);
+
+                                addedFiles.push({ file: event.target.files[i], index: i });
+                                // console.log(`Added file: ${event.target.files[i].name}, Index: ${i}`);
+                            }
+
+                            $('.upload-info-value').text(filesAmount);
+                            $('.upload-img').css('padding', "20px");
+                        }
+                    });
+                    $(document).on('click', '.remove-btn', function () {
+                        let index = $(this).data('index');
+                        if (index !== undefined) {
+                            // console.log(`Removing file at index: ${index}`);
+                            // Find the file object by its index and remove it from the addedFiles array
+                            addedFiles = addedFiles.filter(fileObj => fileObj.index !== index);
+
+                            $(this).parent().remove();
+                            $('.upload-info-value').text(addedFiles.length);
+
+                        } else {
+                            console.error('Index is undefined');
+                        }
+                    });
+
+                });
+
+                document.querySelector('.product-form').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    // Create FormData object and append images
+                    let formData = new FormData(this);
+                    formData.delete('productImages');
+                    addedFiles.forEach(file => {
+                        formData.append('productImages', file.file);
+                    });
+
+                    // Reset error messages
+                    const errorMessages = {
+                        name: 'Please enter a name',
+                        description: 'Please enter a description',
+                        price: 'Price must be a positive number',
+                        gender: 'Please select a gender',
+                        category: 'Please select a category',
+                        stockCount: 'Please enter a valid stock count',
+                        size: 'Please select a size',
+
+                    };
+
+                    // Validate form fields
+                    let errors = false;
+                    if (!formData.get('name').trim()) {
+                        toggleError('name', errorMessages.name);
+                        errors = true;
+                    }
+                    if (!formData.get('description').trim()) {
+                        toggleError('description', errorMessages.description);
+                        errors = true;
+                    }
+                    if (!priceRegex.test(formData.get('price')) || isNaN(formData.get('price')) || formData.get('price') <= 0) {
+                        toggleError('price', errorMessages.price);
+                        errors = true;
+                    }
+
+                    if (formData.get('gender') === '') {
+                        toggleError('gender', errorMessages.gender);
+                        errors = true;
+                    }
+                    if (formData.get('category') === '') {
+                        toggleError('category', errorMessages.category);
+                        errors = true;
+                    }
+                    if (!priceRegex.test(formData.get('price')) || isNaN(formData.get('stockCount')) || formData.get('stockCount') <= 0) {
+                        toggleError('stockCount', errorMessages.stockCount);
+                        errors = true;
+                    }
+                    if (formData.get('size') === '') {
+                        toggleError('size', errorMessages.size);
+                        errors = true;
+                    }
+
+
+                    if (errors) {
+                        return false; // Prevent form submission if there are errors
+                    }
+
+                    // Post form data
+                    axios.put('/admin/product/editproduct/<%= product._id %>', formData)
+                        .then(res => {
+                            if (res.data.status) {
+
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Product Updated Successfully",
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                setTimeout(() => {
+                                    location.href = res.data.url;
+                                }, 2000);
+                            } else {
+                                console.error(res.data);
+                            }
+                        })
+                        .catch(err => {
+                            if (!err.response.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: err.response.data.message,
+                                });
+                            } else {
+                                console.error(err);
+                            }
+                        });
+                });
+
+                function toggleError(field, message) {
+                    const errorField = document.getElementById(`${field}-error`);
+                    if (errorField) {
+                        errorField.textContent = message;
+                    }
+                }
+
+                function deleteImage(productId, photoName) {
+                    if ($('.category-info').length <= 3) {
+                        const warningMessage = 'At least three photos are required. You can only delete photos when there are 4 or more.';
+
+                        $('#productImages-error').text(warningMessage);
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: 'You won\'t be able to revert this!',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            axios.delete(`/admin/product/deletephoto/${productId}/${photoName}`)
+                                .then(res => {
+                                    if (res.data.success) {
+                                        console.log('Photo deleted successfully');
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Success',
+                                            text: 'Photo deleted successfully'
+                                        }).then(() => {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        console.error(res.data.message);
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: res.data.message
+                                        });
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Error deleting photo:', err);
+                                    // Show error alert
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to delete photo. Please try again later.'
+                                    });
+                                });
+                        }
+                    });
+                }
+
+
+
+            </script>

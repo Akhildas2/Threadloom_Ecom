@@ -1,0 +1,107 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+        <main class="main">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="page-header breadcrumb-wrap">
+                        <div class="container">
+                            <div class="breadcrumb">
+                                <a href="/" rel="nofollow">Home</a>
+                                <span></span> <%= pageTitle %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="pt-200 pb-200">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 m-auto">
+                            <div class="row">
+                                <div class="col-lg-6 m-auto">
+                                    <div class="login_wrap widget-taber-content p-30 background-white border-radius-20">
+                                        <div class="padding_eight_all bg-white">
+                                            <div class="heading_s1">
+                                                <h3 class="mb-30">Create an Account</h3>
+                                            </div>
+                                            <form id="registerForm" action="/register" method="post" novalidate>
+                                                <div class="form-group">
+                                                    <input type="text" name="name" id="name" placeholder="Name">
+                                                </div>
+                                                    <div class="error-container">
+                                                        <span id="nameError" class="error"></span>
+                                                        <i id="nameLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                    </div>
+                                                <div class="form-group">
+                                                    <input type="email" name="email" id="email" placeholder="Email">
+                                                </div>
+                                                    <div class="error-container">
+                                                            <span id="emailError" class="error"></span>
+                                                            <i id="emailLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                        </div>
+                                               
+                                                <div class="form-group">
+                                                    <input type="tel" name="mobile" id="mobile"
+                                                        placeholder="Phone Number">
+                                                </div>
+                                                        <div class="error-container">
+                                                            <span id="mobileError" class="error"></span>
+                                                            <i id="mobileLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                        </div>
+                                                <div class="form-group position-relative">
+                                                    <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+                                                    <i class="fas fa-eye toggle-password"></i>
+                                                </div>
+                                                    <div class="error-container">
+                                                        <span id="passwordError" class="error"></span>
+                                                        <i id="passwordLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                    </div>
+                                                <div class="form-group">
+                                                    <input type="password" name="confirmPassword" id="confirmPassword"
+                                                        placeholder="Confirm password">
+                                                    <i class="fas fa-eye toggle-password"></i>
+
+                                                </div>
+                                                        <div class="error-container">
+                                                            <span id="confirmPasswordError" class="error"></span>
+                                                            <i id="confirmPasswordLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                        </div>
+                                                <div class="form-group text-center">
+                                                    <button type="submit"
+                                                        class="btn btn-fill-out btn-block hover-up rounded-pill">verify email &amp; Register</button>
+                                                </div>
+                                            </form>
+                                            <div class="divider-text-center mt-15 mb-15">
+                                                <span> or</span>
+                                            </div>
+                                            <ul class="btn-login list_none text-center mb-15">
+                                                <li><a href="#"
+                                                        class="btn btn-facebook hover-up mb-lg-3 mb-sm-4 rounded-pill">Sign
+                                                        Up With Facebook</a></li>
+                                                <li><a href="/google" class="btn btn-google hover-up rounded-pill">Sign Up
+                                                        With Google</a></li>
+                                            </ul>
+                                            <div class="text-muted text-center">Already have an account? <a
+                                                    href="/login">Sign in now</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+                integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+                integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <!-- Include SweetAlert -->
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script src="/js/validationForm.js"></script>
+
+
+        </main>
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/preloader.ejs') %>
+                <%- include('../layouts/script.ejs') %>

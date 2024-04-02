@@ -1,0 +1,463 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+        <style>
+            .modal-content .btn-primary {
+                background-color: #007bff;
+                /* Bootstrap's primary color */
+                border-color: #007bff;
+                /* Match the background color */
+            }
+
+            /* Change the color of the secondary button */
+            .modal-content .btn-secondary {
+                background-color: #6c757d;
+                /* Bootstrap's secondary color */
+                border-color: #6c757d;
+                /* Match the background color */
+            }
+        </style>
+        <main class="main">
+
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="page-header breadcrumb-wrap">
+                        <div class="container">
+                            <div class="breadcrumb">
+                                <a href="/" rel="nofollow">Home</a>
+                                <span></span>
+                                <%= pageTitle %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="pt-150 pb-150">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-10 m-auto">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="dashboard-menu">
+                                        <ul class="nav flex-column" role="tablist">
+                                            <li class="nav-item">
+                                                <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab"
+                                                    href="#dashboard" role="tab" aria-controls="dashboard"
+                                                    aria-selected="false"><i
+                                                        class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders"
+                                                    role="tab" aria-controls="orders" aria-selected="false"><i
+                                                        class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                                            </li>
+                                            <!-- <li class="nav-item">
+                                            <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab" href="#track-orders" role="tab" aria-controls="track-orders" aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                                        </li> -->
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="address-tab" data-bs-toggle="tab"
+                                                    href="#address" role="tab" aria-controls="address"
+                                                    aria-selected="true"><i class="fi-rs-marker mr-10"></i>My
+                                                    Address</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="profile-tab" data-bs-toggle="tab"
+                                                    href="#profile" role="tab" aria-controls="profile"
+                                                    aria-selected="true"><i class="fi-rs-user mr-10"></i>Profile</a>
+                                            </li>
+                                            <li class="nav-item">
+
+                                                <a class="nav-link" href="/logout">
+                                                    <i class="fi-rs-sign-out mr-10"></i> Logout
+                                                </a>
+                                                </form>
+                                            </li>
+
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="tab-content dashboard-content">
+                                        <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
+                                            aria-labelledby="dashboard-tab">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Hello <%= userData.name %>
+                                                    </h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p>This is your account dashboard. you can easily check &amp; view
+                                                        your <a href="#orders">recent orders</a>, manage your <a
+                                                            href="#address">shipping and billing addresses</a> and <a
+                                                            href="#profile">edit your password and profile details.</a>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="orders" role="tabpanel"
+                                            aria-labelledby="orders-tab">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Your Orders</h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                  <th>Order</th>
+                                                                  <th>Date</th>
+                                                                  <th>Status</th>
+                                                                  <th>Total</th>
+                                                                  <th>Actions</th>
+                                                                </tr>
+                                                              </thead>
+                                                              <tbody>
+                                                                <% orders.forEach(order => { %>
+                                                                  <tr>
+                                                                    <td><%= order._id %></td>
+                                                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                                                    <td><%= order.status %></td>
+                                                                    <td>$<%= order.total.toFixed(2) %> for <%= order.items.length %> item</td>
+                                                                    <td><a href="/order/orderDeatil/<%= order._id %>" class="btn-small d-block">View</a></td>
+                                                                  </tr>
+                                                                <% }); %>
+                                                              </tbody>
+                                                            </table>
+                                                    
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Orders tracking</h5>
+                                            </div>
+                                            <div class="card-body contact-from-area">
+                                                <p>To track your order please enter your OrderID in the box below and press "Track" button. This was given to you on your receipt and in the confirmation email you should have received.</p>
+                                                <div class="row">
+                                                    <div class="col-lg-8">
+                                                        <form class="contact-form-style mt-30 mb-50" action="#" method="post">
+                                                            <div class="input-style mb-20">
+                                                                <label>Order ID</label>
+                                                                <input name="order-id" placeholder="Found in your order confirmation email" type="text" class="square">
+                                                            </div>
+                                                            <div class="input-style mb-20">
+                                                                <label>Billing email</label>
+                                                                <input name="billing-email" placeholder="Email you used during checkout" type="email" class="square">
+                                                            </div>
+                                                            <button class="submit submit-auto-width" type="submit">Track</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                                        <!--  add or edit address  -->
+                                        <div class="tab-pane fade" id="address" role="tabpanel"
+                                            aria-labelledby="address-tab">
+                                            <a href="#" class="btn btn-primary" data-toggle="modal"
+                                                data-target="#addAddressModal">Add Address</a>
+
+                                            <div class="row" style="margin-top: 10px;">
+                                                <% address.forEach(address=> { %>
+                                                    <div class="col-lg-6">
+                                                        <div class="card mb-3 mb-lg-0">
+                                                            <div class="card-header">
+                                                                <h5 class="mb-0">Manage Address</h5>
+                                                            </div>
+                                                            <div class="card-body">
+
+                                                                <p>
+                                                                    <%= address.fullName %>
+                                                                </p>
+                                                                <p>
+                                                                    <%=address.mobileNumber %>
+                                                                </p>
+                                                                <p>
+                                                                    <%= address.houseNo %>, <%= address.area %>
+                                                                </p>
+                                                                <p>
+                                                                    <%= address.city %>, <%= address.state %> - <%=
+                                                                                address.pincode %>
+                                                                </p>
+                                                                <a href="#" class="btn-small edit-address-btn"
+                                                                    data-toggle="modal"
+                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                    data-address-id="<%= address._id %>">Edit</a>
+                                                                <br>
+                                                                <a href="#" class="btn-small delete-address-btn"
+                                                                    data-toggle="modal"
+                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                    data-address-id="<%= address._id %>">Delete</a>
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <% }); %>
+                                            </div>
+                                        </div>
+                                        <!-- for add address modal -->
+                                        <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
+                                            aria-labelledby="addAddressModalLabel " aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addAddressModalLabel">Add Address
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="addAddressForm">
+                                                            <div class="form-group">
+                                                                <label for="fullName">Full Name:</label>
+                                                                <input type="text" id="fullName" name="fullName">
+                                                                <span class="error" id="fullNameError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="mobileNumber">Mobile Number:</label>
+                                                                <input type="text" id="mobileNumber"
+                                                                    name="mobileNumber">
+                                                                <span class="error" id="mobileNumberError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="pincode">Pincode:</label>
+                                                                <input type="text" id="pincode" name="pincode">
+                                                                <span class="error" id="pincodeError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="houseNo">House No,Name:</label>
+                                                                <input type="text" id="houseNo" name="houseNo">
+                                                                <span class="error" id="houseNoError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="area">Area,Street,Village</label>
+                                                                <input type="text" id="area" name="area">
+                                                                <span class="error" id="areaError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="city">City:</label>
+                                                                <input type="text" id="city" name="city">
+                                                                <span class="error" id="cityError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="state">State:</label>
+                                                                <input type="text" id="state" name="state">
+                                                                <span class="error" id="stateError"></span>
+                                                            </div>
+                                                            <button type="submit" class="btn btn-primary"
+                                                                id="addAddress">Add Address</button>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% address.forEach(address=> { %>
+                                            <div class="modal fade edit-address-modal"
+                                                id="editAddressModal-<%= address._id %>" tabindex="-1" role="dialog"
+                                                aria-labelledby="editAddressModalLabel" aria-hidden="true">
+
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editAddressModalLabel">Edit
+                                                                Address
+                                                            </h5>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <form id="editAddressForm-<%= address._id %>">
+                                                                <div class="form-group">
+                                                                    <label for="fullName">Full Name:</label>
+                                                                    <input type="text" id="editFullName" name="fullName"
+                                                                        value="<%=  address.fullName %>">
+                                                                    <span class="error" id="editFullNameError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="mobileNumber">Mobile Number:</label>
+                                                                    <input type="text" id="editMobileNumber"
+                                                                        name="mobileNumber"
+                                                                        value="<%=address.mobileNumber %>">
+                                                                    <span class="error"
+                                                                        id="editMobileNumberError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="pincode">Pincode:</label>
+                                                                    <input type="text" id="editPincode" name="pincode"
+                                                                        value="<%= address.pincode %>">
+                                                                    <span class="error" id="editPincodeError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="houseNo">House No,Name:</label>
+                                                                    <input type="text" id="editHouseNo" name="houseNo"
+                                                                        value="<%= address.houseNo %>">
+                                                                    <span class="error" id="editHouseNoError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="area">Area,Street,Village</label>
+                                                                    <input type="text" id="editArea" name="area"
+                                                                        value="<%= address.area %>">
+                                                                    <span class="error" id="editAreaError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="city">City:</label>
+                                                                    <input type="text" id="editCity" name="city"
+                                                                        value="<%= address.city %>">
+                                                                    <span class="error" id="editCityError"></span>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="state">State:</label>
+                                                                    <input type="text" id="editState" name="state"
+                                                                        value="<%= address.state %>">
+                                                                    <span class="error" id="editStateError"></span>
+                                                                </div>
+
+                                                                <button type="submit" class="btn btn-primary"
+                                                                    id="updateAddress">save</button>
+                                                            </form>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }) %>
+
+                                                <!-- edit profile -->
+                                                <div class="tab-pane fade" id="profile" role="tabpanel"
+                                                    aria-labelledby="profile-tab">
+                                                    <div class="card">
+                                                        <div class="card-header">
+                                                            <h5>Profile Details</h5>
+                                                        </div>
+                                                        <div class="card-body">
+
+                                                            <form id="profileForm" data-user-id="<%= userData._id %>">
+                                                                <div class="row">
+                                                                    <div class="form-group col-md-6">
+                                                                        <label>Name <span>*</span></label>
+                                                                        <input type="text" class="form-control square"
+                                                                            id="name" name="name"
+                                                                            value="<%= userData.name %>">
+                                                                        <div class="error-message" id="name-error">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group col-md-6">
+                                                                        <label>Email</label>
+                                                                        <input type="email" id="email" name="email"
+                                                                            value="<%= userData.email %>"
+                                                                            class="form-control square" disabled>
+                                                                    </div>
+                                                                    <div class="form-group col-md-12">
+                                                                        <label>Mobile Number<span>*</span></label>
+                                                                        <input type="text" id="mobile" name="mobile"
+                                                                            value="<%= userData.mobile %>"
+                                                                            class="form-control square">
+                                                                        <div class="error-message" id="mobile-error">
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <div class="col-md-12">
+                                                                        <button type="button" class="btn btn-fill-out  "
+                                                                            data-toggle="modal"
+                                                                            data-target="#changePasswordModal">Change
+                                                                            Password</button>
+                                                                        <button type="submit"
+                                                                            class="btn btn-fill-out submit"
+                                                                            name="submit" value="Submit">Save</button>
+                                                                    </div>
+
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- for password change modal -->
+                                                <div class="modal fade" id="changePasswordModal" tabindex="-1"
+                                                    role="dialog" aria-labelledby="changePasswordModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="changePasswordModalLabel">
+                                                                    Change
+                                                                    Password</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <form id="changePasswordForm">
+                                                                    <div class="form-group">
+                                                                        <input type="password" class="form-control"
+                                                                            id="oldPassword" name="oldPassword"
+                                                                            placeholder="Enter Old Password">
+                                                                        <i class="fas fa-eye toggle-password"></i>
+                                                                    </div>
+                                                                    <div class="error-message" id="oldPassword-error">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <input type="password" class="form-control"
+                                                                            id="newPassword" name="newPassword"
+                                                                            placeholder="Enter New Password">
+                                                                        <i class="fas fa-eye toggle-password"></i>
+                                                                    </div>
+                                                                    <div class="error-message" id="newPassword-error">
+                                                                    </div>
+
+                                                                    <div class="form-group">
+                                                                        <input type="password" class="form-control"
+                                                                            id="confirmPassword" name="confirmPassword"
+                                                                            placeholder="Confirm Password">
+                                                                        <i class="fas fa-eye toggle-password"></i>
+                                                                    </div>
+                                                                    <div class="error-message"
+                                                                        id="confirmPassword-error">
+
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn btn-primary"
+                                                                    id="changePasswordBtn">Change Password</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script src="/js/dashboard.js"></script>
+
+
+
+
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/preloader.ejs') %>
+                <%- include('../layouts/script.ejs') %>

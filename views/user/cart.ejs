@@ -1,0 +1,351 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+
+
+
+        <main class="main">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="index.html" rel="nofollow">Home</a>
+
+                        <span></span> Your Cart
+                    </div>
+                </div>
+            </div>
+            <section class="mt-50 mb-50">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12">
+                            <% if (!req.session.user_id) { %>
+                                <!-- Show message to login -->
+                                <div class="alert alert-warning" role="alert">
+                                    Please <a href="/login">login</a> to view your cart.
+                                </div>
+                                <% } else if (cartItems.length===0) { %>
+                                    <div class="alert alert-info" role="alert">
+                                        hai buddy Your cart is empty. Please add some items to continue <a
+                                            href="/shop">shopping</a> .
+                                    </div>
+                                    <% } else { %>
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-4 col-md-4">
+                                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                                    <div class="heading_s1 mb-3">
+                                                        <h4>Cart Totals</h4>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Cart Subtotal</td>
+                                                                    <td class="cart_total_amount"><span
+                                                                            class="font-lg fw-900 text-brand"><span>₹<%=
+                                                                                    totalPrice %></span></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Shipping</td>
+                                                                    <td class="cart_total_amount"> <i
+                                                                            class="ti-gift mr-5"></i>
+                                                                        Free
+                                                                        Shipping</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Total</td>
+                                                                    <td class="cart_total_amount"><strong><span
+                                                                                class="font-xl fw-900 text-brand"><span>₹
+                                                                                    <%= totalPrice %>
+                                                                                </span></span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <!-- <a href="#" class="btn "> <i class="fi-rs-box-alt mr-10"></i> Proceed To CheckOut</a> -->
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-8 col-md-8 ">
+                                                <div class="table-responsive">
+                                                    <table class="table shopping-summery text-center clean">
+                                                        <thead>
+                                                            <tr class="main-heading">
+                                                                <th scope="col">Image</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Price</th>
+                                                                <th scope="col">Quantity</th>
+                                                                <th scope="col">Subtotal</th>
+                                                                <th scope="col">Remove</th>
+                                                            </tr>
+                                                        </thead>
+
+                                                        <tbody>
+
+                                                            <% cartItems.forEach(item=> { %>
+
+                                                                <tr>
+                                                                    <td class="image product-thumbnail">
+                                                                        <img src="/uploads/product/resized/<%=item.productId.productImage[0] %>"
+                                                                            alt="#">
+
+                                                                    </td>
+                                                                    <td class="product-des product-name">
+                                                                        <h5 class="product-name"><a href="#">
+                                                                                <%= item.productId.name %>
+                                                                            </a></h5>
+
+                                                                    </td>
+                                                                    <td class="price" data-title="Price"><span>₹<%=
+                                                                                item.productId.price%>
+                                                                        </span></td>
+                                                                    <td class="text-center" data-title="Quantity">
+                                                                        <div class="detail-qty border radius m-auto">
+                                                                            <a href="#" class="qty-down"
+                                                                                onclick="decrementQuantity('<%= item._id %>')">-</a>
+                                                                            <span class="qty-val"
+                                                                                data-item-id="<%= item._id %>">
+                                                                                <%= item.quantity %>
+                                                                            </span>
+
+                                                                            <a href="#" class="qty-up"
+                                                                                onclick="incrementQuantity('<%= item._id %>')">+</a>
+
+
+                                                                        </div>
+                                                                    </td>
+
+
+                                                                    <td class="text-right" data-title="Subtotal">
+                                                                        <span>₹<%= item.subtotal %></span>
+                                                                    </td>
+                                                                    <td class="action" data-title="Remove">
+                                                                        <a href="#"
+                                                                            onclick="removeFromCart('<%= item._id %>')"
+                                                                            class="text-muted"><i
+                                                                                class="fi-rs-trash"></i></a>
+                                                                    </td>
+
+                                                                </tr>
+
+                                                                <% }); %>
+
+
+                                                                    <tr>
+
+                                                                        <td colspan="6" class="text-end">
+                                                                            <a href="#"
+                                                                                onclick="clearCartConfirmation()"
+                                                                                class="text-muted"> <i
+                                                                                    class="fi-rs-cross-small"></i> Clear
+                                                                                Cart</a>
+                                                                        </td>
+
+                                                                    </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i>
+                                        </div>
+
+                                        <div class="row justify-content-center"> <!-- This row centers the button -->
+                                            <div class="col-12 text-center"> <!-- This column centers the button -->
+                                                <div class="cart-action">
+                                                    <a href="/order" class="btn mr-10 mb-sm-15"><i
+                                                            class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- <div class="mb-30 mt-50">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div> -->
+                                        <!-- <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                            <form action="#" target="_blank">
+                                                <div class="form-row row justify-content-center">
+                                                    <div class="form-group col-lg-6">
+                                                        <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                    </div>
+                                                    <div class="form-group col-lg-6">
+                                                        <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+                </div>
+            </section>
+        </main>
+
+
+        <%- include('../layouts/footer.ejs') %>
+            <%- include('../layouts/script.ejs') %>
+
+
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+                <script>
+                    function removeFromCart(id) {
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch(`/cart/removeFromCart/${id}`, {
+                                    method: 'DELETE',
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.message === 'Cart item removed successfully') {
+                                            Swal.fire({
+                                                title: 'Deleted!',
+                                                text: 'Your item has been removed from the cart.',
+                                                icon: 'success',
+                                                timer: 3000, // 3 seconds
+                                                timerProgressBar: true, // Show a progress bar
+                                                showConfirmButton: false,
+                                            });
+                                            // Optionally, refresh the page or update the cart UI here
+                                            location.reload();
+                                        } else {
+                                            Swal.fire(
+                                                'Failed!',
+                                                'Failed to remove item from cart.',
+                                                'error'
+                                            );
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire(
+                                            'Failed!',
+                                            'Failed to remove item from cart.',
+                                            'error'
+                                        );
+                                    });
+                            }
+                        });
+                    }
+
+
+                    function clearCartConfirmation() {
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, clear it!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch('/cart/clear', {
+                                    method: 'DELETE',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        // Include any necessary authentication headers here
+                                    },
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.message === 'Cart cleared successfully') {
+                                            Swal.fire(
+                                                {
+                                                    title: 'Cleared!',
+                                                    text: 'Your cart has been cleared.',
+                                                    icon: 'success',
+                                                    timer: 2000,
+                                                    timerProgressBar: true, // Show a progress bar
+                                                    showConfirmButton: false,
+                                                }
+                                            );
+                                            // Optionally, refresh the page or update the cart UI here
+                                            location.reload();
+                                        } else {
+                                            Swal.fire(
+                                                'Failed!',
+                                                'Failed to clear the cart.',
+                                                'error'
+                                            );
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        Swal.fire(
+                                            'Failed!',
+                                            'Failed to clear the cart.',
+                                            'error'
+                                        );
+                                    });
+                            }
+                        });
+                    }
+
+                    
+                    function incrementQuantity(itemId) {
+                        const currentQuantityElement = document.querySelector(`span[data-item-id="${itemId}"]`);
+                        if (!currentQuantityElement) {
+                            console.error(`Element with data-item-id="${itemId}" not found.`);
+                            return;
+                        }
+                        const currentQuantity = parseInt(currentQuantityElement.textContent);
+                        const newQuantity = currentQuantity + 1;
+                        updateCartItemQuantity(itemId, newQuantity);
+                    }
+
+                    function decrementQuantity(itemId) {
+                        const currentQuantityElement = document.querySelector(`span[data-item-id="${itemId}"]`);
+                        if (!currentQuantityElement) {
+                            console.error(`Element with data-item-id="${itemId}" not found.`);
+                            return;
+                        }
+                        const currentQuantity = parseInt(currentQuantityElement.textContent);
+                        const newQuantity = currentQuantity - 1;
+                        if (newQuantity > 0) {
+                            updateCartItemQuantity(itemId, newQuantity);
+                        }
+                    }
+
+                    function updateCartItemQuantity(itemId, newQuantity) {
+                        fetch(`/cart/updateQuantity/${itemId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ quantity: newQuantity })
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                }
+                                throw new Error('Failed to update quantity');
+                            })
+                            .then(data => {
+                                // Optionally, you can handle success here without showing any alert
+                                console.log('Quantity updated successfully');
+                                // Optionally, refresh the page or update the cart UI here
+                                location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                // Optionally, you can handle error here without showing any alert
+                            });
+                    }
+
+                </script>

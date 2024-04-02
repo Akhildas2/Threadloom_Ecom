@@ -1,0 +1,126 @@
+<%- include('../layouts/header.ejs') %>
+  <%- include('../layouts/navbar.ejs') %>
+    <div class="container">
+      <br>
+      <h2>Order Details</h2>
+      <hr>
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Order Information</h3>
+          <p><strong>Order ID:</strong>
+            <%= order._id %>
+          </p>
+          <p><strong>Date:</strong>
+            <%= new Date(order.createdAt).toLocaleDateString() %>
+          </p>
+          <p><strong>Status:</strong>
+            <%= order.status %>
+          </p>
+          <p><strong>Total:</strong> $<%= order.total.toFixed(2) %>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h3>User Information</h3>
+          <p><strong>Name:</strong>
+            <%= order.address.fullName %>
+          </p>
+          <p><strong>Phone:</strong>
+            <%= order.address.mobileNumber %>
+          </p>
+        </div>
+        <div class="col-md-4">
+          <h3>Address</h3>
+          <p><strong>House name:</strong>
+            <%= order.address.houseNo %>
+          </p>
+          <p><strong>Area:</strong>
+            <%= order.address.area %>
+          </p>
+          <p><strong>City:</strong>
+            <%= order.address.city %>
+          </p>
+          <p><strong>State:</strong>
+            <%= order.address.state %>
+          </p>
+          <p><strong>Pin:</strong>
+            <%= order.address.pincode %>
+          </p>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <h3>Items</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Product Image</th>
+                <th>Item Name</th>
+                <th>Price</th>
+                <% if (order.status !=='Cancelled' ) { %>
+                  <th>Actions</th>
+                  <% } %>
+              </tr>
+            </thead>
+            <tbody>
+              <% order.items.forEach(item=> { %>
+                <tr>
+                  <td><img src="/uploads/product/resized/<%=item.productImage[0] %>" alt="<%= item.productName %>"
+                      style="height: 150px; width: 150px;"></td>
+                  <td>
+                    <%= item.name %>
+                  </td>
+                  <td>$<%= item.price %>
+                  </td>
+                  <% if (order.status !=='Cancelled' ) { %>
+                    <td>
+                      <button class=" btn-danger cancel-product" data-item-id="<%= item._id %>">Cancel Product</button>
+                    </td>
+                    <% } %>
+                </tr>
+                <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <%- include('../layouts/footer.ejs') %>
+      <%- include('../layouts/preloader.ejs') %>
+        <%- include('../layouts/script.ejs') %>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/whatwg-fetch/3.6.2/fetch.min.js"></script>
+
+          <script>
+            document.querySelectorAll('.cancel-product').forEach(button => {
+              button.addEventListener('click', function () {
+                const itemId = this.getAttribute('data-item-id');
+                const orderId = '<%= order._id %>';
+                console.log("order", orderId);
+
+                fetch(`/order/cancel/${orderId}`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ itemId, orderId })
+                })
+                  .then(response => {
+                    // Log the raw response
+                    console.log(response);
+                    return response.json();
+                  })
+                  .then(data => {
+                    if (data.success) {
+                      alert('Product cancelled successfully.');
+                      location.reload(); // Reload the page to reflect the changes
+                    } else {
+                      alert('Failed to cancel product. Please try again.');
+                    }
+                  })
+                  .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                  });
+              });
+            });
+          </script>

@@ -1,0 +1,149 @@
+<%- include('../adminLayouts/header.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
+
+
+
+        <!-- Search Form -->
+        <div class="col-search">
+            <form class="searchform" action="/admin/userList" method="get">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search name">
+
+                    <select name="category" class="input-filter">
+                        <option value="">All Users</option>
+                        <option value="active" <%=selectedStatus==='active' ? 'selected' : '' %>>Active Users</option>
+                        <option value="blocked" <%=selectedStatus==='blocked' ? 'selected' : '' %>>Blocked Users
+                        </option>
+                    </select>
+                    <button class="btn btn-light bg" type="submit"><i class="material-icons md-search"></i></button>
+                </div>
+            </form>
+        </div>
+
+
+
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header">
+                    <h2 class="content-title card-title">User Management</h2>
+                </div>
+                <div class="row">
+                    <h4 class="content-title card-title">Products List:</h4>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Mobile</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach((user, index)=> { %>
+                                <tr>
+                                    <td>
+                                        <%= index + 1 %>
+                                    </td>
+                                    <td>
+                                        <%= user.name %>
+                                    </td>
+                                    <td>
+                                        <%= user.email %>
+                                    </td>
+                                    <td>
+                                        <%= user.mobile %>
+                                    </td>
+                                    <td class="<%= user.isBlocked ? 'text-danger' : 'text-success' %>">
+                                        <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                                    </td>
+                                    <td>
+                                        <% if (user.isBlocked) { %>
+                                            <button class="btn btn-sm btn-success unblock-btn"
+                                                data-user-id="<%= user._id %>">Unblock</button>
+                                            <% } else { %>
+                                                <button class="btn btn-sm btn-danger block-btn"
+                                                    data-user-id="<%= user._id %>">Block</button>
+                                                <% } %>
+                                    </td>
+                                </tr>
+                                <tr class="line"></tr>
+
+
+                                <% }); %>
+
+                                    </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Pagination -->
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-end">
+                            <% if (currentPage> 1) { %>
+                                <li class="page-item"><a class="page-link"
+                                        href="?page=1&status=<%= selectedStatus %>"><i
+                                            class="material-icons md-chevron_left"></i></a></li>
+                                <% } %>
+                                    <% for (let i=1; i <=totalPages; i++) { %>
+                                        <% if (i===currentPage) { %>
+                                            <li class="page-item active"><a class="page-link" href="#">
+                                                    <%= i %>
+                                                </a></li>
+                                            <% } else { %>
+                                                <li class="page-item"><a class="page-link"
+                                                        href="?page=<%= i %>&status=<%= selectedStatus %>">
+                                                        <%= i %>
+                                                    </a></li>
+                                                <% } %>
+                                                    <% } %>
+                                                        <% if (currentPage < totalPages) { %>
+                                                            <li class="page-item"><a class="page-link"
+                                                                    href="?page=<%= currentPage + 1 %>&status=<%= selectedStatus %>"><i
+                                                                        class="material-icons md-chevron_right"></i></a>
+                                                            </li>
+                                                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+
+            </div>
+        </section>
+
+
+
+
+        <!-- Add SweetAlert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- Add Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="/admin/js/userList.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('searchInput');
+                const items = document.querySelectorAll('tbody tr'); // Target table rows
+
+                searchInput.addEventListener('input', function () {
+                    const searchTerm = searchInput.value.toLowerCase().trim();
+
+                    items.forEach(item => {
+                        const itemContent = item.textContent.toLowerCase();
+
+                        // Use regular expression to perform a search on all content
+                        const regex = new RegExp(searchTerm, 'i');
+                        if (regex.test(itemContent)) {
+                            item.style.display = 'table-row'; // Show the row
+                        } else {
+                            item.style.display = 'none'; // Hide the row
+                        }
+                    });
+                });
+            });
+        </script>
+
+        <%- include('../adminLayouts/footer.ejs') %>
