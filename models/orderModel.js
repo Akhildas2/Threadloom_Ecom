@@ -11,11 +11,7 @@ const orderSchema = mongoose.Schema({
         type: String
     },
     deliveryAddress: {
-        type: String,
-        required: true
-    },
-    username: {
-        type: String,
+        type: Object,
         required: true
     },
     totalAmount: {
@@ -35,13 +31,16 @@ const orderSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    payment: {
+    paymentMethod: {
         type: String,
         required: true
     },
     paymentId: {
         type: String
     },
+    payerId: {
+        type: String
+    },  
     items: [{
         productId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -62,7 +61,7 @@ const orderSchema = mongoose.Schema({
         },
         orderStatus: {
             type: String,
-            default: "placed"
+            default: "pending"
         },
         cancellationReason: {
             type: String

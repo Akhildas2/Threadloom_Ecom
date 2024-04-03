@@ -1,6 +1,6 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
-    
+
 
         <main class="main">
             <div class="page-header breadcrumb-wrap">
@@ -8,7 +8,7 @@
                     <div class="breadcrumb">
                         <a href="/" rel="nofollow">Home</a>
                         <span></span>
-                            Shop
+                        Shop
                     </div>
                 </div>
             </div>
@@ -62,74 +62,84 @@
                                 </div>
                             </div>
                             <div class="tab-content wow fadeIn animated" id="myTabContent">
-                                <div class="tab-pane fade show active" id="tab-one" role="tabpanel" aria-labelledby="tab-one">
+                                <div class="tab-pane fade show active" id="tab-one" role="tabpanel"
+                                    aria-labelledby="tab-one">
                                     <div class="row product-grid-4">
                                         <% for(let i=0; i<products.length; i++) { %>
-                                        <div class="col-lg-4">
-                                            <div class="product-cart-wrap mb-30">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        
-                                                        <a href="/productdetails/<%= products[i]._id %>">
-                                                            <img class="default-img"  src="/uploads/product/resized/<%= products[i].productImage[0] %>"
-                                                            alt="">
-                                                            <img class="hover-img"  src="/uploads/product/resized/<%= products[i].productImage[1] %>"
-                                                            alt="">
-                                                            
-                                                        </a>
+                                            <div class="col-lg-4">
+                                                <div class="product-cart-wrap mb-30">
+                                                    <div class="product-img-action-wrap">
+                                                        <div class="product-img product-img-zoom">
+
+                                                            <a href="/productdetails/<%= products[i]._id %>">
+                                                                <img class="default-img"
+                                                                    src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                                    alt="">
+                                                                <img class="hover-img"
+                                                                    src="/uploads/product/resized/<%= products[i].productImage[1] %>"
+                                                                    alt="">
+
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-action-1">
+                                                            <a aria-label="Quick view" class="action-btn hover-up"
+                                                                data-bs-toggle="modal"
+                                                                data-bs-target="#quickViewModal"><i
+                                                                    class="fi-rs-eye"></i></a>
+                                                            <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                                href="#"><i class="fi-rs-heart"></i></a>
+                                                            <a aria-label="Compare" class="action-btn hover-up"
+                                                                href="shop-compare.html"><i
+                                                                    class="fi-rs-shuffle"></i></a>
+                                                        </div>
+                                                        <div
+                                                            class="product-badges product-badges-position product-badges-mrg">
+                                                            <% if(products[i].isNew) { %>
+                                                                <span class="new">New</span>
+                                                                <% } %>
+                                                                    <% if(products[i].isHot) { %>
+                                                                        <span class="hot">Hot</span>
+                                                                        <% } %>
+                                                                            <% if(products[i].isBestSeller) { %>
+                                                                                <span class="best">Best Sell</span>
+                                                                                <% } %>
+                                                        </div>
                                                     </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal"
-                                                            data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i
-                                                                class="fi-rs-shuffle"></i></a>
-                                                    </div>
-                                                    <div class="product-badges product-badges-position product-badges-mrg">
-                                                        <% if(products[i].isNew) { %>
-                                                            <span class="new">New</span>
-                                                            <% } %>
-                                                                <% if(products[i].isHot) { %>
-                                                                    <span class="hot">Hot</span>
-                                                                    <% } %>
-                                                                        <% if(products[i].isBestSeller) { %>
-                                                                            <span class="best">Best Sell</span>
-                                                                            <% } %>
-                                                    </div>
-                                                </div>
-                                                <div class="product-content-wrap">
-                                                    <div class="product-category">
-                                                        <a href="/productdetails/<%= products[i]._id %>">
-                                                        <% if (products[i].category) { %>
-                                                            <p> <%= products[i].category.categoryName %>
-                                                            </p>
-                                                            <% } else { %>
-                                                                <p>Category: Not specified</p>
-                                                                <% } %></a>
-                                                    </div>
-                                                    <h2><a href="/productdetails/<%= products[i]._id %>"><%= products[i].name%></a></h2>
-                                                    <div class="rating-result" title="90%">
-                                                        <span>
-                                                            <span>90%</span>
-                                                        </span>
-                                                    </div>
-                                                    <div class="product-price">
-                                                        <span>₹<%= products[i].price  %> </span>
-                                                        <% if(products[i].price) { %>
-                                                            <span class="old-price">₹<%=
-                                                                    products[i].price %></span>
-                                                            <% } %>
-                                                    </div>
-                                                    <div class="product-action-1 show">
-                                                        <button aria-label="Add To Cart" class="action-btn hover-up"
-                                                            onclick="addToCart('<%= products[i]._id %>')">
-                                                            <i class="fi-rs-shopping-bag-add"></i>
-                                                        </button>
+                                                    <div class="product-content-wrap">
+                                                        <div class="product-category">
+                                                            <a href="/productdetails/<%= products[i]._id %>">
+                                                                <% if (products[i].category) { %>
+                                                                    <p>
+                                                                        <%= products[i].category.categoryName %>
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <p>Category: Not specified</p>
+                                                                        <% } %>
+                                                            </a>
+                                                        </div>
+                                                        <h2><a href="/productdetails/<%= products[i]._id %>">
+                                                                <%= products[i].name%>
+                                                            </a></h2>
+                                                        <div class="rating-result" title="90%">
+                                                            <span>
+                                                                <span>90%</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="product-price">
+                                                            <span>₹<%= products[i].price %> </span>
+                                                            <% if(products[i].price) { %>
+                                                                <span class="old-price">₹<%= products[i].price %></span>
+                                                                <% } %>
+                                                        </div>
+                                                        <div class="product-action-1 show">
+                                                            <button aria-label="Add To Cart" class="action-btn hover-up"
+                                                                onclick="addToCart('<%= products[i]._id %>','<%=products[i].price %>')">
+                                                                <i class="fi-rs-shopping-bag-add"></i>
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
                                             <% } %>
                                     </div>
                                 </div>
@@ -154,8 +164,10 @@
                                 <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                                 <ul class="categories">
                                     <% products.forEach(function(product) { %>
-                                        <li><a href="#"><%= product.category.categoryName%></a></li>
-                                    <% }); %>
+                                        <li><a href="#">
+                                                <%= product.category.categoryName%>
+                                            </a></li>
+                                        <% }); %>
                                 </ul>
                             </div>
                             <!-- Fillter By Price -->
@@ -213,8 +225,7 @@
                                         </div>
                                     </div>
                                 </div> -->
-                                <a href="#" class="btn btn-sm btn-default"><i
-                                        class="fi-rs-filter mr-5"></i> Fillter</a>
+                                <a href="#" class="btn btn-sm btn-default"><i class="fi-rs-filter mr-5"></i> Fillter</a>
                             </div>
 
                         </div>
@@ -232,73 +243,70 @@
 
 
 
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                <script>
-                    function addToCart(productId) {
-                        // Assuming you want to add 1 quantity by default
-                        const quantity = 1;
-                        fetch('/cart/addToCart/' + productId, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ productId, quantity }),
-                        })
-                            .then(response => {
-                                if (response.redirected) {
-                                    return Swal.fire({
-                                        title: 'Login Required',
-                                        text: 'You must be logged in to add items to your cart.',
-                                        icon: 'warning',
-                                        showCancelButton: true,
-                                        confirmButtonText: 'Login',
-                                        cancelButtonText: 'Cancel',
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = '/login';
-                                        } else {
-                                            throw new Error('Action cancelled');
-                                        }
-                                    });
-                                }
-                                return response.json();
+                    <script>
+                        function addToCart(productId,price) {
+                            // Assuming you want to add 1 quantity by default
+                            const quantity = 1;
+                            fetch('/cart/addToCart/' + productId, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ productId, quantity ,price}),
                             })
+                                .then(response => {
+                                    if (response.redirected) {
+                                        return Swal.fire({
+                                            title: 'Login Required',
+                                            text: 'You must be logged in to add items to your cart.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Login',
+                                            cancelButtonText: 'Cancel',
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '/login';
+                                            } else {
+                                                throw new Error('Action cancelled');
+                                            }
+                                        });
+                                    }
+                                    return response.json();
+                                })
 
-                            .then(data => {
-                                if (data.status) {
-                                    // Show a success message using SweetAlert2
-                                    Swal.fire({
-                                        title: 'Success!',
-                                        text: 'Product added to cart.',
-                                        icon: 'success',
-                                        timer: 3000, // 3 seconds
-                                        timerProgressBar: true, // Show a progress bar
-                                        showConfirmButton: false, // Hide the confirm button
-                                    }).then(() => {
-                                        // Redirect to cart or update the cart UI here
-                                        window.location.href = data.URL;
-                                    });
-                                } else {
-                                    // Handle errors
-                                    Swal.fire({
-                                        title: 'Error!',
-                                        text: data.message,
-                                        icon: 'error',
-                                    });
-                                }
-                            })
-                            .catch(err => {
-                                if (!err.data.success) {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: err.response.data.message,
-                                    });
-                                } else {
-                                    console.error(err);
-                                }
-                            });
-                    }
+                                .then(data => {
+                                    if (data.status) {
+                                        // Show a success message using SweetAlert2
+                                        Swal.fire({
+                                            title: 'Success!',
+                                            text:  data.message,
+                                            icon: 'success',
+                                            timer: 3000, // 3 seconds
+                                            timerProgressBar: true, // Show a progress bar
+                                            showConfirmButton: false, // Hide the confirm button
+                                        })
+                                    } else {
+                                        // Handle errors
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: data.message,
+                                            icon: 'error',
+                                        });
+                                    }
+                                })
+                                .catch(err => {
+                                    if (!err.data.success) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: err.response.data.message,
+                                        });
+                                    } else {
+                                        console.error(err);
+                                    }
+                                });
+                        }
 
-                </script>
+                    </script>

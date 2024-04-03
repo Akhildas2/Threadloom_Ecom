@@ -74,7 +74,7 @@
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
                                                 <ins><span class="text-brand">₹<%= products.price %></span></ins>
-                                                <!-- <ins><span class="old-price font-md ml-15">₹<%= products.firstPrice%>
+                                                <!-- <ins><span class="old-price font-md ml-15">₹<#%= products.firstPrice%>
                                                     </span></ins> -->
                                                 <!-- <span class="save-price  font-md color3 ml-15">25% Off</span> -->
                                             </div>
@@ -209,15 +209,16 @@
             document.getElementById('addToCartForm').addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
 
-                const quantity = document.querySelector('.qty-val').textContent; // Get the quantity from the UI
+                const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);// Get the quantity from the UI
                 const productId = '<%= products._id %>'; // Get the product ID from the EJS template
+                const price = '<%= products.price %>'; // Get the product ID from the EJS template
 
                 fetch('/cart/addToCart/' + productId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ productId, quantity }),
+                    body: JSON.stringify({ productId, quantity,price }),
                 })
                     .then(response => {
                         if (response.redirected) {
@@ -243,13 +244,13 @@
                         if (data.status) {
                             Swal.fire({
                                 title: 'Success!',
-                                text: 'Product added to cart.',
+                                text: data.message,
                                 icon: 'success',
                                 timer: 3000, // 3 seconds
                                 timerProgressBar: true, // Show a progress bar
                                 showConfirmButton: false, // Hide the confirm button
                             }).then(() => {
-                                window.location.href = data.URL;
+                                window.location.href = '/cart';
                             });
                         } else {
                             // Handle errors

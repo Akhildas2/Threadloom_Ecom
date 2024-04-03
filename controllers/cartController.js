@@ -26,7 +26,8 @@ const loadCart = async (req, res) => {
 //for add product to cart 
 
 const addToCart = async (req, res) => {
-  const { productId, quantity } = req.body;
+  const { productId, quantity ,price} = req.body;
+  console.log(req.body)
   const userId = req.session.user_id;
   if (!userId) {
     return res.status(401).json({ message: 'You must be logged in to add items to your cart.' });
@@ -46,11 +47,12 @@ const addToCart = async (req, res) => {
       await cartItem.save();
     } else {
       // Create a new cart item
-      cartItem = await CartItem.create({ productId, quantity, user: userId });
+      cartItem = await CartItem.create({ productId, quantity, user: userId ,price: price});
     }
     res.status(200).json({
       status: true,
-      URL: '/cart'
+      message: 'Product added to cart successfully'
+      
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

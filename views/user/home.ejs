@@ -206,7 +206,7 @@
 
                                                     <div class="product-action-1 show">
                                                         <button aria-label="Add To Cart" class="action-btn hover-up"
-                                                            onclick="addToCart('<%= products[i]._id %>')">
+                                                            onclick="addToCart('<%= products[i]._id %>', '<%= products[i].price %>')">
                                                             <i class="fi-rs-shopping-bag-add"></i>
                                                         </button>
                                                     </div>
@@ -373,15 +373,16 @@
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                         <script>
-                            function addToCart(productId) {
+                            function addToCart(productId,price ) {
                                 // Assuming you want to add 1 quantity by default
                                 const quantity = 1;
+                           
                                 fetch('/cart/addToCart/' + productId, {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
                                     },
-                                    body: JSON.stringify({ productId, quantity }),
+                                    body: JSON.stringify({  productId, quantity,price }),
                                 })
                                     .then(response => {
                                         if (response.redirected) {
@@ -408,15 +409,12 @@
                                             // Show a success message using SweetAlert2
                                             Swal.fire({
                                                 title: 'Success!',
-                                                text: 'Product added to cart.',
+                                                text: data.message,
                                                 icon: 'success',
                                                 timer: 3000, // 3 seconds
                                                 timerProgressBar: true, // Show a progress bar
                                                 showConfirmButton: false, // Hide the confirm button
-                                            }).then(() => {
-                                                // Redirect to cart or update the cart UI here
-                                                window.location.href = data.URL;
-                                            });
+                                            })
                                         } else {
                                             // Handle errors
                                             Swal.fire({

@@ -158,48 +158,30 @@
                                     </table>
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+
                                 <div class="payment_method">
                                     <div class="mb-25">
                                         <h5>Payment</h5>
                                     </div>
-                                    <div class="payment_option">
-                                        <!-- <div class="custome-radio">
-                                            <input class="form-check-input" required="" type="radio"
-                                                name="payment_option" id="exampleRadios3" checked="">
-                                            <label class="form-check-label" for="exampleRadios3"
-                                                data-bs-toggle="collapse" data-target="#bankTranfer"
-                                                aria-controls="bankTranfer">Direct Bank Transfer</label>
-                                            <div class="form-group collapse in" id="bankTranfer">
-                                                <p class="text-muted mt-5">There are many variations of passages
-                                                    of Lorem Ipsum available, but the majority have suffered
-                                                    alteration. </p>
+                                    <form id="checkoutForm">
+                                        <input type="hidden" id="paymentMethod" name="paymentMethod" value="">
+                                        <div class="payment_option">
+
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" required="" type="radio"
+                                                    name="paymentMethod" id="cod" checked="" value="cod">
+                                                <label class="form-check-label" for="cod">Cash on delivery</label>
+
                                             </div>
-                                        </div> -->
-                                        <div class="custome-radio">
-                                            <input class="form-check-input" required="" type="radio"
-                                                name="payment_option" id="exampleRadios4" checked="">
-                                            <label class="form-check-label" for="exampleRadios4"
-                                                data-bs-toggle="collapse" data-target="#checkPayment"
-                                                aria-controls="checkPayment">Cash on delivery</label>
-                                            <div class="form-group collapse in" id="checkPayment">
-                                                <p class="text-muted mt-5">Please send your cheque to Store
-                                                    Name, Store Street, Store Town, Store State / County, Store
-                                                    Postcode. </p>
+                                            <div class="custome-radio">
+                                                <input class="form-check-input" required="" type="radio"
+                                                    name="paymentMethod" id="paypal" value="paypal">
+                                                <label class="form-check-label" for="paypal">Paypal</label>
+
                                             </div>
                                         </div>
-                                        <!-- <div class="custome-radio">
-                                            <input class="form-check-input" required="" type="radio"
-                                                name="payment_option" id="exampleRadios5" checked="">
-                                            <label class="form-check-label" for="exampleRadios5"
-                                                data-bs-toggle="collapse" data-target="#paypal"
-                                                aria-controls="paypal">Paypal</label>
-                                            <div class="form-group collapse in" id="paypal">
-                                                <p class="text-muted mt-5">Pay via PayPal; you can pay with your
-                                                    credit card if you don't have a PayPal account.</p>
-                                            </div>
-                                        </div> -->
-                                    </div>
                                 </div>
+                                </form>
                                 <a href="#" id="placeOrderBtn" class="btn btn-fill-out btn-block mt-30">Place Order</a>
 
                             </div>
@@ -222,16 +204,23 @@
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
                     <script>
+
+
                         document.addEventListener('DOMContentLoaded', function () {
+                            let selectedPaymentMethod = 'cod';
                             const placeOrderBtn = document.getElementById('placeOrderBtn');
                             const body = document.querySelector('tbody');
                             const cartItems = JSON.parse(body.getAttribute('data-cart-items'));
                             const totalPrice = body.getAttribute('data-total-price');
                             const addressSelect = document.getElementById('savedAddresses');
-                            let selectedAddressId = addressSelect.value;
-
+                            let selectedAddress = addressSelect.value;
+                            document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
+                                input.addEventListener('change', function () {
+                                    selectedPaymentMethod = this.value;
+                                });
+                            });
                             addressSelect.addEventListener('change', function () {
-                                selectedAddressId = this.value;
+                                selectedAddress = this.value;
                             });
 
                             // Function to check if cartItems is empty
@@ -241,7 +230,7 @@
 
                             // Function to check if no address is selected
                             function isAddressNotSelected() {
-                                return !selectedAddressId;
+                                return !selectedAddress;
                             }
 
                             // Function to enable or disable the "Place Order" button based on conditions
@@ -277,7 +266,8 @@
                                 axios.post('/order/placeOrder', {
                                     items: cartItems,
                                     total: totalPrice,
-                                    address: selectedAddressId
+                                    address: selectedAddress,
+                                    paymentMethod: selectedPaymentMethod
                                 })
                                     .then(response => {
                                         Swal.fire({
@@ -288,7 +278,7 @@
                                         });
                                         setTimeout(() => {
                                             const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
-                                            
+
                                             window.location.href = orderConfirmationUrl;
                                         }, 2000);
                                     })
