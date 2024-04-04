@@ -132,10 +132,11 @@
                                                     <td>
                                                         <h5 class="product-name"><a href="#">
                                                                 <%= item.productId.name %>
-                                                            </a></h5> <span class="product-qty"> * <%= item.quantity %>
-                                                        </span>
+                                                            </a></h5> (<%= item.price %>) <span class="product-qty"> *
+                                                                <%= item.quantity %>
+                                                            </span>
                                                     </td>
-                                                    <td>₹<%= item.productId.price %>
+                                                    <td>₹<%= item.subtotal %>
                                                     </td>
                                                 </tr>
                                                 <% }); %>
@@ -213,14 +214,14 @@
                             const cartItems = JSON.parse(body.getAttribute('data-cart-items'));
                             const totalPrice = body.getAttribute('data-total-price');
                             const addressSelect = document.getElementById('savedAddresses');
-                            let selectedAddress = addressSelect.value;
+                            let selectedAddressId = addressSelect.value;
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
                                     selectedPaymentMethod = this.value;
                                 });
                             });
                             addressSelect.addEventListener('change', function () {
-                                selectedAddress = this.value;
+                                selectedAddressId = this.value;
                             });
 
                             // Function to check if cartItems is empty
@@ -230,7 +231,7 @@
 
                             // Function to check if no address is selected
                             function isAddressNotSelected() {
-                                return !selectedAddress;
+                                return !selectedAddressId;
                             }
 
                             // Function to enable or disable the "Place Order" button based on conditions
@@ -266,22 +267,37 @@
                                 axios.post('/order/placeOrder', {
                                     items: cartItems,
                                     total: totalPrice,
-                                    address: selectedAddress,
+                                    addressId: selectedAddressId,
                                     paymentMethod: selectedPaymentMethod
                                 })
                                     .then(response => {
-                                        Swal.fire({
-                                            icon: 'success',
-                                            title: 'Order Placed!',
-                                            text: 'Your order has been successfully placed.',
-                                            confirmButtonText: 'Okay'
-                                        });
-                                        setTimeout(() => {
-                                            const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
+                                        if (selectedPaymentMethod === 'paypal'){
+                                            // Redirect to the PayPal approval URL for PayPal payments
+                                            console.log(response.data.approvalUrl)
+                                            if (response.data.approvalUrl) {
+                                                window.location.href = response.data.approvalUrl;
+                                            } else {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Oops...',
+                                                    text: 'PayPal payment initiation failed. Please try again.',
+                                                    confirmButtonText: 'Okay'
+                                                });
+                                            }
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'success',
+                                                title: 'Order Placed!',
+                                                text: 'Your order has been successfully placed.',
+                                                confirmButtonText: 'Okay'
+                                            });
+                                            setTimeout(() => {
+                                                const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
 
-                                            window.location.href = orderConfirmationUrl;
-                                        }, 2000);
-                                    })
+                                                window.location.href = orderConfirmationUrl;
+                                            }, 2000);
+                                        }
+                                        })
                                     .catch(error => {
                                         Swal.fire({
                                             icon: 'error',
