@@ -396,7 +396,7 @@ const loadDashboard = async (req, res) => {
             
             const userData = await User.findById(req.session.user_id);
             const address = await Address.find({ userId: req.session.user_id });
-            const orders = await Order.find({ user: req.session.user_id }).sort({ createdAt: -1 });
+            const orders = await Order.find({ userId: req.session.user_id }).sort({ createdAt: -1 });
 
             res.render('dashboard', { req, pageTitle, userData, address,orders });
         }

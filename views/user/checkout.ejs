@@ -273,7 +273,7 @@
                                     .then(response => {
                                         if (selectedPaymentMethod === 'paypal'){
                                             // Redirect to the PayPal approval URL for PayPal payments
-                                            console.log(response.data.approvalUrl)
+                                            console.log("hi it entered paypal",response.data.approvalUrl)
                                             if (response.data.approvalUrl) {
                                                 window.location.href = response.data.approvalUrl;
                                             } else {
@@ -285,10 +285,11 @@
                                                 });
                                             }
                                         } else {
+                                            if(response.data.successs)
                                             Swal.fire({
                                                 icon: 'success',
                                                 title: 'Order Placed!',
-                                                text: 'Your order has been successfully placed.',
+                                                text: data.message,
                                                 confirmButtonText: 'Okay'
                                             });
                                             setTimeout(() => {

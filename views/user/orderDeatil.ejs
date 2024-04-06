@@ -1,85 +1,103 @@
 <%- include('../layouts/header.ejs') %>
   <%- include('../layouts/navbar.ejs') %>
+    <style>
+      .containers {
+        background-color: #f0f8ff;
+        /* Light Blue background color for the container */
+        padding: 20px;
+      }
+
+      .order-Details {
+        background-color: #d4edda;
+        /* Light Green background color for the order confirmation section */
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .order-Details h2 {
+        color: #14ee47;
+        /* Dark Green color for the headings */
+      }
+    </style>
     <div class="container">
       <br>
       <h2>Order Details</h2>
       <hr>
-      <div class="row">
+      <div class="row order-Details">
         <div class="col-md-4">
           <h3>Order Information</h3>
           <p><strong>Order ID:</strong>
-            <%= order._id %>
+            <%= order.orderId %>
           </p>
           <p><strong>Date:</strong>
-            <%= new Date(order.createdAt).toLocaleDateString() %>
+            <%= order.date.toDateString() %>
           </p>
+          <p><strong>Expected Delivery Date:</strong>
+            <%= new Date(order.expectedDelivery).toDateString() %>
+          </p>
+          <p><strong>Payment Method:</strong>
+            <%= order.paymentMethod %>
+          </p>
+
           <p><strong>Status:</strong>
             <%= order.status %>
           </p>
-          <p><strong>Total:</strong> $<%= order.total.toFixed(2) %>
+          <p><strong>Total:</strong>₹<%= order.totalAmount %>
           </p>
         </div>
         <div class="col-md-4">
           <h3>User Information</h3>
           <p><strong>Name:</strong>
-            <%= order.address.fullName %>
+            <%= order.deliveryAddress.fullName %>
           </p>
           <p><strong>Phone:</strong>
-            <%= order.address.mobileNumber %>
+            <%= order.deliveryAddress.mobileNumber %>
           </p>
         </div>
         <div class="col-md-4">
           <h3>Address</h3>
           <p><strong>House name:</strong>
-            <%= order.address.houseNo %>
+            <%= order.deliveryAddress.houseNo %>
           </p>
           <p><strong>Area:</strong>
-            <%= order.address.area %>
+            <%= order.deliveryAddress.area %>
           </p>
           <p><strong>City:</strong>
-            <%= order.address.city %>
+            <%= order.deliveryAddress.city %>
           </p>
           <p><strong>State:</strong>
-            <%= order.address.state %>
+            <%= order.deliveryAddress.state %>
           </p>
           <p><strong>Pin:</strong>
-            <%= order.address.pincode %>
+            <%= order.deliveryAddress.pincode %>
           </p>
         </div>
       </div>
       <br>
-      <div class="row">
-        <div class="col-md-12">
+      <div class="row ">
+        <div class="col-md-12 ">
           <h3>Items</h3>
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Product Image</th>
-                <th>Item Name</th>
-                <th>Price</th>
-                <% if (order.status !=='Cancelled' ) { %>
-                  <th>Actions</th>
-                  <% } %>
-              </tr>
-            </thead>
-            <tbody>
-              <% order.items.forEach(item=> { %>
-                <tr>
-                  <td><img src="/uploads/product/resized/<%=item.productImage[0] %>" alt="<%= item.productName %>"
-                      style="height: 150px; width: 150px;"></td>
-                  <td>
-                    <%= item.name %>
-                  </td>
-                  <td>$<%= item.price %>
-                  </td>
-                  <% if (order.status !=='Cancelled' ) { %>
-                    <td>
-                      <button class=" btn-danger cancel-product" data-item-id="<%= item._id %>">Cancel Product</button>
-                    </td>
-                    <% } %>
-                </tr>
+          <br>
+          <div class="container">
+            <div class="row">
+                <% order.items.forEach(item=> { %>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                 class="card-img-top" alt="<%= item.productId.name %>">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= item.productId.name %></h5>
+                                <p class="card-text">Price: $<%= item.price %></p>
+                                <% if (order.status !== 'Cancelled') { %>
+                                    <button class=" btn-dangers cancel-product" data-item-id="<%= item._id %>"  style="display: block; margin: 0 auto;">Cancel Product</button>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
                 <% }); %>
-            </tbody>
+            </div>
+        </div>
           </table>
         </div>
       </div>
@@ -94,6 +112,7 @@
             document.querySelectorAll('.cancel-product').forEach(button => {
               button.addEventListener('click', function () {
                 const itemId = this.getAttribute('data-item-id');
+                log
                 const orderId = '<%= order._id %>';
                 console.log("order", orderId);
 

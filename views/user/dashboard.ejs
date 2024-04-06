@@ -108,16 +108,18 @@
                                                                   <th>Date</th>
                                                                   <th>Status</th>
                                                                   <th>Total</th>
+                                                                  <th>Payment Method</th>
                                                                   <th>Actions</th>
                                                                 </tr>
                                                               </thead>
                                                               <tbody>
                                                                 <% orders.forEach(order => { %>
                                                                   <tr>
-                                                                    <td><%= order._id %></td>
-                                                                    <td><%= new Date(order.createdAt).toLocaleDateString() %></td>
+                                                                    <td><%= order.orderId %></td>
+                                                                    <td><%= order.date.toDateString() %></td>
                                                                     <td><%= order.status %></td>
-                                                                    <td>$<%= order.total.toFixed(2) %> for <%= order.items.length %> item</td>
+                                                                    <td>₹<%= order.totalAmount%> for <%= order.items.length %> item</td>
+                                                                    <td><%= order.paymentMethod %></td>
                                                                     <td><a href="/order/orderDeatil/<%= order._id %>" class="btn-small d-block">View</a></td>
                                                                   </tr>
                                                                 <% }); %>

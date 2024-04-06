@@ -8,7 +8,8 @@ const orderSchema = mongoose.Schema({
         required: true
     },
     orderId: {
-        type: String
+        type: String,
+        required: true
     },
     deliveryAddress: {
         type: Object,
@@ -55,14 +56,18 @@ const orderSchema = mongoose.Schema({
             type: Number,
             required: true
         },
+        orderStatus: {
+            type: String,
+            default: "placed"
+        },
         cancellationReason: {
             type: String
         },
     }],
     status: {
         type: String,
-        enum: ['pending', 'paid', 'delivered', 'cancelled'],
-        default: 'pending'
+        enum: ['pending', "placed", 'paid', 'delivered', 'cancelled'],
+        default: 'placed'
     }
 }, { timestamps: true })
 

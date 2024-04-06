@@ -910,6 +910,13 @@ h5.widget-title {
     border-radius: 50px;
     padding: 13px 28px;
 }
+.btn-dangers {
+    color: #fff;
+    background-color: #df0606;
+    padding: 13px 28px;
+    border-radius: 25px;
+ 
+}
 
 .btn-default i {
     font-weight: 400;
