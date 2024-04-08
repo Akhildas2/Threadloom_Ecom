@@ -18,7 +18,7 @@ const orderSchema = mongoose.Schema({
     totalAmount: {
         type: Number,
         default: 0,
-        required: true 
+        required: true
     },
     date: {
         type: Date,
@@ -37,7 +37,7 @@ const orderSchema = mongoose.Schema({
     },
     payerId: {
         type: String
-    },  
+    },
     items: [{
         productId: {
             type: mongoose.Schema.Types.ObjectId,
@@ -58,6 +58,7 @@ const orderSchema = mongoose.Schema({
         },
         orderStatus: {
             type: String,
+            enum: ['pending', "placed", 'paid', 'delivered', 'cancelled'],
             default: "placed"
         },
         cancellationReason: {
@@ -71,4 +72,4 @@ const orderSchema = mongoose.Schema({
     }
 }, { timestamps: true })
 
-    module.exports = mongoose.model('Order', orderSchema);
+module.exports = mongoose.model('Order', orderSchema);

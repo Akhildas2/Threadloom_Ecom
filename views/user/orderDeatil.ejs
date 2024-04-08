@@ -90,7 +90,8 @@
                                 <h5 class="card-title"><%= item.productId.name %></h5>
                                 <p class="card-text">Price: $<%= item.price %></p>
                                 <% if (order.status !== 'Cancelled') { %>
-                                    <button class=" btn-dangers cancel-product" data-item-id="<%= item._id %>"  style="display: block; margin: 0 auto;">Cancel Product</button>
+                                  <button class="btn-danger cancel-product" data-item-id="<%= item._id %>" style="display: block; margin: 0 auto;">Cancel Product</button>
+
                                 <% } %>
                             </div>
                         </div>
@@ -112,16 +113,17 @@
             document.querySelectorAll('.cancel-product').forEach(button => {
               button.addEventListener('click', function () {
                 const itemId = this.getAttribute('data-item-id');
-                log
+                console.log("itemId", itemId);
+               
                 const orderId = '<%= order._id %>';
                 console.log("order", orderId);
 
-                fetch(`/order/cancel/${orderId}`, {
+                fetch(`/order/cancel/${orderId}/${itemId}`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
                   },
-                  body: JSON.stringify({ itemId, orderId })
+                  body: JSON.stringify({  itemId, orderId })
                 })
                   .then(response => {
                     // Log the raw response

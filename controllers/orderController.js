@@ -63,17 +63,14 @@ const checkout = async (req, res) => {
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        console.log("userId", userId)
         const { items, total, addressId, paymentMethod } = req.body;
-        console.log("req.body", req.body)
-        console.log("items", items)
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
         }
         const expectedDelivery = new Date();
-        const randomOrderId = generateRandomString(15);
         expectedDelivery.setDate(expectedDelivery.getDate() + 5);
+        const randomOrderId = generateRandomString(15);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
@@ -94,7 +91,7 @@ const placeOrder = async (req, res) => {
                     productId: item.productId._id,
                     quantity: item.quantity,
                     price: item.price,
-                    total: item.price * item.quantity
+                    total: item.price * item.quantity,
                 }))
             });
 
@@ -130,9 +127,8 @@ const placeOrder = async (req, res) => {
                 }]
             };
 
-            // Create PayPal payment
-         
-            paypal.payment.create(create_payment_json, function (error, payment) {
+            // Create PayPal payment  
+         await paypal.payment.create(create_payment_json, function (error, payment) {
                 if (error) {
                     console.error("Error creating PayPal payment:", error);
                     return res.status(500).json({ message: 'Error processing PayPal payment', error: error.message });
@@ -164,11 +160,10 @@ const placeOrder = async (req, res) => {
                     quantity: item.quantity,
                     price: item.price,
                     total: item.price * item.quantity,
-                    cancellationReason: item.cancellationReason,
                 })),
             });
             await order.save();
-
+            console.log("Order placed successfully.")
             // Clear cart
             await CartItems.deleteMany({ user: userId });
 
@@ -189,9 +184,7 @@ const placeOrder = async (req, res) => {
 const paymentSuccess = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        console.log("payment  success")
         const orderId = req.params.orderId;
-        console.log("orderId", orderId)
         if (!orderId) {
             return res.status(400).json({ success: false, message: 'Order Id is missing.' });
         }
@@ -201,12 +194,12 @@ const paymentSuccess = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Order is not found.' });
         }
         order.status = 'paid';
+        for (const item of order.items) {
+            item.orderStatus = 'paid';
+        }
         const paymentId = req.query.paymentId;
         const payerId =req.query.PayerID;
-        console.log("payerId", payerId);
-
         order.paymentId = paymentId;
-        console.log("paymentId", paymentId);
 
         // Check if payerId is provided
         if (payerId) {
@@ -216,8 +209,8 @@ const paymentSuccess = async (req, res) => {
             console.log("payerId not provided");
         }
 
-        const orders = await order.save();
-        console.log("order",orders);
+        await order.save();
+        console.log("Paypal order Sucessfull.",);
           // Clear cart
           await CartItems.deleteMany({ user: userId });
 
@@ -231,7 +224,6 @@ const paymentSuccess = async (req, res) => {
 // For payment cancellation
 const paymentCancel = async (req, res) => {
     try {
-        console.log("payment  cancell")
         const orderId = req.params.orderId;
 
         if (!orderId) {
@@ -254,10 +246,8 @@ const paymentCancel = async (req, res) => {
 const orderDetails = async (req, res) => {
     try {
         const userId = req.params.id;
-        console.log("userId",userId);
         
         const order = await Order.findById(userId).populate('userId').populate('items.productId');
-        console.log("order",order);
         if (!order) {
             return res.status(404).send('Order not found');
         }
@@ -287,22 +277,23 @@ const orderConfirmation = async (req, res) => {
 //this is for oder cancellation
 const cancelOrder = async (req, res) => {
     try {
-        const { orderId, itemId } = req.params;
+        const { orderId,itemId  } = req.params;
         console.log("req", req.params);
 
-        const order = await Order.findById(orderId).populate('items');
+        const order = await Order.findById(orderId).populate('items.productId');
         console.log("order", order);
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found.' });
         }
 
-
+        const item = order.items.find(item => item._id.toString() === itemId);
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
 
-        item.status = 'Cancelled';
+            item.orderStatus = 'cancelled';
+        
         await order.save();
 
         res.json({ success: true, message: 'Product cancelled successfully.' });
