@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful</title>
+    <!-- Link Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .container1 {
+            text-align: center;
+            background-color: #f0f8ff;
+            padding: 200px;
+            border-radius: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-top: 40px;
+
+        }
+
+        .success-icon {
+            color: #4CAF50;
+            font-size: 100px;
+        }
+
+        p {
+            color: #333;
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            margin-top: 30px;
+
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 50%;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container1">
+        <div>
+          
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1>Payment Successful!</h1>
+            <p>Thank you for your payment. Your transaction was successful.</p>
+        
+            <a href="/order/orderConfirmation/<%= orderId %>" class="btn">View Order</a>
+        </div>
+    </div>
+</body>
+
+</html>

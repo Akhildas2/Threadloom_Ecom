@@ -2,7 +2,7 @@ const CartItems = require('../models/cartModel');
 const Address = require('../models/addressModel');
 const Order = require('../models/orderModel');
 const paypal = require('paypal-rest-sdk');
-
+const Product = require('../models/productModel')
 
 
 
@@ -16,10 +16,12 @@ paypal.configure({
 
 //Function to generate a random orderId
 function generateRandomString(length) {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
+    const numberSet = '0123456789';
+
+    let result = 'threadLoom';
     for (let i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
+        const randomIndex = Math.floor(Math.random() * numberSet.length);
+        result += numberSet.charAt(randomIndex);
     }
     return result;
 }
@@ -70,7 +72,8 @@ const placeOrder = async (req, res) => {
         }
         const expectedDelivery = new Date();
         expectedDelivery.setDate(expectedDelivery.getDate() + 5);
-        const randomOrderId = generateRandomString(15);
+        const randomOrderId = generateRandomString(5);
+        console.log("randomOrderId",randomOrderId);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
@@ -82,7 +85,7 @@ const placeOrder = async (req, res) => {
             // Save order details
             const order = new Order({
                 userId: userId,
-                orderId:randomOrderId,
+                ordersId: randomOrderId,
                 deliveryAddress: address.toObject(),
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
@@ -97,6 +100,9 @@ const placeOrder = async (req, res) => {
 
             // Save the order to the database
             const savedOrder = await order.save();
+
+
+
             const orderId = savedOrder._id;
 
             // Create PayPal payment request
@@ -128,7 +134,7 @@ const placeOrder = async (req, res) => {
             };
 
             // Create PayPal payment  
-         await paypal.payment.create(create_payment_json, function (error, payment) {
+            await paypal.payment.create(create_payment_json, function (error, payment) {
                 if (error) {
                     console.error("Error creating PayPal payment:", error);
                     return res.status(500).json({ message: 'Error processing PayPal payment', error: error.message });
@@ -146,11 +152,10 @@ const placeOrder = async (req, res) => {
 
 
         } else if (paymentMethod === 'cod') {
-            console.log("entered to cod")
 
             const order = new Order({
                 userId: userId,
-                orderId:randomOrderId,
+                ordersId: randomOrderId,
                 deliveryAddress: address.toObject(),
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
@@ -194,27 +199,25 @@ const paymentSuccess = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Order is not found.' });
         }
         order.status = 'paid';
-        for (const item of order.items) {
-            item.orderStatus = 'paid';
-        }
+       
         const paymentId = req.query.paymentId;
-        const payerId =req.query.PayerID;
+        const payerId = req.query.PayerID;
         order.paymentId = paymentId;
 
         // Check if payerId is provided
         if (payerId) {
             order.payerId = payerId;
-            console.log("payerId", payerId);
         } else {
             console.log("payerId not provided");
+
         }
 
         await order.save();
         console.log("Paypal order Sucessfull.",);
-          // Clear cart
-          await CartItems.deleteMany({ user: userId });
+        // Clear cart
+        await CartItems.deleteMany({ user: userId });
+        res.render('paymentSuccess', { req, orderId });
 
-         res.redirect('/order/orderConfirmation/' + orderId);
     } catch (error) {
         console.error('Error in payment success:', error);
         res.status(500).send('Server Error');
@@ -233,8 +236,9 @@ const paymentCancel = async (req, res) => {
         if (!order) {
             return res.status(404).send('Order not found.');
         }
-       
-        res.redirect('/order/orderConfirmation/' + orderId);
+        order.status = 'retry';
+        res.render('paymentCancel', { req, orderId });
+
     } catch (error) {
         console.error('Error in payment cancellation:', error);
         res.status(500).send('Server Error');
@@ -246,7 +250,7 @@ const paymentCancel = async (req, res) => {
 const orderDetails = async (req, res) => {
     try {
         const userId = req.params.id;
-        
+
         const order = await Order.findById(userId).populate('userId').populate('items.productId');
         if (!order) {
             return res.status(404).send('Order not found');
@@ -263,6 +267,7 @@ const orderConfirmation = async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId).populate('userId').populate('items.productId');
+        console.log("order",order)
         if (!order) {
             return res.status(404).send('Order not found');
         }
@@ -277,11 +282,9 @@ const orderConfirmation = async (req, res) => {
 //this is for oder cancellation
 const cancelOrder = async (req, res) => {
     try {
-        const { orderId,itemId  } = req.params;
-        console.log("req", req.params);
+        const { orderId, itemId } = req.params;
 
         const order = await Order.findById(orderId).populate('items.productId');
-        console.log("order", order);
 
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found.' });
@@ -292,8 +295,8 @@ const cancelOrder = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
 
-            item.orderStatus = 'cancelled';
-        
+        item.orderStatus = 'cancelled';
+
         await order.save();
 
         res.json({ success: true, message: 'Product cancelled successfully.' });

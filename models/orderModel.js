@@ -7,7 +7,7 @@ const orderSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    orderId: {
+    ordersId: {
         type: String,
         required: true
     },
@@ -58,8 +58,8 @@ const orderSchema = mongoose.Schema({
         },
         orderStatus: {
             type: String,
-            enum: ['pending', "placed", 'paid', 'delivered', 'cancelled'],
-            default: "placed"
+            enum: ['pending', 'placed', 'ship', 'delivered', 'cancelled'],
+            default: 'pending'
         },
         cancellationReason: {
             type: String
@@ -67,8 +67,8 @@ const orderSchema = mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['pending', "placed", 'paid', 'delivered', 'cancelled'],
-        default: 'placed'
+        enum: ['pending', 'paid', 'retry'],
+        default: 'pending'
     }
 }, { timestamps: true })
 

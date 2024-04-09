@@ -28,8 +28,7 @@
                     <div class="col-md-12">
                         <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0]  %>"
                             alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
-
-
+                            
                     </div>
                 </div>
                 <br>
@@ -49,9 +48,11 @@
                         <p><strong>Payment Method:</strong>
                             <%= order.paymentMethod %>
                         </p>
-                        <p><strong>Status:</strong>
+                        <p><strong>Payment Status:</strong>
                             <%= order.status %>
                         </p>
+                        <p><strong>Order Status:</strong> <%= order.items[0].orderStatus %></p>
+
                         <p><strong>Total:</strong> ₹<%= order.totalAmount %>
                         </p>
                     </div>

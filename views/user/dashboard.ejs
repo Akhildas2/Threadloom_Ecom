@@ -115,7 +115,7 @@
                                                               <tbody>
                                                                 <% orders.forEach(order => { %>
                                                                   <tr>
-                                                                    <td><%= order.orderId %></td>
+                                                                    <td><%= order.ordersId %></td>
                                                                     <td><%= order.date.toDateString() %></td>
                                                                     <td><%= order.status %></td>
                                                                     <td>₹<%= order.totalAmount%> for <%= order.items.length %> item</td>

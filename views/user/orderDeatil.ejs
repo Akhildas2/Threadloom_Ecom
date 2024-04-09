@@ -40,11 +40,20 @@
             <%= order.paymentMethod %>
           </p>
 
-          <p><strong>Status:</strong>
+          <p><strong>Payment Status:</strong>
             <%= order.status %>
           </p>
           <p><strong>Total:</strong>₹<%= order.totalAmount %>
           </p>
+          <p><strong>Order Status:</strong>
+            <% order.items.forEach(item => { %>
+                <%= item.orderStatus %>
+            <% }); %>
+        </p>
+        
+        
+        
+        
         </div>
         <div class="col-md-4">
           <h3>User Information</h3>
@@ -75,33 +84,43 @@
         </div>
       </div>
       <br>
-      <div class="row ">
-        <div class="col-md-12 ">
-          <h3>Items</h3>
-          <br>
-          <div class="container">
-            <div class="row">
-                <% order.items.forEach(item=> { %>
-                    <div class="col-md-4 mb-4">
-                        <div class="card">
-                            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                 class="card-img-top" alt="<%= item.productId.name %>">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= item.productId.name %></h5>
-                                <p class="card-text">Price: $<%= item.price %></p>
-                                <% if (order.status !== 'Cancelled') { %>
-                                  <button class="btn-danger cancel-product" data-item-id="<%= item._id %>" style="display: block; margin: 0 auto;">Cancel Product</button>
-
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-                <% }); %>
+      <div class="row">
+        <div class="col-md-12">
+            <h3>Items</h3>
+            <br>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% order.items.forEach(item => { %>
+                            <tr>
+                                <td>
+                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"  style="width: 200px;height: 200px;" alt="<%= item.productId.name %>">
+                                </td>
+                                <td><%= item.productId.name %></td>
+                                <td>$<%= item.price %></td>
+                                <td>
+                                    <% if (item.orderStatus !== 'cancelled') { %>
+                                        <button class=" btn-warnings cancel-product" data-item-id="<%= item._id %>">Cancel Product</button>
+                                    <% } else { %>
+                                        <button class=" btn-dangers cancel-product" disabled>Cancelled</button>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
             </div>
         </div>
-          </table>
-        </div>
-      </div>
+    </div>
+    
     </div>
 
     <%- include('../layouts/footer.ejs') %>
