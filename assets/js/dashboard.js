@@ -341,7 +341,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                 'success'
                             );
                             $('#address-' + addressId).remove();
-                            window.location.href = response.url;
+                            setTimeout(() => {
+                                window.location.href = response.url;
+                            }, 2000);
+                            
                         },
                         error: function (error) {
                             console.error('Error:', error);

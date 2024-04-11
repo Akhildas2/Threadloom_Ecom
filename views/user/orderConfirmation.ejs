@@ -37,7 +37,7 @@
                         <h3>Order Information</h3>
                         <br>
                         <p><strong>Order ID:</strong>
-                            <%= order.orderId %>
+                            <%= order.ordersId %>
                         </p>
                         <p><strong>Date:</strong>
                             <%= order.date.toDateString() %>
@@ -60,7 +60,7 @@
                         <h3>User Information</h3>
                         <br>
                         <p><strong>Name:</strong>
-                            <%= order.userId.name %>
+                            <%= order.deliveryAddress.fullName %>
                         </p>
                         <p><strong>Email:</strong>
                             <%= order.userId.email %>
@@ -74,6 +74,7 @@
                     <div class="col-md-4">
                         <h3>Billing Address</h3>
                         <br>
+                        
                         <p><strong>House No:</strong>
                             <%= order.deliveryAddress.houseNo %>
                         </p>

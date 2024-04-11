@@ -100,36 +100,58 @@
                                                     <h5 class="mb-0">Your Orders</h5>
                                                 </div>
                                                 <div class="card-body">
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                  <th>Order</th>
-                                                                  <th>Date</th>
-                                                                  <th>Status</th>
-                                                                  <th>Total</th>
-                                                                  <th>Payment Method</th>
-                                                                  <th>Actions</th>
-                                                                </tr>
-                                                              </thead>
-                                                              <tbody>
-                                                                <% orders.forEach(order => { %>
-                                                                  <tr>
-                                                                    <td><%= order.ordersId %></td>
-                                                                    <td><%= order.date.toDateString() %></td>
-                                                                    <td><%= order.status %></td>
-                                                                    <td>₹<%= order.totalAmount%> for <%= order.items.length %> item</td>
-                                                                    <td><%= order.paymentMethod %></td>
-                                                                    <td><a href="/order/orderDeatil/<%= order._id %>" class="btn-small d-block">View</a></td>
-                                                                  </tr>
-                                                                <% }); %>
-                                                              </tbody>
-                                                            </table>
-                                                    
-                                                    </div>
+                                                    <% if (orders.length===0) { %>
+                                                        <div class="alert alert-info" role="alert">
+                                                            No orders items found.Please order items.
+                                                        </div>
+                                                        <% } else { %>
+                                                            <div class="table-responsive">
+                                                                <table class="table">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Product Image</th>
+                                                                            <th>product Name</th>
+                                                                            <th>Price and Quantity</th>
+                                                                            <th>Order Status</th>
+                                                                            <th>Order Date</th>
+                                                                            <th>Actions</th>
+
+                                                                        </tr>
+                                                                    </thead>
+                                                                        <% orders.forEach(order => { %>
+                                                                    <tbody>
+
+                                                                            <% order.items.forEach(item => { %>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"  style="width: 250px;height: 150px;" alt="<%= item.productId.name %>">
+                                                                                </td>
+                                                                                <td><%= item.productId.name %></td>
+                                                                                
+                                                                                <td>₹<%= item.price%> for <%= item.quantity %> item
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= item.orderStatus %>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <%= order.date.toDateString() %>
+                                                                                </td>
+                                                                                
+                                                                                
+                                                                                <td><a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
+                                                                                        class="btn-small d-block">View</a>
+                                                                                </td>
+                                                                            </tr>
+                                                                            <% }); %>
+                                                                            <% }); %>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                            <% } %>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <!-- <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
                                         <div class="card">
                                             <div class="card-header">
@@ -158,117 +180,69 @@
                                         <!--  add or edit address  -->
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
-                                            <a href="#" class="btn btn-primary" data-toggle="modal"
+
+                                            <a href="#" class="btn-lg btn-primary" data-toggle="modal"
                                                 data-target="#addAddressModal">Add Address</a>
+                                            <div class="row" style="margin-top: 20px;">
+                                                <% if (address.length===0) { %>
+                                                    <div class="alert alert-info" role="alert">
+                                                        No addresses found.Please add address.
+                                                    </div>
 
-                                            <div class="row" style="margin-top: 10px;">
-                                                <% address.forEach(address=> { %>
-                                                    <div class="col-lg-6">
-                                                        <div class="card mb-3 mb-lg-0">
-                                                            <div class="card-header">
-                                                                <h5 class="mb-0">Manage Address</h5>
-                                                            </div>
-                                                            <div class="card-body">
+                                                    <% } else { %>
+                                                        <div class="row" style="margin-top: 10px;">
+                                                            <% address.forEach(address=> { %>
+                                                                <div class="col-lg-6">
+                                                                    <div class="card mb-3 mb-lg-0">
+                                                                        <div class="card-header">
+                                                                            <h5 class="mb-0">Manage Address</h5>
+                                                                        </div>
+                                                                        <div class="card-body">
 
-                                                                <p>
-                                                                    <%= address.fullName %>
-                                                                </p>
-                                                                <p>
-                                                                    <%=address.mobileNumber %>
-                                                                </p>
-                                                                <p>
-                                                                    <%= address.houseNo %>, <%= address.area %>
-                                                                </p>
-                                                                <p>
-                                                                    <%= address.city %>, <%= address.state %> - <%=
-                                                                                address.pincode %>
-                                                                </p>
-                                                                <a href="#" class="btn-small edit-address-btn"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                    data-address-id="<%= address._id %>">Edit</a>
-                                                                <br>
-                                                                <a href="#" class="btn-small delete-address-btn"
-                                                                    data-toggle="modal"
-                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                    data-address-id="<%= address._id %>">Delete</a>
+                                                                            <p>
+                                                                                <%= address.fullName %>
+                                                                            </p>
+                                                                            <p>
+                                                                                <%=address.mobileNumber %>
+                                                                            </p>
+                                                                            <p>
+                                                                                <%= address.houseNo %>, <%= address.area
+                                                                                        %>
+                                                                            </p>
+                                                                            <p>
+                                                                                <%= address.city %>, <%= address.state
+                                                                                        %> - <%= address.pincode %>
+                                                                            </p>
+                                                                            <a href="#"
+                                                                                class="btn-small edit-address-btn"
+                                                                                data-toggle="modal"
+                                                                                data-target="#editAddressModal-<%= address._id %>"
+                                                                                data-address-id="<%= address._id %>">Edit</a>
+                                                                            <br>
+                                                                            <a href="#"
+                                                                                class="btn-small delete-address-btn"
+                                                                                data-toggle="modal"
+                                                                                data-target="#editAddressModal-<%= address._id %>"
+                                                                                data-address-id="<%= address._id %>">Delete</a>
 
 
-                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <% }); %>
+                                                                    <% } %>
+
                                                         </div>
-                                                    </div>
-                                                    <% }); %>
-                                            </div>
-                                        </div>
-                                        <!-- for add address modal -->
-                                        <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
-                                            aria-labelledby="addAddressModalLabel " aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="addAddressModalLabel">Add Address
-                                                        </h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form id="addAddressForm">
-                                                            <div class="form-group">
-                                                                <label for="fullName">Full Name:</label>
-                                                                <input type="text" id="fullName" name="fullName">
-                                                                <span class="error" id="fullNameError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="mobileNumber">Mobile Number:</label>
-                                                                <input type="text" id="mobileNumber"
-                                                                    name="mobileNumber">
-                                                                <span class="error" id="mobileNumberError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="pincode">Pincode:</label>
-                                                                <input type="text" id="pincode" name="pincode">
-                                                                <span class="error" id="pincodeError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="houseNo">House No,Name:</label>
-                                                                <input type="text" id="houseNo" name="houseNo">
-                                                                <span class="error" id="houseNoError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="area">Area,Street,Village</label>
-                                                                <input type="text" id="area" name="area">
-                                                                <span class="error" id="areaError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="city">City:</label>
-                                                                <input type="text" id="city" name="city">
-                                                                <span class="error" id="cityError"></span>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="state">State:</label>
-                                                                <input type="text" id="state" name="state">
-                                                                <span class="error" id="stateError"></span>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-primary"
-                                                                id="addAddress">Add Address</button>
 
-                                                        </form>
-                                                    </div>
-                                                </div>
                                             </div>
-                                        </div>
-                                        <% address.forEach(address=> { %>
-                                            <div class="modal fade edit-address-modal"
-                                                id="editAddressModal-<%= address._id %>" tabindex="-1" role="dialog"
-                                                aria-labelledby="editAddressModalLabel" aria-hidden="true">
-
+                                            <!-- for add address modal -->
+                                            <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
+                                                aria-labelledby="addAddressModalLabel " aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="editAddressModalLabel">Edit
-                                                                Address
+                                                            <h5 class="modal-title" id="addAddressModalLabel">
+                                                                Add Address
                                                             </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
@@ -276,174 +250,244 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form id="editAddressForm-<%= address._id %>">
+                                                            <form id="addAddressForm">
                                                                 <div class="form-group">
                                                                     <label for="fullName">Full Name:</label>
-                                                                    <input type="text" id="editFullName" name="fullName"
-                                                                        value="<%=  address.fullName %>">
-                                                                    <span class="error" id="editFullNameError"></span>
+                                                                    <input type="text" id="fullName" name="fullName">
+                                                                    <span class="error" id="fullNameError"></span>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label for="mobileNumber">Mobile Number:</label>
-                                                                    <input type="text" id="editMobileNumber"
-                                                                        name="mobileNumber"
-                                                                        value="<%=address.mobileNumber %>">
-                                                                    <span class="error"
-                                                                        id="editMobileNumberError"></span>
+                                                                    <label for="mobileNumber">Mobile
+                                                                        Number:</label>
+                                                                    <input type="text" id="mobileNumber"
+                                                                        name="mobileNumber">
+                                                                    <span class="error" id="mobileNumberError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="pincode">Pincode:</label>
-                                                                    <input type="text" id="editPincode" name="pincode"
-                                                                        value="<%= address.pincode %>">
-                                                                    <span class="error" id="editPincodeError"></span>
+                                                                    <input type="text" id="pincode" name="pincode">
+                                                                    <span class="error" id="pincodeError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="houseNo">House No,Name:</label>
-                                                                    <input type="text" id="editHouseNo" name="houseNo"
-                                                                        value="<%= address.houseNo %>">
-                                                                    <span class="error" id="editHouseNoError"></span>
+                                                                    <input type="text" id="houseNo" name="houseNo">
+                                                                    <span class="error" id="houseNoError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="area">Area,Street,Village</label>
-                                                                    <input type="text" id="editArea" name="area"
-                                                                        value="<%= address.area %>">
-                                                                    <span class="error" id="editAreaError"></span>
+                                                                    <input type="text" id="area" name="area">
+                                                                    <span class="error" id="areaError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="city">City:</label>
-                                                                    <input type="text" id="editCity" name="city"
-                                                                        value="<%= address.city %>">
-                                                                    <span class="error" id="editCityError"></span>
+                                                                    <input type="text" id="city" name="city">
+                                                                    <span class="error" id="cityError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="state">State:</label>
-                                                                    <input type="text" id="editState" name="state"
-                                                                        value="<%= address.state %>">
-                                                                    <span class="error" id="editStateError"></span>
+                                                                    <input type="text" id="state" name="state">
+                                                                    <span class="error" id="stateError"></span>
                                                                 </div>
+                                                                <button type="submit" class="btn-lg btn-primary"
+                                                                    id="addAddress">Add Address</button>
 
-                                                                <button type="submit" class="btn btn-primary"
-                                                                    id="updateAddress">save</button>
                                                             </form>
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
-                                            <% }) %>
+                                            <% address.forEach(address=> { %>
+                                                <div class="modal fade edit-address-modal"
+                                                    id="editAddressModal-<%= address._id %>" tabindex="-1" role="dialog"
+                                                    aria-labelledby="editAddressModalLabel" aria-hidden="true">
 
-                                                <!-- edit profile -->
-                                                <div class="tab-pane fade" id="profile" role="tabpanel"
-                                                    aria-labelledby="profile-tab">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <h5>Profile Details</h5>
-                                                        </div>
-                                                        <div class="card-body">
-
-                                                            <form id="profileForm" data-user-id="<%= userData._id %>">
-                                                                <div class="row">
-                                                                    <div class="form-group col-md-6">
-                                                                        <label>Name <span>*</span></label>
-                                                                        <input type="text" class="form-control square"
-                                                                            id="name" name="name"
-                                                                            value="<%= userData.name %>">
-                                                                        <div class="error-message" id="name-error">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="form-group col-md-6">
-                                                                        <label>Email</label>
-                                                                        <input type="email" id="email" name="email"
-                                                                            value="<%= userData.email %>"
-                                                                            class="form-control square" disabled>
-                                                                    </div>
-                                                                    <div class="form-group col-md-12">
-                                                                        <label>Mobile Number<span>*</span></label>
-                                                                        <input type="text" id="mobile" name="mobile"
-                                                                            value="<%= userData.mobile %>"
-                                                                            class="form-control square">
-                                                                        <div class="error-message" id="mobile-error">
-                                                                        </div>
-
-                                                                    </div>
-
-                                                                    <div class="col-md-12">
-                                                                        <button type="button" class="btn btn-fill-out  "
-                                                                            data-toggle="modal"
-                                                                            data-target="#changePasswordModal">Change
-                                                                            Password</button>
-                                                                        <button type="submit"
-                                                                            class="btn btn-fill-out submit"
-                                                                            name="submit" value="Submit">Save</button>
-                                                                    </div>
-
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- for password change modal -->
-                                                <div class="modal fade" id="changePasswordModal" tabindex="-1"
-                                                    role="dialog" aria-labelledby="changePasswordModalLabel"
-                                                    aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="changePasswordModalLabel">
-                                                                    Change
-                                                                    Password</h5>
+                                                                <h5 class="modal-title" id="editAddressModalLabel">Edit
+                                                                    Address
+                                                                </h5>
                                                                 <button type="button" class="close" data-dismiss="modal"
                                                                     aria-label="Close">
                                                                     <span aria-hidden="true">&times;</span>
                                                                 </button>
                                                             </div>
                                                             <div class="modal-body">
-                                                                <form id="changePasswordForm">
+                                                                <form id="editAddressForm-<%= address._id %>">
                                                                     <div class="form-group">
-                                                                        <input type="password" class="form-control"
-                                                                            id="oldPassword" name="oldPassword"
-                                                                            placeholder="Enter Old Password">
-                                                                        <i class="fas fa-eye toggle-password"></i>
-                                                                    </div>
-                                                                    <div class="error-message" id="oldPassword-error">
+                                                                        <label for="fullName">Full Name:</label>
+                                                                        <input type="text" id="editFullName"
+                                                                            name="fullName"
+                                                                            value="<%=  address.fullName %>">
+                                                                        <span class="error"
+                                                                            id="editFullNameError"></span>
                                                                     </div>
                                                                     <div class="form-group">
-                                                                        <input type="password" class="form-control"
-                                                                            id="newPassword" name="newPassword"
-                                                                            placeholder="Enter New Password">
-                                                                        <i class="fas fa-eye toggle-password"></i>
+                                                                        <label for="mobileNumber">Mobile
+                                                                            Number:</label>
+                                                                        <input type="text" id="editMobileNumber"
+                                                                            name="mobileNumber"
+                                                                            value="<%=address.mobileNumber %>">
+                                                                        <span class="error"
+                                                                            id="editMobileNumberError"></span>
                                                                     </div>
-                                                                    <div class="error-message" id="newPassword-error">
+                                                                    <div class="form-group">
+                                                                        <label for="pincode">Pincode:</label>
+                                                                        <input type="text" id="editPincode"
+                                                                            name="pincode"
+                                                                            value="<%= address.pincode %>">
+                                                                        <span class="error"
+                                                                            id="editPincodeError"></span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="houseNo">House
+                                                                            No,Name:</label>
+                                                                        <input type="text" id="editHouseNo"
+                                                                            name="houseNo"
+                                                                            value="<%= address.houseNo %>">
+                                                                        <span class="error"
+                                                                            id="editHouseNoError"></span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="area">Area,Street,Village</label>
+                                                                        <input type="text" id="editArea" name="area"
+                                                                            value="<%= address.area %>">
+                                                                        <span class="error" id="editAreaError"></span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="city">City:</label>
+                                                                        <input type="text" id="editCity" name="city"
+                                                                            value="<%= address.city %>">
+                                                                        <span class="error" id="editCityError"></span>
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="state">State:</label>
+                                                                        <input type="text" id="editState" name="state"
+                                                                            value="<%= address.state %>">
+                                                                        <span class="error" id="editStateError"></span>
                                                                     </div>
 
-                                                                    <div class="form-group">
-                                                                        <input type="password" class="form-control"
-                                                                            id="confirmPassword" name="confirmPassword"
-                                                                            placeholder="Confirm Password">
-                                                                        <i class="fas fa-eye toggle-password"></i>
-                                                                    </div>
-                                                                    <div class="error-message"
-                                                                        id="confirmPassword-error">
-
-                                                                    </div>
+                                                                    <button type="submit" class="btn btn-primary"
+                                                                        id="updateAddress">save</button>
                                                                 </form>
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-secondary"
-                                                                    data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn btn-primary"
-                                                                    id="changePasswordBtn">Change Password</button>
-                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <% }) %>
+                                        </div>
+
+                                        <!-- edit profile -->
+                                        <div class="tab-pane fade" id="profile" role="tabpanel"
+                                            aria-labelledby="profile-tab">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>Profile Details</h5>
+                                                </div>
+                                                <div class="card-body">
+
+                                                    <form id="profileForm" data-user-id="<%= userData._id %>">
+                                                        <div class="row">
+                                                            <div class="form-group col-md-6">
+                                                                <label>Name <span>*</span></label>
+                                                                <input type="text" class="form-control square" id="name"
+                                                                    name="name" value="<%= userData.name %>">
+                                                                <div class="error-message" id="name-error">
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group col-md-6">
+                                                                <label>Email</label>
+                                                                <input type="email" id="email" name="email"
+                                                                    value="<%= userData.email %>"
+                                                                    class="form-control square" disabled>
+                                                            </div>
+                                                            <div class="form-group col-md-12">
+                                                                <label>Mobile
+                                                                    Number<span>*</span></label>
+                                                                <input type="text" id="mobile" name="mobile"
+                                                                    value="<%= userData.mobile %>"
+                                                                    class="form-control square">
+                                                                <div class="error-message" id="mobile-error">
+                                                                </div>
+
+                                                            </div>
+
+                                                            <div class="col-md-12">
+                                                                <button type="button"
+                                                                    class="btn-md btn-fill-out btn-primary "
+                                                                    data-toggle="modal"
+                                                                    data-target="#changePasswordModal">Change
+                                                                    Password</button>
+                                                                <button type="submit" class="btn btn-fill-out  submit"
+                                                                    name="submit" value="Submit">Save</button>
+                                                            </div>
+
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- for password change modal -->
+                                        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"
+                                            aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="changePasswordModalLabel">
+                                                            Change
+                                                            Password</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="changePasswordForm">
+                                                            <div class="form-group">
+                                                                <input type="password" class="form-control"
+                                                                    id="oldPassword" name="oldPassword"
+                                                                    placeholder="Enter Old Password">
+                                                                <i class="fas fa-eye toggle-password"></i>
+                                                            </div>
+                                                            <div class="error-message" id="oldPassword-error">
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="password" class="form-control"
+                                                                    id="newPassword" name="newPassword"
+                                                                    placeholder="Enter New Password">
+                                                                <i class="fas fa-eye toggle-password"></i>
+                                                            </div>
+                                                            <div class="error-message" id="newPassword-error">
+                                                            </div>
+
+                                                            <div class="form-group">
+                                                                <input type="password" class="form-control"
+                                                                    id="confirmPassword" name="confirmPassword"
+                                                                    placeholder="Confirm Password">
+                                                                <i class="fas fa-eye toggle-password"></i>
+                                                            </div>
+                                                            <div class="error-message" id="confirmPassword-error">
+
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary"
+                                                            id="changePasswordBtn">Change
+                                                            Password</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
         </main>
 

@@ -3,7 +3,7 @@ const Address = require('../models/addressModel');
 const Order = require('../models/orderModel');
 const paypal = require('paypal-rest-sdk');
 const Product = require('../models/productModel')
-
+const mongoose = require('mongoose')
 
 
 
@@ -73,7 +73,6 @@ const placeOrder = async (req, res) => {
         const expectedDelivery = new Date();
         expectedDelivery.setDate(expectedDelivery.getDate() + 5);
         const randomOrderId = generateRandomString(5);
-        console.log("randomOrderId",randomOrderId);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
@@ -100,8 +99,20 @@ const placeOrder = async (req, res) => {
 
             // Save the order to the database
             const savedOrder = await order.save();
+            //for updating the product quantity
+            for (const item of items) {
+                const product = await Product.findById(item.productId)
+                if (!product) {
+                    return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
+                }
+                if (product.quantity < item.quantity) {
+                    return res.status(400).json({ message: `Insufficient quantity for product: ${product.name}.` });
+                }
+                product.stockCount -= item.quantity;
+                const upquantity = await product.save()
+                console.log("quantity descrease. ", upquantity)
 
-
+            }
 
             const orderId = savedOrder._id;
 
@@ -168,6 +179,20 @@ const placeOrder = async (req, res) => {
                 })),
             });
             await order.save();
+            //for updating the product quantity
+            for (const item of items) {
+                const product = await Product.findById(item.productId)
+                if (!product) {
+                    return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
+                }
+                if (product.quantity < item.quantity) {
+                    return res.status(400).json({ message: `Insufficient quantity for product: ${product.name}.` });
+                }
+                product.stockCount -= item.quantity;
+                const upquantity = await product.save()
+                console.log("quantity descrease. ", upquantity)
+
+            }
             console.log("Order placed successfully.")
             // Clear cart
             await CartItems.deleteMany({ user: userId });
@@ -199,7 +224,7 @@ const paymentSuccess = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Order is not found.' });
         }
         order.status = 'paid';
-       
+
         const paymentId = req.query.paymentId;
         const payerId = req.query.PayerID;
         order.paymentId = paymentId;
@@ -249,13 +274,20 @@ const paymentCancel = async (req, res) => {
 //to show order deatils 
 const orderDetails = async (req, res) => {
     try {
-        const userId = req.params.id;
-
-        const order = await Order.findById(userId).populate('userId').populate('items.productId');
+        const orderId = req.params.id;
+        const productId = req.query.productId
+        const productIdObject = new mongoose.Types.ObjectId(productId);
+        const order = await Order.findById(orderId).populate('items.productId');
+        let OtherOrders = []
+        for (const item of order.items) {
+            if (productIdObject.toString() !== item.productId._id.toString()) {
+                OtherOrders.push(item)
+            }
+        }
         if (!order) {
             return res.status(404).send('Order not found');
         }
-        res.render('orderDeatil', { req, order });
+        res.render('orderDeatil', { req, order, OtherOrders });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -267,7 +299,6 @@ const orderConfirmation = async (req, res) => {
     try {
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId).populate('userId').populate('items.productId');
-        console.log("order",order)
         if (!order) {
             return res.status(404).send('Order not found');
         }

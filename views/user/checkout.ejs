@@ -78,34 +78,110 @@
                                     <div class="chek-form">
                                         <div class="custome-checkbox">
                                             <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="differentaddress">
+                                                id="differentaddress" checked>
                                             <label class="form-check-label label_info" data-bs-toggle="collapse"
                                                 data-target="#collapseAddress" href="#collapseAddress"
-                                                aria-controls="collapseAddress" for="differentaddress"><span>Shiping
+                                                aria-controls="collapseAddress" for="differentaddress"><span>Shipping
                                                     Address</span></label>
                                         </div>
                                     </div>
                                 </div>
                                 <div id="collapseAddress" class="different_address collapse in">
-
                                     <div class="form-group">
+                                        <a href="#" class="btn-md btn-primary" id="addAddressModalBtn"
+                                            data-toggle="modal" data-target="#addAddressModal">Add Address</a>
+                                        <br>
+                                        <br>
                                         <label for="savedAddresses">Select Address:</label>
-                                        <select id="savedAddresses" name="savedAddresses" class="form-control">
 
-                                            <% address.forEach(address=> { %>
-                                                <option value="<%= address._id %>">
-                                                    <%= address.fullName %>, <%= address.houseNo %>, <%= address.area %>
-                                                                , <%= address.city %>, <%= address.state %> - <%=
-                                                                            address.pincode %>
-                                                </option>
-                                                <% }); %>
-                                        </select>
+                                        <% address.forEach((address, index)=> { %>
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-9">
+                                                            <div class="custome-radio">
+                                                                <input class="form-check-input" type="radio"
+                                                                    name="shippingAddress" id="address_<%= index %>"
+                                                                    value="<%= address._id %>" <% if (index===0) {
+                                                                    %>checked<% } %>>
+                                                                    <label class="form-check-label label_info"
+                                                                        for="address_<%= index %>">
+                                                                        <span>
+                                                                            <%= address.fullName %>, <%= address.houseNo
+                                                                                    %>, <%= address.area %>,
+                                                                                        <%= address.city %>, <%=
+                                                                                                address.state %> - <%=
+                                                                                                    address.pincode %>
+                                                                        </span>
+                                                                    </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <% }); %>
                                     </div>
                                 </div>
+                                <!-- Add Address Modal -->
+                                <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
+                                    aria-labelledby="addAddressModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
 
+                                            </div>
+                                            <div class="modal-body">
+                                                <form id="addAddressForm">
+                                                    <div class="form-group">
+                                                        <label for="fullName">Full Name:</label>
+                                                        <input type="text" id="fullName" name="fullName">
+                                                        <span class="error" id="fullNameError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="mobileNumber">Mobile Number:</label>
+                                                        <input type="text" id="mobileNumber" name="mobileNumber">
+                                                        <span class="error" id="mobileNumberError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="pincode">Pincode:</label>
+                                                        <input type="text" id="pincode" name="pincode">
+                                                        <span class="error" id="pincodeError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="houseNo">House No,Name:</label>
+                                                        <input type="text" id="houseNo" name="houseNo">
+                                                        <span class="error" id="houseNoError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="area">Area,Street,Village</label>
+                                                        <input type="text" id="area" name="area">
+                                                        <span class="error" id="areaError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="city">City:</label>
+                                                        <input type="text" id="city" name="city">
+                                                        <span class="error" id="cityError"></span>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="state">State:</label>
+                                                        <input type="text" id="state" name="state">
+                                                        <span class="error" id="stateError"></span>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary" id="addAddress">Add
+                                                        Address</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-
                         </div>
+
 
 
                         <div class="col-md-6">
@@ -198,31 +274,135 @@
             <%- include('../layouts/preloader.ejs') %>
                 <%- include('../layouts/script.ejs') %>
 
+                    <!-- Include jQuery first -->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <!-- Then include Bootstrap's JavaScript -->
+                    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
                     <!-- Make sure to include Axios -->
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+
+
+
                     <script>
 
 
+
                         document.addEventListener('DOMContentLoaded', function () {
+                            $(document).ready(function () {
+                                $('#addAddressModalBtn').click(function () {
+                                    $('#addAddressModal').modal('show');
+                                });
+
+                                $('.close').click(function () {
+                                    $('#addAddressModal').modal('hide');
+                                });
+                            });
+                            $(document).ready(function () {
+                                $('#addAddressForm').submit(function (event) {
+                                    event.preventDefault();
+                                    // Reset error messages
+                                    $('.error').text('');
+
+                                    // Validation
+                                    const fullName = $('#fullName').val().trim();
+                                    const mobileNumber = $('#mobileNumber').val().trim();
+                                    const pincode = $('#pincode').val().trim();
+                                    const houseNo = $('#houseNo').val().trim();
+                                    const area = $('#area').val().trim();
+                                    const city = $('#city').val().trim();
+                                    const state = $('#state').val().trim();
+                                    let isValid = true;
+
+                                    if (fullName === '') {
+                                        $('#fullNameError').text('Please enter your full name.');
+                                        isValid = false;
+                                    }
+                                    if (mobileNumber === '' || !/^\d{10}$/.test(mobileNumber)) {
+                                        $('#mobileNumberError').text('Please enter a valid 10-digit mobile number.');
+                                        isValid = false;
+                                    }
+                                    if (pincode === '' || !/^\d{6}$/.test(pincode)) {
+                                        $('#pincodeError').text('Please enter a valid 6-digit pincode.');
+                                        isValid = false;
+                                    }
+                                    if (houseNo === '') {
+                                        $('#houseNoError').text('Please enter your house number/name.');
+                                        isValid = false;
+                                    }
+                                    if (area === '') {
+                                        $('#areaError').text('Please enter your area/street/village.');
+                                        isValid = false;
+                                    }
+                                    if (city === '') {
+                                        $('#cityError').text('Please enter your city.');
+                                        isValid = false;
+                                    }
+                                    if (state === '') {
+                                        $('#stateError').text('Please enter your state.');
+                                        isValid = false;
+                                    }
+                                    if (!isValid) {
+                                        return;
+                                    }
+                                    const formData = new FormData(this);
+
+                                    axios.post('/addAddress', Object.fromEntries(formData))
+                                        .then(response => {
+                                            if (response.data.status) {
+                                                Swal.fire({
+                                                    icon: "success",
+                                                    title: "Address add successfully!",
+                                                    showConfirmButton: false,
+                                                    timer: 2000
+                                                });
+                                                setTimeout(() => {
+                                                    location.reload();
+                                                }, 2000);
+                                            } else {
+                                                console.error(response.data);
+                                            }
+                                        })
+                                        .catch(err => {
+                                            console.error('Error:', err);
+                                            if (!err.response.data.success) {
+                                                Swal.fire({
+                                                    icon: 'error',
+                                                    title: 'Error',
+                                                    text: err.response.data.message,
+                                                });
+                                            } else {
+                                                console.error(err);
+                                            }
+                                        });
+                                });
+                            });
                             let selectedPaymentMethod = 'cod';
                             const placeOrderBtn = document.getElementById('placeOrderBtn');
+                            let isSubmitting = false;
                             const body = document.querySelector('tbody');
                             const cartItems = JSON.parse(body.getAttribute('data-cart-items'));
                             const totalPrice = body.getAttribute('data-total-price');
-                            const addressSelect = document.getElementById('savedAddresses');
-                            let selectedAddressId = addressSelect.value;
+                            const addressRadios = document.querySelectorAll('input[name="shippingAddress"]');
+
+
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
                                     selectedPaymentMethod = this.value;
                                 });
                             });
-                            addressSelect.addEventListener('change', function () {
-                                selectedAddressId = this.value;
-                            });
+                            function updateSelectedAddressId() {
+                                addressRadios.forEach(radio => {
+                                    if (radio.checked) {
+                                        selectedAddressId = radio.value;
+                                    }
+                                });
+                            }
+
+                            updateSelectedAddressId();
 
                             // Function to check if cartItems is empty
                             function isCartEmpty() {
@@ -233,8 +413,7 @@
                             function isAddressNotSelected() {
                                 return !selectedAddressId;
                             }
-
-                            // Function to enable or disable the "Place Order" button based on conditions
+                            // Function to update the "Place Order" button based on conditions
                             function updatePlaceOrderBtn() {
                                 if (isCartEmpty() || isAddressNotSelected()) {
                                     placeOrderBtn.disabled = true;
@@ -248,12 +427,16 @@
                             // Initial check
                             updatePlaceOrderBtn();
 
-                            // Listen for changes in the address select to enable/disable the button
-                            addressSelect.addEventListener('change', updatePlaceOrderBtn);
+                            // Listen for changes in the radio buttons for addresses
+                            addressRadios.forEach(radio => {
+                                radio.addEventListener('change', function () {
+                                    updateSelectedAddressId();
+                                    updatePlaceOrderBtn();
+                                });
+                            });
 
-                            placeOrderBtn.addEventListener('click', function (event) {
+                            placeOrderBtn.addEventListener('click', async function (event) {
                                 event.preventDefault();
-
                                 if (isCartEmpty() || isAddressNotSelected()) {
                                     Swal.fire({
                                         icon: 'warning',
@@ -263,7 +446,15 @@
                                     });
                                     return;
                                 }
+                                if (isSubmitting) {
+                                    return;
+                                }
+                                placeOrderBtn.disabled = true;
+                                isSubmitting = true;
+                                await new Promise(resolve => setTimeout(resolve, 5000));
 
+                                placeOrderBtn.disabled = false;
+                                isSubmitting = false;
                                 axios.post('/order/placeOrder', {
                                     items: cartItems,
                                     total: totalPrice,
@@ -271,9 +462,9 @@
                                     paymentMethod: selectedPaymentMethod
                                 })
                                     .then(response => {
-                                        if (selectedPaymentMethod === 'paypal'){
+                                        if (selectedPaymentMethod === 'paypal') {
                                             // Redirect to the PayPal approval URL for PayPal payments
-                                            console.log("hi it entered paypal",response.data.approvalUrl)
+                                            console.log("hi it entered paypal", response.data.approvalUrl)
                                             if (response.data.approvalUrl) {
                                                 window.location.href = response.data.approvalUrl;
                                             } else {
@@ -285,20 +476,20 @@
                                                 });
                                             }
                                         } else {
-                                            if(response.data.successs)
-                                            Swal.fire({
-                                                icon: 'success',
-                                                title: 'Order Placed!',
-                                                text: data.message,
-                                                confirmButtonText: 'Okay'
-                                            });
+                                            if (response.data.successs)
+                                                Swal.fire({
+                                                    icon: 'success',
+                                                    title: 'Order Placed!',
+                                                    text: data.message,
+                                                    confirmButtonText: 'Okay'
+                                                });
                                             setTimeout(() => {
                                                 const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
 
                                                 window.location.href = orderConfirmationUrl;
                                             }, 2000);
                                         }
-                                        })
+                                    })
                                     .catch(error => {
                                         Swal.fire({
                                             icon: 'error',
