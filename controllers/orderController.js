@@ -278,16 +278,25 @@ const orderDetails = async (req, res) => {
         const productId = req.query.productId
         const productIdObject = new mongoose.Types.ObjectId(productId);
         const order = await Order.findById(orderId).populate('items.productId');
+
         let OtherOrders = []
+        let selectedItem = null;
         for (const item of order.items) {
-            if (productIdObject.toString() !== item.productId._id.toString()) {
+            if (productIdObject.toString() == item.productId._id.toString()) {
+                selectedItem = item;
+
+            }else{
                 OtherOrders.push(item)
+
             }
         }
+        console.log("selectedItem",selectedItem)
+        console.log("OtherOrders",OtherOrders)
+
         if (!order) {
             return res.status(404).send('Order not found');
         }
-        res.render('orderDeatil', { req, order, OtherOrders });
+        res.render('orderDeatil', { req, order, OtherOrders, selectedItem });
     } catch (error) {
         console.error(error);
         res.status(500).send('Server Error');
@@ -314,7 +323,8 @@ const orderConfirmation = async (req, res) => {
 const cancelOrder = async (req, res) => {
     try {
         const { orderId, itemId } = req.params;
-
+        const {cancellationReason} =req.body;
+        console.log("cancell",cancellationReason)
         const order = await Order.findById(orderId).populate('items.productId');
 
         if (!order) {
@@ -325,6 +335,7 @@ const cancelOrder = async (req, res) => {
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
+        item.cancellationReason =cancellationReason;
 
         item.orderStatus = 'cancelled';
 

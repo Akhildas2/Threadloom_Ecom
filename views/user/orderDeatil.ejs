@@ -10,7 +10,7 @@
       .order-Details {
         background-color: #d4edda;
         /* Light Green background color for the order confirmation section */
-        border-radius: 10px;
+        border-radius: 25px;
         padding: 20px;
         margin-bottom: 20px;
       }
@@ -25,21 +25,33 @@
       <h2>Order Details</h2>
       <hr>
       <div class="row order-Details">
-        <div class="col-12">
-          <% order.items.forEach(item => { %>
-            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>" style="width: 200px;height: 200px;" alt="<%= item.productId.name %>">
-            <%= item.productId.name %>
-            $<%= item.price %>
-            <%= item.orderStatus %>
-            <% if (item.orderStatus !== 'cancelled') { %>
-              <button class="btn-warnings cancel-product" data-item-id="<%= item._id %>">Cancel Product</button>
+        <div class="col-md-12 text-center">
+          <% if (!selectedItem) { %>
+            <div class="alert alert-info" role="alert">
+              No selected item found. Please select an item.
+            </div>
             <% } else { %>
-              <button class="btn-dangers cancel-product" disabled>Cancelled</button>
-            <% } %>
-          <% }) %>
-          
+              <img src="/uploads/product/resized/<%= selectedItem.productId.productImage[0] %>"
+                style="width: 200px;height: 200px;" alt="<%= selectedItem.productId.name %>">
+              <p>
+                <%= selectedItem.productId.name %>
+              </p>
+              <p>$<%= selectedItem.price %>
+              </p>
+              <p>
+                <%= selectedItem.orderStatus %>
+              </p>
+              <% if (selectedItem.orderStatus !=='cancelled' ) { %>
+                <button class="btn-warnings cancel-product" data-item-id="<%= selectedItem._id %>">Cancel
+                  Product</button>
+                <% } else { %>
+                  <button class="btn-dangers cancel-product" disabled>Cancelled</button>
+                  <% } %>
+                    <% } %>
         </div>
-        <div class="col-md-6">
+      </div>
+      <div class="row order-Details">
+        <div class="col-md-6" style="margin-top: 30px;">
           <h3>Order Information</h3>
           <p><strong>Order ID:</strong>
             <%= order.ordersId %>
@@ -53,25 +65,20 @@
           <p><strong>Payment Method:</strong>
             <%= order.paymentMethod %>
           </p>
-
           <p><strong>Payment Status:</strong>
             <%= order.status %>
           </p>
-          <p><strong>Total:</strong>₹<%= order.totalAmount %>
+          <p><strong>Total:</strong> ₹<%= order.totalAmount %>
           </p>
-          
-  
         </div>
-      
-        <div class="col-md-6">
-          <h3>User Information</h3>
+        <div class="col-md-6" style="margin-top: 30px;">
+          <h3>Address</h3>
           <p><strong>Name:</strong>
             <%= order.deliveryAddress.fullName %>
           </p>
           <p><strong>Phone:</strong>
             <%= order.deliveryAddress.mobileNumber %>
           </p>
-          <h3>Address</h3>
           <p><strong>House name:</strong>
             <%= order.deliveryAddress.houseNo %>
           </p>
@@ -90,80 +97,137 @@
         </div>
       </div>
       <br>
-      <div class="row">
-        <div class="col-md-12">
+      <% if (OtherOrders.length> 0) { %>
+        <div class="row">
+          <div class="col-md-12">
             <h3>Other Items</h3>
             <br>
             <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Image</th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Order status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% OtherOrders.forEach(item => { %>
-                            <tr>
-                                <td>
-                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"  style="width: 200px;height: 200px;" alt="<%= item.productId.name %>">
-                                </td>
-                                <td><%= item.productId.name %></td>
-                                <td>$<%= item.price %></td>
-                                <td>
-                                      <%= item.orderStatus %>
-                              </td>
-                                
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Order status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% OtherOrders.forEach(item=> { %>
+                    <tr>
+                      <td>
+                        <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                          <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                            style="width: 200px;height: 200px;" alt="<%= item.productId.name %>">
+                        </a>
+                      </td>
+                      <td>
+                        <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                          <%= item.productId.name %>
+                        </a>
+                      </td>
+                      <td>$<%= item.price %>
+                      </td>
+                      <td>
+                        <%= item.orderStatus %>
+                      </td>
+                    </tr>
+
+                    <% }); %>
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
+        <% } %>
     </div>
-    
+    <!-- Modal for cancellation reason -->
+    <div class="modal fade" id="cancellationModal" tabindex="-1" aria-labelledby="cancellationModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cancellationModalLabel">Reason for Cancellation</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="cancellationForm">
+              <div class="mb-3">
+                <label for="cancellationReason" class="form-label">Cancellation Reason</label>
+                <textarea id="cancellationReason" class="form-control" rows="4"
+                  placeholder="Enter reason for cancellation"></textarea>
+                <div id="cancellationReasonError" class="invalid-feedback"></div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" id="confirmCancellation">Confirm</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <%- include('../layouts/footer.ejs') %>
       <%- include('../layouts/preloader.ejs') %>
         <%- include('../layouts/script.ejs') %>
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/whatwg-fetch/3.6.2/fetch.min.js"></script>
+          <!-- Add SweetAlert JS -->
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
           <script>
             document.querySelectorAll('.cancel-product').forEach(button => {
               button.addEventListener('click', function () {
                 const itemId = this.getAttribute('data-item-id');
-                console.log("itemId", itemId);
-               
-                const orderId = '<%= order._id %>';
-                console.log("order", orderId);
-
-                fetch(`/order/cancel/${orderId}/${itemId}`, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({  itemId, orderId })
-                })
-                  .then(response => {
-                    // Log the raw response
-                    console.log(response);
-                    return response.json();
+                $('#cancellationModal').modal('show');
+                $('#confirmCancellation').on('click', function () {
+                  const cancellationReason = document.getElementById('cancellationReason').value;
+                  if (!cancellationReason.trim()) {
+                    document.getElementById('cancellationReason').classList.add('is-invalid');
+                    document.getElementById('cancellationReasonError').textContent = 'Please enter a reason for cancellation.';
+                    return;
+                  }
+                  const orderId = '<%= order._id %>';
+                  fetch(`/order/cancel/${orderId}/${itemId}`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ itemId, orderId, cancellationReason })
                   })
-                  .then(data => {
-                    if (data.success) {
-                      alert('Product cancelled successfully.');
-                      location.reload(); // Reload the page to reflect the changes
-                    } else {
-                      alert('Failed to cancel product. Please try again.');
-                    }
-                  })
-                  .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                  });
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.success) {
+                        // Use SweetAlert for success message
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Success',
+                          text: 'Cancellation request sent for admin approval.',
+                          confirmButtonText: 'OK',
+                        }).then(() => {
+                          $('#cancellationModal').modal('hide'); // Close the modal
+                          location.reload(); // Reload the page to reflect the changes
+                        });
+                      } else {
+                        // Use SweetAlert for error message
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Failed to cancel product. Please try again.',
+                          confirmButtonText: 'OK'
+                        });
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error:', error);
+                      // Use SweetAlert for generic error message
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        confirmButtonText: 'OK'
+                      });
+                    });
+                });
               });
             });
           </script>

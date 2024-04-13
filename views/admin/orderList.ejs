@@ -38,11 +38,10 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
+                            <th>#Order ID</th>
                             <th scope="col">Total</th>
-                            <th scope="col">Status</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Payment Status</th>
                             <th scope="col">Date</th>
                             <th scope="col" class="text-end">Action</th>
                         </tr>
@@ -50,14 +49,23 @@
                     <tbody>
                         <% orders.forEach(function(order) { %>
                             <tr>
-                                <td><%= order._id %></td>
-                                <td><b><%= order.user.name %></b></td>
-                                <td><b><%= order.user.email %></b></td>
-                                <td>₹<%= order.total %></td>
+                                <td><%= order.ordersId%></td>
+                                <td>₹<%= order.totalAmount %></td>
+                                <td><%= order.paymentMethod %></td>
+
                                 <td>
-                                    <span class="badge rounded-pill alert-warning"><%= order.status %></span>
+                                    <span class="badge rounded-pill 
+                                    <% if (order.status === 'pending') { %> alert-warning text-warning 
+                                    <% } else if (order.status === 'paid') { %> alert-success text-success 
+                                    <% } else if (order.status=== 'retry') { %> alert-success text-info
+                                    <% } else { %> alert-secondary text-secondary <% } %>">
+                                    <%=  order.status %>
+                                </span>
                                 </td>
-                                <td><%= order.createdAt.toLocaleDateString() %></td>
+
+                               
+                                
+                                <td><%= order.date.toDateString() %></td>
                                 <td class="text-end">
                                     <a href="/admin/orderList/orderDetails/<%= order._id %>" class="btn btn-md rounded font-sm">Detail</a>
                                     <div class="dropdown">

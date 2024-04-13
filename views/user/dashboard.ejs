@@ -35,8 +35,8 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-10 m-auto">
-                            <div class="row">
-                                <div class="col-md-4">
+                            <div class="row" >
+                                <div class="col-md-4" style="margin-top: 30px;">
                                     <div class="dashboard-menu">
                                         <ul class="nav flex-column" role="tablist">
                                             <li class="nav-item">
@@ -69,7 +69,7 @@
                                                 <a class="nav-link" href="/logout">
                                                     <i class="fi-rs-sign-out mr-10"></i> Logout
                                                 </a>
-                                                </form>
+
                                             </li>
 
                                         </ul>
@@ -79,7 +79,7 @@
                                     <div class="tab-content dashboard-content">
                                         <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                             aria-labelledby="dashboard-tab">
-                                            <div class="card">
+                                            <div class="card" style="margin-top: 30px;">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Hello <%= userData.name %>
                                                     </h5>
@@ -95,7 +95,7 @@
                                         </div>
                                         <div class="tab-pane fade" id="orders" role="tabpanel"
                                             aria-labelledby="orders-tab">
-                                            <div class="card">
+                                            <div class="card" style="margin-top: 30px;">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Your Orders</h5>
                                                 </div>
@@ -118,33 +118,38 @@
 
                                                                         </tr>
                                                                     </thead>
-                                                                        <% orders.forEach(order => { %>
-                                                                    <tbody>
+                                                                    <% orders.forEach(order=> { %>
+                                                                        <tbody>
 
-                                                                            <% order.items.forEach(item => { %>
-                                                                            <tr>
-                                                                                <td>
-                                                                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"  style="width: 250px;height: 150px;" alt="<%= item.productId.name %>">
-                                                                                </td>
-                                                                                <td><%= item.productId.name %></td>
-                                                                                
-                                                                                <td>₹<%= item.price%> for <%= item.quantity %> item
-                                                                                </td>
-                                                                                <td>
-                                                                                    <%= item.orderStatus %>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <%= order.date.toDateString() %>
-                                                                                </td>
-                                                                                
-                                                                                
-                                                                                <td><a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
-                                                                                        class="btn-small d-block">View</a>
-                                                                                </td>
-                                                                            </tr>
-                                                                            <% }); %>
-                                                                            <% }); %>
-                                                                    </tbody>
+                                                                            <% order.items.forEach(item=> { %>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                                                            style="width: 250px;height: 150px;"
+                                                                                            alt="<%= item.productId.name %>">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <%= item.productId.name %>
+                                                                                    </td>
+
+                                                                                    <td>₹<%= item.price%> for <%=
+                                                                                                item.quantity %> item
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <%= item.orderStatus %>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <%= order.date.toDateString() %>
+                                                                                    </td>
+
+
+                                                                                    <td><a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
+                                                                                            class="btn-small d-block">View</a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <% }); %>
+                                                                                    <% }); %>
+                                                                        </tbody>
                                                                 </table>
                                                             </div>
                                                             <% } %>
@@ -180,21 +185,20 @@
                                         <!--  add or edit address  -->
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
-
-                                            <a href="#" class="btn-lg btn-primary" data-toggle="modal"
-                                                data-target="#addAddressModal">Add Address</a>
-                                            <div class="row" style="margin-top: 20px;">
+                                            <div class="row" style="margin-top: 30px;">
+                                                <a href="#" class="btn-lg btn-primary " data-toggle="modal"
+                                                    data-target="#addAddressModal"style="width: auto; margin-left: 13px; ">Add Address</a>
                                                 <% if (address.length===0) { %>
                                                     <div class="alert alert-info" role="alert">
                                                         No addresses found.Please add address.
                                                     </div>
 
                                                     <% } else { %>
-                                                        <div class="row" style="margin-top: 10px;">
+                                                        <div class="row">
                                                             <% address.forEach(address=> { %>
-                                                                <div class="col-lg-6">
+                                                                <div class="col-lg-6" style="margin-top: 30px;">
                                                                     <div class="card mb-3 mb-lg-0">
-                                                                        <div class="card-header">
+                                                                        <div class="card-header" >
                                                                             <h5 class="mb-0">Manage Address</h5>
                                                                         </div>
                                                                         <div class="card-body">
@@ -381,7 +385,7 @@
                                         <!-- edit profile -->
                                         <div class="tab-pane fade" id="profile" role="tabpanel"
                                             aria-labelledby="profile-tab">
-                                            <div class="card">
+                                            <div class="card" style="margin-top: 30px;">
                                                 <div class="card-header">
                                                     <h5>Profile Details</h5>
                                                 </div>

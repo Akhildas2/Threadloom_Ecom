@@ -1,11 +1,11 @@
 const Order = require("../models/orderModel")
-
+const User = require("../models/userModel")
 
 
 //for loading order list 
 const loadOrderList = async (req, res) => {
     try {
-        const orders = await Order.find().populate('user');;
+        const orders = await Order.find({}).populate('userId');
 
         res.render('orderList', { orders })
 
@@ -21,8 +21,8 @@ const loadOrderList = async (req, res) => {
 //for deatil order list
 const deatilOrderList = async (req, res) => {
     try {
-
-        const order = await Order.findById(req.params.id).populate('items').populate('address').populate("user");
+        const id=req.params.id
+        const order = await Order.findById(id).populate('items.productId').populate("userId");
 
         res.render('orderDetails', { order });
 

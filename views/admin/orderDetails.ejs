@@ -16,12 +16,12 @@
                             <span>
                                 <i class="material-icons md-calendar_today"></i>
                                 <b>
-                                    <%= order.createdAt.toLocaleDateString() %>, <%=
-                                            order.createdAt.toLocaleTimeString() %>
+                                    <%= order.date %>
                                 </b>
                             </span>
                             <br />
-                            <small class="text-muted">Order ID: <%= order._id %></small>
+                            <br>
+                            <small >Order ID: <%= order.ordersId %></small>
                         </div>
                         <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                             <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" >
@@ -49,9 +49,9 @@
                                 <div class="text">
                                     <h6 class="mb-1">Customer</h6>
                                     <p class="mb-1">
-                                        <%= order.user.name %> <br />
-                                            <%= order.user.email %> <br />
-                                                <%= order.user.mobile %> <br />
+                                        <%= order.userId.name %> <br />
+                                            <%= order.userId.email %> <br />
+                                                <%= order.userId.mobile %> <br />
 
                                                     <br />
 
@@ -70,7 +70,7 @@
                                     <p class="mb-1">
                                         Shipping: Fargo express <br />
                                         Pay method: COD <br />
-                                        Status: <%= order.status %>
+                                       Payment Status: <%= order.status %>
                                     </p>
                                     <!-- <a href="#">Download info</a> -->
                                 </div>
@@ -84,13 +84,13 @@
                                 <div class="text">
                                     <h6 class="mb-1">Deliver to</h6>
                                     <p class="mb-1">
-                                        <%= order.address.fullName %> <br />
-                                            <%= order.address.mobileNumber %> <br />
-                                                House: <%= order.address.houseNo %>, <%= order.address.area %> <br />
-                                                        City: <%= order.address.city %>, <%= order.address.state %>
+                                        <%= order.deliveryAddress.fullName %> <br />
+                                            <%= order.deliveryAddress.mobileNumber %> <br />
+                                                House: <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %> <br />
+                                                        City: <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>
                                                                 <br />
                                                                 <br />
-                                                                Pin <%= order.address.pincode%>
+                                                                Pin <%= order.deliveryAddress.pincode%>
                                     </p>
                                     <!-- <a href="#">View profile</a> -->
                                 </div>
@@ -98,92 +98,74 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-7">
+                        <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table">
                                     <thead>
                                         <tr>
                                             <th width="40%">Product</th>
-                                            <th width="20%">Unit Price</th>
-                                            <!-- <th width="20%">Quantity</th> -->
+                                            <th width="20%">Price</th>
+                                            <th width="20%">Order Status</th>
                                             <th width="20%" class="text-end">Total</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% order.items.forEach(function(item) { %>
-                                            <tr>
-                                                <td>
-                                                    <a class="itemside" href="#">
-                                                        <div class="left">
-                                                            <img src="/uploads/product/resized/<%=item.productImage[0] %>"
-                                                                alt="" style="height: 50px; width: 50px;">
-
-                                                        </div>
-                                                        <div class="info">
-                                                            <%= item.name %>, <%= item.size %>
-                                                        </div>
-                                                    </a>
+                                        <tr>
+                                            <td>
+                                                <a class="itemside" href="#">
+                                                    <div class="left">
+                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>" alt="" style="height: 100px; width: 100px;">
+                                                    </div>
+                                                    <div class="info">
+                                                        <%= item.productId.name %>, <%= item.productId.size %>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td  >₹<%= item.price %></td>
+                                            <td>
+                                                <span class="badge rounded-pill 
+                                                <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
+                                                <% } else if (item.orderStatus === 'placed') { %> alert-success text-primary 
+                                                <% } else if (item.orderStatus === 'ship') { %> alert-success text-info
+                                                <% } else if (item.orderStatus === 'delivered') { %> alert-success text-success 
+                                                <% } else if (item.orderStatus === 'cancelled') { %> alert-danger text-danger 
+                                                <% } else { %> alert-secondary text-secondary <% } %>">
+                                                <%= item.orderStatus %>
+                                            </span>
+                                            
                                                 </td>
-                                                <td>₹<%= item.price %>
-                                                </td>
-                                                <!-- <td><#%= order.quantity %></td> -->
-                                                <td class="text-end">₹<%= order.total %>
-                                                </td>
-                                            </tr>
-                                            <% }); %>
-                                                <tr>
-                                                    <td colspan="4">
-                                                        <article class="float-end">
-                                                            <dl class="dlist">
-                                                                <dt>Subtotal:</dt>
-                                                                <dd>₹<%= order.total %>
-                                                                </dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Shipping cost:</dt>
-                                                                <dd>Free Shipping</dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Grand total:</dt>
-                                                                <dd><b class="h5">₹<%= order.total %></b></dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt class="text-muted">Status:</dt>
-                                                                <dd>
-                                                                    <span
-                                                                        class="badge rounded-pill alert-success text-success">
-                                                                        <%= order.status %>
-                                                                    </span>
-                                                                </dd>
-                                                            </dl>
-                                                        </article>
-                                                    </td>
-                                                </tr>
+                                            <td class="text-end">₹<%= item.total %></td>
+                                        </tr>
+                                        <% }); %>
+                                        <br>
+                                      
+                                        <tr>
+                                            <td colspan="4" style="padding-top: 30px;">
+                                                <article class="float-end">
+                                                    <dl class="dlist">
+                                                        <dt>Subtotal:</dt>
+                                                        <dd>₹<%= order.totalAmount %></dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Shipping cost:</dt>
+                                                        <dd>Free Shipping</dd>
+                                                    </dl>
+                                                    <dl class="dlist">
+                                                        <dt>Grand total:</dt>
+                                                        <dd><b class="h5">₹<%= order.totalAmount %></b></dd>
+                                                    </dl>
+                                                    
+                                                </article>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <a class="btn btn-primary" href="page-orders-tracking.html">View Order Tracking</a>
                         </div>
                         <div class="col-lg-1"></div>
-                        <!-- <div class="col-lg-4">
-                    <div class="box shadow-sm bg-light">
-                        <h6 class="mb-15">Payment info</h6>
-                        <p>
-                            <img src="assets/imgs/card-brands/2.png" class="border" height="20" />
-                            <#%= order.paymentMethod %> **** **** <%#= order.paymentLastFourDigits %> <br />
-                            Business name: <#%= order.businessName %> <br />
-                            Phone: <#%= order.phoneNumber %>
-                        </p>
-                    </div> -->
-                        <!-- <div class="h-25 pt-4">
-                        <div class="mb-3">
-                            <label>Notes</label>
-                            <textarea class="form-control" name="notes" id="notes" placeholder="Type some note"></textarea>
-                        </div>
-                        <button class="btn btn-primary">Save note</button>
-                    </div> -->
                     </div>
-                </div>
+                    
             </div>
             </div>
         </section>
