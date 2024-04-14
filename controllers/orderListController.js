@@ -39,17 +39,23 @@ const deatilOrderList = async (req, res) => {
 
 
 //change order status
-const changeOrderStatus = async (req, res) => {
+const updateStatus = async (req, res) => {
     try {
-        const order = await Order.findById(req.params.orderId);
+        const {orderId,productId,newStatus}=req.body;
+        const order = await Order.findById(orderId).populate('items.productId');
         console.log("order", order);
         if (!order) return res.status(404).json({ message: 'Order not found' });
+        const item = order.items.find(item => item.productId._id.toString() === productId);
+        if (!item) return res.status(404).json({ message: 'Item not found' });
+        item.orderStatus = newStatus;
+       const ordersave= await order.save();
+       console.log("ordersave",ordersave);
+       res.status(200).json({ message: 'success', order });
 
-        order.status = req.body.status;
-        await order.save();
-        res.render('orderDetails', { order });
 
     } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
 
     }
 }
@@ -59,6 +65,6 @@ const changeOrderStatus = async (req, res) => {
 module.exports = {
     loadOrderList,
     deatilOrderList,
-    changeOrderStatus
+    updateStatus
 
 }

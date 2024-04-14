@@ -21,22 +21,24 @@
                             </span>
                             <br />
                             <br>
-                            <small >Order ID: <%= order.ordersId %></small>
+                            <small>Order ID: <%= order.ordersId %></small>
                         </div>
-                        <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200" >
-                                <option value="cancelled">Cancelled</option>
-                                <option value="confirmed">Confirmed</option>
+
+                        <!-- <div class="col-lg-6 col-md-6 ms-auto text-md-end">
+                            <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
+                                <option value="pending">Pending</option>
+                                <option value="placed">Placed</option>
                                 <option value="shipped">Shipped</option>
                                 <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
                             </select>
-                            
-                            
+
+
                             <a class="btn btn-primary" href="#">Save</a>
-                            <!-- <a class="btn btn-secondary print ms-2" href="#">
+                            <a class="btn btn-secondary print ms-2" href="#">
                                 <i class="icon material-icons md-print"></i>
-                            </a> -->
-                        </div>
+                            </a>
+                        </div> -->
                     </div>
                 </header>
                 <div class="card-body">
@@ -70,7 +72,7 @@
                                     <p class="mb-1">
                                         Shipping: Fargo express <br />
                                         Pay method: COD <br />
-                                       Payment Status: <%= order.status %>
+                                        Payment Status: <%= order.status %>
                                     </p>
                                     <!-- <a href="#">Download info</a> -->
                                 </div>
@@ -86,8 +88,10 @@
                                     <p class="mb-1">
                                         <%= order.deliveryAddress.fullName %> <br />
                                             <%= order.deliveryAddress.mobileNumber %> <br />
-                                                House: <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %> <br />
-                                                        City: <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>
+                                                House: <%= order.deliveryAddress.houseNo %>, <%=
+                                                        order.deliveryAddress.area %> <br />
+                                                        City: <%= order.deliveryAddress.city %>, <%=
+                                                                order.deliveryAddress.state %>
                                                                 <br />
                                                                 <br />
                                                                 Pin <%= order.deliveryAddress.pincode%>
@@ -103,74 +107,145 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th width="40%">Product</th>
-                                            <th width="20%">Price</th>
+                                            <th width="25%">Product</th>
+                                            <th width="25%">Product Name</th>
+                                            <th width="10%">Price</th>
                                             <th width="20%">Order Status</th>
-                                            <th width="20%" class="text-end">Total</th>
+                                            <th width="10%">Sub Total</th>
+                                            <th width="10%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <% order.items.forEach(function(item) { %>
-                                        <tr>
-                                            <td>
-                                                <a class="itemside" href="#">
-                                                    <div class="left">
-                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>" alt="" style="height: 100px; width: 100px;">
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                            alt="" class="img-fluid">
                                                     </div>
-                                                    <div class="info">
-                                                        <%= item.productId.name %>, <%= item.productId.size %>
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td  >₹<%= item.price %></td>
-                                            <td>
-                                                <span class="badge rounded-pill 
+                                                </td>
+
+                                                <td class="align-middle">
+                                                    <%= item.productId.name %>, <%= item.productId.size %>
+
+                                                <td class="align-middle">₹<%= item.price %>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <span class="badge rounded-pill 
                                                 <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
-                                                <% } else if (item.orderStatus === 'placed') { %> alert-success text-primary 
+                                                <% } else if (item.orderStatus === 'placed') { %> alert-success text-primary
                                                 <% } else if (item.orderStatus === 'ship') { %> alert-success text-info
                                                 <% } else if (item.orderStatus === 'delivered') { %> alert-success text-success 
                                                 <% } else if (item.orderStatus === 'cancelled') { %> alert-danger text-danger 
                                                 <% } else { %> alert-secondary text-secondary <% } %>">
-                                                <%= item.orderStatus %>
-                                            </span>
-                                            
+                                                        <%= item.orderStatus %>
+                                                    </span>
                                                 </td>
-                                            <td class="text-end">₹<%= item.total %></td>
-                                        </tr>
-                                        <% }); %>
-                                        <br>
-                                      
-                                        <tr>
-                                            <td colspan="4" style="padding-top: 30px;">
-                                                <article class="float-end">
-                                                    <dl class="dlist">
-                                                        <dt>Subtotal:</dt>
-                                                        <dd>₹<%= order.totalAmount %></dd>
-                                                    </dl>
-                                                    <dl class="dlist">
-                                                        <dt>Shipping cost:</dt>
-                                                        <dd>Free Shipping</dd>
-                                                    </dl>
-                                                    <dl class="dlist">
-                                                        <dt>Grand total:</dt>
-                                                        <dd><b class="h5">₹<%= order.totalAmount %></b></dd>
-                                                    </dl>
-                                                    
-                                                </article>
-                                            </td>
-                                        </tr>
+                                                <td class="align-middle">₹<%= item.total %>
+                                                </td>
+                                                <td class="align-middle">
+                                                    <form class="update-status-form">
+                                                        <input type="hidden" name="productId"
+                                                            value="<%= item.productId._id %>">
+                                                        <select name="newStatus" class="form-select">
+                                                            <option value="pending">Pending</option>
+                                                            <option value="placed">Placed</option>
+                                                            <option value="shipped">Shipped</option>
+                                                            <option value="delivered">Delivered</option>
+                                                            <option value="cancelled">Cancelled</option>
+                                                        </select>
+                                                        <% if (item.orderStatus==='cancelled' ) { %>
+                                                            <button type="submit" class="btn btn-primary btn-sm"
+                                                                disabled>Update</button>
+                                                            <% } else { %>
+                                                                <button type="submit"
+                                                                    class="btn btn-primary btn-sm">Update</button>
+                                                                <% } %>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="6" style="border-top: 1px solid #000;"></td> <!-- Add a horizontal line within the table row -->
+                                            </tr>
+                                            <% }); %>
+                                                <tr>
+                                                    <td colspan="5" style="padding-top: 30px;">
+                                                        <article class="float-end">
+                                                            <dl class="dlist">
+                                                                <dt>Subtotal:</dt>
+                                                                <dd>₹<%= order.totalAmount %>
+                                                                </dd>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt>Shipping cost:</dt>
+                                                                <dd>Free Shipping</dd>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt>Grand total:</dt>
+                                                                <dd><b class="h5">₹<%= order.totalAmount %></b></dd>
+                                                            </dl>
+                                                        </article>
+                                                    </td>
+                                                </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class="col-lg-1"></div>
                     </div>
-                    
-            </div>
+
+                </div>
             </div>
         </section>
 
+        <!-- Add SweetAlert -->
+        <!-- Add SweetAlert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- Add Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script>
+            document.querySelectorAll('.update-status-form').forEach(form => {
+                form.addEventListener("submit", function (event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(form);
+                    const orderId = '<%= order._id %>';
+                    const productId = formData.get('productId');
+                    const newStatus = formData.get('newStatus');
+
+                    axios.put('/admin/orderList/orderDetails/updateStatus', { orderId, productId, newStatus })
+                        .then(response => {
+                            // Show success message using SweetAlert
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: 'success',
+                                title: 'Status Updated',
+                                text: 'The order status has been updated successfully!',
+                            }).then(() => {
+                                // Optionally, you can reload the page after updating the status
+                                location.reload();
+                            });
+                        })
+                        .catch(error => {
+                            // Show error message using SweetAlert
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Something went wrong! Please try again later.',
+                            });
+                        });
+                });
+            });
+        </script>
+
         <%- include('../adminLayouts/footer.ejs') %>
-
-
-            

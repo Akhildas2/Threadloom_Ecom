@@ -14,7 +14,7 @@ cartRoute.get('/listProductsInCart', auth.isLogin,cartController.listProductsInC
 
 cartRoute.delete('/removeFromCart/:id', auth.isLogin, cartController.removeFromCart);
 cartRoute.delete('/clear', auth.isLogin, cartController.clearCart);
-cartRoute.put('/updateQuantity/:itemId',auth.isLogin,cartController.updateQuantity)
+cartRoute.put('/updateQuantity/:itemId',auth.isLogin,cartController.updateQuantity);
 
 
 module.exports = cartRoute;

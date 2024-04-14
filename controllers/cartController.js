@@ -144,6 +144,7 @@ module.exports = {
   listProductsInCart,
   removeFromCart,
   clearCart,
-  updateQuantity
+  updateQuantity,
+ 
 
 } 

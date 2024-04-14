@@ -14,7 +14,7 @@ orderListRoute.set('views', './views/admin');
 
 orderListRoute.get('/',orderListController.loadOrderList);
 orderListRoute.get('/orderDetails/:id',orderListController.deatilOrderList);
-orderListRoute.put('/:orderId/status', orderListController.changeOrderStatus);
+orderListRoute.put('/orderDetails/updateStatus', orderListController.updateStatus);
 
 
 
