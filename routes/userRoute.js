@@ -22,12 +22,7 @@ userRoute.post('/login',userController.verifyLogin)
 userRoute.post('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/productdetails/:productId', userController.productDetails);
-userRoute.get('/dashboard',auth.isLogin,userController.loadDashboard)
-userRoute.put("/dashboard/:userId",auth.isLogin,userController.updateUser)
-userRoute.put("/changePassword",auth.isLogin,userController.changePassword)
-userRoute.post("/addAddress",auth.isLogin,userController.addAddress);
-userRoute.put("/editAddress/:addressId", auth.isLogin, userController.editAddress);
-userRoute.delete("/deleteAddress/:addressId",auth.isLogin,userController.deleteAddress)
+
 // Route for initiating Google authentication
 userRoute.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

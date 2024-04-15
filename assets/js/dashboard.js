@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('mobile-error').innerText = '';
         }
 
-        if (!isValid) { // Changed condition to check if the form is not valid
+        if (!isValid) { 
             console.log('Form validation failed');
             return false;
         }
@@ -108,10 +108,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!isValid) {
             return;
         }
+        const userId = document.querySelector('#profileForm').getAttribute('data-user-id');
 
-
-        axios.put('/changePassword', Object.fromEntries(formData))
+        axios.put(`/dashboard/changePassword/${userId}`, Object.fromEntries(formData))
             .then(response => {
+                console.log("response",response);
                 if (response.data.status) {
                     Swal.fire({
                         icon: "success",
@@ -189,7 +190,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             const formData = new FormData(this);
 
-            axios.post('/addAddress', Object.fromEntries(formData))
+            axios.post('/dashboard/addAddress', Object.fromEntries(formData))
                 .then(response => {
                     if (response.data.status) {
                         Swal.fire({
@@ -281,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             const formData = new FormData(this);
-            axios.put('/editAddress/' + addressId, Object.fromEntries(formData))
+            axios.put('/dashboard/editAddress/' + addressId, Object.fromEntries(formData))
                 .then(response => {
 
                     if (response.data.status) {
@@ -332,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (result.isConfirmed) {
                     // If confirmed, proceed with the deletion
                     $.ajax({
-                        url: '/deleteAddress/' + addressId,
+                        url: '/dashboard/deleteAddress/' + addressId,
                         type: 'DELETE',
                         success: function (response) {
                             Swal.fire(
