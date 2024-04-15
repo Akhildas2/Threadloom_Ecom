@@ -97,8 +97,10 @@
                                                                     <td class="price" data-title="Price"><span>₹<%=
                                                                                 item.productId.price%>
                                                                         </span></td>
+                                                                        
                                                                     <td class="text-center" data-title="Quantity">
                                                                         <div class="detail-qty border radius m-auto">
+                                                                            
                                                                             <a href="#" class="qty-down"
                                                                                 onclick="decrementQuantity('<%= item._id %>')">-</a>
                                                                             <span class="qty-val"
@@ -217,11 +219,11 @@
                                                 title: 'Deleted!',
                                                 text: 'Your item has been removed from the cart.',
                                                 icon: 'success',
-                                                timer: 3000, // 3 seconds
-                                                timerProgressBar: true, // Show a progress bar
+                                                timer: 3000,
+                                                timerProgressBar: true,
                                                 showConfirmButton: false,
                                             });
-                                            // Optionally, refresh the page or update the cart UI here
+
                                             location.reload();
                                         } else {
                                             Swal.fire(
@@ -259,7 +261,7 @@
                                     method: 'DELETE',
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        // Include any necessary authentication headers here
+
                                     },
                                 })
                                     .then(response => response.json())
@@ -271,11 +273,10 @@
                                                     text: 'Your cart has been cleared.',
                                                     icon: 'success',
                                                     timer: 2000,
-                                                    timerProgressBar: true, // Show a progress bar
+                                                    timerProgressBar: true,
                                                     showConfirmButton: false,
                                                 }
                                             );
-                                            // Optionally, refresh the page or update the cart UI here
                                             location.reload();
                                         } else {
                                             Swal.fire(
@@ -297,7 +298,7 @@
                         });
                     }
 
-                    
+
                     function incrementQuantity(itemId) {
                         const currentQuantityElement = document.querySelector(`span[data-item-id="${itemId}"]`);
                         if (!currentQuantityElement) {
@@ -306,7 +307,7 @@
                         }
                         const currentQuantity = parseInt(currentQuantityElement.textContent);
                         const newQuantity = currentQuantity + 1;
-                        updateCartItemQuantity(itemId, newQuantity);
+                        updateCartItemQuantity(itemId, newQuantity, currentQuantityElement);
                     }
 
                     function decrementQuantity(itemId) {
@@ -318,11 +319,17 @@
                         const currentQuantity = parseInt(currentQuantityElement.textContent);
                         const newQuantity = currentQuantity - 1;
                         if (newQuantity > 0) {
-                            updateCartItemQuantity(itemId, newQuantity);
+                            updateCartItemQuantity(itemId, newQuantity, currentQuantityElement);
                         }
                     }
 
-                    function updateCartItemQuantity(itemId, newQuantity) {
+                    function updateCartItemQuantity(itemId, newQuantity, quantityElement) {
+                        const subtotalElement = quantityElement.closest('tr').querySelector('.text-right');
+                        if (!subtotalElement) {
+                            console.error(`Subtotal element for itemId="${itemId}" not found.`);
+                            return;
+                        }
+
                         fetch(`/cart/updateQuantity/${itemId}`, {
                             method: 'PUT',
                             headers: {
@@ -337,15 +344,35 @@
                                 throw new Error('Failed to update quantity');
                             })
                             .then(data => {
-                                // Optionally, you can handle success here without showing any alert
-                                console.log('Quantity updated successfully');
-                                // Optionally, refresh the page or update the cart UI here
-                                location.reload();
+                                // Update the quantity display
+                                quantityElement.textContent = newQuantity;
+                                // Update the subtotal display
+                                const priceElement = quantityElement.closest('tr').querySelector('.price span');
+                                const price = parseFloat(priceElement.textContent.replace('₹', ''));
+                                const newSubtotal = price * newQuantity;
+                                subtotalElement.textContent = `₹${newSubtotal.toFixed(2)}`;
+
+                                // Update the cart subtotal and total
+                                updateCartTotals(newSubtotal);
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                // Optionally, you can handle error here without showing any alert
                             });
+                    }
+
+                    function updateCartTotals(newSubtotal) {
+
+                        const cartSubtotalElement = document.querySelector('.cart_total_amount span');
+                        const cartTotalElement = document.querySelector('.cart_total_amount strong span');
+
+                        if (!cartSubtotalElement || !cartTotalElement) {
+                            console.error('Cart subtotal or total elements not found.');
+                            return;
+                        }
+
+                        // Update the cart subtotal and total
+                        cartSubtotalElement.textContent = `₹${newSubtotal.toFixed(2)}`;
+                        cartTotalElement.textContent = `₹${newSubtotal.toFixed(2)}`;
                     }
 
                 </script>
