@@ -218,7 +218,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ productId, quantity,price }),
+                    body: JSON.stringify({ productId, quantity, price }),
                 })
                     .then(response => {
                         if (response.redirected) {
@@ -242,13 +242,22 @@
 
                     .then(data => {
                         if (data.status) {
-                            Swal.fire({
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "success",
                                 title: 'Success!',
                                 text: data.message,
-                                icon: 'success',
-                                timer: 3000, // 3 seconds
-                                timerProgressBar: true, // Show a progress bar
-                                showConfirmButton: false, // Hide the confirm button
+
                             }).then(() => {
                                 window.location.href = '/cart';
                             });

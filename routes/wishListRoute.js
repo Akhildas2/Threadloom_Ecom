@@ -9,4 +9,7 @@ const userAuth=require('../middleware/userAuth');
 
 wishListRoute.get('/',wishListController.loadWishlist)
 
+wishListRoute.post('/addToWishList/:productId',userAuth.isLogin,wishListController.addToWishList)
+
+
 module.exports = wishListRoute;

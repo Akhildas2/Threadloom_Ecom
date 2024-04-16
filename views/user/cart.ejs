@@ -97,10 +97,10 @@
                                                                     <td class="price" data-title="Price"><span>₹<%=
                                                                                 item.productId.price%>
                                                                         </span></td>
-                                                                        
+
                                                                     <td class="text-center" data-title="Quantity">
                                                                         <div class="detail-qty border radius m-auto">
-                                                                            
+
                                                                             <a href="#" class="qty-down"
                                                                                 onclick="decrementQuantity('<%= item._id %>')">-</a>
                                                                             <span class="qty-val"
@@ -360,19 +360,39 @@
                             });
                     }
 
-                    function updateCartTotals(newSubtotal) {
+                    function updateCartTotals() {
+                        // Get all the rows containing cart items
+                        const cartRows = document.querySelectorAll('.shopping-summery tbody tr');
+                        let totalPrice = 0;
 
+                        // Loop through each cart item row
+                        cartRows.forEach(row => {
+                            const priceElement = row.querySelector('.price span');
+                            const quantityElement = row.querySelector('.qty-val');
+                            const subtotalElement = row.querySelector('.text-right');
+
+                            if (priceElement && quantityElement && subtotalElement) {
+                                // Extract price and quantity values
+                                const price = parseFloat(priceElement.textContent.replace('₹', ''));
+                                const quantity = parseInt(quantityElement.textContent);
+                                const subtotal = price * quantity;
+
+                                // Update the subtotal display
+                                subtotalElement.textContent = `₹${subtotal.toFixed(2)}`;
+
+                                // Add subtotal to total price
+                                totalPrice += subtotal;
+                            }
+                        });
+
+                        // Update the cart subtotal and total
                         const cartSubtotalElement = document.querySelector('.cart_total_amount span');
                         const cartTotalElement = document.querySelector('.cart_total_amount strong span');
 
-                        if (!cartSubtotalElement || !cartTotalElement) {
-                            console.error('Cart subtotal or total elements not found.');
-                            return;
+                        if (cartSubtotalElement && cartTotalElement) {
+                            cartSubtotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
+                            cartTotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
                         }
-
-                        // Update the cart subtotal and total
-                        cartSubtotalElement.textContent = `₹${newSubtotal.toFixed(2)}`;
-                        cartTotalElement.textContent = `₹${newSubtotal.toFixed(2)}`;
                     }
 
                 </script>

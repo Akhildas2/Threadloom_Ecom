@@ -5,8 +5,7 @@
   <div class="page-header breadcrumb-wrap">
       <div class="container">
           <div class="breadcrumb">
-              <a href="index.html" rel="nofollow">Home</a>
-              <span></span> Shop
+              <a href="/" rel="nofollow">Home</a>
               <span></span> Wishlist
           </div>
       </div>
@@ -15,6 +14,16 @@
       <div class="container">
           <div class="row">
               <div class="col-12">
+                <% if (!req.session.user_id) { %>
+                    <!-- Show message to login -->
+                    <div class="alert alert-warning" role="alert">
+                        Please <a href="/login">login</a> to view your wishlist.
+                    </div>
+                    <% } else if (wishlist.length===0) { %>
+                        <div class="alert alert-info" role="alert">
+                            hai buddy Your wishlist is empty. Please add some items to wishlist .
+                        </div>
+                        <% } else { %>
                   <div class="table-responsive">
                       <table class="table shopping-summery text-center">
                           <thead>
@@ -27,14 +36,19 @@
                               </tr>
                           </thead>
                           <tbody>
+                            <% wishlist.forEach(item=> { %>
+
                               <tr>
-                                  <td class="image product-thumbnail"><img src="assets/imgs/shop/product-1-1.jpg" alt="#"></td>
+                                
+                                  <td class="image product-thumbnail"> <img src="/uploads/product/resized/<%=item.productId.productImage[0] %>"
+                                    alt="#"></td>
                                   <td class="product-des product-name">
-                                      <h5 class="product-name"><a href="shop-product-right.html">J.Crew Mercantile Women's Short-Sleeve</a></h5>
-                                      <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
-                                      </p>
+                                      <h5 class="product-name">  <%= item.productId.name %></h5>
+                                      <!-- <p class="font-xs">Maboriosam in a tonto nesciung eget<br> distingy magndapibus.
+                                      </p> -->
                                   </td>
-                                  <td class="price" data-title="Price"><span>$65.00 </span></td>
+                                  <td class="price" data-title="Price"><span>₹<%=
+                                    item.productId.price%></span></td>
                                   <td class="text-center" data-title="Stock">
                                       <span class="color3 font-weight-bold">In Stock</span>
                                   </td>
@@ -43,11 +57,13 @@
                                   </td>
                                   <td class="action" data-title="Remove"><a href="#"><i class="fi-rs-trash"></i></a></td>
                               </tr>
-                    
+                              <% }); %>
                           </tbody>
                       </table>
                   </div>
               </div>
+              <% } %>
+
           </div>
       </div>
   </section>
