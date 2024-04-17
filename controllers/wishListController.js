@@ -18,6 +18,8 @@ const loadWishlist = async (req, res) => {
 }
 
 
+
+//for add to wish  list 
 const addToWishList = async (req, res) => {
   console.log("entered");
 
@@ -37,7 +39,7 @@ const addToWishList = async (req, res) => {
     }
     const wishListItem = new WishList({
       user: userId,
-      item: productId
+      productId: productId
     })
     await wishListItem.save()
     return res.status(201).json({ status: true, message: "Item added to wishlist successfully" });
@@ -49,11 +51,32 @@ const addToWishList = async (req, res) => {
 
 
 
+//for delete from wish list
+
+const RemoveFromWishList = async (req, res) => {
+  try {
+    const userId=req.session.user_id
+    console.log("userId",userId)
+    const {productId}=req.params
+    console.log("productId",productId)
+    const whishlist=await WishList.deleteOne({user:userId,productId:productId})
+    console.log("whishlist",whishlist)
+   
+    if (whishlist.deletedCount === 0) {
+      return res.status(404).json({ message: 'whishlist item not found or not removed' });
+    }
+    res.status(200).json({ status: true, message: 'whishlist item removed successfully' });
 
 
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
 
+  }
+}
 
 module.exports = {
   loadWishlist,
-  addToWishList
+  addToWishList,
+  RemoveFromWishList
 }

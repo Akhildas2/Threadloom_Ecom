@@ -86,7 +86,7 @@ const removeFromCart = async (req, res) => {
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'Cart item not found or not removed' });
     }
-    res.status(200).json({ message: 'Cart item removed successfully' });
+    res.status(200).json({  status: true,message: 'Cart item removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -104,7 +104,7 @@ const clearCart = async (req, res) => {
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: 'No cart items found to clear' });
     }
-    res.status(200).json({ message: 'Cart cleared successfully' });
+    res.status(200).json({  status: true,message: 'Cart cleared successfully' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -128,7 +128,7 @@ const updateQuantity = async (req, res) => {
     cartItem.quantity = quantity;
     const updateIteam=await cartItem.save();
 
-    return res.status(200).json({ message: 'Cart item quantity updated successfully' });
+    return res.status(200).json({ status: true, message: 'Cart item quantity updated successfully' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });
