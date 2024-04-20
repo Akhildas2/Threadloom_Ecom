@@ -88,7 +88,7 @@ const addCategory = async (req, res) => {
 // Load List Category
 const loadListCategory = async (req, res) => {
     try {
-        const categories = await Category.find({isUnlisted:false});
+        const categories = await Category.find({});
         
         res.render('listCategories', { categories });
     } catch (error) {
@@ -206,23 +206,6 @@ const unlistCategory  = async (req, res) => {
 
 
 
-//for loading unlist category and list 
-const loadUnListCategory = async (req, res) => {
-    try {
-        const categories = await Category.find({isUnlisted:true });
-        
-        res.render('unlistCategories', { categories });
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
-
-
-
-
-
-
 // for  listing the category
 const listCategory = async (req, res) => {
     try {
@@ -237,7 +220,7 @@ const listCategory = async (req, res) => {
         console.log("Listed successful");
         res.status(200).json({
             status: true,
-            url: '/admin/category/unlistcategories'
+            url: '/admin/category/listcategories'
         });
        
     } catch (error) {
@@ -260,5 +243,4 @@ module.exports = {
     editCategory,
     unlistCategory ,
     listCategory ,
-    loadUnListCategory 
 };

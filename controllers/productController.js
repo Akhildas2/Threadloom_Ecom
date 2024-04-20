@@ -119,7 +119,7 @@ const productListPage = async (req, res) => {
         const limit = 10;
         const skip = (page - 1) * limit;
 
-        let query = { isUnlisted: false };
+        let query = {};
 
         let selectedCategory = req.query.category || '';
 
@@ -127,23 +127,21 @@ const productListPage = async (req, res) => {
             query.category = req.query.category;
         }
 
-
         const products = await Product.find(query)
             .populate('category')
             .skip(skip)
             .limit(limit);
 
-
         const totalCount = await Product.countDocuments(query);
-        const totalPages = Math.ceil(totalCount / limit)
-        const categories = await Category.find({ isUnlisted: false })
+        const totalPages = Math.ceil(totalCount / limit);
+        const categories = await Category.find();
         res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory });
     } catch (error) {
-
         console.error(error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
+
 
 
 
@@ -323,20 +321,6 @@ const unlistProduct = async (req, res) => {
 
 
 
-//for loading unlist category and list 
-const loadUnListProduct = async (req, res) => {
-    try {
-        const product = await Product.find({ isUnlisted: true }).populate('category');
-
-        res.render('unlistProduct', { product });
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
-
-
-
 
 
 // for updating listing the category
@@ -353,7 +337,7 @@ const listProduct = async (req, res) => {
         console.log("Listed successful");
         res.status(200).json({
             status: true,
-            url: '/admin/product/unlistProduct'
+            url: '/admin/product/listProduct'
         });
 
 
@@ -374,7 +358,6 @@ module.exports = {
     loadEditProduct,
     editProduct,
     unlistProduct,
-    loadUnListProduct,
     listProduct,
     deletePhoto
 

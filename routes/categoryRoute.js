@@ -21,7 +21,6 @@ categoryRoute.get('/editcategory/:categoryId', auth.isLogin, categoryController.
 categoryRoute.put('/editcategory/:categoryId', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
 
 categoryRoute.put('/unlistcategories/:categoryId', auth.isLogin, categoryController.unlistCategory);
-categoryRoute.get('/unlistcategories', auth.isLogin, categoryController.loadUnListCategory );
 
 
 module.exports = categoryRoute;

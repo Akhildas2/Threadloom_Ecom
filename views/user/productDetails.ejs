@@ -118,10 +118,10 @@
                                                                 to cart</button>
 
                                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                                href="shop-wishlist.html"><i
+                                                            onclick="addToWishList('<%= products._id %>')" ><i
                                                                     class="fi-rs-heart"></i></a>
                                                             <a aria-label="Compare" class="action-btn hover-up"
-                                                                href="shop-compare.html"><i
+                                                            href="#"><i
                                                                     class="fi-rs-shuffle"></i></a>
                                                         </form>
                                                     </div>
@@ -131,7 +131,7 @@
                                                         <button class="button sold-out">Sold Out</button>
                                                         <a aria-label="Add To Wishlist"
                                                             class="action-btn hover-up wishlist"
-                                                            href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                            onclick="addToWishList('<%= products._id %>')"><i class="fi-rs-heart"></i></a>
                                                     </div>
                                                     <% } %>
                                         </div>
@@ -282,6 +282,80 @@
                         }
                     });
             });
+
+            
+            function addToWishList(productId) {
+
+
+                fetch('/wishList/addTowishList/' + productId, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ productId }),
+                })
+
+                    .then(response => {
+                        if (response.redirected) {
+                            return Swal.fire({
+                                title: 'Login Required',
+                                text: 'You must be logged in to add items to your Wishlist.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Login',
+                                cancelButtonText: 'Cancel',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login';
+                                } else {
+                                    throw new Error('Action cancelled');
+                                }
+                            });
+                        }
+                        return response.json();
+                    })
+
+                    .then(data => {
+                        if (data.status) {
+                            // Show a success message using SweetAlert2
+                            const Toast = Swal.mixin({
+                                toast: true,
+                                position: "top-end",
+                                showConfirmButton: false,
+                                timer: 3000,
+                                timerProgressBar: true,
+                                didOpen: (toast) => {
+                                    toast.onmouseenter = Swal.stopTimer;
+                                    toast.onmouseleave = Swal.resumeTimer;
+                                }
+                            });
+                            Toast.fire({
+                                icon: "success",
+                                title: 'Success!',
+                                text: data.message,
+                            });
+
+                        } else {
+                            // Handle errors
+                            Swal.fire({
+                                title: 'Error!',
+                                text: data.message,
+                                icon: 'error',
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        if (!err.data.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: err.response.data.message,
+                            });
+                        } else {
+                            console.error(err);
+                        }
+                    });
+            }
 
         </script>
         <%- include('../layouts/footer.ejs') %>

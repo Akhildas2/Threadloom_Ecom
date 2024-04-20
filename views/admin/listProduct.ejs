@@ -17,13 +17,13 @@
                             <form class="searchform" action="/admin/product/listproduct" method="get">
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="searchInput" placeholder="Search name">
-            
+
                                     <select name="category" class="input-filter">
                                         <option value="">All Categories</option>
                                         <% categories.forEach(category=> { %>
                                             <option value="<%= category._id.toString() %>"
-                                                <%=selectedCategory.toString()===category._id.toString() ? 'selected' : ''
-                                                %>><%= category.categoryName %>
+                                                <%=selectedCategory.toString()===category._id.toString() ? 'selected'
+                                                : '' %>><%= category.categoryName %>
                                             </option>
                                             <% }); %>
                                     </select>
@@ -38,92 +38,99 @@
                 <div class="row">
                     <!-- Action Buttons -->
                     <div class="col-12 text-end">
-                        <a href="/admin/product/unlistproduct" class="btn btn-danger btn unlist-category">Unlist products</a>
+                       
                         <a href="/admin/product/addproduct" class="btn btn-primary btn-sm add-category">Add product</a>
                     </div>
                 </div>
             </div>
-            
-                <!-- List Products -->
-                <div class="row mt-4">
-                    <div class="col-md-12 mb-4">
-                       <div class="card product-heading">
-                            <div class="card-body text-center">
-                                <h3 class="card-title">Products List:</h3>
-                            </div>
+
+            <!-- List Products -->
+            <div class="row mt-4">
+                <div class="col-md-12 mb-4">
+                    <div class="card product-heading">
+                        <div class="card-body text-center">
+                            <h3 class="card-title">Products List:</h3>
                         </div>
                     </div>
                 </div>
+            </div>
 
 
-                <div class="card-body">
-                    <% for (let i=0; i < products.length; i++) { %>
-                        <article class="itemlist">
-                            <div class="row align-items-center">
-                                <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
-                                    <%= i + 1 %>
-                                </div>
-                                <div class="col-lg-2 col-md-2 col-sm-2 col-4 col-name">
-                                    <a class="itemside" href="#">
-                                        <div class="left">
-                                            <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
-                                                alt="<%= products[i].name %> Image" style="width: 50px;">
-                                        </div>
-                                        <div class="info">
-                                            <h7 class="mb-0">
-                                                <%= products[i].name %>
-                                            </h7>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="col-lg-1 col-md-4 col-sm-3 col-6 col-name text-end">
-                                    <span>
-                                        <% if (products[i].category) { %>
-                                            <p>
-                                                <%= products[i].category.categoryName %>
-                                            </p>
-                                            <% } else { %>
-                                                <p>No category assigned</p>
-                                                <% } %>
-                                    </span>
-                                </div>
-                                <div class="col-lg-2 col-md-3 col-sm-6 col-12">
-                                    <div class="info">
-                                        <p>
-                                            <%= products[i].description.slice(0, 100) %>
-                                        </p>
+            <div class="card-body">
+                <% for (let i=0; i < products.length; i++) { %>
+                    <article class="itemlist">
+                        <div class="row align-items-center">
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
+                                <%= i + 1 %>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-4 col-name">
+                                <a class="itemside" href="#">
+                                    <div class="left">
+                                        <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                            alt="<%= products[i].name %> Image" style="width: 50px;">
                                     </div>
-                                </div>
-                                <div class="col-lg-1 col-md-2 col-sm-2 col-3 col-price"> <span>
-                                        <%= products[i].gender %>
-                                    </span> </div>
-                                <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                        ₹<%= products[i].price %>
-                                    </span> </div>
-                                <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                        <%= products[i].size %>
-                                    </span> </div>
-                                <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                        <%= products[i].stockCount %>
-                                    </span> </div>
-                                <!-- <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-status">
-                                <span class="badge rounded-pill alert-success">Active</span>
-                                </div> -->
-                                <div class="col-lg-2 col-md-3 col-sm-6 col-8 col-action text-end">
-                                    <a href="/admin/product/editproduct/<%= products[i]._id %>"
-                                        class="btn btn-sm font-sm rounded btn-brand edit-product"
-                                        data-product-id="<%= products[i]._id %>">
-                                        <i class="material-icons md-edit"></i> Edit
-                                    </a>
-                                    <button class="btn btn-warning btn-sm  rounded unlist-product"
-                                        data-product-id="<%= products[i]._id %>">Unlist</button>
+                                    <div class="info">
+                                        <h7 class="mb-0">
+                                            <%= products[i].name %>
+                                        </h7>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-1 col-md-4 col-sm-3 col-6 col-name text-end">
+                                <span>
+                                    <% if (products[i].category) { %>
+                                        <p>
+                                            <%= products[i].category.categoryName %>
+                                        </p>
+                                        <% } else { %>
+                                            <p>No category assigned</p>
+                                            <% } %>
+                                </span>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-12">
+                                <div class="info">
+                                    <p>
+                                        <%= products[i].description.slice(0, 100) %>
+                                    </p>
                                 </div>
                             </div>
-                            <!-- row .// -->
-                        </article>
-                        <% } %>
-                            <!-- itemlist  .// -->
-                </div>
+                            <div class="col-lg-1 col-md-2 col-sm-2 col-3 col-price"> <span>
+                                    <%= products[i].gender %>
+                                </span> </div>
+                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                    ₹<%= products[i].price %>
+                                </span> </div>
+                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                    <%= products[i].size %>
+                                </span> </div>
+                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                    <%= products[i].stockCount %>
+                                </span> </div>
+                            <!-- <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-status">
+                                <span class="badge rounded-pill alert-success">Active</span>
+                                </div> -->
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-8 col-action text-end">
+                                <a href="/admin/product/editproduct/<%= products[i]._id %>"
+                                    class="btn btn-sm font-sm rounded btn-brand edit-product"
+                                    data-product-id="<%= products[i]._id %>">
+                                    <i class="material-icons md-edit"></i> Edit
+                                </a>
+                                <% if ( !products[i].isUnlisted) { %>
+                                    <button class="btn btn-warning btn-sm  rounded unlist-product"
+                                        data-product-id="<%= products[i]._id %>">Unlist</button>
+                                    <% } else { %>
+                                        <button class="btn btn-danger btn-sm btn-list"
+                                            data-product-id="<%= products[i]._id %>">List</button>
+
+                                        <% } %>
+
+                            </div>
+                        </div>
+                        <!-- row .// -->
+                    </article>
+                    <% } %>
+                        <!-- itemlist  .// -->
+            </div>
 
 
 
@@ -241,6 +248,47 @@
                                             Swal.fire({
                                                 title: 'Error',
                                                 text: 'An error occurred while unlisting the product.',
+                                                icon: 'error'
+                                            });
+                                            console.error('Error:', error);
+                                        });
+                                }
+                            });
+                        });
+                    });
+                });
+                document.addEventListener('DOMContentLoaded', function () {
+                    const listButtons = document.querySelectorAll('.btn-list');
+
+                    listButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const productId = this.getAttribute('data-product-id');
+
+                            Swal.fire({
+                                title: 'Are you sure you want to list this product?',
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, List it!',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    axios.put(`/admin/product/listProduct/${productId}`)
+                                        .then(response => {
+                                            // Handle success response
+                                            Swal.fire({
+                                                title: 'Product Listed Successfully!',
+                                                icon: 'success'
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    window.location.href = response.data.url; // Redirect to the URL received from the server
+                                                }, 1000); // Add a time delay for redirecting
+                                            });
+                                        })
+                                        .catch(error => {
+                                            // Handle error
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: 'An error occurred while listing the product.',
                                                 icon: 'error'
                                             });
                                             console.error('Error:', error);

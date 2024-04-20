@@ -21,7 +21,6 @@ productRoute.put('/editproduct/:productId',auth.isLogin, productController.uploa
 productRoute.delete('/deletephoto/:productId/:photoName', productController.deletePhoto);
 
 productRoute.put('/unlistproduct/:productId', auth.isLogin, productController.unlistProduct);
-productRoute.get('/unlistproduct', auth.isLogin, productController.loadUnListProduct );
 
 
 

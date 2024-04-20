@@ -55,13 +55,13 @@ const addToWishList = async (req, res) => {
 
 const RemoveFromWishList = async (req, res) => {
   try {
-    const userId=req.session.user_id
-    console.log("userId",userId)
-    const {productId}=req.params
-    console.log("productId",productId)
-    const whishlist=await WishList.deleteOne({user:userId,productId:productId})
-    console.log("whishlist",whishlist)
-   
+    const userId = req.session.user_id
+    console.log("userId", userId)
+    const { productId } = req.params
+    console.log("productId", productId)
+    const whishlist = await WishList.deleteOne({ user: userId, productId: productId })
+    console.log("whishlist", whishlist)
+
     if (whishlist.deletedCount === 0) {
       return res.status(404).json({ message: 'whishlist item not found or not removed' });
     }
@@ -75,8 +75,28 @@ const RemoveFromWishList = async (req, res) => {
   }
 }
 
+
+
+//fro clear all wishlist
+const clearWishList = async (req, res) => {
+  try {
+    const userId = req.session.user_id;
+    const result = await WishList.deleteMany({ user: userId })
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ message: 'No cart items found to clear' });
+    }
+    res.status(200).json({ status: true, message: 'Cart cleared successfully' });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+
+}
+
 module.exports = {
   loadWishlist,
   addToWishList,
-  RemoveFromWishList
+  RemoveFromWishList,
+  clearWishList
 }

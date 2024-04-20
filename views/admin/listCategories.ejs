@@ -1,120 +1,143 @@
 <%- include('../adminLayouts/header.ejs') %>
-    <%- include('../adminLayouts/navbar.ejs') %>
-      
-        <section class="content-main">
-            <div class="container">
-                <div class="content-header">
-                    <h2 class="content-title card-title">Manage Categories</h2>
+<%- include('../adminLayouts/navbar.ejs') %>
 
-                </div>
-                <div class=" col-md-12 mb-6 text-end">
-                    <a href="/admin/category/unlistcategories" class="btn btn-danger btn unlist category">Unlist Category</a>
-                <a href="/admin/category/addcategory" class="btn btn-primary btn-sm add-category" >Add Category</a>
-            </div>
-            <br>
-                <!-- List Categories -->
-                <div class="row ">
-                    <h3 class="content-title card-title" style="text-align: center;">Categories List :</h3>
-                    <% for (let i=0; i < categories.length; i++) { %>
-                        <div class="col-md-4 mb-4">
-                            <div class="category-box">
-
-                                <h4 class="content-title card-title" style="text-align: center;">Category <%= i + 1 %>
-                                </h4>
-
-                                <div class="category-info">
-                                    <h3>
-                                        <%= categories[i].categoryName %>
-                                    </h3>
-                                    <img src="/uploads/category/resized/<%= categories[i].categoryPhoto %>"
-                                        alt="Category Photo">
-                                </div>
-                                <div class="category-actions">
-                                    <a href="#" class="btn btn-primary btn-sm edit-category"
-                                        data-category-id="<%= categories[i]._id %>">Edit</a>
-                                    <form action="/admin/category/unlistCategories/<%= categories[i]._id %>?_method=put"
-                                        method="post" class="d-inline">
-                                        <button type="submit" class="btn btn-danger btn-sm unlist-category"
-                                            data-category-id="<%= categories[i]._id %>">Unlist</button>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
+<section class="content-main">
+    <div class="container">
+        <div class="content-header">
+            <h2 class="content-title card-title">Manage Categories</h2>
+        </div>
+        <div class="col-md-12 mb-6 text-end">
+            <a href="/admin/category/addcategory" class="btn btn-primary btn-sm add-category">Add Category</a>
+        </div>
+        <br>
+        <!-- List Categories -->
+        <div class="row">
+            <h3 class="content-title card-title" style="text-align: center;">Categories List :</h3>
+            <% for (let i=0; i < categories.length; i++) { %>
+            <div class="col-md-4 mb-4">
+                <div class="category-box">
+                    <h4 class="content-title card-title" style="text-align: center;">Category <%= i + 1 %></h4>
+                    <div class="category-info">
+                        <h3><%= categories[i].categoryName %></h3>
+                        <img src="/uploads/category/resized/<%= categories[i].categoryPhoto %>" alt="Category Photo">
+                    </div>
+                    <div class="category-actions">
+                        <a href="#" class="btn btn-primary btn-sm edit-category" data-category-id="<%= categories[i]._id %>">Edit</a>
+                        <% if (!categories[i].isUnlisted) { %>
+                        <button type="submit" class="btn btn-warning btn-sm unlist-category" data-category-id="<%= categories[i]._id %>">Unlist</button>
+                        <% } else { %>
+                        <button class="btn btn-danger btn-lg btn-list" data-category-id="<%= categories[i]._id %>">List</button>
                         <% } %>
+                    </div>
                 </div>
             </div>
-            
-    
-        </section>
+            <% } %>
+        </div>
+    </div>
+</section>
 
-        <!-- Add SweetAlert -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Add SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <!-- Add Axios -->
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const editButtons = document.querySelectorAll('.edit-category');
-                const unlistButtons = document.querySelectorAll('.unlist-category');
+<!-- Add Axios -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editButtons = document.querySelectorAll('.edit-category');
+        const unlistButtons = document.querySelectorAll('.unlist-category');
 
-                editButtons.forEach(button => {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault(); // Prevent the default form submission
-
-                        const categoryId = this.getAttribute('data-category-id');
-                        Swal.fire({
-                            title: 'Are you sure you want to edit this category?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, edit it!',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                window.location.href = `/admin/category/editcategory/${categoryId}`;
-                            }
-                        });
-                    });
-                });
-
-                unlistButtons.forEach(button => {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault();
-                        const categoryId = this.getAttribute('data-category-id');
-                        Swal.fire({
-                            title: 'Are you sure you want to unlist this category?',
-                            icon: 'question',
-                            showCancelButton: true,
-                            confirmButtonText: 'Yes, unlist it!',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                axios.put(`/admin/category/unlistCategories/${categoryId}`)
-                                    .then(response => {
-                                        // Handle success response
-                                        Swal.fire({
-                                            title: 'Category Unlisted Successfully!',
-                                            icon: 'success'
-                                        }).then(() => {
-                                            setTimeout(() => {
-                                                window.location.href = response.data.url; // Redirect to the URL received from the server
-                                            }, 1000);
-                                        });
-                                    })
-                                    .catch(error => {
-                                        // Handle error
-                                        Swal.fire({
-                                            title: 'Error',
-                                            text: 'An error occurred while unlisting the category.',
-                                            icon: 'error'
-                                        });
-                                        console.error('Error:', error);
-                                    });
-                            }
-                        });
-                    });
+        editButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const categoryId = this.getAttribute('data-category-id');
+                Swal.fire({
+                    title: 'Are you sure you want to edit this category?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, edit it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = `/admin/category/editcategory/${categoryId}`;
+                    }
                 });
             });
-        </script>
+        });
 
-        <%- include('../adminLayouts/footer.ejs') %>
+        unlistButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+                event.preventDefault();
+                const categoryId = this.getAttribute('data-category-id');
+                Swal.fire({
+                    title: 'Are you sure you want to unlist this category?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, unlist it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.put(`/admin/category/unlistCategories/${categoryId}`)
+                            .then(response => {
+                                Swal.fire({
+                                    title: 'Category Unlisted Successfully!',
+                                    icon: 'success'
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        window.location.href = response.data.url;
+                                    }, 1000);
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An error occurred while unlisting the category.',
+                                    icon: 'error'
+                                });
+                                console.error('Error:', error);
+                            });
+                    }
+                });
+            });
+        });
+
+        const listButtons = document.querySelectorAll('.btn-list');
+
+        listButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const categoryId = this.getAttribute('data-category-id');
+
+                Swal.fire({
+                    title: 'Are you sure you want to list this category?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, List it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.put(`/admin/category/listCategories/${categoryId}`)
+                            .then(response => {
+                                Swal.fire({
+                                    title: 'Category Listed Successfully!',
+                                    icon: 'success'
+                                }).then(() => {
+                                    setTimeout(() => {
+                                        window.location.href = response.data.url;
+                                    }, 1000);
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'An error occurred while listing the category.',
+                                    icon: 'error'
+                                });
+                                console.error('Error:', error);
+                            });
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+<%- include('../adminLayouts/footer.ejs') %>

@@ -13,5 +13,7 @@ wishListRoute.post('/addToWishList/:productId',userAuth.isLogin,wishListControll
 
 wishListRoute.delete('/removeFromWishList/:productId',userAuth.isLogin,wishListController.RemoveFromWishList)
 
+wishListRoute.delete('/clear',userAuth.isLogin,wishListController.clearWishList)
+
 
 module.exports = wishListRoute;
