@@ -327,7 +327,6 @@ const unlistProduct = async (req, res) => {
 const listProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
-        // Find the category by ID and update the 'deleted' field to true
         const product = await Product.findByIdAndUpdate(productId, { isUnlisted: false }, { new: true });
 
         if (!productId) {

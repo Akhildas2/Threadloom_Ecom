@@ -3,7 +3,7 @@ const Product = require('../models/productModel')
 const Otp = require('../models/otpModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-const Category=require("../models/categoryModel")
+const Category = require("../models/categoryModel")
 
 
 //for loading the home page
@@ -12,7 +12,7 @@ const loadHome = async (req, res) => {
 
         const products = await Product.find({ isUnlisted: false }).populate('category');
         const categories = await Category.find({});
-        res.render('home', { req, products ,categories});
+        res.render('home', { req, products, categories });
 
 
     } catch (error) {
@@ -111,14 +111,14 @@ const sendVerifyOtp = async (name, email, otp) => {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
-                user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASSWORD 
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
             }
         });
 
         // Send OTP to user's email
         const mailOptions = {
-            from:process.env.EMAIL_USER,
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'Your OTP For Verification',
             text: `Hello ${name},\n\nYour OTP is: ${otp}\n\nThis OTP is valid for 1 minutes.`
@@ -194,7 +194,7 @@ const verifyOtp = async (req, res) => {
 
         //for updating is_verified
         const updateInfo = await User.updateOne({ email: req.cookies.email }, { isVerified: true });
-      
+
         // OTP is valid, clear the OTP cookie
         res.clearCookie('email');
         // Delete OTP record from the database
@@ -323,7 +323,7 @@ const verifyLogin = async (req, res) => {
 //for user logout
 const userLogout = async (req, res) => {
     try {
-        delete req.session.user_id; 
+        delete req.session.user_id;
 
         res.redirect('/')
     } catch (error) {
@@ -389,13 +389,54 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 
 
 //for shop showing product
-const shop = async (req,res)=>{
+const shop = async (req, res) => {
     try {
+        const { search, sort, filter, page = 1, limit = 4 } = req.query;
+        let query = { isUnlisted: false };
+        const currentPage = parseInt(page, 10);
+        if (search) {
+            query.name = { $regex: search, $options: 'i' }
+        }
+        if (filter) {
+            query.category = filter;
+        }
+        
+        let sortQuery = {}
+        switch (sort) {
+            case 'popularity':
+                sortQuery = { popularity: -1 };
+                break;
+            case 'priceinc':
+                sortQuery = { price: 1 };
+                break;
+            case 'priceDesc':
+                sortQuery = { price: -1 }; 
+                break;
+            case 'featured':
+                sortQuery = { isFeatured: -1 };
+                break;
+            case 'newArrivals':
+                sortQuery = { createdAt: -1 };
+                break;
+            case 'az':
+                sortQuery = { name: 1 };
+                break;
+            case 'za':
+                sortQuery = { name: -1 };
+                break;
+            default:
+                sortQuery = { createdAt: -1 };
+        }
+        const products = await Product.find(query)
+            .populate('category')
+            .sort(sortQuery)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit));
 
-        const products = await Product.find({ isUnlisted: false }).populate('category');
+    const totalCount = await Product.countDocuments(query);
+        const totalPages = Math.ceil(totalCount / limit);
 
-        res.render('shop', { req, products });
-
+        res.render('shop', { req, products, totalPages, currentPage, limit, sort, filter });
 
     } catch (error) {
         console.log(error.message);

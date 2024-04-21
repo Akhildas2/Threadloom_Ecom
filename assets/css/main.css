@@ -9859,7 +9859,7 @@ span.fi-rs-apps {
         line-height: 1.3;
     }
     .banner-bg h2 {
-        font-size: 20px;
+        font-size: 18px;
     }
     .single-header .single-header-meta,
     .entry-bottom {
@@ -9947,16 +9947,16 @@ span.fi-rs-apps {
         padding-top: 0;
     }
     .hero-slider-1.style-3 .hero-slider-content-2 h1 {
-        font-size: 18px;
-    }
-    .hero-slider-1.style-3 .hero-slider-content-2 h2 {
         font-size: 16px;
     }
-    .hero-slider-1.style-3 .hero-slider-content-2 h4 {
+    .hero-slider-1.style-3 .hero-slider-content-2 h2 {
         font-size: 14px;
     }
+    .hero-slider-1.style-3 .hero-slider-content-2 h4 {
+        font-size: 12px;
+    }
     .hero-slider-1.style-3 .hero-slider-content-2 p {
-        font-size: 11px;
+        font-size: 10px;
     }
     .hero-slider-1.style-3 .hero-slider-content-2 a.btn {
         display: none;
@@ -9965,14 +9965,14 @@ span.fi-rs-apps {
         display: none;
     }
     .header-style-5 .header-action-2 .header-action-icon-2>a {
-        font-size: 18px;
+        font-size: 16px;
     }
     .header-style-5 .sticky-bar.stick.sticky-white-bg {
         background-color: #fff;
         padding: 15px 0;
     }
     .font-xxl {
-        font-size: 28px;
+        font-size: 24px;
     }
     .w-50 {
         width: 100% !important;
@@ -10048,7 +10048,7 @@ span.fi-rs-apps {
         width: 50%;
     }
     .nav-tabs .nav-link {
-        font-size: 13px;
+        font-size: 11px;
         padding: 10px 12px;
     }
     .deal {
@@ -10066,7 +10066,7 @@ span.fi-rs-apps {
         margin-bottom: 20px !important;
     }
     .product-list-small .title-small {
-        font-size: 16px;
+        font-size: 10px;
         font-weight: 600;
     }
     .newsletter .des {
@@ -10131,10 +10131,13 @@ span.fi-rs-apps {
     }
     .col-lg-4 .banner-img {
         margin-bottom: 30px;
+        
     }
     .banner-features {
         margin-bottom: 30px;
     }
+  
+   
 }
 
 /*small phone*/
@@ -10143,10 +10146,12 @@ span.fi-rs-apps {
     .entry-meta .hit-count,
     .entry-meta.meta-2 .font-xs {
         display: none;
+        font-size: 10px; 
     }
     .deal {
         padding: 30px;
     }
+  
 }
 
 .zoomContainer {

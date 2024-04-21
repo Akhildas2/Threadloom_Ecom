@@ -38,7 +38,8 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>#Order ID</th>
+                            <th>#</th>
+                            <th>Order ID</th>
                             <th scope="col">Total</th>
                             <th scope="col">Payment Method</th>
                             <th scope="col">Payment Status</th>
@@ -47,8 +48,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% orders.forEach(function(order) { %>
+                        <% orders.forEach(function(order,index) { %>
                             <tr>
+                                <td><%= index + 1 %></td>
                                 <td><%= order.ordersId%></td>
                                 <td>₹<%= order.totalAmount %></td>
                                 <td><%= order.paymentMethod %></td>
