@@ -15,7 +15,7 @@
             <section class="mt-50 mb-50">
                 <div class="container">
                     <div class="row flex-row-reverse">
-                        <div class="col-9">
+                        <div class="col-8">
                             <div class="shop-product-fillter style-2">
                                 <div class="totall-product">
                                     <p> We found <strong class="text-brand">688</strong> items for you!</p>
@@ -71,13 +71,13 @@
                                     aria-labelledby="tab-one">
                                     <div class="row product-grid-4">
                                         <% for(let i=0; i<products.length; i++) { %>
-                                            <div class="col-lg-3 col-md-4 col-sm-6  col-6">
+                                            <div class="col-lg-4 col-md-4 col-sm-6  col-12">
                                                 <div class="product-cart-wrap mb-30">
                                                     <div class="product-img-action-wrap">
-                                                        <div class="product-img product-img-zoom">
+                                                        <div class="product-img product-img-zoom ">
 
                                                             <a href="/productdetails/<%= products[i]._id %>">
-                                                                <img class="default-img"
+                                                                <img class="default-img "
                                                                     src="/uploads/product/resized/<%= products[i].productImage[0] %>"
                                                                     alt="">
                                                                 <img class="hover-img"
@@ -132,11 +132,13 @@
                                                             </span>
                                                         </div>
                                                         <div class="product-price">
-                                                            <span>₹<%= products[i].price %> </span>
+                                                            <span>₹<%= products[i].price %></span>
                                                             <% if(products[i].price) { %>
                                                                 <span class="old-price">₹<%= products[i].price %></span>
                                                                 <% } %>
+
                                                         </div>
+
                                                         <div class="product-action-1 show">
                                                             <button aria-label="Add To Cart" class="action-btn hover-up"
                                                                 onclick="addToCart('<%= products[i]._id %>','<%=products[i].price %>')">
@@ -156,22 +158,28 @@
 
 
                         </div>
-                        <div class="col-3 primary-sidebar sticky-sidebar ">
+                        <div class="col-lg-3 col-sm-3 col-4 primary-sidebar sticky-sidebar ">
                             <div class="widget-category mb-30">
                                 <label for="category">Category</label>
+
                                 <select class="form-control" id="categoryFilter" name="categoryFilter">
-                                    <option value="">-----Choose category-----</option>
-                                    <% products.forEach(function(product) { %>
-                                        <option value="<%= product.category._id %>">
-                                            <%= product.category.categoryName %>
+                                    <option value="">All</option>
+                                    <% category.forEach(function(category) { %>
+                                        <option value="<%= category._id %>">
+                                            <%= category.categoryName %>
                                         </option>
                                         <% }); %>
                                 </select>
+
+
+                                </select>
+
 
                             </div>
                             <!-- Fillter By Price -->
                             <div class="sidebar-widget price_range range mb-30">
                                 <div class="widget-header position-relative mb-20 pb-10">
+
                                     <h5 class="widget-title mb-10">Fill by price</h5>
                                     <div class="bt-1 border-color-1"></div>
                                 </div>
@@ -216,29 +224,14 @@
                                                 for="exampleCheckbox5"><span>XXL</span></label>
                                             <br>
                                         </div>
-                                        <!-- <label class="fw-900 mt-15">Item Condition</label>
-                                        <div class="custome-checkbox">
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="exampleCheckbox11" value="">
-                                            <label class="form-check-label" for="exampleCheckbox11"><span>New
-                                                    (1506)</span></label>
-                                            <br>
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="exampleCheckbox21" value="">
-                                            <label class="form-check-label" for="exampleCheckbox21"><span>Refurbished
-                                                    (27)</span></label>
-                                            <br>
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="exampleCheckbox31" value="">
-                                            <label class="form-check-label" for="exampleCheckbox31"><span>Used
-                                                    (45)</span></label>
-                                        </div> -->
+
                                     </div>
                                 </div>
 
-                                <a href="#" class="btn-sm btn-default" id="applyFilterBtn">
-                                    <span class="d-none d-sm-inline"><i class="fi-rs-filter"></i> Filter</span>
+                                <a href="#" class=" btn-sm btn-default" id="applyFilterBtn">
+                                    <span><i class="fi-rs-filter"></i>Filter</span>
                                 </a>
+
 
                             </div>
 
@@ -249,30 +242,14 @@
                 <div class="pagination-area mt-30 mb-50" id="pagination-container">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination justify-content-end">
-                            <% if (currentPage> 1) { %>
-                                <li class="page-item"><a class="page-link" onclick="changePage(1)"><i
-                                            class="material-icons md-chevron_left"></i></a></li>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <% if (i===currentPage) { %>
+                                    <li class="page-item active"><a class="page-link" onclick="changePage(`<%= i %>`, '<%= sort %>')"><%= i %></a></li>
+                                <% } else { %>
+                                    <li class="page-item"><a class="page-link" onclick="changePage(`<%= i %>`, '<%= sort %>')"><%= i %></a></li>
                                 <% } %>
-
-                                    <% for (let i=1; i <=totalPages; i++) { %>
-                                        <% if (i===currentPage) { %>
-                                            <li class="page-item active"><a class="page-link"
-                                                    onclick="changePage(`<%= i %>`)">
-                                                    <%= i %>
-                                                </a></li>
-                                            <% } else { %>
-                                                <li class="page-item"><a class="page-link"
-                                                        onclick="changePage(`<%= i %>`)">
-                                                        <%= i %>
-                                                    </a></li>
-                                                <% } %>
-                                                    <% } %>
-                                                        <% if (currentPage < totalPages) { %>
-                                                            <li class="page-item"><a class="page-link"
-                                                                    onclick="changePage(`<%= totalPages %>`)"><i
-                                                                        class="material-icons md-chevron_right"></i></a>
-                                                            </li>
-                                                            <% } %>
+                            <% } %>
+                            
                         </ul>
                     </nav>
                 </div>
@@ -436,10 +413,8 @@
                                 });
                         }
 
-
                         function changePage(page) {
-                            const sort = '<%= sort %>'; // Assuming sort is available in the template context
-                            const filter = '<%= filter %>'; // Assuming filter is available in the template context
+                            const sort = '<%= sort %>';
 
                             fetch(`/shop?page=${page}&sort=${sort}&filter=${filter}`, {
                                 method: 'GET',
@@ -449,15 +424,10 @@
                             })
                                 .then(response => response.text())
                                 .then(data => {
-                                    // Assuming the server returns the new content as HTML
-                                    // Replace the content of the pagination container with the new content
                                     document.getElementById('pagination-container').innerHTML = data;
                                 })
                                 .catch(error => console.error('Error:', error));
                         }
-
-
-
 
 
 

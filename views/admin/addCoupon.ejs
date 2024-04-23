@@ -1,0 +1,123 @@
+<%- include('../adminLayouts/header.ejs') %>
+<%- include('../adminLayouts/navbar.ejs') %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h2>Add Coupon</h2>
+                </div>
+                <div class="card-body">
+                    <form id="addCouponForm">
+                        <div class="mb-3">
+                            <label for="couponName" class="form-label">Coupon Name</label>
+                            <input type="text" class="form-control" id="couponName" name="couponName">
+                            <div class="error-message" id="couponName-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="couponCode" class="form-label">Coupon Code</label>
+                            <input type="text" class="form-control" id="couponCode" name="couponCode">
+                            <div class="error-message" id="couponCode-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="discount" class="form-label">Discount (%)</label>
+                            <input type="number" class="form-control" id="discount" name="discount">
+                            <div class="error-message" id="discount-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="expiryDate" class="form-label">Expiry Date</label>
+                            <input type="date" class="form-control" id="expiryDate" name="expiryDate">
+                            <div class="error-message" id="expiryDate-error"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="criteriaAmount" class="form-label">Coupon Criteria Amount</label>
+                            <input type="number" class="form-control" id="criteriaAmount" name="criteriaAmount">
+                            <div class="error-message" id="criteriaAmount-error"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Coupon</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Include Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- Include SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.getElementById('addCouponForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Create FormData object
+        const formData = new FormData(this);
+
+        // Convert FormData to object
+        const formDataObject = {};
+        formData.forEach((value, key) => {
+            formDataObject[key] = value;
+        });
+
+        // Validation function
+        function validateForm(formData) {
+            let isValid = true;
+            for (const [key, value] of formData.entries()) {
+                const errorMessage = document.getElementById(`${key}-error`);
+                if (!value.trim()) {
+                    errorMessage.textContent = `${key} is required`;
+                    errorMessage.classList.add('error');
+                    isValid = false;
+                } else if ((key === 'discount' || key === 'criteriaAmount') && parseFloat(value) < 1) {
+                    errorMessage.textContent = `${key} must be greater than or equal to 1`;
+                    errorMessage.classList.add('error');
+                    isValid = false;
+                } else if (key === 'discount' && (parseFloat(value) < 1 || parseFloat(value) > 99)) {
+                    errorMessage.textContent = `${key} must be between 1 and 99`;
+                    errorMessage.classList.add('error');
+                    isValid = false;
+                } else if (key === 'expiryDate') {
+                    const today = new Date();
+                    const selectedDate = new Date(value);
+                    today.setHours(0, 0, 0, 0); // Set time to start of day for accurate comparison
+                    if (selectedDate < today) {
+                        errorMessage.textContent = `${key} must be greater than or equal to today`;
+                        errorMessage.classList.add('error');
+                        isValid = false;
+                    } else {
+                        errorMessage.textContent = '';
+                        errorMessage.classList.remove('error');
+                    }
+                } else {
+                    errorMessage.textContent = '';
+                    errorMessage.classList.remove('error');
+                }
+            }
+            return isValid;
+        }
+
+        // Validate the form
+        if (!validateForm(formData)) {
+            return; // If validation fails, do not proceed further
+        }
+
+       
+        axios.post('/admin/coupon/addCoupon', formDataObject)
+            .then(function (response) {
+                console.log(response.data);
+                // Handle success
+                alert('Coupon added successfully!');
+                // Redirect or reload the page as needed
+            })
+            .catch(function (error) {
+                // Handle error
+                alert('An error occurred while adding the coupon.');
+            });
+    });
+
+</script>
+
+<%- include('../adminLayouts/footer.ejs') %>

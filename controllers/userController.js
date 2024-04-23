@@ -391,17 +391,13 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { search, sort, filter, page = 1, limit = 4 } = req.query;
-        let query = { isUnlisted: false };
+        const { sort, page , limit = 4 } = req.query;
+        console.log("req.",req.query)
         const currentPage = parseInt(page, 10);
-        if (search) {
-            query.name = { $regex: search, $options: 'i' }
-        }
-        if (filter) {
-            query.category = filter;
-        }
-        
-        let sortQuery = {}
+
+        let query = { isUnlisted: false };
+      
+        let sortQuery = {};
         switch (sort) {
             case 'popularity':
                 sortQuery = { popularity: -1 };
@@ -410,7 +406,7 @@ const shop = async (req, res) => {
                 sortQuery = { price: 1 };
                 break;
             case 'priceDesc':
-                sortQuery = { price: -1 }; 
+                sortQuery = { price: -1 };
                 break;
             case 'featured':
                 sortQuery = { isFeatured: -1 };
@@ -427,23 +423,30 @@ const shop = async (req, res) => {
             default:
                 sortQuery = { createdAt: -1 };
         }
+
         const products = await Product.find(query)
             .populate('category')
             .sort(sortQuery)
             .skip((page - 1) * limit)
             .limit(parseInt(limit));
-
-    const totalCount = await Product.countDocuments(query);
+        const category = await Category.find({isUnlisted: false});
+        const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
 
-        res.render('shop', { req, products, totalPages, currentPage, limit, sort, filter });
-
+        res.render('shop', {
+            req,
+            products,
+            totalPages,
+            currentPage,
+            limit,
+            sort,
+            category,
+        });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
-}
-
+};
 
 
 

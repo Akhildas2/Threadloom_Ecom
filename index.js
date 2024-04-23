@@ -66,6 +66,12 @@ const wishListRoute=require('./routes/wishListRoute')
 //for dashboard route
 const dashboardRoute=require('./routes/dashboardRoute')
 
+//for coupon route
+const couponRoute=require('./routes/couponRoute')
+
+
+
+
 
 app.use('/admin', express.static('adminAssets'));
 app.use('/uploads', express.static('uploads'));
@@ -84,6 +90,7 @@ app.use('/order',orderRoute)
 app.use('/admin/orderList',orderListRoute)
 app.use('/wishList',wishListRoute)
 app.use('/dashboard',dashboardRoute)
+app.use('/admin/coupon',couponRoute)
 
 
 
