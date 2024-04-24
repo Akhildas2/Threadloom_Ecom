@@ -28,57 +28,62 @@
                     <h2 class="content-title card-title">User Management</h2>
                 </div>
                 <div class="row">
-                    <h4 class="content-title card-title">Products List:</h4>
+                    <% if (users.length===0) { %>
+                        <div class="alert alert-info" role="alert">
+                            No users found.
+                        </div>
 
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Mobile</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% users.forEach((user, index)=> { %>
-                                <tr>
-                                    <td>
-                                        <%= index + 1 %>
-                                    </td>
-                                    <td>
-                                        <%= user.name %>
-                                    </td>
-                                    <td>
-                                        <%= user.email %>
-                                    </td>
-                                    <td>
-                                        <%= user.mobile %>
-                                    </td>
-                                    <td class="<%= user.isBlocked ? 'text-danger' : 'text-success' %>">
-                                        <%= user.isBlocked ? 'Blocked' : 'Active' %>
-                                    </td>
-                                    <td>
-                                        <% if (user.isBlocked) { %>
-                                            <button class="btn btn-sm btn-success unblock-btn"
-                                                data-user-id="<%= user._id %>">Unblock</button>
-                                            <% } else { %>
-                                                <button class="btn btn-sm btn-danger block-btn"
-                                                    data-user-id="<%= user._id %>">Block</button>
-                                                <% } %>
-                                    </td>
-                                </tr>
-                                <tr class="line"></tr>
-
-
-                                <% }); %>
+                        <% } else { %>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Mobile</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
 
                                     </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach((user, index)=> { %>
+                                        <tr>
+                                            <td>
+                                                <%= index + 1 %>
+                                            </td>
+                                            <td>
+                                                <%= user.name %>
+                                            </td>
+                                            <td>
+                                                <%= user.email %>
+                                            </td>
+                                            <td>
+                                                <%= user.mobile %>
+                                            </td>
+                                            <td class="<%= user.isBlocked ? 'text-danger' : 'text-success' %>">
+                                                <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                                            </td>
+                                            <td>
+                                                <% if (user.isBlocked) { %>
+                                                    <button class="btn btn-sm btn-success unblock-btn"
+                                                        data-user-id="<%= user._id %>">Unblock</button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm btn-danger block-btn"
+                                                            data-user-id="<%= user._id %>">Block</button>
+                                                        <% } %>
+                                            </td>
+                                        </tr>
+                                        <tr class="line"></tr>
 
-                        </tbody>
-                    </table>
+
+                                        <% }); %>
+
+                                            </tr>
+
+                                </tbody>
+                            </table>
+                        <% }; %>
                 </div>
                 <!-- Pagination -->
                 <div class="pagination-area mt-30 mb-50">

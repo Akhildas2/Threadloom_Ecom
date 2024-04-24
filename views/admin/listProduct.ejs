@@ -38,7 +38,7 @@
                 <div class="row">
                     <!-- Action Buttons -->
                     <div class="col-12 text-end">
-                       
+
                         <a href="/admin/product/addproduct" class="btn btn-primary btn-sm add-category">Add product</a>
                     </div>
                 </div>
@@ -57,79 +57,86 @@
 
 
             <div class="card-body">
-                <% for (let i=0; i < products.length; i++) { %>
-                    <article class="itemlist">
-                        <div class="row align-items-center">
-                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
-                                <%= i + 1 %>
-                            </div>
-                            <div class="col-lg-2 col-md-2 col-sm-2 col-4 col-name">
-                                <a class="itemside" href="#">
-                                    <div class="left">
-                                        <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
-                                            alt="<%= products[i].name %> Image" style="width: 50px;">
+                <% if (products.length===0) { %>
+                    <div class="alert alert-info" role="alert">
+                        No products found.Please add products.
+                    </div>
+
+                    <% } else { %>
+                        <% for (let i=0; i < products.length; i++) { %>
+                            <article class="itemlist">
+                                <div class="row align-items-center">
+                                    <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
+                                        <%= i + 1 %>
                                     </div>
-                                    <div class="info">
-                                        <h7 class="mb-0">
-                                            <%= products[i].name %>
-                                        </h7>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-4 col-name">
+                                        <a class="itemside" href="#">
+                                            <div class="left">
+                                                <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                    alt="<%= products[i].name %> Image" style="width: 50px;">
+                                            </div>
+                                            <div class="info">
+                                                <h7 class="mb-0">
+                                                    <%= products[i].name %>
+                                                </h7>
+                                            </div>
+                                        </a>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="col-lg-1 col-md-4 col-sm-3 col-6 col-name text-end">
-                                <span>
-                                    <% if (products[i].category) { %>
-                                        <p>
-                                            <%= products[i].category.categoryName %>
-                                        </p>
-                                        <% } else { %>
-                                            <p>No category assigned</p>
-                                            <% } %>
-                                </span>
-                            </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-12">
-                                <div class="info">
-                                    <p>
-                                        <%= products[i].description.slice(0, 100) %>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-2 col-3 col-price"> <span>
-                                    <%= products[i].gender %>
-                                </span> </div>
-                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                    ₹<%= products[i].price %>
-                                </span> </div>
-                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                    <%= products[i].size %>
-                                </span> </div>
-                            <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                    <%= products[i].stockCount %>
-                                </span> </div>
-                            <!-- <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-status">
+                                    <div class="col-lg-1 col-md-4 col-sm-3 col-6 col-name text-end">
+                                        <span>
+                                            <% if (products[i].category) { %>
+                                                <p>
+                                                    <%= products[i].category.categoryName %>
+                                                </p>
+                                                <% } else { %>
+                                                    <p>No category assigned</p>
+                                                    <% } %>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-12">
+                                        <div class="info">
+                                            <p>
+                                                <%= products[i].description.slice(0, 100) %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-2 col-3 col-price"> <span>
+                                            <%= products[i].gender %>
+                                        </span> </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                            ₹<%= products[i].price %>
+                                        </span> </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                            <%= products[i].size %>
+                                        </span> </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                            <%= products[i].stockCount %>
+                                        </span> </div>
+                                    <!-- <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-status">
                                 <span class="badge rounded-pill alert-success">Active</span>
                                 </div> -->
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-8 col-action text-end">
-                                <a href="/admin/product/editproduct/<%= products[i]._id %>"
-                                    class="btn btn-sm font-sm rounded btn-brand edit-product"
-                                    data-product-id="<%= products[i]._id %>">
-                                    <i class="material-icons md-edit"></i> Edit
-                                </a>
-                                <% if ( !products[i].isUnlisted) { %>
-                                    <button class="btn btn-warning btn-sm  rounded unlist-product"
-                                        data-product-id="<%= products[i]._id %>">Unlist</button>
-                                    <% } else { %>
-                                        <button class="btn btn-danger btn-sm btn-list"
-                                            data-product-id="<%= products[i]._id %>">List</button>
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-8 col-action text-end">
+                                        <a href="/admin/product/editproduct/<%= products[i]._id %>"
+                                            class="btn btn-sm font-sm rounded btn-brand edit-product"
+                                            data-product-id="<%= products[i]._id %>">
+                                            <i class="material-icons md-edit"></i> Edit
+                                        </a>
+                                        <% if ( !products[i].isUnlisted) { %>
+                                            <button class="btn btn-warning btn-sm  rounded unlist-product"
+                                                data-product-id="<%= products[i]._id %>">Unlist</button>
+                                            <% } else { %>
+                                                <button class="btn btn-danger btn-sm btn-list"
+                                                    data-product-id="<%= products[i]._id %>">List</button>
 
-                                        <% } %>
+                                                <% } %>
 
-                            </div>
-                        </div>
-                        <!-- row .// -->
-                    </article>
-                    <% } %>
-                        <!-- itemlist  .// -->
+                                    </div>
+                                </div>
+                                <!-- row .// -->
+                            </article>
+                            <% } %>
+                            <% } %>
+                                <!-- itemlist  .// -->
             </div>
 
 

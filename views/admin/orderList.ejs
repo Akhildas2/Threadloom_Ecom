@@ -1,17 +1,17 @@
 <%- include('../adminLayouts/header.ejs') %>
-<%- include('../adminLayouts/navbar.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
 
-<section class="content-main">
-    <div class="content-header">
-        <div>
-            <h2 class="content-title card-title">Order List</h2>
-        </div>
-        <div>
-            <input type="text" placeholder="Search order ID" class="form-control " />
-        </div>
-    </div>
-    <div class="card mb-4">
-        <!-- <header class="card-header">
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Order List</h2>
+                </div>
+                <div>
+                    <input type="text" placeholder="Search order ID" class="form-control " />
+                </div>
+            </div>
+            <div class="card mb-4">
+                <!-- <header class="card-header">
             <div class="row gx-3">
                 <div class="col-lg-4 col-md-6 me-auto">
                     <input type="text" placeholder="Search..." class="form-control" />
@@ -33,61 +33,81 @@
                 </div>
             </div>
         </header> -->
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Order ID</th>
-                            <th scope="col">Total</th>
-                            <th scope="col">Payment Method</th>
-                            <th scope="col">Payment Status</th>
-                            <th scope="col">Date</th>
-                            <th scope="col" class="text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% orders.forEach(function(order,index) { %>
-                            <tr>
-                                <td><%= index + 1 %></td>
-                                <td><%= order.ordersId%></td>
-                                <td>₹<%= order.totalAmount %></td>
-                                <td><%= order.paymentMethod %></td>
+                <div class="card-body">
+                    <% if (orders.length===0) { %>
+                        <div class="alert alert-info" role="alert">
+                            No orders found.Please order products.
+                        </div>
 
-                                <td>
-                                    <span class="badge rounded-pill 
+                        <% } else { %>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Order ID</th>
+                                            <th scope="col">Total</th>
+                                            <th scope="col">Payment Method</th>
+                                            <th scope="col">Payment Status</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col" class="text-end">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% orders.forEach(function(order,index) { %>
+                                            <tr>
+                                                <td>
+                                                    <%= index + 1 %>
+                                                </td>
+                                                <td>
+                                                    <%= order.ordersId%>
+                                                </td>
+                                                <td>₹<%= order.totalAmount %>
+                                                </td>
+                                                <td>
+                                                    <%= order.paymentMethod %>
+                                                </td>
+
+                                                <td>
+                                                    <span class="badge rounded-pill 
                                     <% if (order.status === 'pending') { %> alert-warning text-warning 
                                     <% } else if (order.status === 'paid') { %> alert-success text-success 
                                     <% } else if (order.status=== 'retry') { %> alert-success text-info
                                     <% } else { %> alert-secondary text-secondary <% } %>">
-                                    <%=  order.status %>
-                                </span>
-                                </td>
+                                                        <%= order.status %>
+                                                    </span>
+                                                </td>
 
-                               
-                                
-                                <td><%= order.date.toDateString() %></td>
-                                <td class="text-end">
-                                    <a href="/admin/orderList/orderDetails/<%= order._id %>" class="btn btn-md rounded font-sm">Detail</a>
-                                    <div class="dropdown">
-                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm">
-                                            <i class="material-icons md-more_horiz"></i>
-                                        </a>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item" href="/admin/orderList/orderDetails/<%= order._id %>">View detail</a>
-                                            <!-- <a class="dropdown-item" href="#">Edit info</a>
+
+
+                                                <td>
+                                                    <%= order.date.toDateString() %>
+                                                </td>
+                                                <td class="text-end">
+                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>"
+                                                        class="btn btn-md rounded font-sm">Detail</a>
+                                                    <div class="dropdown">
+                                                        <a href="#" data-bs-toggle="dropdown"
+                                                            class="btn btn-light rounded btn-sm font-sm">
+                                                            <i class="material-icons md-more_horiz"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item"
+                                                                href="/admin/orderList/orderDetails/<%= order._id %>">View
+                                                                detail</a>
+                                                            <!-- <a class="dropdown-item" href="#">Edit info</a>
                                             <a class="dropdown-item text-danger" href="#">Delete</a> -->
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <% }); %>
-                    </tbody>
-                </table>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% }; %>
+                </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
-<%- include('../adminLayouts/footer.ejs') %>
+        <%- include('../adminLayouts/footer.ejs') %>
