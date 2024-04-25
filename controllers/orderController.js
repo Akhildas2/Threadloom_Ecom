@@ -110,7 +110,6 @@ const placeOrder = async (req, res) => {
                 }
                 product.stockCount -= item.quantity;
                 const upquantity = await product.save()
-                console.log("quantity descrease. ", upquantity)
 
             }
 
@@ -147,7 +146,6 @@ const placeOrder = async (req, res) => {
             // Create PayPal payment  
             await paypal.payment.create(create_payment_json, function (error, payment) {
                 if (error) {
-                    console.error("Error creating PayPal payment:", error);
                     return res.status(500).json({ message: 'Error processing PayPal payment', error: error.message });
                 } else {
                     // Assuming payerId is part of the payment response
@@ -190,7 +188,6 @@ const placeOrder = async (req, res) => {
                 }
                 product.stockCount -= item.quantity;
                 const upquantity = await product.save()
-                console.log("quantity descrease. ", upquantity)
 
             }
             console.log("Order placed successfully.")
@@ -290,9 +287,7 @@ const orderDetails = async (req, res) => {
 
             }
         }
-        console.log("selectedItem",selectedItem)
-        console.log("OtherOrders",OtherOrders)
-
+      
         if (!order) {
             return res.status(404).send('Order not found');
         }
@@ -324,7 +319,6 @@ const cancelOrder = async (req, res) => {
     try {
         const { orderId, itemId } = req.params;
         const {cancellationReason} =req.body;
-        console.log("cancell",cancellationReason)
         const order = await Order.findById(orderId).populate('items.productId');
 
         if (!order) {

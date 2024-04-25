@@ -69,6 +69,8 @@ const dashboardRoute=require('./routes/dashboardRoute')
 //for coupon route
 const couponRoute=require('./routes/couponRoute')
 
+//for coupon route
+const offerRoute=require('./routes/offerRoute')
 
 
 
@@ -91,6 +93,7 @@ app.use('/admin/orderList',orderListRoute)
 app.use('/wishList',wishListRoute)
 app.use('/dashboard',dashboardRoute)
 app.use('/admin/coupon',couponRoute)
+app.use('/admin/offer',offerRoute)
 
 
 

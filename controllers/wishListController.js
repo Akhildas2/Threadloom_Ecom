@@ -6,10 +6,7 @@ const WishList = require('../models/wishListModel')
 const loadWishlist = async (req, res) => {
   try {
     const userId = req.session.user_id;
-    console.log("userId", userId);
     const wishlist = await WishList.find({ user: userId }).populate('productId');
-    console.log("wishlist", wishlist);
-
     res.render('wishList', { req, wishlist })
   } catch (error) {
     console.error(error);
@@ -21,12 +18,9 @@ const loadWishlist = async (req, res) => {
 
 //for add to wish  list 
 const addToWishList = async (req, res) => {
-  console.log("entered");
 
   const userId = req.session.user_id;
-  console.log("userId", userId);
   const { productId } = req.params;
-  console.log("productId", productId);
 
   if (!userId) {
     return res.status(401).json({ message: 'You must be logged in to add items to your cart.' });
@@ -56,11 +50,8 @@ const addToWishList = async (req, res) => {
 const RemoveFromWishList = async (req, res) => {
   try {
     const userId = req.session.user_id
-    console.log("userId", userId)
     const { productId } = req.params
-    console.log("productId", productId)
     const whishlist = await WishList.deleteOne({ user: userId, productId: productId })
-    console.log("whishlist", whishlist)
 
     if (whishlist.deletedCount === 0) {
       return res.status(404).json({ message: 'whishlist item not found or not removed' });

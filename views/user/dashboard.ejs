@@ -16,6 +16,9 @@
                 /* Match the background color */
             }
         </style>
+
+
+
         <main class="main">
 
             <div class="page-header breadcrumb-wrap">
@@ -35,7 +38,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-10 m-auto">
-                            <div class="row" >
+                            <div class="row">
                                 <div class="col-md-4" style="margin-top: 30px;">
                                     <div class="dashboard-menu">
                                         <ul class="nav flex-column" role="tablist">
@@ -63,6 +66,11 @@
                                                 <a class="nav-link" id="profile-tab" data-bs-toggle="tab"
                                                     href="#profile" role="tab" aria-controls="profile"
                                                     aria-selected="true"><i class="fi-rs-user mr-10"></i>Profile</a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
+                                                    role="tab" aria-controls="wallet" aria-selected="true"><i
+                                                        class="fas fa-wallet mr-10"></i>Profile</a>
                                             </li>
                                             <li class="nav-item">
 
@@ -181,13 +189,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> -->
+                                        </div> -->
                                         <!--  add or edit address  -->
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
                                             <div class="row" style="margin-top: 30px;">
                                                 <a href="#" class="btn-lg btn-primary " data-toggle="modal"
-                                                    data-target="#addAddressModal"style="width: auto; margin-left: 13px; ">Add Address</a>
+                                                    data-target="#addAddressModal"
+                                                    style="width: auto; margin-left: 13px; ">Add Address</a>
                                                 <% if (address.length===0) { %>
                                                     <div class="alert alert-info" role="alert">
                                                         No addresses found.Please add address.
@@ -198,7 +207,7 @@
                                                             <% address.forEach(address=> { %>
                                                                 <div class="col-lg-6" style="margin-top: 30px;">
                                                                     <div class="card mb-3 mb-lg-0">
-                                                                        <div class="card-header" >
+                                                                        <div class="card-header">
                                                                             <h5 class="mb-0">Manage Address</h5>
                                                                         </div>
                                                                         <div class="card-body">
@@ -486,7 +495,18 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="tab-pane fade" id="wallet" role="tabpanel"
+                                            aria-labelledby="wallet-tab">
+                                            <div class="card" style="margin-top: 30px;">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Hello <%= userData.name %>
+                                                    </h5>
+                                                </div>
+                                                <div class="card-body">
+                                                    <h3>Welcome to Your Wallet</h3>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
