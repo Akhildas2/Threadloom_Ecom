@@ -37,7 +37,10 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary"
                                     style="display: block; margin: 0 auto;">Add Coupon</button>
-                            </form>
+                            <br>
+                            <div class="error-message" id="form-errors" style="text-align: center;"></div>
+
+                                </form>
                         </div>
                     </div>
                 </div>
@@ -134,22 +137,13 @@
                             setTimeout(() => {
                                 location.href = data.url;
                             }, 2000);
-                        } else {
-                            // Handle errors
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message,
-                                icon: 'error',
-                            });
-                        }
+                        } 
                     })
                     .catch(err => {
                         if (err.response && err.response.data && !err.response.data.success) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: err.response.data.message,
-                            });
+                            const errorMessageContainer = document.getElementById('form-errors');
+                            errorMessageContainer.textContent = err.response.data.message;
+                            errorMessageContainer.classList.add('error');
                         } else {
                             console.error(err);
                         }

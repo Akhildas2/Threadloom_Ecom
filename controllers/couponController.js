@@ -58,7 +58,7 @@ const insertCoupon = async (req, res) => {
         // Save the new coupon to the database
         await newCoupon.save();
 
-        return res.status(200).json({ success: true, url: '/admin/coupon/listcoupon' });
+        return res.status(200).json({ success: true, url: '/admin/coupon/listCoupon' });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
@@ -85,11 +85,8 @@ const deleteCoupon = async (req, res) => {
 //for editing the coupon 
 const editcoupon = async (req, res) => {
     try {
-        console.log("entered")
         const { couponId } = req.params;
-        console.log(" req.params", req.params)
         const { couponName, couponCode, discount, expiryDate, criteriaAmount } = req.body;
-        console.log(" req.body", req.body)
 
         const existingCoupon = await Coupon.findOne({
             $and: [
@@ -99,7 +96,6 @@ const editcoupon = async (req, res) => {
         });
 
 
-        console.log("existingCoupon", existingCoupon)
         if (existingCoupon) {
             return res.status(400).json({ success: false, message: 'A coupon with the same name or same coupon code already exists ' });
         }
