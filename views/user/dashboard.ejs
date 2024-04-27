@@ -70,7 +70,7 @@
                                             <li class="nav-item">
                                                 <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
                                                     role="tab" aria-controls="wallet" aria-selected="true"><i
-                                                        class="fas fa-wallet mr-10"></i>Profile</a>
+                                                        class="fas fa-wallet mr-10"></i>Wallet</a>
                                             </li>
                                             <li class="nav-item">
 
@@ -101,6 +101,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- for order -->
                                         <div class="tab-pane fade" id="orders" role="tabpanel"
                                             aria-labelledby="orders-tab">
                                             <div class="card" style="margin-top: 30px;">
@@ -133,7 +134,7 @@
                                                                                 <tr>
                                                                                     <td>
                                                                                         <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                                                                            style="width: 250px;height: 150px;"
+                                                                                            style="width: 150px;height: 100px;"
                                                                                             alt="<%= item.productId.name %>">
                                                                                     </td>
                                                                                     <td>
@@ -203,48 +204,56 @@
                                                     </div>
 
                                                     <% } else { %>
-                                                        <div class="row">
-                                                            <% address.forEach(address=> { %>
-                                                                <div class="col-lg-6" style="margin-top: 30px;">
-                                                                    <div class="card mb-3 mb-lg-0">
-                                                                        <div class="card-header">
-                                                                            <h5 class="mb-0">Manage Address</h5>
-                                                                        </div>
-                                                                        <div class="card-body">
+                                                        <div class="card" style="margin-top: 30px;">
+                                                            <div class="card-header">
+                                                                <h5 class="mb-0">Manage Address</h5>
+                                                            </div>
+                                                            <div class="card-body">
+                                                            <div class="row">
+                                                                <% address.forEach(address=> { %>
+                                                                    <div class="col-lg-6" style="margin-top: 30px;">
+                                                                        <div class="card mb-3">
+                                                                            <div class="card-header">
+                                                                                <h5 class="mb-0">Address</h5>
+                                                                            </div>
+                                                                            <div class="card-body">
 
-                                                                            <p>
-                                                                                <%= address.fullName %>
-                                                                            </p>
-                                                                            <p>
-                                                                                <%=address.mobileNumber %>
-                                                                            </p>
-                                                                            <p>
-                                                                                <%= address.houseNo %>, <%= address.area
-                                                                                        %>
-                                                                            </p>
-                                                                            <p>
-                                                                                <%= address.city %>, <%= address.state
-                                                                                        %> - <%= address.pincode %>
-                                                                            </p>
-                                                                            <a href="#"
-                                                                                class="btn-small edit-address-btn"
-                                                                                data-toggle="modal"
-                                                                                data-target="#editAddressModal-<%= address._id %>"
-                                                                                data-address-id="<%= address._id %>">Edit</a>
-                                                                            <br>
-                                                                            <a href="#"
-                                                                                class="btn-small delete-address-btn"
-                                                                                data-toggle="modal"
-                                                                                data-target="#editAddressModal-<%= address._id %>"
-                                                                                data-address-id="<%= address._id %>">Delete</a>
+                                                                                <p>
+                                                                                    <%= address.fullName %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%=address.mobileNumber %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%= address.houseNo %>, <%=
+                                                                                            address.area %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%= address.city %>, <%=
+                                                                                            address.state %> - <%=
+                                                                                                address.pincode %>
+                                                                                </p>
+                                                                                <a href="#"
+                                                                                    class="btn-small edit-address-btn"
+                                                                                    data-toggle="modal"
+                                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                                    data-address-id="<%= address._id %>">Edit</a>
+                                                                                <br>
+                                                                                <a href="#"
+                                                                                    class="btn-small delete-address-btn"
+                                                                                    data-toggle="modal"
+                                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                                    data-address-id="<%= address._id %>">Delete</a>
 
 
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <% }); %>
-                                                                    <% } %>
+                                                                    <% }); %>
+                                                                        <% } %>
+                                                                    </div>
 
+                                                            </div>
                                                         </div>
 
                                             </div>
@@ -495,23 +504,67 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- for dashboard -->
                                         <div class="tab-pane fade" id="wallet" role="tabpanel"
                                             aria-labelledby="wallet-tab">
-                                            <div class="card" style="margin-top: 30px;">
+                                            <div class="card">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Hello <%= userData.name %>
                                                     </h5>
                                                 </div>
-                                                <div class="card-body">
-                                                    <h3>Welcome to Your Wallet</h3>
+                                                <div class="card-body" style="text-align: center;">
+                                                    <h3 class="card-title">Balance: &#x20B9;<span style="color: green;">
+                                                            <%= wallet.balance %>
+                                                        </span></h3>
+                                                    <br>
+                                                    <h4 style="color: red;">Transaction Historys:</h4>
+                                                    <br>
+                                                    <div class="row">
+                                                        <% wallet.transactions.forEach(transaction=> { %>
+                                                            <div class="col-12">
+                                                                <div class="card mb-3">
+                                                                    <div class="card-body">
+                                                                        <h5 class="card-title">Type:
+                                                                            <% if (transaction.type=='credit' ) { %>
+                                                                                <span style="color: green;">
+                                                                                    <%= transaction.type %>
+                                                                                </span>
+                                                                                <% } else if (transaction.type=='debit'
+                                                                                    ) { %>
+                                                                                    <span style="color: red;">
+                                                                                        <%= transaction.type %>
+                                                                                    </span>
+                                                                                    <% } %>
+                                                                        </h5>
+                                                                        <p class="card-text">Amount: <%=
+                                                                                transaction.amount %>
+                                                                        </p>
+                                                                        <p class="card-text">Date: <%=
+                                                                                transaction.date.toDateString() %>
+                                                                        </p>
+                                                                        <p class="card-text">Description: <%=
+                                                                                transaction.description %>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <% }); %>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
+
+
+
+
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
             </section>
         </main>
 

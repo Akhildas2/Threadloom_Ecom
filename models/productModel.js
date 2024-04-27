@@ -39,6 +39,9 @@ const productSchema = new mongoose.Schema({
     isUnlisted: {
         type: Boolean,
         default: false
+    },
+    offer: {
+        type: Object
     }
 });
 

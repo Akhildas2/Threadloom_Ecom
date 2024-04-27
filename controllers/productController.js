@@ -1,6 +1,6 @@
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
-
+const Offer = require('../models/offerModel')
 const multer = require('multer');
 const fs = require('fs')
 const path = require('path');
@@ -131,11 +131,11 @@ const productListPage = async (req, res) => {
             .populate('category')
             .skip(skip)
             .limit(limit);
-
+        const offers= await Offer.find({});
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
-        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory });
+        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory ,offers});
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });

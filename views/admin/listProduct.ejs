@@ -1,6 +1,16 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
+        <style>
+            /* Modal colors */
+            .modal-content {
+                background-color: #ffffff;
 
+            }
+
+            .modal-header {
+                background-color: #088178;
+            }
+        </style>
 
 
 
@@ -59,30 +69,58 @@
             <div class="card-body">
                 <% if (products.length===0) { %>
                     <div class="alert alert-info" role="alert">
-                        No products found.Please add products.
+                        No products found. Please add products.
                     </div>
-
                     <% } else { %>
+                        <div class="row align-items-center">
+                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
+                                <strong>#</strong>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-4 col-6 col-name text-center">
+                                <strong>Product Image and Name</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
+                                <strong>Category</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                                <strong>Gender</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                                <strong>Price</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                                <strong>Size</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                                <strong>Stock Count</strong>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-center">
+                                <strong>Offer</strong>
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-center">
+                                <strong>Action</strong>
+                            </div>
+                        </div>
                         <% for (let i=0; i < products.length; i++) { %>
                             <article class="itemlist">
                                 <div class="row align-items-center">
                                     <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
                                         <%= i + 1 %>
                                     </div>
-                                    <div class="col-lg-2 col-md-2 col-sm-2 col-4 col-name">
+                                    <div class="col-lg-2 col-md-4 col-sm-4 col-6 col-name">
                                         <a class="itemside" href="#">
                                             <div class="left">
                                                 <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
                                                     alt="<%= products[i].name %> Image" style="width: 50px;">
                                             </div>
                                             <div class="info">
-                                                <h7 class="mb-0">
+                                                <h6 class="mb-0">
                                                     <%= products[i].name %>
-                                                </h7>
+                                                </h6>
                                             </div>
                                         </a>
                                     </div>
-                                    <div class="col-lg-1 col-md-4 col-sm-3 col-6 col-name text-end">
+                                    <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-end">
                                         <span>
                                             <% if (products[i].category) { %>
                                                 <p>
@@ -93,55 +131,118 @@
                                                     <% } %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-12">
-                                        <div class="info">
-                                            <p>
-                                                <%= products[i].description.slice(0, 100) %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-2 col-3 col-price"> <span>
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                        <span>
                                             <%= products[i].gender %>
-                                        </span> </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
-                                            ₹<%= products[i].price %>
-                                        </span> </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                        <span>
+                                            ₹ <%= products[i].price %>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                        <span>
                                             <%= products[i].size %>
-                                        </span> </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-price"> <span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                        <span>
                                             <%= products[i].stockCount %>
-                                        </span> </div>
-                                    <!-- <div class="col-lg-1 col-md-2 col-sm-1 col-3 col-status">
-                                <span class="badge rounded-pill alert-success">Active</span>
-                                </div> -->
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-8 col-action text-end">
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-end">
+                                        <% if (!products[i].offer) { %>
+                                            <button class="btn btn-success btn-sm rounded add-product"
+                                                data-toggle="modal" data-target="#addOfferModal"
+                                                data-product-id="<%= products[i]._id %>">Add offer</button>
+                                            <% } else { %>
+                                                <button class="btn btn-danger btn-sm"
+                                                    data-product-id="<%= products[i]._id %>">Remove offer</button>
+                                                <% } %>
+                                    </div>
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-end">
                                         <a href="/admin/product/editproduct/<%= products[i]._id %>"
                                             class="btn btn-sm font-sm rounded btn-brand edit-product"
                                             data-product-id="<%= products[i]._id %>">
                                             <i class="material-icons md-edit"></i> Edit
                                         </a>
-                                        <% if ( !products[i].isUnlisted) { %>
-                                            <button class="btn btn-warning btn-sm  rounded unlist-product"
+                                        <% if (!products[i].isUnlisted) { %>
+                                            <button class="btn btn-warning btn-sm rounded unlist-product"
                                                 data-product-id="<%= products[i]._id %>">Unlist</button>
                                             <% } else { %>
                                                 <button class="btn btn-danger btn-sm btn-list"
                                                     data-product-id="<%= products[i]._id %>">List</button>
-
                                                 <% } %>
-
                                     </div>
                                 </div>
                                 <!-- row .// -->
                             </article>
                             <% } %>
-                            <% } %>
-                                <!-- itemlist  .// -->
+                                <% } %>
+                                    <!-- itemlist  .// -->
+                                    <!-- listOfferModal.ejs -->
+                                    <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Select an Offer</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="row">
+                                                        <% offers.forEach(offer=> { %>
+                                                            <div class="col-md-6">
+                                                                <div class="card mb-4">
+                                                                    <div class="card-body">
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input" type="radio"
+                                                                                name="selectedOffer"
+                                                                                id="offer-<%= offer._id %>"
+                                                                                value="<%= offer._id %>">
+                                                                            <label class="form-check-label"
+                                                                                for="offer-<%= offer._id %>">
+                                                                                <h5 class="card-title">
+                                                                                    <%= offer.offerName %>
+                                                                                </h5>
+                                                                            </label>
+                                                                        </div>
+                                                                        
+                                                                        <p class="card-text">
+                                                                            Starting Date: <%=
+                                                                                offer.startingDate.toLocaleDateString()
+                                                                                %> <br>
+                                                                                Ending Date: <%=
+                                                                                    offer.endingDate.toLocaleDateString()
+                                                                                    %> <br>
+                                                                                    Discount: <%= offer.discount %>%
+                                                                        </p>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <% }) %>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" id="addOfferBtn">Add
+                                                        Offer</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
             </div>
 
 
 
-            </div>
+
 
 
             <!-- Pagination -->
@@ -179,7 +280,8 @@
         </section>
 
         <%- include('../adminLayouts/footer.ejs') %>
-
+            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
             <!-- Add SweetAlert -->
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -305,4 +407,49 @@
                         });
                     });
                 });
+
+
+                $(document).ready(function () {
+                    // Add click event listener for "Add offer" button
+                    $('.add-product').click(function () {
+                        const productId = $(this).data('product-id');
+                        $('#addOfferModal').data('product-id', productId); // Store the product ID in the modal data
+                        $('#addOfferModal').modal('show'); // Show the modal
+                    });
+                    $(document).ready(function () {
+                        $('.close').click(function () {
+                            $('#addOfferModal').modal('hide');
+
+                        });
+                        $('#addOfferModal').on('hidden.bs.modal', function (e) {
+                            // Remove the modal backdrop
+                            $('.modal-backdrop').remove();
+                        });
+                    });
+                    // Handle "Add Offer" button click inside the modal
+                    $('#addOfferBtn').click(function () {
+                        const productId = $('#addOfferModal').data('product-id');
+                        const selectedOfferId = $('input[name="selectedOffer"]:checked').val();
+
+                        if (selectedOfferId) {
+                            // Send an AJAX request to update the product's offer property
+                            $.ajax({
+                                url: `/products/${productId}/add-offer`,
+                                method: 'PUT',
+                                data: { offerId: selectedOfferId },
+                                success: function (response) {
+                                    // Handle the successful response
+                                    console.log(response);
+                                    // Optionally, you can update the UI to reflect the new offer
+                                    $('#addOfferModal').modal('hide');
+                                },
+                                error: function (error) {
+                                    // Handle the error
+                                    console.error(error);
+                                }
+                            });
+                        }
+                    });
+                });
+
             </script>

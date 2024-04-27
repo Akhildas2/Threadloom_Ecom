@@ -4,7 +4,7 @@ const Order = require('../models/orderModel');
 const paypal = require('paypal-rest-sdk');
 const Product = require('../models/productModel')
 const mongoose = require('mongoose')
-
+const Wallet = require('../models/walletModel')
 
 
 // Create PayPal environment
@@ -99,6 +99,7 @@ const placeOrder = async (req, res) => {
 
             // Save the order to the database
             const savedOrder = await order.save();
+            console.log("savedOrder", savedOrder)
             //for updating the product quantity
             for (const item of items) {
                 const product = await Product.findById(item.productId)
@@ -234,7 +235,9 @@ const paymentSuccess = async (req, res) => {
 
         }
 
-        await order.save();
+        const a = await order.save();
+        console.log("a", a)
+
         console.log("Paypal order Sucessfull.",);
         // Clear cart
         await CartItems.deleteMany({ user: userId });
@@ -282,12 +285,12 @@ const orderDetails = async (req, res) => {
             if (productIdObject.toString() == item.productId._id.toString()) {
                 selectedItem = item;
 
-            }else{
+            } else {
                 OtherOrders.push(item)
 
             }
         }
-      
+
         if (!order) {
             return res.status(404).send('Order not found');
         }
@@ -317,8 +320,10 @@ const orderConfirmation = async (req, res) => {
 //this is for oder cancellation
 const cancelOrder = async (req, res) => {
     try {
+        const userId = req.session.user_id;
+        console.log("userId", userId)
         const { orderId, itemId } = req.params;
-        const {cancellationReason} =req.body;
+        const { cancellationReason } = req.body;
         const order = await Order.findById(orderId).populate('items.productId');
 
         if (!order) {
@@ -329,11 +334,48 @@ const cancelOrder = async (req, res) => {
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
-        item.cancellationReason =cancellationReason;
+        item.cancellationReason = cancellationReason;
 
         item.orderStatus = 'cancelled';
 
         await order.save();
+        if (order.status == 'paid') {
+            const wallet = await Wallet.findOne({ userId })
+            console.log("wallet", wallet)
+            if (!wallet) {
+                // If the wallet doesn't exist, create a new one
+                const newWallet = new Wallet({
+                    userId,
+                    balance: item.total,
+                    transactions: [{
+                        type: 'credit',
+                        amount: item.total,
+                        date: new Date(),
+                        orderId,
+                        itemId,
+                        description: `Refund for order cancellation`
+                    }]
+                });
+                const walletBalance = await newWallet.save();
+                console.log("walletBalance", walletBalance)
+
+            } else {
+                wallet.balance += item.total;
+
+                wallet.transactions.push({
+                    type: 'credit',
+                    amount: item.total,
+                    date: new Date(),
+                    orderId,
+                    itemId,
+                    description: `Refund for order cancellation`
+                });
+                const update=await wallet.save();
+                console.log("update", update)
+            }
+
+
+        }
 
         res.json({ success: true, message: 'Product cancelled successfully.' });
     } catch (error) {
