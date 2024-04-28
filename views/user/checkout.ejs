@@ -464,7 +464,7 @@
                                     .then(response => {
                                         if (selectedPaymentMethod === 'paypal') {
                                             // Redirect to the PayPal approval URL for PayPal payments
-                                            console.log("hi it entered paypal", response.data.approvalUrl)
+                                            // console.log("hi it entered paypal", response.data.approvalUrl)
                                             if (response.data.approvalUrl) {
                                                 window.location.href = response.data.approvalUrl;
                                             } else {

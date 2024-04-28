@@ -20,7 +20,8 @@ categoryRoute.put('/listCategories/:categoryId', auth.isLogin, categoryControlle
 categoryRoute.get('/editcategory/:categoryId', auth.isLogin, categoryController.loadEditCategory);
 categoryRoute.put('/editcategory/:categoryId', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
 
-categoryRoute.put('/unlistcategories/:categoryId', auth.isLogin, categoryController.unlistCategory);
+categoryRoute.put('/:categoryId/addOffer', auth.isLogin, categoryController.addOffer);
+categoryRoute.put('/removeOffer/:categoryId', auth.isLogin, categoryController.removeOffer);
 
 
 module.exports = categoryRoute;

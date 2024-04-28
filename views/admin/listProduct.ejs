@@ -82,16 +82,16 @@
                             <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
                                 <strong>Category</strong>
                             </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Gender</strong>
                             </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Price</strong>
                             </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Size</strong>
                             </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price">
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Stock Count</strong>
                             </div>
                             <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-center">
@@ -120,7 +120,7 @@
                                             </div>
                                         </a>
                                     </div>
-                                    <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-end">
+                                    <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
                                         <span>
                                             <% if (products[i].category) { %>
                                                 <p>
@@ -131,37 +131,41 @@
                                                     <% } %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
                                         <span>
                                             <%= products[i].gender %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
                                         <span>
                                             ₹ <%= products[i].price %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
                                         <span>
                                             <%= products[i].size %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price">
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
                                         <span>
                                             <%= products[i].stockCount %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-end">
-                                        <% if (!products[i].offer) { %>
-                                            <button class="btn btn-success btn-sm rounded add-product"
-                                                data-toggle="modal" data-target="#addOfferModal"
-                                                data-product-id="<%= products[i]._id %>">Add offer</button>
-                                            <% } else { %>
-                                                <button class="btn btn-danger btn-sm"
-                                                    data-product-id="<%= products[i]._id %>">Remove offer</button>
-                                                <% } %>
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-center">
+                                        <% if (!products[i].isUnlisted ) { %>
+                                            <% if (!products[i].offer ) { %>
+                                                <button class="btn btn-success btn-sm rounded add-product"
+                                                    data-toggle="modal" data-target="#addOfferModal"
+                                                    data-product-id="<%= products[i]._id %>">Add offer</button>
+
+                                                <% } else { %>
+                                                    <button class="btn btn-danger btn-sm remove-offer"
+                                                        data-product-id="<%= products[i]._id %>">Remove offer</button>
+
+                                                    <% } %>
+                                                        <% } %>
                                     </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-end">
+                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-center">
                                         <a href="/admin/product/editproduct/<%= products[i]._id %>"
                                             class="btn btn-sm font-sm rounded btn-brand edit-product"
                                             data-product-id="<%= products[i]._id %>">
@@ -180,7 +184,6 @@
                             </article>
                             <% } %>
                                 <% } %>
-                                    <!-- itemlist  .// -->
                                     <!-- listOfferModal.ejs -->
                                     <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
                                         <div class="modal-dialog" role="document">
@@ -198,35 +201,57 @@
                                                             <div class="col-md-6">
                                                                 <div class="card mb-4">
                                                                     <div class="card-body">
-                                                                        <div class="form-check">
-                                                                            <input class="form-check-input" type="radio"
-                                                                                name="selectedOffer"
-                                                                                id="offer-<%= offer._id %>"
-                                                                                value="<%= offer._id %>">
-                                                                            <label class="form-check-label"
-                                                                                for="offer-<%= offer._id %>">
-                                                                                <h5 class="card-title">
-                                                                                    <%= offer.offerName %>
-                                                                                </h5>
-                                                                            </label>
-                                                                        </div>
-                                                                        
-                                                                        <p class="card-text">
-                                                                            Starting Date: <%=
-                                                                                offer.startingDate.toLocaleDateString()
-                                                                                %> <br>
-                                                                                Ending Date: <%=
-                                                                                    offer.endingDate.toLocaleDateString()
-                                                                                    %> <br>
-                                                                                    Discount: <%= offer.discount %>%
-                                                                        </p>
-                                                                        
+                                                                        <% const today=new Date(); %>
+                                                                            <% today.setHours(0, 0, 0, 0); %>
+                                                                                <% const offerDate=new
+                                                                                    Date(offer.endingDate); %>
+                                                                                    <% offerDate.setHours(0, 0, 0, 0);
+                                                                                        %>
+                                                                                        <% if (offerDate>= today) { %>
+                                                                                            <div class="form-check">
+                                                                                                <input
+                                                                                                    class="form-check-input"
+                                                                                                    type="radio"
+                                                                                                    name="selectedOffer"
+                                                                                                    id="offer-<%= offer._id %>"
+                                                                                                    value="<%= offer._id %>">
+                                                                                                <label
+                                                                                                    class="form-check-label"
+                                                                                                    for="offer-<%= offer._id %>">
+                                                                                                    <h5
+                                                                                                        class="card-title">
+                                                                                                        <%= offer.offerName
+                                                                                                            %>
+                                                                                                    </h5>
+                                                                                                </label>
+                                                                                            </div>
+                                                                                            <% } else { %>
+                                                                                                <h5 class="card-title">
+                                                                                                    <%= offer.offerName
+                                                                                                        %>
+                                                                                                </h5>
+                                                                                                <% } %>
+
+                                                                                                    <p
+                                                                                                        class="card-text">
+                                                                                                        Starting Date:
+                                                                                                        <%= offer.startingDate.toLocaleDateString()
+                                                                                                            %> <br>
+                                                                                                            Ending Date:
+                                                                                                            <%= offer.endingDate.toLocaleDateString()
+                                                                                                                %> <br>
+                                                                                                                Discount:
+                                                                                                                <%= offer.discount
+                                                                                                                    %>%
+                                                                                                    </p>
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                             <% }) %>
                                                     </div>
                                                 </div>
+                                                <div id="offerError" class="text-danger"
+                                                    style="display: none; text-align: center;"></div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-primary" id="addOfferBtn">Add
                                                         Offer</button>
@@ -236,6 +261,9 @@
                                             </div>
                                         </div>
                                     </div>
+
+
+
 
 
             </div>
@@ -280,8 +308,8 @@
         </section>
 
         <%- include('../adminLayouts/footer.ejs') %>
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+            
             <!-- Add SweetAlert -->
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -416,11 +444,9 @@
                         $('#addOfferModal').data('product-id', productId); // Store the product ID in the modal data
                         $('#addOfferModal').modal('show'); // Show the modal
                     });
-                    $(document).ready(function () {
-                        $('.close').click(function () {
-                            $('#addOfferModal').modal('hide');
+                    $('.close').click(function () {
+                        $('#addOfferModal').modal('hide');
 
-                        });
                         $('#addOfferModal').on('hidden.bs.modal', function (e) {
                             // Remove the modal backdrop
                             $('.modal-backdrop').remove();
@@ -431,25 +457,81 @@
                         const productId = $('#addOfferModal').data('product-id');
                         const selectedOfferId = $('input[name="selectedOffer"]:checked').val();
 
-                        if (selectedOfferId) {
-                            // Send an AJAX request to update the product's offer property
-                            $.ajax({
-                                url: `/products/${productId}/add-offer`,
-                                method: 'PUT',
-                                data: { offerId: selectedOfferId },
-                                success: function (response) {
-                                    // Handle the successful response
-                                    console.log(response);
-                                    // Optionally, you can update the UI to reflect the new offer
-                                    $('#addOfferModal').modal('hide');
-                                },
-                                error: function (error) {
-                                    // Handle the error
-                                    console.error(error);
-                                }
-                            });
+                        let isValid = true;
+                        let errorMessage = '';
+                        // Check if an offer is selected
+                        if (!selectedOfferId) {
+                            isValid = false;
+                            errorMessage = 'Please select an offer.';
+                            $('#offerError').text(errorMessage).show();
+                        } else {
+                            $('#offerError').hide();
+                        }
+                        if (isValid) {
+                            axios.put(`/admin/product/${productId}/addOffer`, { offerId: selectedOfferId })
+                                .then(response => {
+                                    Swal.fire({
+                                        title: 'Offer Added Successfully!',
+                                        icon: 'success'
+                                    }).then(() => {
+                                        setTimeout(() => {
+                                            window.location.href = response.data.url;
+                                        }, 1000);
+                                    });
+                                })
+                                .catch(error => {
+                                    Swal.fire({
+                                        title: 'Error',
+                                        text: 'An error occurred while adding the offer.',
+                                        icon: 'error'
+                                    });
+                                    console.error('Error:', error);
+                                });
+
                         }
                     });
                 });
+                document.addEventListener('DOMContentLoaded', function () {
+                    const removeOfferButtons = document.querySelectorAll('.remove-offer');
+
+                    removeOfferButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const productId = this.getAttribute('data-product-id');
+
+                            Swal.fire({
+                                title: 'Are you sure you want to remove offer from this product?',
+                                icon: 'question',
+                                showCancelButton: true,
+                                confirmButtonText: 'Yes, Remove it!',
+                                cancelButtonText: 'Cancel'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    axios.put(`/admin/product/removeOffer/${productId}`)
+                                        .then(response => {
+                                            // Handle success response
+                                            Swal.fire({
+                                                title: 'Offer removed Successfully!',
+                                                icon: 'success'
+                                            }).then(() => {
+                                                setTimeout(() => {
+                                                    window.location.href = response.data.url; // Redirect to the URL received from the server
+                                                }, 1000); // Add a time delay for redirecting
+                                            });
+                                        })
+                                        .catch(error => {
+                                            // Handle error
+                                            Swal.fire({
+                                                title: 'Error',
+                                                text: 'An error occurred while removing the offer.',
+                                                icon: 'error'
+                                            });
+                                            console.error('Error:', error);
+                                        });
+                                }
+                            });
+                        });
+                    });
+                });
+
 
             </script>

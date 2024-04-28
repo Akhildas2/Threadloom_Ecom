@@ -41,7 +41,8 @@ const productSchema = new mongoose.Schema({
         default: false
     },
     offer: {
-        type: Object
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Offer",
     }
 });
 

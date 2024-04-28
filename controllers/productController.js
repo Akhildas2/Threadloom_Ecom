@@ -6,6 +6,9 @@ const fs = require('fs')
 const path = require('path');
 const sharp = require('sharp');
 
+
+
+
 // Multer configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -131,11 +134,11 @@ const productListPage = async (req, res) => {
             .populate('category')
             .skip(skip)
             .limit(limit);
-        const offers= await Offer.find({});
+        const offers = await Offer.find({});
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
-        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory ,offers});
+        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
@@ -322,7 +325,6 @@ const unlistProduct = async (req, res) => {
 
 
 
-
 // for updating listing the category
 const listProduct = async (req, res) => {
     try {
@@ -349,6 +351,72 @@ const listProduct = async (req, res) => {
 
 
 
+
+//for adding the offer
+const addOffer = async (req, res) => {
+    try {
+        const productId = req.params.productId;
+        const offerId = req.body.offerId; 
+    
+        // Find the product by productId
+        const product = await Product.findById(productId);
+
+        // Check if the product exists
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+        
+        product.offer = offerId;
+
+        // Save the updated product
+        await product.save();
+
+        return res.status(200).json({
+            status: true,
+            url: '/admin/product/listproduct'
+        });
+
+    } catch (error) {
+        console.error('Error adding offer:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+
+
+
+
+
+//for offer remove
+const removeOffer = async(req,res)=>{
+    try {
+        const productId=req.params.productId;
+
+        const product= await Product.findById(productId)
+        if (!product) {
+            return res.status(404).json({ success: false, message: 'Product not found' });
+        }
+
+        product.offer=undefined;
+        await product.save();
+        return res.status(200).json({
+            status: true,
+            url: '/admin/product/listproduct'
+        });
+    } catch (error) {
+        console.error('Error deleting photo:', error);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+   
+    }
+}
+
+
+
+
+
+
+
 module.exports = {
     loadAddProduct,
     upload,
@@ -358,6 +426,8 @@ module.exports = {
     editProduct,
     unlistProduct,
     listProduct,
-    deletePhoto
+    deletePhoto,
+    addOffer,
+    removeOffer
 
 };

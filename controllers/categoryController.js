@@ -2,18 +2,7 @@ const Category = require('../models/categoryModel');
 const multer = require('multer');
 const path = require('path');
 const sharp = require('sharp');
-
-
-// Load Category
-const loadAddCategory = async (req, res) => {
-    try {
-
-        res.render('addcategory');
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-    }
-};
+const Offer= require('../models/offerModel')
 
 
 
@@ -32,6 +21,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
+// Load Category
+const loadAddCategory = async (req, res) => {
+    try {
+
+        res.render('addcategory');
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 
 
 
@@ -39,13 +39,13 @@ const upload = multer({ storage: storage });
 const addCategory = async (req, res) => {
     try {
         const categoryName = req.body.categoryName.trim();
-        const existingCategory = await Category.findOne({ 
-            categoryName: { 
+        const existingCategory = await Category.findOne({
+            categoryName: {
                 $regex: new RegExp('^' + categoryName + '$', 'i')
-            } 
+            }
         });
-     
-     
+
+
         if (existingCategory) {
             return res.status(400).json({ success: false, message: "Category already exists" });
         }
@@ -60,12 +60,12 @@ const addCategory = async (req, res) => {
         await sharp(req.file.path)
             .resize({ width: 800, height: 800, fit: 'fill' })
             .toFile(resizedImagePath);
-             
-            // Extract only the filename from the resizedImagePath
-            const resizedImageFileName = path.basename(resizedImagePath);
+
+        // Extract only the filename from the resizedImagePath
+        const resizedImageFileName = path.basename(resizedImagePath);
         const category = new Category({
             categoryName,
-            categoryPhoto:  resizedImageFileName,
+            categoryPhoto: resizedImageFileName,
         });
 
         const addedCategory = await category.save();
@@ -74,7 +74,7 @@ const addCategory = async (req, res) => {
             status: true,
             url: '/admin/category/listcategories'
         });
-      
+
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: "Error adding category" });
@@ -89,8 +89,8 @@ const addCategory = async (req, res) => {
 const loadListCategory = async (req, res) => {
     try {
         const categories = await Category.find({});
-        
-        res.render('listCategories', { categories });
+        const offers= await Offer.find({})
+        res.render('listCategories', { categories,offers });
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -106,7 +106,7 @@ const loadEditCategory = async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         const category = await Category.findById(categoryId);
-        
+
         if (!category) {
             return res.status(404).render('error', { message: 'Category not found' });
         }
@@ -130,14 +130,14 @@ const editCategory = async (req, res) => {
         const updateFields = {};
 
         if (req.body.categoryName) {
-          
+
             const trimmedCategoryName = req.body.categoryName.trim();
             updateFields.categoryName = trimmedCategoryName;
 
             // Check if a category with the same name already exists
             const existingCategory = await Category.findOne({
                 categoryName: { $regex: new RegExp('^' + trimmedCategoryName + '$', 'i') },
-                _id: { $ne: categoryId } 
+                _id: { $ne: categoryId }
             });
 
             if (existingCategory) {
@@ -180,7 +180,7 @@ const editCategory = async (req, res) => {
 
 
 // for updating unlist the category
-const unlistCategory  = async (req, res) => {
+const unlistCategory = async (req, res) => {
     try {
         const categoryId = req.params.categoryId;
         //for update 
@@ -222,7 +222,7 @@ const listCategory = async (req, res) => {
             status: true,
             url: '/admin/category/listcategories'
         });
-       
+
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -231,6 +231,58 @@ const listCategory = async (req, res) => {
 
 
 
+//for add offer 
+const addOffer = async (req, res) => {
+    try {
+
+        const categoryId = req.params.categoryId;
+        
+        const offerId = req.body.offerId;
+
+        const category = await Category.findById(categoryId)
+
+        // Check if the category exists
+        if (!category) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
+
+        category.offer = offerId;
+        await category.save()
+        res.status(200).json({
+            status: true,
+            url: '/admin/category/listcategories'
+        });
+    } catch (error) {
+        console.error('Error adding offer:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
+
+
+
+
+//for remove offer 
+const removeOffer = async (req, res) => {
+    try {
+        const categoryId = req.params.categoryId;
+
+        const category = await Category.findById(categoryId)
+        // Check if the category exists
+        if (!category) {
+            return res.status(404).json({ success: false, message: 'Category not found' });
+        }
+
+        category.offer = undefined;
+        await category.save()
+        res.status(200).json({
+            status: true,
+            url: '/admin/category/listcategories'
+        });
+    } catch (error) {
+        console.error('Error adding offer:', error);
+        return res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+}
 
 
 
@@ -241,6 +293,8 @@ module.exports = {
     loadListCategory,
     loadEditCategory,
     editCategory,
-    unlistCategory ,
-    listCategory ,
+    unlistCategory,
+    listCategory,
+    removeOffer,
+    addOffer
 };

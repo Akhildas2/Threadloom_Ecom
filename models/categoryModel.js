@@ -18,7 +18,11 @@ const categorySchema = new mongoose.Schema({
       isUnlisted: {
         type:Boolean,
         default: false
-      }
+      }, 
+      offer: {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Offer",
+    }
 });
 
 

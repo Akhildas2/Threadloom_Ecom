@@ -22,6 +22,8 @@ productRoute.delete('/deletephoto/:productId/:photoName', productController.dele
 
 productRoute.put('/unlistproduct/:productId', auth.isLogin, productController.unlistProduct);
 
+productRoute.put('/:productId/addOffer', auth.isLogin, productController.addOffer);
+productRoute.put('/removeOffer/:productId', auth.isLogin, productController.removeOffer);
 
 
 
