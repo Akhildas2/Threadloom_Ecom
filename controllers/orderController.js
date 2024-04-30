@@ -6,7 +6,6 @@ const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
 
-
 // Create PayPal environment
 paypal.configure({
     'mode': 'sandbox', // sandbox or live
@@ -35,8 +34,6 @@ function truncateDescription(description) {
     }
     return description;
 }
-
-
 
 
 //for checkout process
@@ -76,10 +73,11 @@ const placeOrder = async (req, res) => {
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
-
+     
         // Check if the payment method is PayPal
         if (paymentMethod === 'paypal') {
             const itemTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            console.log("itemTotal",itemTotal)
 
             // Save order details
             const order = new Order({
@@ -99,18 +97,17 @@ const placeOrder = async (req, res) => {
 
             // Save the order to the database
             const savedOrder = await order.save();
-            console.log("savedOrder", savedOrder)
+            console.log("savedOrder")
             //for updating the product quantity
             for (const item of items) {
                 const product = await Product.findById(item.productId)
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
                 }
-                if (product.quantity < item.quantity) {
-                    return res.status(400).json({ message: `Insufficient quantity for product: ${product.name}.` });
-                }
+               
                 product.stockCount -= item.quantity;
-                const upquantity = await product.save()
+                 await product.save()
+                console.log("Quantity decreased")
 
             }
 
@@ -127,11 +124,7 @@ const placeOrder = async (req, res) => {
                     "cancel_url": `http://localhost:3434/order/paymentCancel/${orderId}`
                 },
                 "transactions": [{
-                    "amount": {
-                        "currency": "USD",
-                        "total": itemTotal
-                    },
-                    "description": items.description,
+                   
                     "item_list": {
                         "items": items.map(item => ({
                             "name": item.productId.name,
@@ -140,10 +133,16 @@ const placeOrder = async (req, res) => {
                             "price": item.price,
                             "currency": "USD"
                         }))
-                    }
+                    }, 
+                    "amount": {
+                        "currency": "USD",
+                        "total": itemTotal
+                    },
+                    "description": "Order summary of the product."
                 }]
             };
-
+            console.log("create_payment_json",create_payment_json)
+   
             // Create PayPal payment  
             await paypal.payment.create(create_payment_json, function (error, payment) {
                 if (error) {
@@ -184,11 +183,10 @@ const placeOrder = async (req, res) => {
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
                 }
-                if (product.quantity < item.quantity) {
-                    return res.status(400).json({ message: `Insufficient quantity for product: ${product.name}.` });
-                }
+                
                 product.stockCount -= item.quantity;
-                const upquantity = await product.save()
+                 await product.save()
+                 console.log("Quantity decreased")
 
             }
             console.log("Order placed successfully.")
@@ -339,6 +337,18 @@ const cancelOrder = async (req, res) => {
         item.orderStatus = 'cancelled';
 
         await order.save();
+           //for updating the product quantity
+           for (const item of items) {
+            const product = await Product.findById(item.productId)
+            if (!product) {
+                return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
+            }
+            
+            product.stockCount += item.quantity;
+             await product.save()
+            console.log("Quantity increased")
+
+        }
         if (order.status == 'paid') {
             const wallet = await Wallet.findOne({ userId })
             console.log("wallet", wallet)

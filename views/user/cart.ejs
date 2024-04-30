@@ -60,9 +60,9 @@
                                                                 </tr>
                                                             </tbody>
                                                         </table>
-                                                        
+
                                                     </div>
-                                                  
+
                                                 </div>
                                                 <div class="mb-30 mt-50">
                                                     <div class="heading_s1 mb-3">
@@ -171,7 +171,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i>
                                         </div>
 
@@ -184,7 +184,7 @@
                                             </div>
                                         </div>
 
-                                     
+
                         </div>
 
                     </div>
@@ -356,7 +356,7 @@
                                 if (response.ok) {
                                     return response.json();
                                 }
-                                throw new Error('Failed to update quantity');
+                                throw new Error('Requested quantity exceeds available stock');
                             })
                             .then(data => {
                                 // Update the quantity display
@@ -372,6 +372,14 @@
                             })
                             .catch(error => {
                                 console.error('Error:', error);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: error.message
+                                })
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 2000);
                             });
                     }
 

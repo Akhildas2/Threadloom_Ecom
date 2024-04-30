@@ -120,15 +120,21 @@ const updateQuantity = async (req, res) => {
   
 
   try {
-    const cartItem = await CartItem.findById(itemId);
-
+    const cartItem = await CartItem.findById(itemId).populate('productId');
     if (!cartItem) {
       return res.status(404).json({ message: 'Cart item not found' });
     }
-    cartItem.quantity = quantity;
-    const updateIteam=await cartItem.save();
+     // Check product stock count
+     const productStockCount = cartItem.productId.stockCount;
 
-    return res.status(200).json({ status: true, message: 'Cart item quantity updated successfully' });
+     // Check if quantity is greater than the product stock count
+     if (quantity > productStockCount) {
+         return res.status(400).json({ message: 'Requested quantity exceeds available stock' });
+     }
+    cartItem.quantity = quantity;
+   await cartItem.save();
+
+    return res.status(200).json({ status: true});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Internal server error' });
