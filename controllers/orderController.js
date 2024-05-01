@@ -5,10 +5,14 @@ const paypal = require('paypal-rest-sdk');
 const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
+const axios = require('axios')
+
+
+
 
 // Create PayPal environment
 paypal.configure({
-    'mode': 'sandbox', // sandbox or live
+    'mode':process.env.PAYPAL_MODE, 
     'client_id': process.env.PAYPAL_CLIENT_ID,
     'client_secret': process.env.PAYPAL_CLIENT_SECRET
 });
@@ -23,6 +27,18 @@ function generateRandomString(length) {
         result += numberSet.charAt(randomIndex);
     }
     return result;
+}
+
+// Function to fetch exchange rate from INR to USD
+const fetchExchangeRate = async () => {
+    try {
+        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/INR');
+        console.log("response", response.data.rates.USD)
+        return response.data.rates.USD;
+    } catch (error) {
+        console.error('Error fetching exchange rate:', error);
+        throw new Error('Error fetching exchange rate');
+    }
 }
 
 
@@ -58,11 +74,13 @@ const checkout = async (req, res) => {
 };
 
 
+
 //for place order
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
+
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
@@ -73,11 +91,23 @@ const placeOrder = async (req, res) => {
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
-     
+        for (const item of items) {
+            const product = await Product.findById(item.productId) 
+            if (product.stockCount < item.quantity) {
+                return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
+            }
+        
+         
+        }
+
         // Check if the payment method is PayPal
         if (paymentMethod === 'paypal') {
-            const itemTotal = items.reduce((total, item) => total + (item.price * item.quantity), 0);
-            console.log("itemTotal",itemTotal)
+
+            const itemTotalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            console.log("itemTotalAmount", itemTotalAmount)
+            const exchangeRate = await fetchExchangeRate();
+            const itemTotal = itemTotalAmount * exchangeRate;
+            console.log("itemTotal", itemTotal)
 
             // Save order details
             const order = new Order({
@@ -104,14 +134,15 @@ const placeOrder = async (req, res) => {
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
                 }
-               
+
                 product.stockCount -= item.quantity;
-                 await product.save()
+                await product.save()
                 console.log("Quantity decreased")
 
             }
 
             const orderId = savedOrder._id;
+
 
             // Create PayPal payment request
             const create_payment_json = {
@@ -120,45 +151,56 @@ const placeOrder = async (req, res) => {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url": `http://localhost:3434/order/paymentSuccess/${orderId}`,
-                    "cancel_url": `http://localhost:3434/order/paymentCancel/${orderId}`
-                },
+                    "return_url":  process.env.BASE_URL + `/order/paymentSuccess/${orderId}`,
+                    "cancel_url":  process.env.BASE_URL + `/order/paymentCancel/${orderId}`
+                },                
                 "transactions": [{
-                   
                     "item_list": {
                         "items": items.map(item => ({
                             "name": item.productId.name,
                             "description": truncateDescription(item.productId.description),
                             "quantity": item.quantity,
-                            "price": item.price,
+                            "price": (item.price * exchangeRate).toFixed(2),
                             "currency": "USD"
                         }))
-                    }, 
+                    },
                     "amount": {
                         "currency": "USD",
-                        "total": itemTotal
+                        "total": itemTotal.toFixed(2)
                     },
-                    "description": "Order summary of the product."
-                }]
-            };
-            console.log("create_payment_json",create_payment_json)
-   
-            // Create PayPal payment  
-            await paypal.payment.create(create_payment_json, function (error, payment) {
-                if (error) {
-                    return res.status(500).json({ message: 'Error processing PayPal payment', error: error.message });
-                } else {
-                    // Assuming payerId is part of the payment response
-                    const payerId = payment.payer.payer_id;
-
-                    // Redirect user to paymentSuccess with payerId as a query parameter
-                    const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
-                    const paymentSuccessUrl = `${approvalUrl}?payerId=${payerId}`;
-
-                    return res.status(200).json({ approvalUrl: paymentSuccessUrl });
+                    "description": "Order summary of the product.",
+                 
+                }],
+                application_context: {
+                    shipping_preference: "NO_SHIPPING",
+                    brand_name: "threadloom"
                 }
+                
+            };
+            console.log("create_payment_json", create_payment_json)
+
+
+
+            // Create PayPal payment  
+            const createPayPalPayment = new Promise((resolve, reject) => {
+                paypal.payment.create(create_payment_json, function (error, payment) {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        // Assuming payerId is part of the payment response
+                        const payerId = payment.payer.payer_id;
+
+                        // Redirect user to paymentSuccess with payerId as a query parameter
+                        const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
+                        const paymentSuccessUrl = `${approvalUrl}?payerId=${payerId}`;
+
+                        resolve(paymentSuccessUrl);
+                    }
+                });
             });
 
+            const paymentSuccessUrl = await createPayPalPayment;
+            return res.status(200).json({ approvalUrl: paymentSuccessUrl });
 
         } else if (paymentMethod === 'cod') {
 
@@ -183,10 +225,10 @@ const placeOrder = async (req, res) => {
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
                 }
-                
+
                 product.stockCount -= item.quantity;
-                 await product.save()
-                 console.log("Quantity decreased")
+                await product.save()
+                console.log("Quantity decreased")
 
             }
             console.log("Order placed successfully.")
@@ -233,8 +275,7 @@ const paymentSuccess = async (req, res) => {
 
         }
 
-        const a = await order.save();
-        console.log("a", a)
+        await order.save();
 
         console.log("Paypal order Sucessfull.",);
         // Clear cart
@@ -337,15 +378,15 @@ const cancelOrder = async (req, res) => {
         item.orderStatus = 'cancelled';
 
         await order.save();
-           //for updating the product quantity
-           for (const item of items) {
+        //for updating the product quantity
+        for (const item of items) {
             const product = await Product.findById(item.productId)
             if (!product) {
                 return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
             }
-            
+
             product.stockCount += item.quantity;
-             await product.save()
+            await product.save()
             console.log("Quantity increased")
 
         }
@@ -380,7 +421,7 @@ const cancelOrder = async (req, res) => {
                     itemId,
                     description: `Refund for order cancellation`
                 });
-                const update=await wallet.save();
+                const update = await wallet.save();
                 console.log("update", update)
             }
 
