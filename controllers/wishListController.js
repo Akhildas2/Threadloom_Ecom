@@ -27,7 +27,7 @@ const addToWishList = async (req, res) => {
   }
   try {
 
-    const existingItem = await WishList.findOne({ user: userId, item: productId })
+    const existingItem = await WishList.findOne({ user: userId, productId: productId })
     if (existingItem) {
       return res.status(400).json({ message: 'Item already in wishlist' });
     }

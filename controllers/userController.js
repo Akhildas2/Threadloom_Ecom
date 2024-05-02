@@ -4,6 +4,7 @@ const Otp = require('../models/otpModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 const Category = require("../models/categoryModel")
+const Wishlist = require("../models/wishListModel")
 
 
 //for loading the home page
@@ -12,7 +13,12 @@ const loadHome = async (req, res) => {
 
         const products = await Product.find({ isUnlisted: false }).populate('category');
         const categories = await Category.find({});
-        res.render('home', { req, products, categories });
+        const userId = req.session.user_id;
+        let userWishlist = [];
+        if (userId) { // If the user is logged in
+            userWishlist = await Wishlist.find({ user: userId }).populate('productId');
+        }
+        res.render('home', { req, products, categories ,userWishlist });
 
 
     } catch (error) {
@@ -341,8 +347,17 @@ const productDetails = async (req, res) => {
     try {
         const productId = req.params.productId;
         const productData = await Product.findById(productId).populate('category')
+        let userWishlist = false; 
+        const userId = req.session.user_id;
+         // If the user is logged in
+        if (userId) {
+            const wishlistItem=await Wishlist.findOne({productId:productId, user: userId});
+            if (wishlistItem) {
+                userWishlist = true; 
+            }
+        }
 
-        res.render('productDetails', { products: productData, req });
+        res.render('productDetails', { products: productData, req ,userWishlist});
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
@@ -391,9 +406,14 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort, page , limit = 4 } = req.query;
+        const { sort, page , limit = 7 } = req.query;
         console.log("req.",req.query)
         const currentPage = parseInt(page, 10);
+        const userId = req.session.user_id;
+        let userWishlist = [];
+        if (userId) { // If the user is logged in
+            userWishlist = await Wishlist.find({ user: userId }).populate('productId');
+        }
 
         let query = { isUnlisted: false };
       
@@ -441,6 +461,7 @@ const shop = async (req, res) => {
             limit,
             sort,
             category,
+            userWishlist
         });
     } catch (error) {
         console.log(error.message);

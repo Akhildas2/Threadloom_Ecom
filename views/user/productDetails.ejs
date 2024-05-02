@@ -116,10 +116,16 @@
                                                             <input type="hidden" name="quantity" value="1">
                                                             <button type="submit" class="button button-add-to-cart">Add
                                                                 to cart</button>
-
-                                                            <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                            onclick="addToWishList('<%= products._id %>')" ><i
-                                                                    class="fi-rs-heart"></i></a>
+                                                                <% if (userWishlist) { %>
+                                                                    <a aria-label="Add To Wishlist" class="action-btn" style="background-color: red;"
+                                                                        onclick="addToWishList('<%= products._id %>')"><i
+                                                                            class="fi-rs-heart"></i></a>
+                                                                <% } else { %>
+                                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                                    onclick="addToWishList('<%= products._id %>')" ><i
+                                                                            class="fi-rs-heart"></i></a>
+                                                                <% } %>
+                                                            
                                                             <a aria-label="Compare" class="action-btn hover-up"
                                                             href="#"><i
                                                                     class="fi-rs-shuffle"></i></a>

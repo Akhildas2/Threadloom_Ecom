@@ -162,11 +162,18 @@
                                                         <a aria-label="Quick view" class="action-btn hover-up"
                                                             data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
                                                                 class="fi-rs-eye"></i></a>
-                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                            onclick="addToWishList('<%= products[i]._id %>')"><i
-                                                                class="fi-rs-heart"></i></a>
+                                                                <% if (userWishlist.some(item => item.productId.equals(products[i]._id))) { %>
+                                                                    <a aria-label="Add To Wishlist" class="action-btn" style="background-color: red;"
+                                                                        onclick="addToWishList('<%= products[i]._id %>')"><i
+                                                                            class="fi-rs-heart"></i></a>
+                                                                <% } else { %>
+                                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                                        onclick="addToWishList('<%= products[i]._id %>')"><i
+                                                                            class="fi-rs-heart"></i></a>
+                                                                <% } %>
+                                                      
                                                         <a aria-label="Compare" class="action-btn hover-up"
-                                                            href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                            href="#"><i class="fi-rs-shuffle"></i></a>
                                                     </div>
                                                     <div
                                                         class="product-badges product-badges-position product-badges-mrg">
@@ -500,7 +507,9 @@
                                                 title: 'Success!',
                                                 text: data.message,
                                             });
-                                          
+                                          setTimeout(() => {
+                                            location.reload();
+                                          }, 3000);
                                         } else {
                                             // Handle errors
                                             Swal.fire({
