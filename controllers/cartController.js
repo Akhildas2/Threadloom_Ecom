@@ -1,7 +1,7 @@
 
 const CartItem = require('../models/cartModel')
 const Product = require('../models/productModel');
-
+const Coupon=require("../models/couponModel")
 
 
 //for loading cart
@@ -9,12 +9,14 @@ const loadCart = async (req, res) => {
   const userId = req.session.user_id;
   try {
     const cartItems = await CartItem.find({ user: userId }).populate('productId');
+    const coupon = await Coupon.find({});
+
     let totalPrice = 0;
     cartItems.forEach(item => {
       item.subtotal = item.productId.price * item.quantity;
       totalPrice += item.subtotal;
     });
-    res.render('cart', { req: req, cartItems, totalPrice });
+    res.render('cart', { req: req, cartItems, totalPrice,coupon });
   } catch (error) {
     console.log(error.message);
     res.status(500).send('Internal Server Error');

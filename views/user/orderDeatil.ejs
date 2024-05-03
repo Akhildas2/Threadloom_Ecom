@@ -36,7 +36,7 @@
               <p>
                 <%= selectedItem.productId.name %>
               </p>
-              <p>$<%= selectedItem.price %>
+              <p> ₹<%= selectedItem.price %>
               </p>
               <p>
                 <%= selectedItem.orderStatus %>
@@ -126,7 +126,7 @@
                           <%= item.productId.name %>
                         </a>
                       </td>
-                      <td>$<%= item.price %>
+                      <td> ₹<%= item.price %>
                       </td>
                       <td>
                         <%= item.orderStatus %>
@@ -201,7 +201,7 @@
                         Swal.fire({
                           icon: 'success',
                           title: 'Success',
-                          text: 'Cancellation request sented.',
+                          text: 'Successfully canceled.',
                           confirmButtonText: 'OK',
                         }).then(() => {
                           $('#cancellationModal').modal('hide'); // Close the modal

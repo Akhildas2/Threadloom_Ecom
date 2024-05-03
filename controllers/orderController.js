@@ -57,7 +57,6 @@ const checkout = async (req, res) => {
     const userId = req.session.user_id;
     try {
         const cartItems = await CartItems.find({ user: userId }).populate('productId');
-
         let totalPrice = 0;
         cartItems.forEach(item => {
             item.subtotal = item.price * item.quantity;
@@ -104,10 +103,8 @@ const placeOrder = async (req, res) => {
         if (paymentMethod === 'paypal') {
 
             const itemTotalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0);
-            console.log("itemTotalAmount", itemTotalAmount)
             const exchangeRate = await fetchExchangeRate();
             const itemTotal = itemTotalAmount * exchangeRate;
-            console.log("itemTotal", itemTotal)
 
             // Save order details
             const order = new Order({
@@ -177,7 +174,6 @@ const placeOrder = async (req, res) => {
                 }
                 
             };
-            console.log("create_payment_json", create_payment_json)
 
 
 
@@ -360,7 +356,6 @@ const orderConfirmation = async (req, res) => {
 const cancelOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        console.log("userId", userId)
         const { orderId, itemId } = req.params;
         const { cancellationReason } = req.body;
         const order = await Order.findById(orderId).populate('items.productId');
@@ -379,8 +374,10 @@ const cancelOrder = async (req, res) => {
 
         await order.save();
         //for updating the product quantity
+        const items = order.items;
         for (const item of items) {
             const product = await Product.findById(item.productId)
+            
             if (!product) {
                 return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
             }
@@ -392,7 +389,6 @@ const cancelOrder = async (req, res) => {
         }
         if (order.status == 'paid') {
             const wallet = await Wallet.findOne({ userId })
-            console.log("wallet", wallet)
             if (!wallet) {
                 // If the wallet doesn't exist, create a new one
                 const newWallet = new Wallet({
@@ -407,8 +403,7 @@ const cancelOrder = async (req, res) => {
                         description: `Refund for order cancellation`
                     }]
                 });
-                const walletBalance = await newWallet.save();
-                console.log("walletBalance", walletBalance)
+                 await newWallet.save();
 
             } else {
                 wallet.balance += item.total;
@@ -421,8 +416,7 @@ const cancelOrder = async (req, res) => {
                     itemId,
                     description: `Refund for order cancellation`
                 });
-                const update = await wallet.save();
-                console.log("update", update)
+                await wallet.save();
             }
 
 

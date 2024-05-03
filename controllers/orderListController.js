@@ -5,7 +5,7 @@ const User = require("../models/userModel")
 //for loading order list 
 const loadOrderList = async (req, res) => {
     try {
-        const orders = await Order.find({}).populate('userId');
+        const orders = await Order.find({}).populate('items.productId').populate('userId');
 
         res.render('orderList', { orders })
 

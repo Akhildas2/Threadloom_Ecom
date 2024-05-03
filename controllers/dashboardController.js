@@ -26,7 +26,8 @@ const loadDashboard = async (req, res) => {
             const userData = await User.findById(userId);
             const address = await Address.find({ userId });
             const orders = await Order.find({ userId}).populate('userId').populate('items.productId').sort({ createdAt: -1 });
-            const wallet = await Wallet.findOne({ userId });
+            const wallet = await Wallet.findOne({ userId }).sort({ 'transactions.date': -1 });
+
 
             res.render('dashboard', { req, pageTitle, userData, address, orders,wallet });
     } catch (error) {

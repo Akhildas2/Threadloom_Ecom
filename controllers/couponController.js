@@ -31,7 +31,7 @@ const addCoupon = async (req, res) => {
 //for adding coupon
 const insertCoupon = async (req, res) => {
     try {
-        const { couponName, couponCode, discount, expiryDate, criteriaAmount } = req.body;
+        const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
 
         const existingCoupon = await Coupon.findOne({
             $or: [
@@ -50,7 +50,7 @@ const insertCoupon = async (req, res) => {
         const newCoupon = new Coupon({
             couponName,
             couponCode,
-            discount,
+            discountAmount,
             expiryDate,
             criteriaAmount,
         });
@@ -86,7 +86,7 @@ const deleteCoupon = async (req, res) => {
 const editcoupon = async (req, res) => {
     try {
         const { couponId } = req.params;
-        const { couponName, couponCode, discount, expiryDate, criteriaAmount } = req.body;
+        const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
 
         const existingCoupon = await Coupon.findOne({
             $and: [
@@ -97,7 +97,7 @@ const editcoupon = async (req, res) => {
 
 
         if (existingCoupon) {
-            return res.status(400).json({ success: false, message: 'A coupon with the same name or same coupon code already exists ' });
+            return res.status(400).json({ success: false, message: 'coupon with the same name or same coupon code already exists ' });
         }
 
         const coupon = await Coupon.findById(couponId);
@@ -107,7 +107,7 @@ const editcoupon = async (req, res) => {
 
         coupon.couponName = couponName;
         coupon.couponCode = couponCode;
-        coupon.discount = discount;
+        coupon.discountAmount = discountAmount;
         coupon.expiryDate = expiryDate;
         coupon.criteriaAmount = criteriaAmount;
         await coupon.save();

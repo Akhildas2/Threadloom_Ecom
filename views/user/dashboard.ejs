@@ -133,12 +133,22 @@
                                                                             <% order.items.forEach(item=> { %>
                                                                                 <tr>
                                                                                     <td>
-                                                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                                                                            style="width: 150px;height: 100px;"
-                                                                                            alt="<%= item.productId.name %>">
+                                                                                        <a
+                                                                                            href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                                                                                            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                                                                style="width: 150px;height: 100px;"
+                                                                                                alt="<%= item.productId.name %>">
+                                                                                        </a>
+
                                                                                     </td>
+
                                                                                     <td>
-                                                                                        <%= item.productId.name %>
+                                                                                        <a
+                                                                                            href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+
+                                                                                            <%= item.productId.name %>
+                                                                                        </a>
+
                                                                                     </td>
 
                                                                                     <td>₹<%= item.price%> for <%=
@@ -209,49 +219,49 @@
                                                                 <h5 class="mb-0">Manage Address</h5>
                                                             </div>
                                                             <div class="card-body">
-                                                            <div class="row">
-                                                                <% address.forEach(address=> { %>
-                                                                    <div class="col-lg-6" style="margin-top: 30px;">
-                                                                        <div class="card mb-3">
-                                                                            <div class="card-header">
-                                                                                <h5 class="mb-0">Address</h5>
-                                                                            </div>
-                                                                            <div class="card-body">
+                                                                <div class="row">
+                                                                    <% address.forEach(address=> { %>
+                                                                        <div class="col-lg-6" style="margin-top: 30px;">
+                                                                            <div class="card mb-3">
+                                                                                <div class="card-header">
+                                                                                    <h5 class="mb-0">Address</h5>
+                                                                                </div>
+                                                                                <div class="card-body">
 
-                                                                                <p>
-                                                                                    <%= address.fullName %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%=address.mobileNumber %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%= address.houseNo %>, <%=
-                                                                                            address.area %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%= address.city %>, <%=
-                                                                                            address.state %> - <%=
-                                                                                                address.pincode %>
-                                                                                </p>
-                                                                                <a href="#"
-                                                                                    class="btn-small edit-address-btn"
-                                                                                    data-toggle="modal"
-                                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                                    data-address-id="<%= address._id %>">Edit</a>
-                                                                                <br>
-                                                                                <a href="#"
-                                                                                    class="btn-small delete-address-btn"
-                                                                                    data-toggle="modal"
-                                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                                    data-address-id="<%= address._id %>">Delete</a>
+                                                                                    <p>
+                                                                                        <%= address.fullName %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%=address.mobileNumber %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= address.houseNo %>, <%=
+                                                                                                address.area %>
+                                                                                    </p>
+                                                                                    <p>
+                                                                                        <%= address.city %>, <%=
+                                                                                                address.state %> - <%=
+                                                                                                    address.pincode %>
+                                                                                    </p>
+                                                                                    <a href="#"
+                                                                                        class="btn-small edit-address-btn"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#editAddressModal-<%= address._id %>"
+                                                                                        data-address-id="<%= address._id %>">Edit</a>
+                                                                                    <br>
+                                                                                    <a href="#"
+                                                                                        class="btn-small delete-address-btn"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#editAddressModal-<%= address._id %>"
+                                                                                        data-address-id="<%= address._id %>">Delete</a>
 
 
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
-                                                                    <% }); %>
-                                                                        <% } %>
-                                                                    </div>
+                                                                        <% }); %>
+                                                                            <% } %>
+                                                                </div>
 
                                                             </div>
                                                         </div>
@@ -512,47 +522,71 @@
                                                     <h5 class="mb-0">Hello <%= userData.name %>
                                                     </h5>
                                                 </div>
+
                                                 <div class="card-body" style="text-align: center;">
-                                                    <h3 class="card-title">Balance: &#x20B9;<span style="color: green;">
-                                                            <%= wallet.balance %>
-                                                        </span></h3>
-                                                    <br>
-                                                    <h4 style="color: red;">Transaction Historys:</h4>
-                                                    <br>
-                                                    <div class="row">
-                                                        <% wallet.transactions.forEach(transaction=> { %>
-                                                            <div class="col-12">
-                                                                <div class="card mb-3">
-                                                                    <div class="card-body">
-                                                                        <h5 class="card-title">Type:
-                                                                            <% if (transaction.type=='credit' ) { %>
-                                                                                <span style="color: green;">
-                                                                                    <%= transaction.type %>
-                                                                                </span>
-                                                                                <% } else if (transaction.type=='debit'
-                                                                                    ) { %>
-                                                                                    <span style="color: red;">
-                                                                                        <%= transaction.type %>
-                                                                                    </span>
+                                                    <% if (wallet && wallet.balance !==null) { %>
+                                                        <h3 class="card-title">Balance: &#x20B9;<span
+                                                                style="color: green;">
+                                                                <%= wallet.balance %>
+                                                            </span></h3>
+                                                        <% } else { %>
+                                                            <h3 class="card-title">Balance:<span
+                                                                    style="color: green;">000</span></h3>
+                                                            <% } %>
+                                                                <br>
+                                                                <h4 style="color: red;">Transaction Historys:</h4>
+                                                                <br>
+                                                                <div class="row">
+                                                                    <% if (wallet && wallet.transactions) { %>
+                                                                        <% wallet.transactions.forEach(transaction=> {
+                                                                            %>
+                                                                            <div class="col-12">
+                                                                                <div class="card mb-3">
+                                                                                    <div class="card-body">
+                                                                                        <h5 class="card-title">Type: <%
+                                                                                                if
+                                                                                                (transaction.type==='credit'
+                                                                                                ) { %><span
+                                                                                                    style="color: green;">
+                                                                                                    <%= transaction.type
+                                                                                                        %>
+                                                                                                </span>
+                                                                                                <% } else if
+                                                                                                    (transaction.type==='debit'
+                                                                                                    ) { %><span
+                                                                                                        style="color: red;">
+                                                                                                        <%= transaction.type
+                                                                                                            %>
+                                                                                                    </span>
+                                                                                                    <% } %>
+                                                                                        </h5>
+                                                                                        <p class="card-text">Amount: <%=
+                                                                                                transaction.amount %>
+                                                                                        </p>
+                                                                                        <p class="card-text">Date: <%=
+                                                                                                transaction.date ?
+                                                                                                transaction.date.toDateString()
+                                                                                                : 'N/A' %>
+                                                                                        </p>
+                                                                                        <p class="card-text">
+                                                                                            Description: <%=
+                                                                                                transaction.description
+                                                                                                ?
+                                                                                                transaction.description
+                                                                                                : 'N/A' %>
+                                                                                        </p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <% }); %>
+                                                                                <% } else { %>
+                                                                                    <p>No transactions found.</p>
                                                                                     <% } %>
-                                                                        </h5>
-                                                                        <p class="card-text">Amount: <%=
-                                                                                transaction.amount %>
-                                                                        </p>
-                                                                        <p class="card-text">Date: <%=
-                                                                                transaction.date.toDateString() %>
-                                                                        </p>
-                                                                        <p class="card-text">Description: <%=
-                                                                                transaction.description %>
-                                                                        </p>
-                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                            <% }); %>
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
 
 
 

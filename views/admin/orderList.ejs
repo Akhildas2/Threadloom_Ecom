@@ -1,6 +1,12 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
 
+    <style>
+      .image-cell {
+    text-align: center;
+    }
+
+    </style>
         <section class="content-main">
             <div class="content-header">
                 <div>
@@ -45,9 +51,10 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Order ID</th>
-                                            <th scope="col">Total</th>
-                                            <th scope="col">Payment Method</th>
+                                            <th scope="col" class="text-center">Order ID</th>
+                                            <th scope="col" class="text-center">Order Image & Name</th>
+                                            <th scope="col" class="text-center">Total</th>
+                                            <th scope="col" class="text-center">Payment Method</th>
                                             <th scope="col">Payment Status</th>
                                             <th scope="col">Date</th>
                                             <th scope="col" class="text-end">Action</th>
@@ -59,12 +66,26 @@
                                                 <td>
                                                     <%= index + 1 %>
                                                 </td>
-                                                <td>
+                                                <td class="text-center">
                                                     <%= order.ordersId%>
                                                 </td>
-                                                <td>₹<%= order.totalAmount %>
+                                                <td class="image-cell">
+                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>">
+                                                            <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
+                                                                alt="<%= order.items[0].productId.name %> Image"
+                                                                style="width: 80px;">
+                                               
+                                                    <p class="">
+                                                        <%= order.items[0].productId.name %>
+
+                                                    </p>
+                                                    </a>
+
                                                 </td>
-                                                <td>
+
+                                                <td class="text-center">₹<%= order.totalAmount %>
+                                                </td>
+                                                <td class="text-center">
                                                     <%= order.paymentMethod %>
                                                 </td>
 
@@ -105,7 +126,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                        <% }; %>
+                            <% }; %>
                 </div>
             </div>
         </section>

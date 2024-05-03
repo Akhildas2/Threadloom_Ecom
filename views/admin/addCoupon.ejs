@@ -21,9 +21,9 @@
                                     <div class="error-message" id="couponCode-error"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="discount" class="form-label">Discount (%)</label>
-                                    <input type="number" class="form-control" id="discount" name="discount">
-                                    <div class="error-message" id="discount-error"></div>
+                                    <label for="discountAmount" class="form-label">Discount Amount</label>
+                                    <input type="number" class="form-control" id="discountAmount" name="discountAmount">
+                                    <div class="error-message" id="discountAmount-error"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="expiryDate" class="form-label">Expiry Date</label>
@@ -37,10 +37,10 @@
                                 </div>
                                 <button type="submit" class="btn btn-primary"
                                     style="display: block; margin: 0 auto;">Add Coupon</button>
-                            <br>
-                            <div class="error-message" id="form-errors" style="text-align: center;"></div>
+                                <br>
+                                <div class="error-message" id="form-errors" style="text-align: center;"></div>
 
-                                </form>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -69,18 +69,17 @@
                 // Validation function
                 function validateForm(formData) {
                     let isValid = true;
+                    let discountAmount = null;
+                    let criteriaAmount = null;
+
                     for (const [key, value] of formData.entries()) {
                         const errorMessage = document.getElementById(`${key}-error`);
                         if (!value.trim()) {
                             errorMessage.textContent = `${key} is required`;
                             errorMessage.classList.add('error');
                             isValid = false;
-                        } else if ((key === 'discount' || key === 'criteriaAmount') && parseFloat(value) < 1) {
+                        } else if ((key === 'discountAmount' || key === 'criteriaAmount') && parseFloat(value) < 1) {
                             errorMessage.textContent = `${key} must be greater than or equal to 1`;
-                            errorMessage.classList.add('error');
-                            isValid = false;
-                        } else if (key === 'discount' && (parseFloat(value) < 1 || parseFloat(value) > 99)) {
-                            errorMessage.textContent = `${key} must be between 1 and 99`;
                             errorMessage.classList.add('error');
                             isValid = false;
                         } else if (key === 'couponCode' && value.trim().length !== 6) {
@@ -102,8 +101,24 @@
                         } else {
                             errorMessage.textContent = '';
                             errorMessage.classList.remove('error');
+
+                            // Store discount amount and criteria amount
+                            if (key === 'discountAmount') {
+                                discountAmount = parseFloat(value);
+                            } else if (key === 'criteriaAmount') {
+                                criteriaAmount = parseFloat(value);
+                            }
                         }
                     }
+
+                    // Check if Discount Amount is less than Criteria Amount
+                    if (discountAmount !== null && criteriaAmount !== null && discountAmount >= criteriaAmount) {
+                        const errorMessage = document.getElementById(`criteriaAmount-error`);
+                        errorMessage.textContent = 'Criteria Amount must be greater than Discount Amount';
+                        errorMessage.classList.add('error');
+                        isValid = false;
+                    }
+
                     return isValid;
                 }
 
@@ -137,7 +152,7 @@
                             setTimeout(() => {
                                 location.href = data.url;
                             }, 2000);
-                        } 
+                        }
                     })
                     .catch(err => {
                         if (err.response && err.response.data && !err.response.data.success) {
