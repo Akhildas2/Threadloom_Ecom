@@ -22,7 +22,8 @@
                                 <div class="alert alert-warning" role="alert">
                                     Please <a href="/login">login</a> to view your cart.
                                 </div>
-                                <% } else if (cartItems.length===0) { %>
+                                <% } else if (cartItems.length===0 ) { %>
+                                   
                                     <div class="alert alert-info" role="alert">
                                         hai buddy Your cart is empty. Please add some items to continue <a
                                             href="/shop">shopping</a> .
@@ -75,11 +76,15 @@
                                                                     <div class="form-row row justify-content-center">
                                                                         <div class="form-group ">
                                                                             <input class="font-medium" name="Coupon"
-                                                                                placeholder="Enter Your Coupon">
+                                                                                placeholder="Select Your Coupon">
                                                                         </div>
                                                                         <div class="form-group ">
-                                                                            <button class="btn btn-primary btn-sm"><i
-                                                                                    class="fi-rs-label "></i>Select Coupon</button>
+                                                                            <button type="button"
+                                                                                class="btn-lg btn-primary"
+                                                                                data-toggle="modal"
+                                                                                data-target="#couponModal">
+                                                                                Select Coupon
+                                                                            </button>
                                                                         </div>
                                                                     </div>
                                                                 </form>
@@ -87,7 +92,87 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <!-- Coupon Modal -->
+                                                <div class="modal fade" id="couponModal" tabindex="-1" role="dialog"
+                                                    aria-labelledby="couponModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="couponModalLabel">Available
+                                                                    Coupons</h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body row">
+                                                                <form id="couponForm">
+
+                                                                    <% coupons.forEach((coupon, index)=> { %>
+                                                                        <div class="col-12 mb-3">
+                                                                            <div class="card"
+                                                                                style="border-radius: 25px;">
+                                                                                <div class="card-body">
+                                                                                    <div class="form-check">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="couponSelection"
+                                                                                            id="coupon<%= index %>"
+                                                                                            value="<%= coupon._id %>">
+                                                                                        <label class="form-check-label"
+                                                                                            for="coupon<%= index %>">
+                                                                                            <h5 class="card-title"
+                                                                                                style="color: green;">
+                                                                                                <strong
+                                                                                                    style="color: #000000;">
+                                                                                                    <%= coupon.couponName
+                                                                                                        %>
+                                                                                                </strong>&nbsp;you save
+                                                                                                ₹
+                                                                                                <%= coupon.discountAmount
+                                                                                                    %>
+                                                                                            </h5>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <p class="card-text">Use this coupon
+                                                                                        code: <strong
+                                                                                            style="color: blue">
+                                                                                            <%= coupon.couponCode %>
+                                                                                        </strong></p>
+                                                                                    <p class="card-text">Get ₹<strong
+                                                                                            style="color: green">
+                                                                                            <%= coupon.discountAmount %>
+                                                                                        </strong>Off on <u>₹<strong
+                                                                                                style="color: green">
+                                                                                                <%= coupon.criteriaAmount
+                                                                                                    %>
+                                                                                            </strong></u> and Above </p>
+                                                                                    <p class="card-text">Expiry On
+                                                                                        <strong style="color: Red">
+                                                                                            <%= coupon.expiryDate.toDateString()
+                                                                                                %>
+                                                                                        </strong>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <% }); %>
+                                                                </form>
+
+                                                            </div>
+                                                            <div id="validationMessage" class="text-danger mt-2"
+                                                                style="display:none;"></div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn-lg btn-secondary"
+                                                                    data-dismiss="modal">Close</button>
+                                                                <button type="button" class="btn-lg btn-primary"
+                                                                    onclick="applyCoupon()">Apply Coupon</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                         
                                             <div class="col-lg-8 col-md-8 ">
                                                 <div class="table-responsive">
                                                     <table class="table shopping-summery text-center clean">
@@ -101,72 +186,48 @@
                                                                 <th scope="col">Remove</th>
                                                             </tr>
                                                         </thead>
-
+                                                        
                                                         <tbody>
-
-                                                            <% cartItems.forEach(item=> { %>
-
-                                                                <tr>
-                                                                    <td class="image product-thumbnail">
-                                                                        <img src="/uploads/product/resized/<%=item.productId.productImage[0] %>"
-                                                                            alt="#">
-
-                                                                    </td>
-                                                                    <td class="product-des product-name">
-                                                                        <h5 class="product-name"><a href="#">
-                                                                                <%= item.productId.name %>
-                                                                            </a></h5>
-
-                                                                    </td>
-                                                                    <td class="price" data-title="Price"><span>₹<%=
-                                                                                item.productId.price%>
-                                                                        </span></td>
-
-                                                                    <td class="text-center" data-title="Quantity">
-                                                                        <div class="detail-qty border radius m-auto">
-
-                                                                            <a href="#" class="qty-down"
-                                                                                onclick="decrementQuantity('<%= item._id %>')">-</a>
-                                                                            <span class="qty-val"
-                                                                                data-item-id="<%= item._id %>">
-                                                                                <%= item.quantity %>
-                                                                            </span>
-
-                                                                            <a href="#" class="qty-up"
-                                                                                onclick="incrementQuantity('<%= item._id %>')">+</a>
-
-
-                                                                        </div>
-                                                                    </td>
-
-
-                                                                    <td class="text-right" data-title="Subtotal">
-                                                                        <span>₹<%= item.subtotal %></span>
-                                                                    </td>
-                                                                    <td class="action" data-title="Remove">
-                                                                        <a href="#"
-                                                                            onclick="removeFromCart('<%= item._id %>')"
-                                                                            class="text-muted"><i
-                                                                                class="fi-rs-trash"></i></a>
-                                                                    </td>
-
-                                                                </tr>
-
-                                                                <% }); %>
-
-
+                                                            <% cartItems.forEach(cartItem => { %>
+                                                                <% cartItem.products.forEach(product => { %>
                                                                     <tr>
-
-                                                                        <td colspan="6" class="text-end">
-                                                                            <a href="#"
-                                                                                onclick="clearCartConfirmation()"
-                                                                                class="text-muted"> <i
-                                                                                    class="fi-rs-cross-small"></i> Clear
-                                                                                Cart</a>
+                                                                        <td class="image product-thumbnail">
+                                                                            <a href="/productdetails/<%= product.productId._id %>">
+                                                                        <img src="/uploads/product/resized/<%=product.productId.productImage[0] %>"
+                                                                            alt="<%= product.name %> photo">
+                                                                        </a>
+                                                                    </td>
+                                                                        <td class="product-des product-name">
+                                                                            <h5 class="product-name">   <a href="/productdetails/<%= product.productId._id %>">
+                                                                                    <%= product.name %>
+                                                                                </a></h5>
                                                                         </td>
-
+                                                                        <td class="price" data-title="Price"><span>₹<%= product.productId.price %></span></td>
+                                                                        <td class="text-center" data-title="Quantity">
+                                                                            <div class="detail-qty border radius m-auto">
+                                                                                <a href="#" class="qty-down" onclick="decrementQuantity('<%= product._id %>')">-</a>
+                                                                                <span class="qty-val" data-item-id="<%= product._id %>">
+                                                                                    <%= product.quantity %>
+                                                                                </span>
+                                                                                <a href="#" class="qty-up" onclick="incrementQuantity('<%= product._id %>')">+</a>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="text-right" data-title="Subtotal">
+                                                                            <span>₹<%= product.total %></span>
+                                                                        </td>
+                                                                        <td class="action" data-title="Remove">
+                                                                            <a href="#" onclick="removeFromCart('<%= product._id %>')" class="text-muted"><i class="fi-rs-trash"></i></a>
+                                                                        </td>
                                                                     </tr>
+                                                                <% }); %>
+                                                            <% }); %>
+                                                            <tr>
+                                                                <td colspan="6" class="text-end">
+                                                                    <a href="#" onclick="clearCartConfirmation()" class="text-muted"> <i class="fi-rs-cross-small"></i> Clear Cart</a>
+                                                                </td>
+                                                            </tr>
                                                         </tbody>
+                                                        
                                                     </table>
                                                 </div>
                                             </div>
@@ -183,12 +244,10 @@
                                                 </div>
                                             </div>
                                         </div>
-
-
                         </div>
+                    <% } %>
 
                     </div>
-                    <% } %>
                 </div>
                 </div>
                 </div>
@@ -198,12 +257,17 @@
 
         <%- include('../layouts/footer.ejs') %>
             <%- include('../layouts/script.ejs') %>
+                <!-- jQuery -->
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                <!-- Bootstrap JS -->
+                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 
                 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                 <script>
                     function removeFromCart(id) {
+                        console.log("Removing item with ID:", id);
                         Swal.fire({
                             title: 'Are you sure?',
                             text: "You won't be able to revert this!",
@@ -418,4 +482,40 @@
                         }
                     }
 
+
+
+                    document.getElementById('couponForm').addEventListener('submit', function (event) {
+                        event.preventDefault();
+                        // Check if a coupon is selected
+                        const selectedCoupon = document.querySelector('input[name="couponSelection"]:checked');
+                        const validationMessage = document.getElementById('validationMessage');
+
+                        if (!selectedCoupon) {
+                            // Show validation message
+                            validationMessage.textContent = 'Please select a coupon.';
+                            return;
+                        }
+                        const couponId = selectedCoupon.value;
+                        applyCoupon(couponId, productId);
+                    });
+
+                    function applyCoupon(couponId, productId) {
+                        fetch(`/cart/applyCoupon/${productId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ couponId: couponId })
+
+                        })
+                            .then(response => {
+                                console.log(response.data);
+
+
+                            })
+                            .catch(error => {
+                                console.error(error);
+
+                            });
+                    }
                 </script>

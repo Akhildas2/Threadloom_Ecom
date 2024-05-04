@@ -56,7 +56,8 @@ function truncateDescription(description) {
 const checkout = async (req, res) => {
     const userId = req.session.user_id;
     try {
-        const cartItems = await CartItems.find({ user: userId }).populate('productId');
+        const cartItems = await CartItems.find({ user: userId }).populate('products.productId');
+        console.log("cartItems",cartItems)
         let totalPrice = 0;
         cartItems.forEach(item => {
             item.subtotal = item.price * item.quantity;
@@ -79,7 +80,7 @@ const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
-
+        console.log("total",total)
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
@@ -114,6 +115,7 @@ const placeOrder = async (req, res) => {
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
+                total:total,
                 items: items.map((item) => ({
                     productId: item.productId._id,
                     quantity: item.quantity,
@@ -207,6 +209,7 @@ const placeOrder = async (req, res) => {
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
+                total:total,
                 items: items.map((item) => ({
                     productId: item.productId._id,
                     quantity: item.quantity,

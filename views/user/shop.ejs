@@ -146,8 +146,7 @@
                                                         </div>
 
                                                         <div class="product-action-1 show">
-                                                            <button aria-label="Add To Cart" class="action-btn hover-up"
-                                                                onclick="addToCart('<%= products[i]._id %>','<%=products[i].price %>')">
+                                                            <button aria-label="Add To Cart" class="action-btn hover-up" onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">
                                                                 <i class="fi-rs-shopping-bag-add"></i>
                                                             </button>
                                                         </div>
@@ -275,7 +274,7 @@
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                     <script>
-                        function addToCart(productId, price) {
+                       function addToCart(productId, name, price) {
                             // Assuming you want to add 1 quantity by default
                             const quantity = 1;
                             fetch('/cart/addToCart/' + productId, {
@@ -283,7 +282,7 @@
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
-                                body: JSON.stringify({ productId, quantity, price }),
+                                body: JSON.stringify({ productId, name, quantity, price }),
                             })
                                 .then(response => {
                                     if (response.redirected) {

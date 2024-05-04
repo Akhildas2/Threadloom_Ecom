@@ -69,7 +69,15 @@ const orderSchema = mongoose.Schema({
         type: String,
         enum: ['pending', 'paid', 'retry'],
         default: 'pending'
-    }
+    },
+    total: {
+        type: Number,
+        required: true
+    }, 
+     discount: {
+        type: Number,
+        default:0
+    },
 }, { timestamps: true })
 
 module.exports = mongoose.model('Order', orderSchema);

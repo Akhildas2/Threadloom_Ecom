@@ -215,16 +215,16 @@
             document.getElementById('addToCartForm').addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent the default form submission
 
-                const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);// Get the quantity from the UI
-                const productId = '<%= products._id %>'; // Get the product ID from the EJS template
-                const price = '<%= products.price %>'; // Get the product ID from the EJS template
-
+                const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);
+                const productId = '<%= products._id %>'; 
+                const price = '<%= products.price %>'; 
+                const name = `<%=products.name %>`
                 fetch('/cart/addToCart/' + productId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ productId, quantity, price }),
+                    body: JSON.stringify({ productId,name, quantity, price }),
                 })
                     .then(response => {
                         if (response.redirected) {
