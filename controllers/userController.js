@@ -11,7 +11,9 @@ const Wishlist = require("../models/wishListModel")
 const loadHome = async (req, res) => {
     try {
 
-        const products = await Product.find({ isUnlisted: false }).populate('category');
+        const products = await Product.find({ isUnlisted: false }).populate('category').populate('offer');
+        //console.log('products',products);
+        
         const categories = await Category.find({});
         const userId = req.session.user_id;
         let userWishlist = [];

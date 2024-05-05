@@ -12,7 +12,7 @@ const axios = require('axios')
 
 // Create PayPal environment
 paypal.configure({
-    'mode':process.env.PAYPAL_MODE, 
+    'mode': process.env.PAYPAL_MODE,
     'client_id': process.env.PAYPAL_CLIENT_ID,
     'client_secret': process.env.PAYPAL_CLIENT_SECRET
 });
@@ -57,11 +57,11 @@ const checkout = async (req, res) => {
     const userId = req.session.user_id;
     try {
         const cartItems = await CartItems.find({ user: userId }).populate('products.productId');
-        console.log("cartItems",cartItems)
         let totalPrice = 0;
         cartItems.forEach(item => {
-            item.subtotal = item.price * item.quantity;
-            totalPrice += item.subtotal;
+            item.products.forEach(product => {
+                totalPrice += product.price * product.quantity;
+            });
         });
         const address = await Address.find({ userId: userId });
 
@@ -80,7 +80,6 @@ const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
-        console.log("total",total)
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
@@ -91,19 +90,56 @@ const placeOrder = async (req, res) => {
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
+
+
         for (const item of items) {
-            const product = await Product.findById(item.productId) 
-            if (product.stockCount < item.quantity) {
-                return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
+            for (const productDetail of item.products) {
+                // Ensure productDetail.productId is defined before accessing its _id
+                if (!productDetail.productId) {
+                    return res.status(400).json({ message: `Product ID is undefined for item ${item._id}.` });
+                }
+                const productId = productDetail.productId._id;
+                const product = await Product.findById(productId);
+
+                if (!product) {
+                    return res.status(404).json({ message: `Product with ID ${productId} not found.` });
+                }
+
+                if (product.stockCount < productDetail.quantity) {
+                    return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
+                }
+
+                product.stockCount -= productDetail.quantity;
+                await product.save();
+                console.log("Quantity decreased");
             }
-        
-         
         }
+
+
+        const orderItems = items.flatMap((item) => {
+            return item.products.map(productDetail => ({
+                productId: productDetail.productId._id,
+                quantity: productDetail.quantity,
+                price: productDetail.price,
+                total: productDetail.price * productDetail.quantity,
+            }));
+        });
+
+
+
 
         // Check if the payment method is PayPal
         if (paymentMethod === 'paypal') {
 
-            const itemTotalAmount = items.reduce((total, item) => total + (item.price * item.quantity), 0);
+            // Calculate the total amount for each item's products
+            const itemTotalAmount = items.flatMap((item) => {
+                // Calculate the total amount for each item's products
+                const itemTotal = item.products.reduce((total, productDetail) => total + (productDetail.price * productDetail.quantity), 0);
+                return itemTotal;
+            });
+
+
+
             const exchangeRate = await fetchExchangeRate();
             const itemTotal = itemTotalAmount * exchangeRate;
 
@@ -115,31 +151,13 @@ const placeOrder = async (req, res) => {
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
-                total:total,
-                items: items.map((item) => ({
-                    productId: item.productId._id,
-                    quantity: item.quantity,
-                    price: item.price,
-                    total: item.price * item.quantity,
-                }))
+                total: total,
+                items: orderItems
             });
 
             // Save the order to the database
             const savedOrder = await order.save();
             console.log("savedOrder")
-            //for updating the product quantity
-            for (const item of items) {
-                const product = await Product.findById(item.productId)
-                if (!product) {
-                    return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
-                }
-
-                product.stockCount -= item.quantity;
-                await product.save()
-                console.log("Quantity decreased")
-
-            }
-
             const orderId = savedOrder._id;
 
 
@@ -150,31 +168,34 @@ const placeOrder = async (req, res) => {
                     "payment_method": "paypal"
                 },
                 "redirect_urls": {
-                    "return_url":  process.env.BASE_URL + `/order/paymentSuccess/${orderId}`,
-                    "cancel_url":  process.env.BASE_URL + `/order/paymentCancel/${orderId}`
-                },                
+                    "return_url": process.env.BASE_URL + `/order/paymentSuccess/${orderId}`,
+                    "cancel_url": process.env.BASE_URL + `/order/paymentCancel/${orderId}`
+                },
                 "transactions": [{
                     "item_list": {
-                        "items": items.map(item => ({
-                            "name": item.productId.name,
-                            "description": truncateDescription(item.productId.description),
-                            "quantity": item.quantity,
-                            "price": (item.price * exchangeRate).toFixed(2),
-                            "currency": "USD"
-                        }))
+                        "items": items.flatMap(item => {
+                            // Map each product within an item
+                            return item.products.map(productDetail => ({
+                                "name": productDetail.productId.name,
+                                "description": truncateDescription(productDetail.productId.description),
+                                "quantity": productDetail.quantity,
+                                "price": (productDetail.price * exchangeRate).toFixed(2),
+                                "currency": "USD"
+                            }));
+                        }).flat()
                     },
                     "amount": {
                         "currency": "USD",
                         "total": itemTotal.toFixed(2)
                     },
                     "description": "Order summary of the product.",
-                 
+
                 }],
                 application_context: {
                     shipping_preference: "NO_SHIPPING",
                     brand_name: "threadloom"
                 }
-                
+
             };
 
 
@@ -209,27 +230,11 @@ const placeOrder = async (req, res) => {
                 totalAmount: parseFloat(total),
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
-                total:total,
-                items: items.map((item) => ({
-                    productId: item.productId._id,
-                    quantity: item.quantity,
-                    price: item.price,
-                    total: item.price * item.quantity,
-                })),
+                total: total,
+                items: orderItems
             });
             await order.save();
-            //for updating the product quantity
-            for (const item of items) {
-                const product = await Product.findById(item.productId)
-                if (!product) {
-                    return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
-                }
 
-                product.stockCount -= item.quantity;
-                await product.save()
-                console.log("Quantity decreased")
-
-            }
             console.log("Order placed successfully.")
             // Clear cart
             await CartItems.deleteMany({ user: userId });
@@ -246,6 +251,10 @@ const placeOrder = async (req, res) => {
         res.status(500).json({ message: 'Error placing order', error: error.message });
     }
 }
+
+
+
+
 
 // For payment success
 const paymentSuccess = async (req, res) => {
@@ -287,6 +296,12 @@ const paymentSuccess = async (req, res) => {
     }
 };
 
+
+
+
+
+
+
 // For payment cancellation
 const paymentCancel = async (req, res) => {
     try {
@@ -307,6 +322,13 @@ const paymentCancel = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+
+
+
+
+
+
 
 
 //to show order deatils 
@@ -339,6 +361,12 @@ const orderDetails = async (req, res) => {
     }
 };
 
+
+
+
+
+
+
 //this is for order confirmation
 const orderConfirmation = async (req, res) => {
     try {
@@ -353,6 +381,11 @@ const orderConfirmation = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+
+
+
+
 
 
 //this is for oder cancellation
@@ -380,7 +413,7 @@ const cancelOrder = async (req, res) => {
         const items = order.items;
         for (const item of items) {
             const product = await Product.findById(item.productId)
-            
+
             if (!product) {
                 return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
             }
@@ -406,7 +439,7 @@ const cancelOrder = async (req, res) => {
                         description: `Refund for order cancellation`
                     }]
                 });
-                 await newWallet.save();
+                await newWallet.save();
 
             } else {
                 wallet.balance += item.total;
@@ -431,6 +464,10 @@ const cancelOrder = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error.' });
     }
 };
+
+
+
+
 
 
 

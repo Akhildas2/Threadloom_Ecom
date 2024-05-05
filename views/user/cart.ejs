@@ -23,7 +23,7 @@
                                     Please <a href="/login">login</a> to view your cart.
                                 </div>
                                 <% } else if (cartItems.length===0 ) { %>
-                                   
+
                                     <div class="alert alert-info" role="alert">
                                         hai buddy Your cart is empty. Please add some items to continue <a
                                             href="/shop">shopping</a> .
@@ -72,22 +72,42 @@
                                                     <div class="total-amount">
                                                         <div class="left">
                                                             <div class="coupon">
-                                                                <form action="#" target="_blank">
-                                                                    <div class="form-row row justify-content-center">
-                                                                        <div class="form-group ">
-                                                                            <input class="font-medium" name="Coupon"
-                                                                                placeholder="Select Your Coupon">
-                                                                        </div>
-                                                                        <div class="form-group ">
-                                                                            <button type="button"
-                                                                                class="btn-lg btn-primary"
-                                                                                data-toggle="modal"
-                                                                                data-target="#couponModal">
-                                                                                Select Coupon
-                                                                            </button>
+                                                                <div class="form-group">
+                                                                    <div class="left">
+                                                                        <div class="coupon">
+                                                                            <form action="#" target="_blank">
+                                                                                <div
+                                                                                    class="form-row row justify-content-center">
+                                                                                    <div class="form-group">
+                                                                                        <% if (appliedCouponId) { %>
+                                                                                            <input type="text" style="color: green;" class="form-control" value="<%= appliedCouponId.couponCode %> Coupon Applied" readonly>
+                                                                                        <% } else { %>
+                                                                                            <input type="text" class="font-medium" style="color: black;" value="Select Your Coupon" readonly>
+                                                                                        <% } %>
+                                                                                    </div>
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    
+                                                                                    <div class="form-group">
+                                                                                        <% if (appliedCouponId) { %>
+                                                                                            <button type="button"
+                                                                                                class="btn-lg btn-danger"
+                                                                                                onclick="removeCoupon('<%= appliedCouponId.cartItemId || appliedCouponId._id %>')">Remove
+                                                                                                Coupon</button>
+                                                                                            <% } else { %>
+                                                                                                <button type="button"
+                                                                                                    class="btn-lg btn-primary"
+                                                                                                    data-toggle="modal"
+                                                                                                    data-target="#couponModal">Select
+                                                                                                    Coupon</button>
+                                                                                                <% } %>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </form>
                                                                         </div>
                                                                     </div>
-                                                                </form>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -161,18 +181,18 @@
 
                                                             </div>
                                                             <div id="validationMessage" class="text-danger mt-2"
-                                                                style="display:none;"></div>
+                                                                style=" text-align: center;"></div>
                                                             <div class="modal-footer">
                                                                 <button type="button" class="btn-lg btn-secondary"
                                                                     data-dismiss="modal">Close</button>
                                                                 <button type="button" class="btn-lg btn-primary"
-                                                                    onclick="applyCoupon()">Apply Coupon</button>
+                                                                    onclick="applyCoupon(event)">Apply Coupon</button>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                         
+
                                             <div class="col-lg-8 col-md-8 ">
                                                 <div class="table-responsive">
                                                     <table class="table shopping-summery text-center clean">
@@ -186,48 +206,63 @@
                                                                 <th scope="col">Remove</th>
                                                             </tr>
                                                         </thead>
-                                                        
+
                                                         <tbody>
-                                                            <% cartItems.forEach(cartItem => { %>
-                                                                <% cartItem.products.forEach(product => { %>
+                                                            <% cartItems.forEach(cartItem=> { %>
+                                                                <% cartItem.products.forEach(product=> { %>
                                                                     <tr>
                                                                         <td class="image product-thumbnail">
-                                                                            <a href="/productdetails/<%= product.productId._id %>">
-                                                                        <img src="/uploads/product/resized/<%=product.productId.productImage[0] %>"
-                                                                            alt="<%= product.name %> photo">
-                                                                        </a>
-                                                                    </td>
+                                                                            <a
+                                                                                href="/productdetails/<%= product.productId._id %>">
+                                                                                <img src="/uploads/product/resized/<%=product.productId.productImage[0] %>"
+                                                                                    alt="<%= product.name %> photo">
+                                                                            </a>
+                                                                        </td>
                                                                         <td class="product-des product-name">
-                                                                            <h5 class="product-name">   <a href="/productdetails/<%= product.productId._id %>">
+                                                                            <h5 class="product-name"> <a
+                                                                                    href="/productdetails/<%= product.productId._id %>">
                                                                                     <%= product.name %>
                                                                                 </a></h5>
                                                                         </td>
-                                                                        <td class="price" data-title="Price"><span>₹<%= product.productId.price %></span></td>
+                                                                        <td class="price" data-title="Price"><span>₹<%=
+                                                                                    product.productId.price %></span>
+                                                                        </td>
                                                                         <td class="text-center" data-title="Quantity">
-                                                                            <div class="detail-qty border radius m-auto">
-                                                                                <a href="#" class="qty-down" onclick="decrementQuantity('<%= product._id %>')">-</a>
-                                                                                <span class="qty-val" data-item-id="<%= product._id %>">
+                                                                            <div
+                                                                                class="detail-qty border radius m-auto">
+                                                                                <a href="#" class="qty-down"
+                                                                                    onclick="decrementQuantity('<%= product._id %>')">-</a>
+                                                                                <span class="qty-val"
+                                                                                    data-item-id="<%= product._id %>">
                                                                                     <%= product.quantity %>
                                                                                 </span>
-                                                                                <a href="#" class="qty-up" onclick="incrementQuantity('<%= product._id %>')">+</a>
+                                                                                <a href="#" class="qty-up"
+                                                                                    onclick="incrementQuantity('<%= product._id %>')">+</a>
                                                                             </div>
                                                                         </td>
                                                                         <td class="text-right" data-title="Subtotal">
                                                                             <span>₹<%= product.total %></span>
                                                                         </td>
                                                                         <td class="action" data-title="Remove">
-                                                                            <a href="#" onclick="removeFromCart('<%= product._id %>')" class="text-muted"><i class="fi-rs-trash"></i></a>
+                                                                            <a href="#"
+                                                                                onclick="removeFromCart('<%= product._id %>')"
+                                                                                class="text-muted"><i
+                                                                                    class="fi-rs-trash"></i></a>
                                                                         </td>
                                                                     </tr>
-                                                                <% }); %>
-                                                            <% }); %>
-                                                            <tr>
-                                                                <td colspan="6" class="text-end">
-                                                                    <a href="#" onclick="clearCartConfirmation()" class="text-muted"> <i class="fi-rs-cross-small"></i> Clear Cart</a>
-                                                                </td>
-                                                            </tr>
+                                                                    <% }); %>
+                                                                        <% }); %>
+                                                                            <tr>
+                                                                                <td colspan="6" class="text-end">
+                                                                                    <a href="#"
+                                                                                        onclick="clearCartConfirmation()"
+                                                                                        class="text-muted"> <i
+                                                                                            class="fi-rs-cross-small"></i>
+                                                                                        Clear Cart</a>
+                                                                                </td>
+                                                                            </tr>
                                                         </tbody>
-                                                        
+
                                                     </table>
                                                 </div>
                                             </div>
@@ -245,7 +280,7 @@
                                             </div>
                                         </div>
                         </div>
-                    <% } %>
+                        <% } %>
 
                     </div>
                 </div>
@@ -483,39 +518,114 @@
                     }
 
 
-
-                    document.getElementById('couponForm').addEventListener('submit', function (event) {
+                    function applyCoupon(event) {
                         event.preventDefault();
-                        // Check if a coupon is selected
                         const selectedCoupon = document.querySelector('input[name="couponSelection"]:checked');
                         const validationMessage = document.getElementById('validationMessage');
 
                         if (!selectedCoupon) {
-                            // Show validation message
                             validationMessage.textContent = 'Please select a coupon.';
+                            validationMessage.style.display = 'block';
                             return;
                         }
-                        const couponId = selectedCoupon.value;
-                        applyCoupon(couponId, productId);
-                    });
 
-                    function applyCoupon(couponId, productId) {
-                        fetch(`/cart/applyCoupon/${productId}`, {
+                        const couponId = selectedCoupon.value;
+                        validationMessage.style.display = 'none';
+
+                        fetch('/cart/applyCoupon', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({ couponId: couponId })
-
                         })
-                            .then(response => {
-                                console.log(response.data);
-
-
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.status) {
+                                    updateCartTotals();
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Coupon Applied!',
+                                        text: 'Your coupon has been successfully applied.',
+                                    });
+                                    setTimeout(() => {
+                                        location.reload()
+                                    }, 2000);
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: 'Failed to apply the coupon.',
+                                    });
+                                }
                             })
                             .catch(error => {
                                 console.error(error);
-
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error!',
+                                    text: 'An error occurred while applying the coupon.',
+                                });
                             });
                     }
+
+
+
+
+                        function removeCoupon(couponId) {
+                          
+
+                            // Use SweetAlert for confirmation
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, remove it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetch('/cart/removeCoupon', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ couponId: couponId })
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.status) {
+
+                                                Swal.fire(
+                                                    'Removed!',
+                                                    'Your coupon has been removed.',
+                                                    'success'
+                                                );
+                                                setTimeout(() => {
+                                                    location.reload()
+                                                }, 2000);
+                                            } else {
+                                                // Handle the error
+                                                Swal.fire(
+                                                    'Error!',
+                                                    'Failed to remove the coupon.',
+                                                    'error'
+                                                );
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            Swal.fire(
+                                                'Error!',
+                                                'An error occurred while removing the coupon.',
+                                                'error'
+                                            );
+                                        });
+                                }
+                            });
+                        }
+             
+
+
                 </script>

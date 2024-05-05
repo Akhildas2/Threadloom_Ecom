@@ -208,6 +208,38 @@
                                                             <span>90%</span>
                                                         </span>
                                                     </div>
+                                                    <div class="product-card__price d-flex">
+                                                        <% let discountedPrice = products[i].price; %>
+                                                        <% let hasDiscount = false; %>
+                                                      
+                                                        <% if (products[i].offer && products[i].offer.discount) { %>
+                                                          <% discountedPrice = discountedPrice - (discountedPrice * (products[i].offer.discount / 100)); %>
+                                                          <% hasDiscount = true; %>
+                                                        <% } %>
+                                                      
+                                                        <% if (products[i].category && products[i].category.offer) { %>
+                                                          <% const categoryOffer = products[i].category.offer; %>
+                                                          <% console.log('Category Offer for product:', products[i].name, categoryOffer); %>
+                                                          <% if (categoryOffer && categoryOffer.discount) { %>
+                                                            <% console.log('Applying category offer discount:', categoryOffer.discount, 'for product:', products[i].name); %>
+                                                            <% discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100)); %>
+                                                            <% hasDiscount = true; %>
+                                                          <% } else { %>
+                                                            <% console.log('No category offer discount available for product:', products[i].name); %>
+                                                          <% } %>
+                                                        <% } else { %>
+                                                          <% console.log('No category offer available for product:', products[i].name); %>
+                                                        <% } %>
+                                                      
+                                                        <% if (hasDiscount) { %>
+                                                          <span class="money price">
+                                                            <del>₹<%= products[i].price.toFixed(2) %></del>
+                                                            &nbsp;<span class="discounted-price" style="color: green;">₹<%= discountedPrice.toFixed(2) %></span>
+                                                          </span>
+                                                        <% } else { %>
+                                                          <span class="money price">₹<%= products[i].price.toFixed(2) %></span>
+                                                        <% } %>
+                                                      </div>
                                                     <div class="product-price">
                                                         <span>₹<%= products[i].price %> </span>
                                                         <% if(products[i].price) { %>

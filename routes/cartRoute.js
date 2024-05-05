@@ -15,7 +15,8 @@ cartRoute.get('/listProductsInCart', auth.isLogin,cartController.listProductsInC
 cartRoute.delete('/removeFromCart/:id', auth.isLogin, cartController.removeFromCart);
 cartRoute.delete('/clear', auth.isLogin, cartController.clearCart);
 cartRoute.put('/updateQuantity/:itemId',auth.isLogin,cartController.updateQuantity);
-cartRoute.post('/applyCoupon/:productId',auth.isLogin,cartController.applyCoupon);
+cartRoute.post('/applyCoupon',auth.isLogin,cartController.applyCoupon);
+cartRoute.post('/removeCoupon',auth.isLogin,cartController.removeCoupon);
 
 
 module.exports = cartRoute;

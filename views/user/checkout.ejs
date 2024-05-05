@@ -148,37 +148,45 @@
                                         </thead>
                                         <tbody data-cart-items="<%= JSON.stringify(cartItems) %>"
                                             data-total-price="<%= totalPrice %>">
-                                            <% cartItems.forEach(item=> { %>
-                                                <tr>
-                                                    <td class="image product-thumbnail">
-                                                        <img src="/uploads/product/resized/<%=item.productId.productImage[0] %>"
-                                                            alt="<%= item.productId.name %>">
-
+                                            <% cartItems.forEach(cartItem=> { %>
+                                                <% cartItem.products.forEach(product=> { %>
+                                                    <tr>
+                                                        <td class="image product-thumbnail">
+                                                            <a href="/productdetails/<%= product.productId._id %>">
+                                                                <img src="/uploads/product/resized/<%=product.productId.productImage[0] %>"
+                                                                    alt="<%= product.name %> photo">
+                                                            </a>
+                                                        </td>
                                                     <td>
-                                                        <h5 class="product-name"><a href="#">
-                                                                <%= item.productId.name %>
-                                                            </a></h5> (<%= item.price %>) <span class="product-qty"> *
-                                                                <%= item.quantity %>
-                                                            </span>
-                                                    </td>
-                                                    <td>₹<%= item.subtotal %>
-                                                    </td>
-                                                </tr>
-                                                <% }); %>
-                                                    <th>SubTotal</th>
-                                                    <td class="product-subtotal" colspan="2">₹<%= totalPrice %>
-                                                    </td>
+                                                            <h5 class="product-name"> <a
+                                                                    href="/productdetails/<%= product.productId._id %>">
+                                                                    <%= product.name %>
+                                                            </h5> (<%= product.price %>) <span class="product-qty"> *
+                                                                    <%= product.quantity %> </a>
+                                                                </span>
+                                                        </td>
+                                                        <td>₹<%= product.total %>
+                                                        </td>
+                                                      
                                                     </tr>
-                                                    <tr>
-                                                        <th>Shipping</th>
-                                                        <td colspan="2"><em>Free Shipping</em></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total</th>
-                                                        <td colspan="2" class="product-subtotal"><span
-                                                                class="font-xl text-brand fw-900">₹<%= totalPrice %>
-                                                            </span></td>
-                                                    </tr>
+                                                    <% }); %>
+                                                        <% }); %>
+
+                                                            <th>SubTotal</th>
+                                                            <td class="product-subtotal" colspan="2">₹<%= totalPrice %>
+                                                            </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Shipping</th>
+                                                                <td colspan="2"><em>Free Shipping</em></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Total</th>
+                                                                <td colspan="2" class="product-subtotal"><span
+                                                                        class="font-xl text-brand fw-900">₹<%=
+                                                                            totalPrice %>
+                                                                    </span></td>
+                                                            </tr>
 
                                         </tbody>
                                     </table>
@@ -425,7 +433,7 @@
                                                 });
                                             }
                                         } else {
-                                            console.log("response",response)
+                                            console.log("response", response)
                                             if (response.data.successs)
                                                 Swal.fire({
                                                     icon: 'success',
