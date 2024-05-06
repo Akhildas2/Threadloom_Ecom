@@ -219,16 +219,16 @@
                                                       
                                                         <% if (products[i].category && products[i].category.offer) { %>
                                                           <% const categoryOffer = products[i].category.offer; %>
-                                                          <% console.log('Category Offer for product:', products[i].name, categoryOffer); %>
+                                                          <%# console.log('Category Offer for product:', products[i].name, categoryOffer); %>
                                                           <% if (categoryOffer && categoryOffer.discount) { %>
-                                                            <% console.log('Applying category offer discount:', categoryOffer.discount, 'for product:', products[i].name); %>
+                                                            <%# console.log('Applying category offer discount:', categoryOffer.discount, 'for product:', products[i].name); %>
                                                             <% discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100)); %>
                                                             <% hasDiscount = true; %>
                                                           <% } else { %>
-                                                            <% console.log('No category offer discount available for product:', products[i].name); %>
+                                                            <%# console.log('No category offer discount available for product:', products[i].name); %>
                                                           <% } %>
                                                         <% } else { %>
-                                                          <% console.log('No category offer available for product:', products[i].name); %>
+                                                          <%# console.log('No category offer available for product:', products[i].name); %>
                                                         <% } %>
                                                       
                                                         <% if (hasDiscount) { %>
@@ -240,12 +240,12 @@
                                                           <span class="money price">₹<%= products[i].price.toFixed(2) %></span>
                                                         <% } %>
                                                       </div>
-                                                    <div class="product-price">
-                                                        <span>₹<%= products[i].price %> </span>
-                                                        <% if(products[i].price) { %>
-                                                            <span class="old-price">₹<%= products[i].price %></span>
-                                                            <% } %>
-                                                    </div>
+                                                    <!-- <div class="product-price">
+                                                        <span>₹<%#= products[i].price %> </span>
+                                                        <%# if(products[i].price) { %>
+                                                            <span class="old-price">₹<%#= products[i].price %></span>
+                                                            <%# } %>
+                                                    </div> -->
 
                                                     <div class="product-action-1 show">
                                                         <button aria-label="Add To Cart" class="action-btn hover-up" onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">

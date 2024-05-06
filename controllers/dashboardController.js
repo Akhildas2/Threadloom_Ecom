@@ -27,7 +27,9 @@ const loadDashboard = async (req, res) => {
             const address = await Address.find({ userId });
             const orders = await Order.find({ userId}).populate('userId').populate('items.productId').sort({ createdAt: -1 });
             const wallet = await Wallet.findOne({ userId }).sort({ 'transactions.date': -1 });
-
+            // Sorting new transactions
+            wallet.transactions.sort((a, b) => b.date - a.date);
+            
 
             res.render('dashboard', { req, pageTitle, userData, address, orders,wallet });
     } catch (error) {
@@ -60,7 +62,7 @@ const updateUser = async (req, res) => {
             user.mobile = mobile;
         }
 
-        const updatedUser = await user.save();
+       await user.save();
         console.log("User deatils updated successful");
 
         return res.status(200).json({
@@ -108,7 +110,7 @@ const changePassword = async (req, res) => {
 
 
         user.password = await securePassword(newPassword);
-        const updatedUser = await user.save();
+         await user.save();
         console.log("Password updated successfully");
         return res.status(200).json({
             status: true,
@@ -137,7 +139,7 @@ const addAddress = async (req, res) => {
             userId: userId
         });
 
-        const add = await address.save();
+        await address.save();
         console.log("Address add successful");
         return res.status(200).json({
             status: true,

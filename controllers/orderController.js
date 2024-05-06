@@ -33,7 +33,7 @@ function generateRandomString(length) {
 const fetchExchangeRate = async () => {
     try {
         const response = await axios.get('https://api.exchangerate-api.com/v4/latest/INR');
-        console.log("response", response.data.rates.USD)
+        // console.log("response", response.data.rates.USD)
         return response.data.rates.USD;
     } catch (error) {
         console.error('Error fetching exchange rate:', error);

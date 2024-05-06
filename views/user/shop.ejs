@@ -15,7 +15,7 @@
             <section class="mt-50 mb-50">
                 <div class="container">
                     <div class="row flex-row-reverse">
-                        <div class="col-8">
+                        <div class="col-12">
                             <div class="shop-product-fillter style-2">
                                 <div class="totall-product">
                                     <p> We found <strong class="text-brand">688</strong> items for you!</p>
@@ -69,9 +69,11 @@
                             <div class="tab-content wow fadeIn animated" id="myTabContent">
                                 <div class="tab-pane fade show active" id="tab-one" role="tabpanel"
                                     aria-labelledby="tab-one">
+                    <div class="row flex-row-reverse">
+
                                     <div class="row product-grid-4">
                                         <% for(let i=0; i<products.length; i++) { %>
-                                            <div class="col-lg-4 col-md-4 col-sm-6  col-12">
+                                            <div class="col-lg-4 col-md-4 col-sm-6  col-8">
                                                 <div class="product-cart-wrap mb-30">
                                                     <div class="product-img-action-wrap">
                                                         <div class="product-img product-img-zoom ">
@@ -91,18 +93,21 @@
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#quickViewModal"><i
                                                                     class="fi-rs-eye"></i></a>
-                                                                    <% if (userWishlist.some(item => item.productId.equals(products[i]._id))) { %>
-                                                                        <a aria-label="Add To Wishlist" class="action-btn" style="background-color: red;"
-                                                                            onclick="addToWishList('<%= products[i]._id %>')"><i
-                                                                                class="fi-rs-heart"></i></a>
-                                                                    <% } else { %>
-                                                                        <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                                            onclick="addToWishList('<%= products[i]._id %>')"><i
-                                                                                class="fi-rs-heart"></i></a>
+                                                            <% if (userWishlist.some(item=>
+                                                                item.productId.equals(products[i]._id))) { %>
+                                                                <a aria-label="Add To Wishlist" class="action-btn"
+                                                                    style="background-color: red;"
+                                                                    onclick="addToWishList('<%= products[i]._id %>')"><i
+                                                                        class="fi-rs-heart"></i></a>
+                                                                <% } else { %>
+                                                                    <a aria-label="Add To Wishlist"
+                                                                        class="action-btn hover-up"
+                                                                        onclick="addToWishList('<%= products[i]._id %>')"><i
+                                                                            class="fi-rs-heart"></i></a>
                                                                     <% } %>
-                                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                                href="#"><i
-                                                                    class="fi-rs-shuffle"></i></a>
+                                                                        <a aria-label="Compare"
+                                                                            class="action-btn hover-up" href="#"><i
+                                                                                class="fi-rs-shuffle"></i></a>
                                                         </div>
                                                         <div
                                                             class="product-badges product-badges-position product-badges-mrg">
@@ -146,7 +151,8 @@
                                                         </div>
 
                                                         <div class="product-action-1 show">
-                                                            <button aria-label="Add To Cart" class="action-btn hover-up" onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">
+                                                            <button aria-label="Add To Cart" class="action-btn hover-up"
+                                                                onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">
                                                                 <i class="fi-rs-shopping-bag-add"></i>
                                                             </button>
                                                         </div>
@@ -158,7 +164,7 @@
                                 </div>
                             </div>
 
-
+    </div>
 
 
 
@@ -249,12 +255,16 @@
                         <ul class="pagination justify-content-end">
                             <% for (let i=1; i <=totalPages; i++) { %>
                                 <% if (i===currentPage) { %>
-                                    <li class="page-item active"><a class="page-link" onclick="changePage(`<%= i %>`, '<%= sort %>')"><%= i %></a></li>
-                                <% } else { %>
-                                    <li class="page-item"><a class="page-link" onclick="changePage(`<%= i %>`, '<%= sort %>')"><%= i %></a></li>
-                                <% } %>
-                            <% } %>
-                            
+                                    <li class="page-item active"><a class="page-link" onclick="changePage(`<%= i %>`)">
+                                            <%= i %>
+                                        </a></li>
+                                    <% } else { %>
+                                        <li class="page-item"><a class="page-link" onclick="changePage(`<%= i %>`)">
+                                                <%= i %>
+                                            </a></li>
+                                        <% } %>
+                                            <% } %>
+
                         </ul>
                     </nav>
                 </div>
@@ -274,7 +284,7 @@
                     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
                     <script>
-                       function addToCart(productId, name, price) {
+                        function addToCart(productId, name, price) {
                             // Assuming you want to add 1 quantity by default
                             const quantity = 1;
                             fetch('/cart/addToCart/' + productId, {
@@ -421,21 +431,34 @@
                                 });
                         }
 
-                        function changePage(page) {
-                            const sort = '<%= sort %>';
+                     
+                            const categoryId = this.value;
+                            const sort = this.getAttribute('data-sort'); 
+                            const filter = this.getAttribute('data-filter');
 
-                            fetch(`/shop?page=${page}&sort=${sort}&filter=${filter}`, {
+                            // Fetch new data from the server
+                            fetch(`/shop?category=${categoryId}&sort=${sort}&filter=${filter}`, {
                                 method: 'GET',
                                 headers: {
                                     'Content-Type': 'application/json',
                                 },
                             })
-                                .then(response => response.text())
-                                .then(data => {
-                                    document.getElementById('pagination-container').innerHTML = data;
+                                .then(response => {
+                                    // Check if the response is successful
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.text(); 
                                 })
-                                .catch(error => console.error('Error:', error));
-                        }
+                                .then(data => {
+                                    
+                                    document.getElementById('myTabContent').innerHTML = data;
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                   
+                                });
+                       
 
 
 

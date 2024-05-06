@@ -201,7 +201,7 @@ const verifyOtp = async (req, res) => {
         }
 
         //for updating is_verified
-        const updateInfo = await User.updateOne({ email: req.cookies.email }, { isVerified: true });
+        await User.updateOne({ email: req.cookies.email }, { isVerified: true });
 
         // OTP is valid, clear the OTP cookie
         res.clearCookie('email');
@@ -408,9 +408,12 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort, page , limit = 7 } = req.query;
-        console.log("req.",req.query)
-        const currentPage = parseInt(page, 10);
+        const { sort,  page  , limit = 3 ,categoryId,filter} = req.query;
+        console.log("req.query",req.query)
+      
+        const currentPage = parseInt(page, 10)|| 1;
+        console.log("currentPage",currentPage)
+
         const userId = req.session.user_id;
         let userWishlist = [];
         if (userId) { // If the user is logged in
@@ -419,6 +422,12 @@ const shop = async (req, res) => {
 
         let query = { isUnlisted: false };
       
+        if (categoryId) {
+            query.categoryId = categoryId;
+            console.log(`Filtering by category ID: ${categoryId}`);
+        }
+        
+
         let sortQuery = {};
         switch (sort) {
             case 'popularity':
@@ -445,15 +454,22 @@ const shop = async (req, res) => {
             default:
                 sortQuery = { createdAt: -1 };
         }
+        console.log("sortQuery",sortQuery)
 
         const products = await Product.find(query)
             .populate('category')
             .sort(sortQuery)
-            .skip((page - 1) * limit)
+            .skip((currentPage - 1) * limit)
             .limit(parseInt(limit));
+
         const category = await Category.find({isUnlisted: false});
+
         const totalCount = await Product.countDocuments(query);
+        console.log("totalCount",totalCount)
+
         const totalPages = Math.ceil(totalCount / limit);
+        console.log("totalPages",totalPages)
+
 
         res.render('shop', {
             req,
@@ -462,6 +478,7 @@ const shop = async (req, res) => {
             currentPage,
             limit,
             sort,
+            filter,
             category,
             userWishlist
         });
