@@ -7719,9 +7719,9 @@ span.fi-rs-apps {
     background: #e22b26;
 }
 
-.sidebar-widget .widget-header {
+/* .sidebar-widget .widget-header {
     border-bottom: 1px solid #e2e9e1;
-}
+} */
 
 .sidebar-widget .widget-header h5 {
     margin-bottom: 0;

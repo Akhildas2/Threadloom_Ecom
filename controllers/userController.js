@@ -13,14 +13,14 @@ const loadHome = async (req, res) => {
 
         const products = await Product.find({ isUnlisted: false }).populate('category').populate('offer');
         //console.log('products',products);
-        
+
         const categories = await Category.find({});
         const userId = req.session.user_id;
         let userWishlist = [];
         if (userId) { // If the user is logged in
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
         }
-        res.render('home', { req, products, categories ,userWishlist });
+        res.render('home', { req, products, categories, userWishlist });
 
 
     } catch (error) {
@@ -349,17 +349,17 @@ const productDetails = async (req, res) => {
     try {
         const productId = req.params.productId;
         const productData = await Product.findById(productId).populate('category')
-        let userWishlist = false; 
+        let userWishlist = false;
         const userId = req.session.user_id;
-         // If the user is logged in
+        // If the user is logged in
         if (userId) {
-            const wishlistItem=await Wishlist.findOne({productId:productId, user: userId});
+            const wishlistItem = await Wishlist.findOne({ productId: productId, user: userId });
             if (wishlistItem) {
-                userWishlist = true; 
+                userWishlist = true;
             }
         }
 
-        res.render('productDetails', { products: productData, req ,userWishlist});
+        res.render('productDetails', { products: productData, req, userWishlist });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
@@ -408,11 +408,11 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort,  page  , limit = 3 ,categoryId,filter} = req.query;
-        console.log("req.query",req.query)
-      
-        const currentPage = parseInt(page, 10)|| 1;
-        console.log("currentPage",currentPage)
+        const { sort, page, limit = 3, category, filter } = req.query;
+        console.log("req.query", req.query)
+
+        const currentPage = parseInt(page, 10) || 1;
+        console.log("currentPage", currentPage)
 
         const userId = req.session.user_id;
         let userWishlist = [];
@@ -421,12 +421,18 @@ const shop = async (req, res) => {
         }
 
         let query = { isUnlisted: false };
-      
-        if (categoryId) {
-            query.categoryId = categoryId;
-            console.log(`Filtering by category ID: ${categoryId}`);
+
+        if (category) {
+            const categoryId = await Category.findOne({ categoryName: category }).select('_id');
+            if (categoryId) {
+                query.category = categoryId;
+                console.log(`Filtering by category ID: ${categoryId}`);
+            } else {
+                console.log(`Category not found: ${category}`);
+            }
         }
         
+
 
         let sortQuery = {};
         switch (sort) {
@@ -454,7 +460,7 @@ const shop = async (req, res) => {
             default:
                 sortQuery = { createdAt: -1 };
         }
-        console.log("sortQuery",sortQuery)
+        console.log("sortQuery", sortQuery)
 
         const products = await Product.find(query)
             .populate('category')
@@ -462,13 +468,13 @@ const shop = async (req, res) => {
             .skip((currentPage - 1) * limit)
             .limit(parseInt(limit));
 
-        const category = await Category.find({isUnlisted: false});
+        const categories = await Category.find({ isUnlisted: false });
 
         const totalCount = await Product.countDocuments(query);
-        console.log("totalCount",totalCount)
+        console.log("totalCount", totalCount)
 
         const totalPages = Math.ceil(totalCount / limit);
-        console.log("totalPages",totalPages)
+        console.log("totalPages", totalPages)
 
 
         res.render('shop', {
@@ -479,7 +485,7 @@ const shop = async (req, res) => {
             limit,
             sort,
             filter,
-            category,
+            categories,
             userWishlist
         });
     } catch (error) {
