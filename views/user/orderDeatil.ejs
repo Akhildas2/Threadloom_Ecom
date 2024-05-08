@@ -41,12 +41,20 @@
               <p>
                 <%= selectedItem.orderStatus %>
               </p>
-              <% if (selectedItem.orderStatus !=='cancelled' ) { %>
-                <button class="btn-warnings cancel-product" data-item-id="<%= selectedItem._id %>">Cancel
-                  Product</button>
-                <% } else { %>
-                  <button class="btn-dangers cancel-product" disabled>Cancelled</button>
-                  <% } %>
+              <% if (selectedItem.orderStatus !='delivered') { %>
+                <% if (selectedItem.orderStatus !=='cancelled' ) { %>
+                  <button class="btn-warnings cancel-product" data-item-id="<%= selectedItem._id %>">Cancel
+                    Product</button>
+                  <% } else { %>
+                    <button class="btn-dangers cancel-product" disabled>Cancelled</button>
+                    <% } %>
+
+                    <% } else { %>
+                      <button class="btn-warnings return-product" data-item-id="<%= selectedItem._id %>" >Return Product</button>
+
+
+              <% } %>
+             
                     <% } %>
         </div>
       </div>
@@ -230,4 +238,67 @@
                 });
               });
             });
-          </script>
+
+
+
+
+
+
+            document.querySelectorAll('.return-product').forEach(button => {
+              button.addEventListener('click', function () {
+                const itemId = this.getAttribute('data-item-id');
+                $('#cancellationModal').modal('show');
+                $('#confirmCancellation').on('click', function () {
+                  const cancellationReason = document.getElementById('cancellationReason').value;
+                  if (!cancellationReason.trim()) {
+                    document.getElementById('cancellationReason').classList.add('is-invalid');
+                    document.getElementById('cancellationReasonError').textContent = 'Please enter a reason for cancellation.';
+                    return;
+                  }
+                  const orderId = '<%= order._id %>';
+                  fetch(`/order/return/${orderId}/${itemId}`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ itemId, orderId, cancellationReason })
+                  })
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.success) {
+                        // Use SweetAlert for success message
+                        Swal.fire({
+                          icon: 'success',
+                          title: 'Success',
+                          text: 'Successfully return.',
+                          confirmButtonText: 'OK',
+                        }).then(() => {
+                          $('#cancellationModal').modal('hide'); // Close the modal
+                          location.reload(); // Reload the page to reflect the changes
+                        });
+                      } else {
+                        // Use SweetAlert for error message
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Error',
+                          text: 'Failed to cancel product. Please try again.',
+                          confirmButtonText: 'OK'
+                        });
+                      }
+                    })
+                    .catch(error => {
+                      console.error('Error:', error);
+                      // Use SweetAlert for generic error message
+                      Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        confirmButtonText: 'OK'
+                      });
+                    });
+                });
+              });
+            });
+         
+         
+         </script>

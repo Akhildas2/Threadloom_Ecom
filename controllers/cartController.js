@@ -10,6 +10,7 @@ const loadCart = async (req, res) => {
   try {
     //for finding CartItem
     const cartItems = await CartItem.find({ user: userId }).populate('products.productId');
+    console.log("cartItems",cartItems)
     let appliedCouponId = null;
     for (const cartItem of cartItems) {
       if (cartItem.coupondiscount) {

@@ -11,9 +11,8 @@ const Wishlist = require("../models/wishListModel")
 const loadHome = async (req, res) => {
     try {
 
-        const products = await Product.find({ isUnlisted: false }).populate('category').populate('offer');
-        //console.log('products',products);
-
+        const products = await Product.find({ isUnlisted: false }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+        
         const categories = await Category.find({});
         const userId = req.session.user_id;
         let userWishlist = [];
@@ -348,7 +347,8 @@ const userLogout = async (req, res) => {
 const productDetails = async (req, res) => {
     try {
         const productId = req.params.productId;
-        const productData = await Product.findById(productId).populate('category')
+
+        const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
         let userWishlist = false;
         const userId = req.session.user_id;
         // If the user is logged in
@@ -408,7 +408,7 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort, page, limit = 3, category, filter } = req.query;
+        const { sort, page, limit = 10, category, filter } = req.query;
         console.log("req.query", req.query)
 
         const currentPage = parseInt(page, 10) || 1;
@@ -431,7 +431,7 @@ const shop = async (req, res) => {
                 console.log(`Category not found: ${category}`);
             }
         }
-        
+
 
 
         let sortQuery = {};
@@ -463,7 +463,8 @@ const shop = async (req, res) => {
         console.log("sortQuery", sortQuery)
 
         const products = await Product.find(query)
-            .populate('category')
+            .populate({ path: "category", populate: { path: "offer" } })
+            .populate('offer')
             .sort(sortQuery)
             .skip((currentPage - 1) * limit)
             .limit(parseInt(limit));
@@ -486,7 +487,8 @@ const shop = async (req, res) => {
             sort,
             filter,
             categories,
-            userWishlist
+            userWishlist,
+            totalCount
         });
     } catch (error) {
         console.log(error.message);

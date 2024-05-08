@@ -31,6 +31,7 @@
                                                         <th scope="col" colspan="2">Product</th>
                                                         <th scope="col">Price</th>
                                                         <th scope="col">Stock Status</th>
+                                                        <th scope="col">Add To Cart</th>
                                                         <th scope="col">Remove</th>
                                                     </tr>
                                                 </thead>
@@ -52,8 +53,9 @@
                                                                 </a>
                                                             </td>
                                                             <td class="price" data-title="Price"><span>₹<%=
-                                                                        items.productId.price%></span></td>
-                                                            <% if (!items.productId.stockCount<=0) { %>
+                                                                        items.productId.price%></span>
+                                                            </td>
+                                                                  <% if (!items.productId.stockCount<=0) { %>
                                                                 <td class="text-center" data-title="Stock">
                                                                     <span class="color3 font-weight-bold">In
                                                                         Stock</span>
@@ -66,7 +68,11 @@
                                                                     </td>
 
                                                                     <% } %>
-
+                                                                    <td>
+                                                                        <button aria-label="Add To Cart" style="background-color:#088178 ;" onclick="addToCart('<%= items.productId._id %>', '<%= items.productId.name %>', '<%= items.productId.price %>')">
+                                                                            <i class="fi-rs-shopping-bag-add"></i>
+                                                                        </button>
+                                                                    </td>
 
                                                                         <td class="action" data-title="Remove">
                                                                             <a href="#"
@@ -135,7 +141,7 @@
                                                     text: 'Your item has been removed from the wishlist.',
                                                     icon: 'success',
                                                 });
-                                              
+
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
@@ -214,4 +220,78 @@
                                 }
                             });
                         }
+
+                        function addToCart(productId, name, price) {
+                                // Assuming you want to add 1 quantity by default
+                                const quantity = 1;
+
+                                fetch('/cart/addToCart/' + productId, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ productId, name, quantity, price }),
+                                })
+                                    .then(response => {
+                                        if (response.redirected) {
+                                            return Swal.fire({
+                                                title: 'Login Required',
+                                                text: 'You must be logged in to add items to your cart.',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonText: 'Login',
+                                                cancelButtonText: 'Cancel',
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = '/login';
+                                                } else {
+                                                    throw new Error('Action cancelled');
+                                                }
+                                            });
+                                        }
+                                        return response.json();
+                                    })
+
+                                    .then(data => {
+                                        if (data.status) {
+                                            // Show a success message using SweetAlert2
+                                            const Toast = Swal.mixin({
+                                                toast: true,
+                                                position: "top-end",
+                                                showConfirmButton: false,
+                                                timer: 3000,
+                                                timerProgressBar: true,
+                                                didOpen: (toast) => {
+                                                    toast.onmouseenter = Swal.stopTimer;
+                                                    toast.onmouseleave = Swal.resumeTimer;
+                                                }
+                                            });
+                                            Toast.fire({
+                                                icon: "success",
+                                                title: 'Success!',
+                                                text: data.message,
+                                            });
+                                        } else {
+                                            // Handle errors
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: data.message,
+                                                icon: 'error',
+                                            });
+                                        }
+                                    })
+                                    .catch(err => {
+                                        if (!err.data.success) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: err.response.data.message,
+                                            });
+                                        } else {
+                                            console.error(err);
+                                        }
+                                    });
+                            }
+
+
                     </script>
