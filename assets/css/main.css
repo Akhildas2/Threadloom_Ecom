@@ -917,6 +917,13 @@ h5.widget-title {
     border-radius: 25px;
  
 }
+.btn-infos {
+    color: #fff;
+    background-color: #007bff; 
+    padding: 13px 28px;
+    border-radius: 25px;
+}
+
 .btn-warnings {
     color: #050505;
     background-color: #eeea11;

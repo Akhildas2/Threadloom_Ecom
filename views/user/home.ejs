@@ -211,25 +211,32 @@
                                                     <div class="product-card__price d-flex">
                                                         <% let discountedPrice = products[i].price; %>
                                                         <% let hasDiscount = false; %>
-                                                    
+                                                        
                                                         <% if (products[i].offer) { %>
-                                                            <% discountedPrice = discountedPrice - (discountedPrice * (products[i].offer.discount / 100)); %>
-                                                            <% hasDiscount = true; %>
+                                                            <% const offer = products[i].offer; %>
+                                                            <% const currentDate = new Date(); %>
+                                                            <% const offerEndDate = new Date(offer.endingDate); %> 
+                                                            
+                                                            <% if (currentDate <= offerEndDate) { %> 
+                                                                <% discountedPrice = discountedPrice - (discountedPrice * (offer.discount / 100)); %>
+                                                                <% hasDiscount = true; %>
+                                                            <% } %>
                                                         <% } else if (products[i].category.offer) { %>
                                                             <% const categoryOffer = products[i].category.offer; %>
-                                                            <% if (categoryOffer && categoryOffer.discount) { %>
+                                                            <% const currentDate = new Date(); %>
+                                                            <% const offerEndDate = new Date(categoryOffer.endingDate); %> 
+                                                            
+                                                            <% if (currentDate <= offerEndDate) { %> 
                                                                 <% discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100)); %>
                                                                 <% hasDiscount = true; %>
                                                             <% } %>
                                                         <% } %>
                                                         
-                                                    
                                                         <% if (hasDiscount) { %>
                                                             <span class="money price">
                                                                 <del>₹<%= products[i].price.toFixed(2) %></del>
                                                                 &nbsp;<span class="discounted-price" style="color: green;">₹<%= discountedPrice.toFixed(2) %></span>
-                                                                &nbsp;<span class="discounted-percentage" style="color: red;">(<%= products[i].offer ? products[i].offer.discount :products[i].category.offer.discount%> % off)</span>
-                                                           
+                                                                &nbsp;<span class="discounted-percentage" style="color: red;">(<%= products[i].offer ? products[i].offer.discount : products[i].category.offer.discount %>% off)</span>
                                                             </span>
                                                         <% } else { %>
                                                             <span class="money price">₹<%= products[i].price.toFixed(2) %></span>

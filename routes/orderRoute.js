@@ -16,6 +16,7 @@ orderRoute.post('/placeOrder', auth.isLogin,orderController.placeOrder);
 orderRoute.get('/orderDeatil/:id', auth.isLogin, orderController.orderDetails);
 orderRoute.get('/orderConfirmation/:orderId', auth.isLogin, orderController.orderConfirmation);
 orderRoute.post('/cancel/:orderId/:itemId', auth.isLogin,orderController.cancelOrder);
+orderRoute.post('/return/:orderId/:itemId', auth.isLogin,orderController.returnOrder);
 
 
 module.exports=orderRoute;

@@ -1,7 +1,6 @@
 const Order = require("../models/orderModel")
-const User = require("../models/userModel")
-
-
+const Wallet = require("../models/walletModel")
+const Product = require("../models/productModel")
 //for loading order list 
 const loadOrderList = async (req, res) => {
     try {
@@ -50,8 +49,60 @@ const updateStatus = async (req, res) => {
         item.orderStatus = newStatus;
        const ordersave= await order.save();
        console.log("ordersave",ordersave);
-       res.status(200).json({ message: 'success', order });
+       //for updating the product quantity
+       const items = order.items;
+       if (item.orderStatus == 'returned'|| item.orderStatus == 'cancelled') {
+       for (const item of items) {
+           const product = await Product.findById(item.productId)
 
+           if (!product) {
+               return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
+           }
+
+           product.stockCount += item.quantity;
+           await product.save()
+           console.log("Quantity increased")
+        }
+       }
+
+       const userId= order.userId;
+       if (item.orderStatus == 'returned') {
+       
+        console.log("userId",userId)
+           const wallet = await Wallet.findOne({ userId })
+           if (!wallet) {
+               // If the wallet doesn't exist, create a new one
+               const newWallet = new Wallet({
+                   userId,
+                   balance: item.total,
+                   transactions: [{
+                       type: 'credit',
+                       amount: item.total,
+                       date: new Date(),
+                       orderId,
+                       itemId:item._id,
+                       description: `Refund for order return`
+                   }]
+               });
+               await newWallet.save();
+
+           } else {
+               wallet.balance += item.total;
+
+               wallet.transactions.push({
+                   type: 'credit',
+                   amount: item.total,
+                   date: new Date(),
+                   orderId,
+                   itemId:item._id,
+                   description: `Refund for order return`
+               });
+               await wallet.save();
+           }
+        }
+
+
+       res.status(200).json({ message: 'success', order });
 
     } catch (error) {
         console.log(error.message);

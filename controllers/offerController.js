@@ -17,7 +17,7 @@ const addOffer = async (req, res) => {
 const insertOffer = async (req, res) => {
     try {
         const { offerName, startingDate, endingDate, discount } = req.body;
-
+        console.log(" req.body", req.body)
         // Check if starting date is greater than or equal to today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -34,6 +34,10 @@ const insertOffer = async (req, res) => {
         if (new Date(startingDate) > new Date(endingDate)) {
             return res.status(400).json({ success: false, message: 'Starting date must be less than or equal to ending date' });
         }
+        // Adjust ending date to midnight (23:59:59)
+        let adjustedEndingDate = new Date(endingDate);
+        adjustedEndingDate.setHours(23, 59, 59, 0);
+        console.log("adjustedEndingDate",adjustedEndingDate)
 
         // Check if offer name already exists
         const existingOffer = await Offer.findOne({ offerName: { $regex: new RegExp(offerName, 'i') } });
@@ -45,13 +49,13 @@ const insertOffer = async (req, res) => {
         const newOffer = new Offer({
             offerName,
             startingDate,
-            endingDate,
+            endingDate:adjustedEndingDate,
             discount
         });
 
         // Save the offer
         await newOffer.save();
-
+        console.log("newOffer",newOffer)
         return res.status(200).json({ success: true, url: '/admin/offer/listOffer' });
     } catch (error) {
         console.error(error);

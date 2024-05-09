@@ -130,13 +130,16 @@
 
                                                 <td class="align-middle">₹<%= item.price %>
                                                 </td>
+
                                                 <td class="align-middle">
                                                     <span class="badge rounded-pill 
                                                 <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
                                                 <% } else if (item.orderStatus === 'placed') { %> alert-success text-primary
-                                                <% } else if (item.orderStatus === 'ship') { %> alert-success text-info
+                                                <% } else if (item.orderStatus === 'shipped') { %> alert-success text-info
                                                 <% } else if (item.orderStatus === 'delivered') { %> alert-success text-success 
                                                 <% } else if (item.orderStatus === 'cancelled') { %> alert-danger text-danger 
+                                                <% } else if (item.orderStatus === 'returned') { %> alert-danger text-danger 
+                                                <% } else if (item.orderStatus === 'awaiting approval') { %> alert-success text-info
                                                 <% } else { %> alert-secondary text-secondary <% } %>">
                                                         <%= item.orderStatus %>
                                                     </span>
@@ -144,6 +147,16 @@
                                                 <td class="align-middle">₹<%= item.total %>
                                                 </td>
                                                 <td class="align-middle">
+                                                    <% if (item.orderStatus ==='awaiting approval' ) { %>
+                                                        <form class="update-status-form">
+                                                            <input type="hidden" name="productId"
+                                                                value="<%= item.productId._id %>">
+                                                            <select name="newStatus" class="form-select">
+                                                                <option value="returned">Return Approved</option>
+                                                              
+                                                            </select>
+                                                        <% } else { %>
+                                                         
                                                     <form class="update-status-form">
                                                         <input type="hidden" name="productId"
                                                             value="<%= item.productId._id %>">
@@ -154,14 +167,19 @@
                                                             <option value="delivered">Delivered</option>
                                                             <option value="cancelled">Cancelled</option>
                                                         </select>
-                                                        <% if (item.orderStatus==='cancelled' ) { %>
+                                                        <% } %>
+                                                        <% if (item.orderStatus==='cancelled' || item.orderStatus==='returned' ) { %>
                                                             <button type="submit" class="btn btn-primary btn-sm"
                                                                 disabled>Update</button>
+                                                                <% } else if (item.orderStatus==='delivered' ) { %>
+                                                                    <button type="submit" class="btn btn-primary btn-sm"
+                                                                    disabled>Update</button>
                                                             <% } else { %>
                                                                 <button type="submit"
                                                                     class="btn btn-primary btn-sm">Update</button>
                                                                 <% } %>
                                                     </form>
+                                                    
                                                 </td>
                                             </tr>
                                             <tr>

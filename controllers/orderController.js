@@ -470,7 +470,33 @@ const cancelOrder = async (req, res) => {
 
 
 //for order return 
+const returnOrder = async (req, res) => {
+    try {
+        const { orderId, itemId } = req.params;
+        const { cancellationReason } = req.body;
+        const order = await Order.findById(orderId).populate('items.productId');
 
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found.' });
+        }
+
+        const item = order.items.find(item => item._id.toString() === itemId);
+        if (!item) {
+            return res.status(404).json({ success: false, message: 'Item not found.' });
+        }
+        item.cancellationReason = cancellationReason;
+
+        item.orderStatus = 'awaiting approval';
+
+        await order.save();
+      
+
+        res.json({ success: true, message: 'Product return is awaiting approval.' });
+    } catch (error) {
+        console.error('Error in /return/:orderId route:', error);
+        res.status(500).json({ success: false, message: 'Server error.' });
+    }
+};
 
 
 
@@ -482,6 +508,7 @@ module.exports = {
     orderDetails,
     orderConfirmation,
     cancelOrder,
+    returnOrder,
     paymentSuccess,
     paymentCancel
 }
