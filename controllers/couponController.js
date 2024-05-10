@@ -41,6 +41,9 @@ const insertCoupon = async (req, res) => {
             ]
         });
 
+        // ending date to midnight (23:59:59)
+        var dateMidnight = new Date(expiryDate);
+        dateMidnight.setUTCHours(23, 59, 59);
 
         if (existingCoupon) {
             // If a coupon with the same couponName or couponCode already exists, return an error
@@ -51,7 +54,7 @@ const insertCoupon = async (req, res) => {
             couponName,
             couponCode,
             discountAmount,
-            expiryDate,
+            expiryDate: dateMidnight,
             criteriaAmount,
         });
 
@@ -104,11 +107,14 @@ const editcoupon = async (req, res) => {
         if (!coupon) {
             return res.status(404).json({ success: false, message: 'Coupon not found' });
         }
+        // ending date to midnight (23:59:59)
+        var dateMidnight = new Date(expiryDate);
+        dateMidnight.setUTCHours(23, 59, 59);
 
         coupon.couponName = couponName;
         coupon.couponCode = couponCode;
         coupon.discountAmount = discountAmount;
-        coupon.expiryDate = expiryDate;
+        coupon.expiryDate = dateMidnight;
         coupon.criteriaAmount = criteriaAmount;
         await coupon.save();
 

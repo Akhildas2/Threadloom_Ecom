@@ -1,6 +1,16 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
+    <style>
+        /* Modal colors */
+        .modal-content {
+            background-color: #ffffff;
 
+        }
+
+        .modal-header {
+            background-color: #088178;
+        }
+    </style>
         <section class="content-main">
             <div class="container">
                 <div class="content-header">
@@ -78,45 +88,35 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <% offers.forEach(offer=> { %>
+                            <% offers.forEach(offer => { %>
                                 <div class="col-md-6">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <% const today=new Date(); %>
-                                                <% today.setHours(0, 0, 0, 0); %>
-                                                    <% const offerDate=new Date(offer.endingDate); %>
-                                                        <% offerDate.setHours(0, 0, 0, 0); %>
-                                                            <% if (offerDate>= today) { %>
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input" type="radio"
-                                                                        name="selectedOffer" id="offer-<%= offer._id %>"
-                                                                        value="<%= offer._id %>">
-                                                                    <label class="form-check-label"
-                                                                        for="offer-<%= offer._id %>">
-                                                                        <h5 class="card-title">
-                                                                            <%= offer.offerName %>
-                                                                        </h5>
-                                                                    </label>
-                                                                </div>
-                                                                <% } else { %>
-                                                                    <h5 class="card-title">
-                                                                        <%= offer.offerName %>
-                                                                    </h5>
-                                                                    <% } %>
-
-                                                                        <p class="card-text">
-                                                                            Starting Date: <%=
-                                                                                offer.startingDate.toLocaleDateString()
-                                                                                %> <br>
-                                                                                Ending Date: <%=
-                                                                                    offer.endingDate.toLocaleDateString()
-                                                                                    %> <br>
-                                                                                    Discount: <%= offer.discount %>%
-                                                                        </p>
+                                            <% const today = new Date(); %>
+                                            <% const offerDate = new Date(offer.endingDate); %>
+                                            <% if (offerDate >= today) { %>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="selectedOffer" id="offer-<%= offer._id %>" value="<%= offer._id %>">
+                                                    <label class="form-check-label" for="offer-<%= offer._id %>">
+                                                        <h5 class="card-title">
+                                                            <%= offer.offerName %>
+                                                        </h5>
+                                                    </label>
+                                                </div>
+                                            <% } else { %>
+                                                <h5 class="card-title">
+                                                    <%= offer.offerName %>
+                                                </h5>
+                                            <% } %>
+                                            <p class="card-text">
+                                                Starting Date: <%= offer.startingDate.toLocaleDateString() %> <br>
+                                                Ending Date: <%= offer.endingDate.toLocaleDateString() %> <br>
+                                                Discount: <%= offer.discount %>%
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
-                                <% }) %>
+                            <% }) %>
                         </div>
                     </div>
                     <div id="offerError" class="text-danger" style="display: none; text-align: center;"></div>

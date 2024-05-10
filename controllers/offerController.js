@@ -34,10 +34,9 @@ const insertOffer = async (req, res) => {
         if (new Date(startingDate) > new Date(endingDate)) {
             return res.status(400).json({ success: false, message: 'Starting date must be less than or equal to ending date' });
         }
-        // Adjust ending date to midnight (23:59:59)
-        let adjustedEndingDate = new Date(endingDate);
-        adjustedEndingDate.setHours(23, 59, 59, 0);
-        console.log("adjustedEndingDate",adjustedEndingDate)
+        // ending date to midnight (23:59:59)
+        var dateMidnight = new Date(endingDate);
+        dateMidnight.setUTCHours(23, 59, 59);
 
         // Check if offer name already exists
         const existingOffer = await Offer.findOne({ offerName: { $regex: new RegExp(offerName, 'i') } });
@@ -49,13 +48,13 @@ const insertOffer = async (req, res) => {
         const newOffer = new Offer({
             offerName,
             startingDate,
-            endingDate:adjustedEndingDate,
+            endingDate: dateMidnight,
             discount
         });
 
         // Save the offer
         await newOffer.save();
-        console.log("newOffer",newOffer)
+        console.log("newOffer", newOffer)
         return res.status(200).json({ success: true, url: '/admin/offer/listOffer' });
     } catch (error) {
         console.error(error);
@@ -123,7 +122,9 @@ const editOffer = async (req, res) => {
         if (new Date(endingDate) < new Date(startingDate)) {
             return res.status(400).json({ success: false, message: 'Ending date must be greater than or equal to starting date.' });
         }
-
+        // ending date to midnight (23:59:59)
+        var dateMidnight = new Date(endingDate);
+        dateMidnight.setUTCHours(23, 59, 59);
         const offer = await Offer.findById(offerId);
         if (!offer) {
             return res.status(404).json({ success: false, message: 'Offer not found.' });
@@ -132,12 +133,12 @@ const editOffer = async (req, res) => {
         // Update offer details
         offer.offerName = offerName;
         offer.startingDate = startingDate;
-        offer.endingDate = endingDate;
+        offer.endingDate = dateMidnight;
         offer.discount = discount;
 
         // Save updated offer
         const result = await offer.save();
-        return res.status(200).json({ success: true, message: 'Offer updated successfully.', data: result });
+        return res.status(200).json({ success: true, message: 'Offer updated successfully.' });
 
     } catch (error) {
         console.error(error);
