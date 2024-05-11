@@ -12,11 +12,7 @@
             </div>
             <section class="mt-50 mb-50">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="divider mt-50 mb-50"></div>
-                        </div>
-                    </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="mb-25">
@@ -129,6 +125,135 @@
                                     </div>
                                 </div>
                             </div>
+
+
+
+
+                            <div class="mb-30 mt-50">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Apply Coupon</h4>
+                                </div>
+                                <div class="total-amount">
+                                    <div class="left">
+                                        <div class="coupon">
+                                            <div class="form-group">
+                                                <div class="left">
+                                                    <div class="coupon">
+                                                        <form action="#" target="_blank">
+                                                            <div class="form-row row justify-content-center">
+                                                                <div class="form-group">
+                                                                    <% if (appliedCouponId) { %>
+                                                                        <input type="text" style="color: green;"
+                                                                            class="form-control"
+                                                                            value="<%= appliedCouponId.couponCode %> Coupon Applied -  ₹ <%= appliedCouponId.discountAmount %> Off"
+                                                                            readonly>
+                                                                        <% } else { %>
+                                                                            <input type="text" class="font-medium"
+                                                                                style="color: black;"
+                                                                                value="Select Your Coupon" readonly>
+                                                                            <% } %>
+                                                                </div>
+
+
+
+
+                                                                <div class="form-group">
+                                                                    <% if (appliedCouponId) { %>
+                                                                        <button type="button" class="btn-lg btn-danger"
+                                                                            onclick="removeCoupon('<%= appliedCouponId.cartItemId || appliedCouponId._id %>')">Remove
+                                                                            Coupon</button>
+                                                                        <% } else { %>
+                                                                            <button type="button"
+                                                                                class="btn-lg btn-primary"
+                                                                                data-toggle="modal"
+                                                                                data-target="#couponModal">Select
+                                                                                Coupon</button>
+                                                                            <% } %>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Coupon Modal -->
+                            <div class="modal fade" id="couponModal" tabindex="-1" role="dialog"
+                                aria-labelledby="couponModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="couponModalLabel">Available
+                                                Coupons</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body row">
+                                            <form id="couponForm">
+
+                                                <% coupons.forEach((coupon, index)=> { %>
+                                                    <% if ( totalPrice>= coupon.criteriaAmount) { %>
+                                                        <div class="col-12 mb-3">
+                                                            <div class="card" style="border-radius: 25px;">
+                                                                <div class="card-body">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input" type="radio"
+                                                                            name="couponSelection"
+                                                                            id="coupon<%= index %>"
+                                                                            value="<%= coupon._id %>">
+                                                                        <label class="form-check-label"
+                                                                            for="coupon<%= index %>">
+                                                                            <h5 class="card-title"
+                                                                                style="color: green;">
+                                                                                <strong style="color: #000000;">
+                                                                                    <%= coupon.couponName %>
+                                                                                </strong>&nbsp;you
+                                                                                save
+                                                                                ₹
+                                                                                <%= coupon.discountAmount %>
+                                                                            </h5>
+                                                                        </label>
+                                                                    </div>
+                                                                    <p class="card-text">Use this
+                                                                        coupon
+                                                                        code: <strong style="color: blue">
+                                                                            <%= coupon.couponCode %>
+                                                                        </strong></p>
+                                                                    <p class="card-text">Get
+                                                                        ₹<strong style="color: green">
+                                                                            <%= coupon.discountAmount %>
+                                                                        </strong>Off on <u>₹<strong
+                                                                                style="color: green">
+                                                                                <%= coupon.criteriaAmount %>
+                                                                            </strong></u> and Above
+                                                                    </p>
+                                                                    <p class="card-text">Expiry On
+                                                                        <strong style="color: Red">
+                                                                            <%= coupon.expiryDate.toDateString() %>
+                                                                        </strong>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
+                                                            <% }); %>
+                                            </form>
+
+                                        </div>
+                                        <div id="validationMessage" class="text-danger mt-2"
+                                            style=" text-align: center;"></div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn-lg btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                            <button type="button" class="btn-lg btn-primary"
+                                                onclick="applyCoupon(event)">Apply Coupon</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -157,7 +282,7 @@
                                                                     alt="<%= product.name %> photo">
                                                             </a>
                                                         </td>
-                                                    <td>
+                                                        <td>
                                                             <h5 class="product-name"> <a
                                                                     href="/productdetails/<%= product.productId._id %>">
                                                                     <%= product.name %>
@@ -167,28 +292,32 @@
                                                         </td>
                                                         <td>₹<%= product.total %>
                                                         </td>
-                                                      
+
                                                     </tr>
                                                     <% }); %>
                                                         <% }); %>
 
-                                                            <th>SubTotal</th>
-                                                            <td class="product-subtotal" colspan="2">₹<%= totalPrice %>
-                                                            </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Shipping</th>
-                                                                <td colspan="2"><em>Free Shipping</em></td>
-                                                            </tr>
-                                                            <tr>
-                                                                <th>Total</th>
-                                                                <td colspan="2" class="product-subtotal"><span
-                                                                        class="font-xl text-brand fw-900">₹<%=
-                                                                            totalPrice %>
-                                                                    </span></td>
-                                                            </tr>
+
 
                                         </tbody>
+                                    </table>
+                                    <table>
+                                        <th>SubTotal</th>
+                                        <td class="product-subtotal">₹<%= totalPrice.toFixed(2)%>
+                                        </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Shipping</th>
+                                            <td><em>Free Shipping</em></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td class="product-subtotal"><span class="font-xl text-brand fw-900">₹<%=
+                                                        totalPrice.toFixed(2) %>
+                                                </span>
+                                                <input type="hidden" name="offerDiscount" value="<%= offerDiscount %>">
+                                            </td>
+                                        </tr>
                                     </table>
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
@@ -344,7 +473,8 @@
                             const cartItems = JSON.parse(body.getAttribute('data-cart-items'));
                             const totalPrice = body.getAttribute('data-total-price');
                             const addressRadios = document.querySelectorAll('input[name="shippingAddress"]');
-
+                            const couponDiscount = `<%= appliedCouponId ? appliedCouponId.discountAmount : 0 %>`;
+                            const offerDiscount =`<%= offerDiscount ? offerDiscount:0 %>`
 
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
@@ -416,12 +546,13 @@
                                     items: cartItems,
                                     total: totalPrice,
                                     addressId: selectedAddressId,
-                                    paymentMethod: selectedPaymentMethod
+                                    paymentMethod: selectedPaymentMethod,
+                                    couponDiscount: couponDiscount,
+                                    offerDiscount:offerDiscount
                                 })
                                     .then(response => {
                                         if (selectedPaymentMethod === 'paypal') {
-                                            // Redirect to the PayPal approval URL for PayPal payments
-                                            // console.log("hi it entered paypal", response.data.approvalUrl)
+                                          
                                             if (response.data.approvalUrl) {
                                                 window.location.href = response.data.approvalUrl;
                                             } else {
@@ -433,12 +564,12 @@
                                                 });
                                             }
                                         } else {
-                                            console.log("response", response)
-                                            if (response.data.successs)
+                                         
+                                            if (response.data.success)
                                                 Swal.fire({
                                                     icon: 'success',
                                                     title: 'Order Placed!',
-                                                    text: data.message,
+                                                    text: response.data.message,
                                                     confirmButtonText: 'Okay'
                                                 });
                                             setTimeout(() => {
@@ -452,11 +583,122 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Oops...',
-                                            text: 'Something went wrong! Please try again.',
+                                            text:error.message,
                                             confirmButtonText: 'Okay'
                                         });
                                         console.error('Error placing order:', error);
                                     });
                             });
                         });
+
+
+
+
+                        function applyCoupon(event) {
+                            event.preventDefault();
+                            const selectedCoupon = document.querySelector('input[name="couponSelection"]:checked');
+                            const validationMessage = document.getElementById('validationMessage');
+
+                            if (!selectedCoupon) {
+                                validationMessage.textContent = 'Please select a coupon.';
+                                validationMessage.style.display = 'block';
+                                return;
+                            }
+
+                            const couponId = selectedCoupon.value;
+                            validationMessage.style.display = 'none';
+
+                            fetch('/cart/applyCoupon', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ couponId: couponId })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.status) {
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Coupon Applied!',
+                                            text: 'Your coupon has been successfully applied.',
+                                        });
+                                        setTimeout(() => {
+                                            location.reload()
+                                        }, 2000);
+                                    } else {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error!',
+                                            text: 'Failed to apply the coupon.',
+                                        });
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error!',
+                                        text: 'An error occurred while applying the coupon.',
+                                    });
+                                });
+                        }
+
+
+
+
+                        function removeCoupon(couponId) {
+
+
+                            // Use SweetAlert for confirmation
+                            Swal.fire({
+                                title: 'Are you sure?',
+                                text: "You won't be able to revert this!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Yes, remove it!'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    fetch('/cart/removeCoupon', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ couponId: couponId })
+                                    })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            if (data.status) {
+
+                                                Swal.fire(
+                                                    'Removed!',
+                                                    'Your coupon has been removed.',
+                                                    'success'
+                                                );
+                                                setTimeout(() => {
+                                                    location.reload()
+                                                }, 2000);
+                                            } else {
+                                                // Handle the error
+                                                Swal.fire(
+                                                    'Error!',
+                                                    'Failed to remove the coupon.',
+                                                    'error'
+                                                );
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Error:', error);
+                                            Swal.fire(
+                                                'Error!',
+                                                'An error occurred while removing the coupon.',
+                                                'error'
+                                            );
+                                        });
+                                }
+                            });
+                        }
+
                     </script>

@@ -42,7 +42,8 @@
                                                                     <td class="cart_total_label">Cart Subtotal</td>
                                                                     <td class="cart_total_amount"><span
                                                                             class="font-lg fw-900 text-brand"><span>₹<%=
-                                                                                    totalPrice %></span></span></td>
+                                                                                    totalPrice.toFixed(2)%>
+                                                                                    </span></span></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="cart_total_label">Shipping</td>
@@ -55,7 +56,7 @@
                                                                     <td class="cart_total_label">Total</td>
                                                                     <td class="cart_total_amount"><strong><span
                                                                                 class="font-xl fw-900 text-brand"><span>₹
-                                                                                    <%= totalPrice %>
+                                                                                    <%= totalPrice.toFixed(2) %>
                                                                                 </span></span></strong>
                                                                     </td>
                                                                 </tr>
@@ -65,134 +66,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="mb-30 mt-50">
-                                                    <div class="heading_s1 mb-3">
-                                                        <h4>Apply Coupon</h4>
-                                                    </div>
-                                                    <div class="total-amount">
-                                                        <div class="left">
-                                                            <div class="coupon">
-                                                                <div class="form-group">
-                                                                    <div class="left">
-                                                                        <div class="coupon">
-                                                                            <form action="#" target="_blank">
-                                                                                <div
-                                                                                    class="form-row row justify-content-center">
-                                                                                    <div class="form-group">
-                                                                                        <% if (appliedCouponId) { %>
-                                                                                            <input type="text" style="color: green;" class="form-control" value="<%= appliedCouponId.couponCode %> Coupon Applied" readonly>
-                                                                                        <% } else { %>
-                                                                                            <input type="text" class="font-medium" style="color: black;" value="Select Your Coupon" readonly>
-                                                                                        <% } %>
-                                                                                    </div>
-                                                                                    
-                                                                                    
-                                                                                    
-                                                                                    
-                                                                                    <div class="form-group">
-                                                                                        <% if (appliedCouponId) { %>
-                                                                                            <button type="button"
-                                                                                                class="btn-lg btn-danger"
-                                                                                                onclick="removeCoupon('<%= appliedCouponId.cartItemId || appliedCouponId._id %>')">Remove
-                                                                                                Coupon</button>
-                                                                                            <% } else { %>
-                                                                                                <button type="button"
-                                                                                                    class="btn-lg btn-primary"
-                                                                                                    data-toggle="modal"
-                                                                                                    data-target="#couponModal">Select
-                                                                                                    Coupon</button>
-                                                                                                <% } %>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </form>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Coupon Modal -->
-                                                <div class="modal fade" id="couponModal" tabindex="-1" role="dialog"
-                                                    aria-labelledby="couponModalLabel" aria-hidden="true">
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="couponModalLabel">Available
-                                                                    Coupons</h5>
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
-                                                            </div>
-                                                            <div class="modal-body row">
-                                                                <form id="couponForm">
-
-                                                                    <% coupons.forEach((coupon, index)=> { %>
-                                                                        <% if ( totalPrice  >= coupon.criteriaAmount) { %>
-                                                                        <div class="col-12 mb-3">
-                                                                            <div class="card"
-                                                                                style="border-radius: 25px;">
-                                                                                <div class="card-body">
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
-                                                                                            name="couponSelection"
-                                                                                            id="coupon<%= index %>"
-                                                                                            value="<%= coupon._id %>">
-                                                                                        <label class="form-check-label"
-                                                                                            for="coupon<%= index %>">
-                                                                                            <h5 class="card-title"
-                                                                                                style="color: green;">
-                                                                                                <strong
-                                                                                                    style="color: #000000;">
-                                                                                                    <%= coupon.couponName
-                                                                                                        %>
-                                                                                                </strong>&nbsp;you save
-                                                                                                ₹
-                                                                                                <%= coupon.discountAmount
-                                                                                                    %>
-                                                                                            </h5>
-                                                                                        </label>
-                                                                                    </div>
-                                                                                    <p class="card-text">Use this coupon
-                                                                                        code: <strong
-                                                                                            style="color: blue">
-                                                                                            <%= coupon.couponCode %>
-                                                                                        </strong></p>
-                                                                                    <p class="card-text">Get ₹<strong
-                                                                                            style="color: green">
-                                                                                            <%= coupon.discountAmount %>
-                                                                                        </strong>Off on <u>₹<strong
-                                                                                                style="color: green">
-                                                                                                <%= coupon.criteriaAmount
-                                                                                                    %>
-                                                                                            </strong></u> and Above </p>
-                                                                                    <p class="card-text">Expiry On
-                                                                                        <strong style="color: Red">
-                                                                                            <%= coupon.expiryDate.toDateString()
-                                                                                                %>
-                                                                                        </strong>
-                                                                                    </p>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <% } %>
-                                                                        <% }); %>
-                                                                </form>
-
-                                                            </div>
-                                                            <div id="validationMessage" class="text-danger mt-2"
-                                                                style=" text-align: center;"></div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn-lg btn-secondary"
-                                                                    data-dismiss="modal">Close</button>
-                                                                <button type="button" class="btn-lg btn-primary"
-                                                                    onclick="applyCoupon(event)">Apply Coupon</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                               
                                             </div>
 
                                             <div class="col-lg-8 col-md-8 ">
@@ -226,8 +100,8 @@
                                                                                     <%= product.name %>
                                                                                 </a></h5>
                                                                         </td>
-                                                                       
-                                                                        
+
+
                                                                         <td class="price" data-title="Price"><span>₹<%=
                                                                                     product.price %></span>
                                                                         </td>
@@ -256,7 +130,11 @@
                                                                     </tr>
                                                                     <% }); %>
                                                                         <% }); %>
+                                                                                
                                                                             <tr>
+                                                                                <td colspan="4" class="text-end">
+                                                                                <b> Total : ₹<%= totalPrice.toFixed(2)  %></b>
+                                                                                   </td>
                                                                                 <td colspan="6" class="text-end">
                                                                                     <a href="#"
                                                                                         onclick="clearCartConfirmation()"
@@ -522,113 +400,6 @@
                     }
 
 
-                    function applyCoupon(event) {
-                        event.preventDefault();
-                        const selectedCoupon = document.querySelector('input[name="couponSelection"]:checked');
-                        const validationMessage = document.getElementById('validationMessage');
-
-                        if (!selectedCoupon) {
-                            validationMessage.textContent = 'Please select a coupon.';
-                            validationMessage.style.display = 'block';
-                            return;
-                        }
-
-                        const couponId = selectedCoupon.value;
-                        validationMessage.style.display = 'none';
-
-                        fetch('/cart/applyCoupon', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ couponId: couponId })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.status) {
-                                    updateCartTotals();
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Coupon Applied!',
-                                        text: 'Your coupon has been successfully applied.',
-                                    });
-                                    setTimeout(() => {
-                                        location.reload()
-                                    }, 2000);
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error!',
-                                        text: 'Failed to apply the coupon.',
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                console.error(error);
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error!',
-                                    text: 'An error occurred while applying the coupon.',
-                                });
-                            });
-                    }
-
-
-
-
-                        function removeCoupon(couponId) {
-                          
-
-                            // Use SweetAlert for confirmation
-                            Swal.fire({
-                                title: 'Are you sure?',
-                                text: "You won't be able to revert this!",
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#3085d6',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Yes, remove it!'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    fetch('/cart/removeCoupon', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ couponId: couponId })
-                                    })
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            if (data.status) {
-
-                                                Swal.fire(
-                                                    'Removed!',
-                                                    'Your coupon has been removed.',
-                                                    'success'
-                                                );
-                                                setTimeout(() => {
-                                                    location.reload()
-                                                }, 2000);
-                                            } else {
-                                                // Handle the error
-                                                Swal.fire(
-                                                    'Error!',
-                                                    'Failed to remove the coupon.',
-                                                    'error'
-                                                );
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error('Error:', error);
-                                            Swal.fire(
-                                                'Error!',
-                                                'An error occurred while removing the coupon.',
-                                                'error'
-                                            );
-                                        });
-                                }
-                            });
-                        }
              
 
 

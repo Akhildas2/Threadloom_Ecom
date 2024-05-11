@@ -74,10 +74,14 @@ const orderSchema = mongoose.Schema({
         type: Number,
         required: true
     }, 
-     discount: {
+    offerDiscount: {
         type: Number,
         default:0
     },
+    couponDiscount: {
+        type: Number,
+        default:0
+    }
 }, { timestamps: true })
 
 module.exports = mongoose.model('Order', orderSchema);

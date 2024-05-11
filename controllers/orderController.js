@@ -6,6 +6,7 @@ const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
 const axios = require('axios')
+const Coupon = require("../models/couponModel")
 
 
 
@@ -56,16 +57,87 @@ function truncateDescription(description) {
 const checkout = async (req, res) => {
     const userId = req.session.user_id;
     try {
-        const cartItems = await CartItems.find({ user: userId }).populate('products.productId');
+        const cartItems = await CartItems.find({ user: userId }).populate('products.productId').populate('coupondiscount');
+        let appliedCouponId = null;
+        for (const cartItem of cartItems) {
+            if (cartItem.coupondiscount) {
+                const coupon = await Coupon.findById(cartItem.coupondiscount);
+                appliedCouponId = coupon;
+                break;
+            }
+        }
+
+        //for finding expiry
+        const today = new Date();
+        const coupons = await Coupon.find({ expiryDate: { $gte: today } });
+
         let totalPrice = 0;
-        cartItems.forEach(item => {
-            item.products.forEach(product => {
-                totalPrice += product.price * product.quantity;
-            });
-        });
+        let originalTotalPrice = 0;
+        // products offer
+        const productsWithOffers = await Product.find({ isUnlisted: false })
+            .populate({ path: "category", populate: { path: "offer" } })
+            .populate('offer');
+
+        // cart items
+        for (const item of cartItems) {
+            // products
+            for (const product of item.products) {
+
+                // Find  offer and category offer
+                const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
+                // console.log("productWithOffer", productWithOffer);
+
+                if (!productWithOffer) {
+                    console.error("Product not found in products:", product.productId._id);
+                    continue;
+                }
+                let productTotal = 0;
+                originalTotalPrice += (product.price * product.quantity); 
+
+                let productPricePerUnit = product.price;
+
+                // Check product offer
+                if (productWithOffer.offer && productWithOffer.offer.endingDate >= today) {
+
+                    // Apply product offer
+                    productPricePerUnit -= (productPricePerUnit * productWithOffer.offer.discount) / 100;
+                }
+                //check  category  offer
+                if (productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today) {
+
+                    // Apply category offer
+                    productPricePerUnit -= (productPricePerUnit * productWithOffer.category.offer.discount) / 100;
+
+                }
+                productTotal = productPricePerUnit * product.quantity;
+                product.price = productPricePerUnit;
+                product.total = productTotal;
+
+                // Add the discounted price to the total
+                totalPrice += productTotal;
+            }
+        }
+
+       let offerDiscount= originalTotalPrice-totalPrice
+       
+
+        // Iterate over each cart item
+        for (const cartItem of cartItems) {
+
+            // Check if coupondiscount exists
+            if (cartItem.coupondiscount) {
+                // Access the discountAmount
+                const discountAmount = cartItem.coupondiscount.discountAmount;
+                totalPrice -= discountAmount
+
+
+            }
+        }
+
+
         const address = await Address.find({ userId: userId });
 
-        res.render('checkout', { req, cartItems, totalPrice, address });
+        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId ,offerDiscount});
 
     } catch (error) {
         console.error(error.message);
@@ -84,13 +156,18 @@ const placeOrder = async (req, res) => {
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
         }
+        const couponDiscount=req.body.couponDiscount||0;
+        const offerDiscount=req.body.offerDiscount||0;
         const expectedDelivery = new Date();
         expectedDelivery.setDate(expectedDelivery.getDate() + 5);
         const randomOrderId = generateRandomString(5);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
-
+        if (paymentMethod === 'cod' && total >= 1000) {
+            return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
+        }
+        
 
         for (const item of items) {
             for (const productDetail of item.products) {
@@ -152,7 +229,9 @@ const placeOrder = async (req, res) => {
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
                 total: total,
-                items: orderItems
+                items: orderItems,
+                couponDiscount,
+                offerDiscount
             });
 
             // Save the order to the database
@@ -221,7 +300,9 @@ const placeOrder = async (req, res) => {
             const paymentSuccessUrl = await createPayPalPayment;
             return res.status(200).json({ approvalUrl: paymentSuccessUrl });
 
-        } else if (paymentMethod === 'cod') {
+        } 
+        
+        if (paymentMethod === 'cod') {
 
             const order = new Order({
                 userId: userId,
@@ -231,7 +312,9 @@ const placeOrder = async (req, res) => {
                 expectedDelivery: expectedDelivery,
                 paymentMethod: paymentMethod,
                 total: total,
-                items: orderItems
+                items: orderItems,
+                couponDiscount,
+                offerDiscount
             });
             await order.save();
 
@@ -489,7 +572,7 @@ const returnOrder = async (req, res) => {
         item.orderStatus = 'awaiting approval';
 
         await order.save();
-      
+
 
         res.json({ success: true, message: 'Product return is awaiting approval.' });
     } catch (error) {

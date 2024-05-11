@@ -1,7 +1,6 @@
 
 const CartItem = require('../models/cartModel')
 const Product = require('../models/productModel');
-const Coupon = require("../models/couponModel")
 
 
 //for loading cart
@@ -9,33 +8,20 @@ const loadCart = async (req, res) => {
   const userId = req.session.user_id;
   try {
     //for finding CartItem
-    const cartItems = await CartItem.find({ user: userId }).populate('products.productId').populate('coupondiscount');
-    console.log("cart97979y79iby7i98678 bjh6",cartItems);
-    let appliedCouponId = null;
-    for (const cartItem of cartItems) {
-      if (cartItem.coupondiscount) {
-        const coupon = await Coupon.findById(cartItem.coupondiscount);
-        appliedCouponId = coupon;
-        break;
-      }
-    }
-
-    //for finding expiry
+    const cartItems = await CartItem.find({ user: userId }).populate('products.productId');
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const coupons = await Coupon.find({ expiryDate: { $gte: today } });
 
     let totalPrice = 0;
     // products offer
     const productsWithOffers = await Product.find({ isUnlisted: false })
-     .populate({ path: "category", populate: { path: "offer" } })
-     .populate('offer');
-    
+      .populate({ path: "category", populate: { path: "offer" } })
+      .populate('offer');
+
     // cart items
     for (const item of cartItems) {
       // products
       for (const product of item.products) {
-    
+
         // Find  offer and category offer
         const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
         // console.log("productWithOffer", productWithOffer);
@@ -44,52 +30,37 @@ const loadCart = async (req, res) => {
           console.error("Product not found in products:", product.productId._id);
           continue;
         }
-    
-        let productPrice = product.price * product.quantity;
+        let productTotal = 0;
+
+        let productPricePerUnit = product.price;
+
         // Check product offer
         if (productWithOffer.offer && productWithOffer.offer.endingDate >= today) {
+
           // Apply product offer
-          productPrice -= (productPrice * productWithOffer.offer.discount) / 100;
-          product.price = productPrice;
-          product.total=product.quantity * productPrice;
+          productPricePerUnit -= (productPricePerUnit * productWithOffer.offer.discount) / 100;
         }
-    
         //check  category  offer
         if (productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today) {
+
           // Apply category offer
-          productPrice -= (productPrice * productWithOffer.category.offer.discount) / 100;
-          product.price = productPrice; 
-          product.total=product.quantity * productPrice;
+          productPricePerUnit -= (productPricePerUnit * productWithOffer.category.offer.discount) / 100;
 
         }
-    
+        productTotal = productPricePerUnit * product.quantity;
+        product.price = productPricePerUnit;
+        product.total = productTotal;
         // Add the discounted price to the total
-        totalPrice += productPrice;
+        totalPrice += productTotal;
       }
     }
 
 
-// Iterate over each cart item
-for (const cartItem of cartItems) {
-  // Check if coupondiscount exists
-  if (cartItem.coupondiscount) {
-    // Access the discountAmount
-    const discountAmount = cartItem.coupondiscount.discountAmount;
-    console.log("discountAmount",discountAmount)
-    totalPrice -=discountAmount
 
-    console.log(`Discount Amount for this cart item: ${discountAmount}`);
-  } else {
-    console.log("No coupon discount found for this cart item.");
-  }
-}
-
-    console.log("cartItems",cartItems)
-    console.log("totalPrice",totalPrice)
-    res.render('cart', { req: req, cartItems, totalPrice, coupons, appliedCouponId });
+    res.render('cart', { req: req, cartItems, totalPrice });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send('Internal Server Error');
+    res.status(500).json({ message: error.message });
   }
 };
 
