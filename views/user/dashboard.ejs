@@ -120,7 +120,8 @@
                                                                         <tr>
                                                                             <th>Product Image</th>
                                                                             <th>product Name</th>
-                                                                            <th>Price and Quantity</th>
+                                                                            <th>Price </th>
+                                                                            <th>Quantity</th>
                                                                             <th>Order Status</th>
                                                                             <th>Order Date</th>
                                                                             <th>Actions</th>
@@ -151,8 +152,10 @@
 
                                                                                     </td>
 
-                                                                                    <td>₹<%= item.price%> for <%=
-                                                                                                item.quantity %> item
+                                                                                    <td>₹<%= item.price%> 
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <%= item.quantity %> 
                                                                                     </td>
                                                                                     <td>
                                                                                         <%= item.orderStatus %>

@@ -23,11 +23,13 @@
             <section class="mt-50 mb-50">
                 <div class="container">
                     <div class="col-12">
-                        <div class="shop-product-fillter style-2" >
+                        <div class="shop-product-fillter style-2">
                             <div class="totall-product">
-                                <p>We found <strong class="text-brand"><%= totalCount %></strong> items for you!</p>
+                                <p>We found <strong class="text-brand">
+                                        <%= totalCount %>
+                                    </strong> items for you!</p>
                             </div>
-                            
+
                             <div class="sort-by-product-area">
                                 <!-- <div class="sort-by-cover mr-10">
                                     <div class="sort-by-product-wrap">
@@ -94,7 +96,8 @@
                                         <ul class="text-center">
                                             <% categories.forEach(category=> { %>
                                                 <li>
-                                                    <a href="<%= category.categoryName %>" data-category="<%= category.categoryName %>"
+                                                    <a href="<%= category.categoryName %>"
+                                                        data-category="<%= category.categoryName %>"
                                                         class="categoryLink">
                                                         <%= category.categoryName %><span></span>
                                                     </a>
@@ -230,33 +233,101 @@
                                                             <div class="rating-result" title="90%">
                                                                 <span><span>90%</span></span>
                                                             </div>
+
                                                             <div class="product-card__price d-flex">
-                                                        <% let discountedPrice = products[i].price; %>
-                                                        <% let hasDiscount = false; %>
-                                                    
-                                                        <% if (products[i].offer) { %>
-                                                            <% discountedPrice = discountedPrice - (discountedPrice * (products[i].offer.discount / 100)); %>
-                                                            <% hasDiscount = true; %>
-                                                        <% } else if (products[i].category.offer) { %>
-                                                            <% const categoryOffer = products[i].category.offer; %>
-                                                            <% if (categoryOffer && categoryOffer.discount) { %>
-                                                                <% discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100)); %>
-                                                                <% hasDiscount = true; %>
-                                                            <% } %>
-                                                        <% } %>
-                                                    
-                                                        <% if (hasDiscount) { %>
-                                                            <span class="money price">
-                                                                <del>₹<%= products[i].price.toFixed(2) %></del>
-                                                                &nbsp;<span class="discounted-price" style="color: green;">₹<%= discountedPrice.toFixed(2) %></span>
-                                                                &nbsp;<span class="discounted-precentage" style="color: red;">(<%= products[i].offer ? products[i].offer.discount : products[i].category.offer.discount %>  % off)</span>
-                                                            
-                                                                </span>
-                                                        <% } else { %>
-                                                            <span class="money price">₹<%= products[i].price.toFixed(2) %></span>
-                                                        <% } %>
-                                                    </div>
-                                                    <!-- <div class="product-price">
+                                                                <% let discountedPrice=products[i].price; %>
+                                                                    <% let hasDiscount=false; %>
+
+                                                                        <% if (products[i].offer) { %>
+                                                                            <% const offer=products[i].offer; %>
+                                                                                <% const currentDate=new Date(); %>
+                                                                                    <% const offerEndDate=new
+                                                                                        Date(offer.endingDate); %>
+
+                                                                                        <% if (currentDate
+                                                                                            <=offerEndDate) { %>
+                                                                                            <% discountedPrice=discountedPrice
+                                                                                                - (discountedPrice *
+                                                                                                (offer.discount / 100));
+                                                                                                %>
+                                                                                                <% hasDiscount=true; %>
+                                                                                                    <% } %>
+                                                                                                        <% } else if
+                                                                                                            (products[i].category.offer)
+                                                                                                            { %>
+                                                                                                            <% const
+                                                                                                                categoryOffer=products[i].category.offer;
+                                                                                                                %>
+                                                                                                                <% const
+                                                                                                                    currentDate=new
+                                                                                                                    Date();
+                                                                                                                    %>
+                                                                                                                    <% const
+                                                                                                                        offerEndDate=new
+                                                                                                                        Date(categoryOffer.endingDate);
+                                                                                                                        %>
+
+                                                                                                                        <% if
+                                                                                                                            (currentDate
+                                                                                                                            <=offerEndDate)
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            <% discountedPrice=discountedPrice
+                                                                                                                                -
+                                                                                                                                (discountedPrice
+                                                                                                                                *
+                                                                                                                                (categoryOffer.discount
+                                                                                                                                /
+                                                                                                                                100));
+                                                                                                                                %>
+                                                                                                                                <% hasDiscount=true;
+                                                                                                                                    %>
+                                                                                                                                    <% }
+                                                                                                                                        %>
+                                                                                                                                        <% }
+                                                                                                                                            %>
+
+                                                                                                                                            <% if
+                                                                                                                                                (hasDiscount)
+                                                                                                                                                {
+                                                                                                                                                %>
+                                                                                                                                                <span
+                                                                                                                                                    class="money price">
+                                                                                                                                                    <del>₹
+                                                                                                                                                        <%= products[i].price.toFixed(2)
+                                                                                                                                                            %>
+                                                                                                                                                            </del>
+                                                                                                                                                    &nbsp;<span
+                                                                                                                                                        class="discounted-price"
+                                                                                                                                                        style="color: green;">₹
+                                                                                                                                                        <%= discountedPrice.toFixed(2)
+                                                                                                                                                            %>
+                                                                                                                                                            </span>
+                                                                                                                                                    &nbsp;<span
+                                                                                                                                                        class="discounted-precentage"
+                                                                                                                                                        style="color: red;">(
+                                                                                                                                                        <%= products[i].offer
+                                                                                                                                                            ?
+                                                                                                                                                            products[i].offer.discount
+                                                                                                                                                            :
+                                                                                                                                                            products[i].category.offer.discount
+                                                                                                                                                            %>
+                                                                                                                                                            %
+                                                                                                                                                            off)</span>
+
+                                                                                                                                                </span>
+                                                                                                                                                <% } else
+                                                                                                                                                    {
+                                                                                                                                                    %>
+                                                                                                                                                    <span
+                                                                                                                                                        class="money price">₹
+                                                                                                                                                        <%= products[i].price.toFixed(2)
+                                                                                                                                                            %>
+                                                                                                                                                            </span>
+                                                                                                                                                    <% }
+                                                                                                                                                        %>
+                                                            </div>
+                                                            <!-- <div class="product-price">
                                                         <span>₹<%#= products[i].price %> </span>
                                                         <%# if(products[i].price) { %>
                                                             <span class="old-price">₹<%#= products[i].price %></span>
@@ -475,7 +546,7 @@
 
 
 
-                      
+
 
 
 

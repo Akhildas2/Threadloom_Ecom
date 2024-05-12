@@ -74,32 +74,96 @@
                                         <div class="clearfix product-price-cover">
                                             <div class="product-price primary-color float-left">
                                                 <div class="product-card__price d-flex">
-                                                    <% let discountedPrice = products.price; %>
-                                                    <% let hasDiscount = false; %>
-                                                
-                                                    <% if (products.offer) { %>
-                                                        <% discountedPrice = discountedPrice - (discountedPrice * (products.offer.discount / 100)); %>
-                                                        <% hasDiscount = true; %>
-                                                    <% } else if (products.category.offer) { %>
-                                                        <% const categoryOffer = products.category.offer; %>
-                                                        <% if (categoryOffer && categoryOffer.discount) { %>
-                                                            <% discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100)); %>
-                                                            <% hasDiscount = true; %>
-                                                        <% } %>
-                                                    <% } %>
-                                                
-                                                    <% if (hasDiscount) { %>
+                                                    <% let discountedPrice=products.price; %>
+                                                        <% let hasDiscount=false; %>
+                                                            <% if (products.offer) { %>
+                                                                <% const offer=products.offer; %>
+                                                                    <% const currentDate=new Date(); %>
+                                                                        <% const offerEndDate=new
+                                                                            Date(offer.endingDate); %>
 
-                                                        <span class="money price">
-                                                            <ins><del>₹<%= products.price.toFixed(2) %></del></ins>
-                                                            <ins style="margin-left: 20px;"><span class="discounted-price" style="color: green;">₹<%= discountedPrice.toFixed(2) %></span></ins>
-                                                            <ins style="margin-left: 20px;"><span class="discount-percentage" style="color: red;">(<%= products.offer ? products.offer.discount : products.category.offer.discount %> % off)</span></ins>
-                                                        </span>
-                                                        
-                                                        
-                                                    <% } else { %>
-                                                        <ins><span class="money price">₹<%= products.price.toFixed(2) %></span></ins>
-                                                    <% } %>
+                                                                            <% if (currentDate <=offerEndDate) { %>
+                                                                                <% discountedPrice=discountedPrice -
+                                                                                    (discountedPrice * (offer.discount /
+                                                                                    100)); %>
+                                                                                    <% hasDiscount=true; %>
+                                                                                        <% } %>
+                                                                                            <% } else if
+                                                                                                (products.category.offer)
+                                                                                                { %>
+                                                                                                <% const
+                                                                                                    categoryOffer=products.category.offer;
+                                                                                                    %>
+                                                                                                    <% const
+                                                                                                        currentDate=new
+                                                                                                        Date(); %>
+                                                                                                        <% const
+                                                                                                            offerEndDate=new
+                                                                                                            Date(categoryOffer.endingDate);
+                                                                                                            %>
+
+                                                                                                            <% if
+                                                                                                                (currentDate
+                                                                                                                <=offerEndDate)
+                                                                                                                { %>
+                                                                                                                <% discountedPrice=discountedPrice
+                                                                                                                    -
+                                                                                                                    (discountedPrice
+                                                                                                                    *
+                                                                                                                    (categoryOffer.discount
+                                                                                                                    /
+                                                                                                                    100));
+                                                                                                                    %>
+                                                                                                                    <% hasDiscount=true;
+                                                                                                                        %>
+                                                                                                                        <% }
+                                                                                                                            %>
+                                                                                                                            <% }
+                                                                                                                                %>
+
+                                                                                                                                <% if
+                                                                                                                                    (hasDiscount)
+                                                                                                                                    {
+                                                                                                                                    %>
+
+                                                                                                                                    <span
+                                                                                                                                        class="money price">
+                                                                                                                                        <ins><del>₹
+                                                                                                                                                <%= products.price.toFixed(2)
+                                                                                                                                                    %>
+                                                                                                                                                    </del></ins>
+                                                                                                                                        <ins
+                                                                                                                                            style="margin-left: 20px;"><span
+                                                                                                                                                class="discounted-price"
+                                                                                                                                                style="color: green;">₹
+                                                                                                                                                <%= discountedPrice.toFixed(2)
+                                                                                                                                                    %>
+                                                                                                                                                    </span></ins>
+                                                                                                                                        <ins
+                                                                                                                                            style="margin-left: 20px;"><span
+                                                                                                                                                class="discount-percentage"
+                                                                                                                                                style="color: red;">(
+                                                                                                                                                <%= products.offer
+                                                                                                                                                    ?
+                                                                                                                                                    products.offer.discount
+                                                                                                                                                    :
+                                                                                                                                                    products.category.offer.discount
+                                                                                                                                                    %>
+                                                                                                                                                    %
+                                                                                                                                                    off)</span></ins>
+                                                                                                                                    </span>
+
+
+                                                                                                                                    <% } else
+                                                                                                                                        {
+                                                                                                                                        %>
+                                                                                                                                        <ins><span
+                                                                                                                                                class="money price">₹
+                                                                                                                                                <%= products.price.toFixed(2)
+                                                                                                                                                    %>
+                                                                                                                                                    </span></ins>
+                                                                                                                                        <% }
+                                                                                                                                            %>
                                                 </div>
                                                 <!-- <ins><span class="text-brand">₹<#%= products.price %></span></ins> -->
                                                 <!-- <ins><span class="old-price font-md ml-15">₹<#%= products.firstPrice%>
@@ -144,19 +208,21 @@
                                                             <input type="hidden" name="quantity" value="1">
                                                             <button type="submit" class="button button-add-to-cart">Add
                                                                 to cart</button>
-                                                                <% if (userWishlist) { %>
-                                                                    <a aria-label="Add To Wishlist" class="action-btn" style="background-color: red;"
+                                                            <% if (userWishlist) { %>
+                                                                <a aria-label="Add To Wishlist" class="action-btn"
+                                                                    style="background-color: red;"
+                                                                    onclick="addToWishList('<%= products._id %>')"><i
+                                                                        class="fi-rs-heart"></i></a>
+                                                                <% } else { %>
+                                                                    <a aria-label="Add To Wishlist"
+                                                                        class="action-btn hover-up"
                                                                         onclick="addToWishList('<%= products._id %>')"><i
                                                                             class="fi-rs-heart"></i></a>
-                                                                <% } else { %>
-                                                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                                    onclick="addToWishList('<%= products._id %>')" ><i
-                                                                            class="fi-rs-heart"></i></a>
-                                                                <% } %>
-                                                            
-                                                            <a aria-label="Compare" class="action-btn hover-up"
-                                                            href="#"><i
-                                                                    class="fi-rs-shuffle"></i></a>
+                                                                    <% } %>
+
+                                                                        <a aria-label="Compare"
+                                                                            class="action-btn hover-up" href="#"><i
+                                                                                class="fi-rs-shuffle"></i></a>
                                                         </form>
                                                     </div>
                                                 </div>
@@ -165,7 +231,8 @@
                                                         <button class="button sold-out">Sold Out</button>
                                                         <a aria-label="Add To Wishlist"
                                                             class="action-btn hover-up wishlist"
-                                                            onclick="addToWishList('<%= products._id %>')"><i class="fi-rs-heart"></i></a>
+                                                            onclick="addToWishList('<%= products._id %>')"><i
+                                                                class="fi-rs-heart"></i></a>
                                                     </div>
                                                     <% } %>
                                         </div>
@@ -244,15 +311,15 @@
                 event.preventDefault(); // Prevent the default form submission
 
                 const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);
-                const productId = '<%= products._id %>'; 
-                const price = '<%= products.price %>'; 
+                const productId = '<%= products._id %>';
+                const price = '<%= products.price %>';
                 const name = `<%=products.name %>`
                 fetch('/cart/addToCart/' + productId, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ productId,name, quantity, price }),
+                    body: JSON.stringify({ productId, name, quantity, price }),
                 })
                     .then(response => {
                         if (response.redirected) {
@@ -293,7 +360,7 @@
                                 text: data.message,
 
                             }).then(() => {
-                               location.reload();
+                                location.reload();
                             });
                         } else {
                             // Handle errors
@@ -317,7 +384,7 @@
                     });
             });
 
-            
+
             function addToWishList(productId) {
 
 

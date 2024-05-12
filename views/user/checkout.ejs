@@ -474,7 +474,7 @@
                             const totalPrice = body.getAttribute('data-total-price');
                             const addressRadios = document.querySelectorAll('input[name="shippingAddress"]');
                             const couponDiscount = `<%= appliedCouponId ? appliedCouponId.discountAmount : 0 %>`;
-                            const offerDiscount =`<%= offerDiscount ? offerDiscount:0 %>`
+                            const offerDiscount = `<%= offerDiscount ? offerDiscount:0 %>`
 
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
@@ -542,17 +542,29 @@
 
                                 placeOrderBtn.disabled = false;
                                 isSubmitting = false;
+
+                                if (selectedPaymentMethod === 'cod' && totalPrice >= 1000) {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: 'Cash on delivery is only available for purchases below 1000.',
+                                        confirmButtonText: 'Okay'
+                                    });
+                                    return;
+                                    
+                                }
+
                                 axios.post('/order/placeOrder', {
                                     items: cartItems,
                                     total: totalPrice,
                                     addressId: selectedAddressId,
                                     paymentMethod: selectedPaymentMethod,
                                     couponDiscount: couponDiscount,
-                                    offerDiscount:offerDiscount
+                                    offerDiscount: offerDiscount
                                 })
                                     .then(response => {
                                         if (selectedPaymentMethod === 'paypal') {
-                                          
+
                                             if (response.data.approvalUrl) {
                                                 window.location.href = response.data.approvalUrl;
                                             } else {
@@ -564,7 +576,7 @@
                                                 });
                                             }
                                         } else {
-                                         
+
                                             if (response.data.success)
                                                 Swal.fire({
                                                     icon: 'success',
@@ -580,14 +592,24 @@
                                         }
                                     })
                                     .catch(error => {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Oops...',
-                                            text:error.message,
-                                            confirmButtonText: 'Okay'
-                                        });
+                                        if (error.response && error.response.data && error.response.data.message) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: error.response.data.message,
+                                                confirmButtonText: 'Okay'
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'Something went wrong. Please try again later.',
+                                                confirmButtonText: 'Okay'
+                                            });
+                                        }
                                         console.error('Error placing order:', error);
                                     });
+
                             });
                         });
 

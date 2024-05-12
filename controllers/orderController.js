@@ -152,6 +152,11 @@ const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
+        console.log("req.body",req.body)
+        if (paymentMethod === 'cod' && total >= 1000) {
+            return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
+        }
+        
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
@@ -164,9 +169,7 @@ const placeOrder = async (req, res) => {
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
-        if (paymentMethod === 'cod' && total >= 1000) {
-            return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
-        }
+    
         
 
         for (const item of items) {
@@ -398,6 +401,7 @@ const paymentCancel = async (req, res) => {
             return res.status(404).send('Order not found.');
         }
         order.status = 'retry';
+        await order.save();
         res.render('paymentCancel', { req, orderId });
 
     } catch (error) {

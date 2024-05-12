@@ -41,20 +41,22 @@
               <p>
                 <%= selectedItem.orderStatus %>
               </p>
-              <% if (selectedItem.orderStatus === 'delivered') { %>
-                <button class="btn-warnings return-product" data-item-id="<%= selectedItem._id %>">Return Product</button>
-            <% } else if (selectedItem.orderStatus === 'cancelled') { %>
-                <button class="btn-dangers cancel-product" disabled>Cancelled</button>
-            <% } else if (selectedItem.orderStatus === 'awaiting approval') { %>
-                <button class="btn-infos cancel-product" disabled>Awaiting Approval</button>
-                <% } else if (selectedItem.orderStatus === 'returned') { %>
-                  <button class="btn-dangers return-product" disabled>Returned</button>
-            <% } else { %>
-                <button class="btn-warnings cancel-product" data-item-id="<%= selectedItem._id %>">Cancel Product</button>
-            <% } %>
-            
+              <% if (selectedItem.orderStatus==='delivered' ) { %>
+                <button class="btn-warnings return-product" data-item-id="<%= selectedItem._id %>">Return
+                  Product</button>
+                <% } else if (selectedItem.orderStatus==='cancelled' ) { %>
+                  <button class="btn-dangers cancel-product" disabled>Cancelled</button>
+                  <% } else if (selectedItem.orderStatus==='awaiting approval' ) { %>
+                    <button class="btn-infos cancel-product" disabled>Awaiting Approval</button>
+                    <% } else if (selectedItem.orderStatus==='returned' ) { %>
+                      <button class="btn-dangers return-product" disabled>Returned</button>
+                      <% } else { %>
+                        <button class="btn-warnings cancel-product" data-item-id="<%= selectedItem._id %>">Cancel
+                          Product</button>
+                        <% } %>
 
-            <% } %>
+
+                          <% } %>
 
 
 
@@ -73,14 +75,23 @@
           <p><strong>Expected Delivery Date:</strong>
             <%= new Date(order.expectedDelivery).toDateString() %>
           </p>
-          <p><strong>Payment Method:</strong>
-            <%= order.paymentMethod %>
-          </p>
-          <p><strong>Payment Status:</strong>
-            <%= order.status %>
-          </p>
-          <p><strong>Total:</strong> ₹<%= order.totalAmount %>
-          </p>
+          <% if (order.paymentMethod === 'paypal' ) { %>
+            <p><strong>Payment Method:</strong>
+              <%= order.paymentMethod %>
+            </p>
+            <p><strong>Payment Status:</strong>
+              <% if (order.status === 'retry' ) { %>
+                <button id="retryButton" class=" btn-default btn-sm">Retry Payment</button>
+
+                <% } else { %>
+                  <%= order.status %>
+                <% } %>
+                 
+            </p>
+            <% } %>
+
+              <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+              </p>
         </div>
         <div class="col-md-6" style="margin-top: 30px;">
           <h3>Address</h3>
