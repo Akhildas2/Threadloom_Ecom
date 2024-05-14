@@ -1,0 +1,181 @@
+<%- include('../adminLayouts/header.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
+
+        <style>
+            .center {
+                text-align: center;
+            }
+
+            .container2 {
+                border: 1px solid white;
+                padding: 20px;
+                margin: 0 auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .form-group {
+                flex: 1 1 30%;
+                min-width: 200px;
+                padding: 10px;
+            }
+
+            .btn-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                margin-top: 20px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .summary-container {
+                margin-top: 20px;
+              
+                display: flex;
+                justify-content: space-around;
+                border-top: 1px solid white;
+                border-bottom: 1px solid white;
+                padding-top: 20px;
+                padding: 10px;
+
+            }
+        </style>
+
+        <div class="container">
+            <h1 class="center mt-20">Sales Report</h1>
+            <form action="/admin/orderList/salesReport" method="get">
+                <div class="container2">
+                    <div class="form-group">
+                        <label for="startDate">Starting Date:</label>
+                        <input type="date" id="startDate" name="startDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">Ending Date:</label>
+                        <input type="date" id="endDate" name="endDate" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="period">Period:</label>
+                        <select id="period" name="period" class="form-control">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="btn-container">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="material-icons"></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <br>
+        
+
+
+            <div class="summary-container">
+                <div class="summary-item">
+                    <h6>Total Sales Count :<%= totalSalesCount %>
+                    </h6>
+                </div>
+                <div class="summary-item">
+                    <h6>Total Sales Amount :₹<%= totalSalesAmount.toFixed(2) %>
+                    </h6>
+                </div>
+                <div class="summary-item">
+                    <h6>Total Discount Amount :₹<%= totalDiscountAmount.toFixed(2) %>
+                    </h6>
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">
+                <i class="material-icons md-insert_chart_outlined"></i> Generate Report
+            </button>
+           
+            <div class="table-responsive mt-4">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="center">#</th>
+                            <th class="center">Order ID</th>
+                            <th class="center">Delivery Date</th>
+                            <th class="center">Customer Name</th>
+                            <th class="center">Product Name</th>
+                            <th class="center">Quantity</th>
+                            <th class="center">Price</th>
+                            <th class="center">Full Discount</th>
+                            <th class="center">Payment</th>
+                            <th class="center">Total</th>
+                        </tr>
+                    </thead>
+                    <% let index=1; %>
+                        <tbody>
+                            <% orders.forEach(order=> { %>
+                                <% let isFirstProduct=true; %>
+                                    <% order.items.forEach((item)=> { %>
+                                        <tr>
+
+                                            <% if (isFirstProduct) { %>
+                                                <td class="center" rowspan="<%= order.items.length %>">
+                                                    <%= index %>
+                                                </td>
+                                                <td class="center" rowspan="<%= order.items.length %>">
+                                                    <%= order.ordersId %>
+                                                </td>
+                                                <td class="center" rowspan="<%= order.items.length %>">
+                                                    <%= new Date(order.expectedDelivery).toDateString() %>
+                                                </td>
+                                                <td class="center" rowspan="<%= order.items.length %>">
+                                                    <%= order.deliveryAddress.fullName %>
+                                                </td>
+                                                <% } %>
+                                                    <td class="center">
+                                                        <%= item.productId.name %>
+                                                    </td>
+                                                    <td class="center">
+                                                        <%= item.quantity %>
+                                                    </td>
+                                                    <td class="center">
+                                                        ₹<%= item.price %>
+                                                    </td>
+                                                    <% if (isFirstProduct) { %>
+                                                        <td class="center" rowspan="<%= order.items.length %>">
+                                                            <% let offerDiscount=order.offerDiscount ?
+                                                                order.offerDiscount : 0; let
+                                                                couponDiscount=order.couponDiscount ?
+                                                                order.couponDiscount : 0; let fullDiscount=offerDiscount
+                                                                + couponDiscount; %>
+                                                                <%= (fullDiscount===0) ? 0 : fullDiscount.toFixed(2) %>
+                                                        </td>
+                                                        <td class="center" rowspan="<%= order.items.length %>">
+                                                            <%= order.paymentMethod %>
+                                                        </td>
+                                                        <td class="center" rowspan="<%= order.items.length %>">
+                                                            ₹<%= order.total %>
+                                                        </td>
+                                                        <% } %>
+
+                                        </tr>
+                                        <% isFirstProduct=false; %>
+
+                                            <% }) %>
+                                                <% index++; %>
+
+                                                    <tr class="line"></tr>
+
+                                                    <% }) %>
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+        <br>
+        <br>
+
+        <%- include('../adminLayouts/footer.ejs') %>
