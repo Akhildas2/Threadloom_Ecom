@@ -555,3 +555,156 @@ const shop = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
+
+
+
+
+
+
+
+
+
+const loadSalesReport = async (req, res) => {
+  try {
+    
+    let page = 1;
+    if (req.query.page) {
+      page = parseInt(req.query.page);
+      // console.log('inside sales report')
+    }
+    const limit = 10;
+    const orderData = await Order.find({ 'status': 'delivered' })
+      .populate({
+        path: 'user',
+        model: 'User',
+      })
+      .populate({
+        path: 'product.productId',
+        model: 'Product',
+      })
+      .sort({ Date: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .exec();
+
+    const count = await Order.find({ 'status': 'delivered' }).countDocuments();
+    const overallData = await Order.aggregate([
+
+      {
+        $match: {
+          status: 'delivered'
+        }
+      },
+
+      {
+        $group: {
+          _id: "",
+          totalSalesCount: { $sum: 1 },
+          totalOrderAmount: { $sum: '$subtotal' },
+          totalDiscount: { $sum: '$discount' }
+        }
+      }
+    ]);
+
+    console.log('overallData:', overallData);
+
+    res.render('admin/salesreport', {
+      orderData,
+      overallData,
+      // totalpages: Math.ceil(count / limit),
+      // currentpage: page,
+      // nextpage: page + 1 <= Math.ceil(count / limit) ? page + 1 : 1,
+      // prevpage: page - 1 >= 1 ? page - 1 : 1,
+    });
+
+
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+const filterSales = async (req, res) => {
+  try {
+    let fromdate, todate;
+    const currentDate = new Date();
+
+    const overallData = await Order.aggregate([
+      {
+        $match: {
+          'status': 'delivered'
+        }
+      },
+      {
+        $group: {
+          _id: "",
+          totalSalesCount: { $sum: 1 },
+          totalOrderAmount: { $sum: '$subtotal' },
+          totalDiscount: { $sum: '$discount' }
+        }
+      }
+    ]);
+
+    const range = req.body.range;
+    switch (range) {
+      case 'daily':
+        fromdate = new Date(currentDate);
+        fromdate.setHours(0, 0, 0, 0);
+        todate = new Date(currentDate);
+        todate.setHours(23, 59, 59, 999);
+        break;
+      case 'weekly':
+        const currentDateCopy1 = new Date(currentDate);
+        const firstDayOfWeek = new Date(currentDateCopy1.setDate(currentDateCopy1.getDate() - currentDateCopy1.getDay()));
+        const lastDayOfWeek = new Date(currentDateCopy1.setDate(currentDateCopy1.getDate() + 6)); // Saturday
+        fromdate = new Date(firstDayOfWeek);
+        fromdate.setHours(0, 0, 0, 0);
+        todate = new Date(lastDayOfWeek);
+        todate.setHours(23, 59, 59, 999);
+        break;
+      case 'monthly':
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        const firstDayOfMonth = new Date(year, month, 1);
+        const lastDayOfMonth = new Date(year, month + 1, 0);
+        fromdate = new Date(firstDayOfMonth);
+        fromdate.setHours(0, 0, 0, 0);
+        todate = new Date(lastDayOfMonth);
+        todate.setHours(23, 59, 59, 999);
+        break;
+      case 'yearly':
+        const firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1);
+        const lastDayOfYear = new Date(currentDate.getFullYear() + 1, 0, 0);
+        fromdate = new Date(firstDayOfYear);
+        fromdate.setHours(0, 0, 0, 0);
+        todate = new Date(lastDayOfYear);
+        todate.setHours(23, 59, 59, 999);
+        break;
+      case 'custom':
+        fromdate = req.body.fromdate ? new Date(req.body.fromdate) : null;
+        if (fromdate) fromdate.setHours(0, 0, 0, 0);
+        todate = req.body.todate ? new Date(req.body.todate) : null;
+        if (todate) todate.setHours(23, 59, 59, 999);
+        break;
+    }
+
+    const orderData = await Order.find({
+      'Date': { $lt: todate || currentDate, $gt: fromdate || new Date(0) },
+      'status': 'delivered' // Filter only delivered orders
+    })
+      .populate({
+        path: 'user',
+        model: 'User',
+      })
+      .populate({
+        path: 'product.productId',
+        model: 'Product',
+      })
+      .sort({ Date: -1 });
+
+    res.render("admin/salesreport", { orderData, overallData });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).send("Internal Server Error");
+  }
+}

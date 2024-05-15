@@ -43,7 +43,7 @@ const fetchExchangeRate = async () => {
 }
 
 
-// Function to truncate description if it exceeds PayPal's limits
+// Function description for PayPal's limits
 function truncateDescription(description) {
     const maxLength = 127; // Maximum length allowed by PayPal
     if (description.length > maxLength) {
@@ -152,7 +152,7 @@ const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
-        console.log("req.body",req.body)
+        
         if (paymentMethod === 'cod' && total >= 1000) {
             return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
         }
@@ -164,7 +164,7 @@ const placeOrder = async (req, res) => {
         const couponDiscount=req.body.couponDiscount||0;
         const offerDiscount=req.body.offerDiscount||0;
         const expectedDelivery = new Date();
-        expectedDelivery.setDate(expectedDelivery.getDate() + 5);
+        expectedDelivery.setDate(expectedDelivery.getDate() + 7);
         const randomOrderId = generateRandomString(5);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
@@ -392,6 +392,7 @@ const paymentSuccess = async (req, res) => {
 const paymentCancel = async (req, res) => {
     try {
         const orderId = req.params.orderId;
+        const userId = req.session.user_id;
 
         if (!orderId) {
             return res.status(400).send('Order ID is missing.');
@@ -402,6 +403,7 @@ const paymentCancel = async (req, res) => {
         }
         order.status = 'retry';
         await order.save();
+        await CartItems.deleteMany({ user: userId });
         res.render('paymentCancel', { req, orderId });
 
     } catch (error) {

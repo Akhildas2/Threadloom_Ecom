@@ -126,60 +126,30 @@ const updateStatus = async (req, res) => {
 //for loading order list 
 const loadSalesReport = async (req, res) => {
     try {
-        const { startDate, endDate, period } = req.query;
+        let { startDate, endDate, period } = req.query;
         console.log("req.query", req.query);
-
-        let periodQuery = {};
-
-        if (period === 'daily') {
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                end.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
-                periodQuery = { 'expectedDelivery': { $gte: start, $lte: end } };
-            }
-        } else if (period === 'weekly') {
-            if (startDate && endDate) {
-                const startOfWeek = new Date(startDate);
-                startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
-                const endOfWeek = new Date(endDate);
-                endOfWeek.setDate(endOfWeek.getDate() + (6 - endOfWeek.getDay()));
-                endOfWeek.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
-                periodQuery = { 'expectedDelivery': { $gte: startOfWeek, $lte: endOfWeek } };
-            }
-        } else if (period === 'monthly') {
-            if (startDate && endDate) {
-                const startOfMonth = new Date(startDate);
-                startOfMonth.setDate(1);
-                const endOfMonth = new Date(endDate);
-                endOfMonth.setMonth(endOfMonth.getMonth() + 1);
-                endOfMonth.setDate(0);
-                endOfMonth.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
-                periodQuery = { 'expectedDelivery': { $gte: startOfMonth, $lte: endOfMonth } };
-            }
-        } else if (period === 'yearly') {
-            if (startDate && endDate) {
-                const startOfYear = new Date(startDate);
-                startOfYear.setMonth(0, 1);
-                const endOfYear = new Date(endDate);
-                endOfYear.setFullYear(endOfYear.getFullYear() + 1, 0, 0);
-                endOfYear.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
-                periodQuery = { 'expectedDelivery': { $gte: startOfYear, $lte: endOfYear } };
-            }
-        } else if (period === 'custom') {
-            if (startDate && endDate) {
-                const start = new Date(startDate);
-                const end = new Date(endDate);
-                end.setHours(23, 59, 59, 999); // Ensure the end date includes the entire day
-                periodQuery = { 'expectedDelivery': { $gte: start, $lte: end } };
-            }
+        if (endDate && startDate) {
+            startDate = new Date(startDate);
+            startDate.setHours(0, 0, 0, 0);
+            endDate = new Date(endDate);
+            endDate.setHours(23, 59, 59, 999);
         }
 
-        console.log("periodQuery", periodQuery);
+        let orders;
+        if(period==='daily' || period==='weekly' || period==='monthly' || period==='yearly'  || period==='custom') {
+        
+             orders = await Order.find({ 
+                    'items.orderStatus': 'delivered',
+                    expectedDelivery: {
+                        $gte: startDate,
+                        $lt: endDate
+                    }
+                });
+             
+        }else{
+             orders = await Order.find({ 'items.orderStatus': 'delivered' });
 
-        const orders = await Order.find({ 'items.orderStatus': 'delivered', ...periodQuery })
-            .populate('items.productId')
-            .populate('userId');
+        }
         console.log("orders", orders);
 
         let totalSalesCount = 0;

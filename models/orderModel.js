@@ -25,7 +25,7 @@ const orderSchema = mongoose.Schema({
         default: Date.now
     },
     expectedDelivery: {
-        type: String,
+        type: Date,
         required: true
     },
     paymentMethod: {

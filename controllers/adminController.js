@@ -1,5 +1,8 @@
 const User = require("../models/userModel")
 const Admin = require("../models/adminModel")
+const Order = require('../models/orderModel')
+const Product = require('../models/productModel')
+const Category = require('../models/categoryModel')
 
 const bcrypt = require('bcrypt');
 
@@ -15,7 +18,7 @@ const securePassword = async (password) => {
 }
 
 //for admin register
-const  registerAdmin = async(req,res)=>{
+const registerAdmin = async (req, res) => {
     try {
         const { name, email, mobile, password } = req.body;
         const spassword = await securePassword(password);
@@ -27,10 +30,10 @@ const  registerAdmin = async(req,res)=>{
         });
 
         const adminData = await admin.save();
-if(adminData){
-    console.log("admin register successfull");
-}
-        
+        if (adminData) {
+            console.log("admin register successfull");
+        }
+
     } catch (error) {
         console.log(error.message);
     }
@@ -49,13 +52,95 @@ const loadLogin = async (req, res) => {
 }
 
 // for loading admin home
-const loadAdminHome= async(req,res)=>{
-try {
- 
-    res.render('adminhome')
-    
-    }
-catch (error) {
+const loadAdminHome = async (req, res) => {
+    try {
+
+        const revenue = await Order.aggregate([
+            { $match: { 'items.orderStatus': 'delivered' } },
+            { $group: { _id: null, total: { $sum: '$total' } } }
+        ]);
+        //daily
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1)
+        const dailyRevenue = await Order.aggregate([
+            {
+                $match: {
+                    'items.orderStatus': 'delivered',
+                    createdAt: { $gte: today, $lt: tomorrow }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total' }
+                }
+            }
+        ]);
+
+        //weekly
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
+
+        const weeklyRevenue = await Order.aggregate([
+            {
+                $match: {
+                    'items.orderStatus': 'delivered',
+                    createdAt: { $gte: startOfWeek, $lt: tomorrow }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total' }
+                }
+            }
+        ]);
+
+
+        //monthly 
+        const startOfMonth = new Date(today.getFullYear(),today.getMonth(),1);
+        const monthlyRevenue = await Order.aggregate([
+            {
+                $match:{
+                    'items.orderStatus': 'delivered',
+                    createdAt:{$gte:startOfMonth,$lt:tomorrow}
+                }
+            },{
+                $group:{
+                    _id:null,
+                    total:{$sum:'$total'}
+                }
+            }
+        ])
+
+        //yearly
+        const startOfYear = new Date(today.getFullYear(),0,1);
+        const yearlyRevenue = await  Order.aggregate([
+            {
+                $match:{
+                    'items.orderStatus': 'delivered',
+                    createdAt:{$gte:startOfYear,$lt:tomorrow} 
+                }
+            },{
+                $group:{
+                    _id:null,
+                    total:{$sum:'$total'}
+                }
+            }
+        ])
+      
+    const totalUsers = await User.find({}).countDocuments();
+    const totalOrders = await Order.find({ 'items.orderStatus': 'delivered' }).countDocuments();
+    const totalProducts = await Product.find({}).countDocuments()
+    const totalCategorys = await Category.find({}).countDocuments()
+
+    res.render('adminhome', { revenue, totalUsers, totalOrders, totalProducts, totalCategorys, dailyRevenue,weeklyRevenue,monthlyRevenue,yearlyRevenue})
+
+}
+    catch (error) {
     console.log(error.message);
     res.status(500).send('Internal Server Error');
 
@@ -83,10 +168,10 @@ const verifyLogin = async (req, res) => {
 //for logout
 const logout = async (req, res) => {
     try {
-      
+
         delete req.session.admin_id;
         res.redirect('/admin');
-  
+
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -105,9 +190,9 @@ const userList = async (req, res) => {
         const limit = 10;
         const skip = (page - 1) * limit;
 
-        let query = { isVerified: true }; 
+        let query = { isVerified: true };
 
-     
+
         if (req.query.category) {
             if (req.query.category === 'active') {
                 query.isBlocked = false;
@@ -116,12 +201,12 @@ const userList = async (req, res) => {
             }
         }
         const users = await User.find(query)
-        .skip(skip)
-        .limit(limit);
+            .skip(skip)
+            .limit(limit);
 
-    const totalCount = await User.countDocuments(query);
-    const totalPages = Math.ceil(totalCount / limit);
-    res.render('userList', { users, currentPage: page, totalPages, selectedStatus: req.query.category || '' });
+        const totalCount = await User.countDocuments(query);
+        const totalPages = Math.ceil(totalCount / limit);
+        res.render('userList', { users, currentPage: page, totalPages, selectedStatus: req.query.category || '' });
 
     } catch (error) {
         console.log(error.message);
@@ -136,11 +221,11 @@ const userList = async (req, res) => {
 //for block user 
 const blockUser = async (req, res) => {
     try {
-        const userId = req.params.id;  
-       
+        const userId = req.params.id;
+
         // Find the user by ID
         const user = await User.findById(userId);
-     
+
         // Check if the user exists
         if (!user) {
             return res.status(404).send('User not found');
@@ -150,30 +235,30 @@ const blockUser = async (req, res) => {
         if (user.isAdmin) {
             return res.status(403).send('Cannot block admin user');
         }
-       
+
 
         //destroy only the user's session
         if (req.session.user_id === userId) {
-            delete req.session.user_id; 
+            delete req.session.user_id;
             req.session.save(err => {
                 if (err) {
                     console.error('Error saving session:', err);
                     return res.status(500).send('Internal Server Error');
                 }
-               
+
             });
         }
 
         // Update the user to be blocked
         user.isBlocked = true;
         await user.save();
-       
+
         console.log('User blocked successfully');
         res.status(200).json({
             status: true,
             url: '/admin/userList'
         });
-       
+
     } catch (error) {
         console.error('Error blocking user:', error.message);
         res.status(500).send('Internal Server Error');
@@ -185,7 +270,7 @@ const blockUser = async (req, res) => {
 const unblockUser = async (req, res) => {
     try {
         const userId = req.params.id;
-     
+
         await User.findByIdAndUpdate(userId, { isBlocked: false });
         console.log('User unblocked successfully');
         res.status(200).json({
@@ -194,7 +279,7 @@ const unblockUser = async (req, res) => {
         });
 
 
-       
+
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -214,5 +299,5 @@ module.exports = {
     userList,
     blockUser,
     unblockUser,
- 
+
 }
