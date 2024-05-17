@@ -34,7 +34,6 @@
 
             .summary-container {
                 margin-top: 20px;
-
                 display: flex;
                 justify-content: space-around;
                 border-top: 1px solid white;
@@ -78,10 +77,11 @@
 
             <br>
 
-            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="downloadPDF('order')">
+            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="generatePdf()">
                 <i class="material-icons md-picture_as_pdf"></i> Generate PDF Report
             </button>
-            <button id="excelDownloadBtn" class="btn btn-primary" onclick="downloadExcel('order')">
+
+            <button id="excelDownloadBtn" class="btn btn-primary" onclick="downloadExcel()">
                 <i class="material-icons md-insert_chart"></i> Generate Excel Report
             </button>
             <br>
@@ -187,120 +187,91 @@
                 </div>
             </div>
         </div>
+        <!-- Pagination -->
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a class="page-link"
+                                href="?page=<%= currentPage - 1 %>&limit=<%= limit %>&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>">
+                                <i class="material-icons md-chevron_left"></i>
+                            </a>
+                        </li>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <% if (i===currentPage) { %>
+                                    <li class="page-item active">
+                                        <a class="page-link" href="#">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } else { %>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="?page=<%= i %>&limit=<%= limit %>&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>">
+                                                <%= i %>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                            href="?page=<%= currentPage + 1 %>&limit=<%= limit %>&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>">
+                                                            <i class="material-icons md-chevron_right"></i>
+                                                        </a>
+                                                    </li>
+                                                    <% } %>
+                </ul>
+            </nav>
+        </div>
+
+
+
         <br>
         <br>
 
         <%- include('../adminLayouts/footer.ejs') %>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
-
             <script>
+
                 document.addEventListener("DOMContentLoaded", function () {
                     const startDateInput = document.getElementById('startDate');
                     const endDateInput = document.getElementById('endDate');
                     const periodSelect = document.getElementById('period');
-                    const hiddenPeriodInput = document.getElementById('period');
 
-                    startDateInput.addEventListener('change', function () {
-                        const startDate = new Date(this.value);
-                        const endDate = new Date(endDateInput.value);
+                    startDateInput.addEventListener('change', updatePeriodBasedOnDates);
+                    endDateInput.addEventListener('change', updatePeriodBasedOnDates);
+                    periodSelect.addEventListener('change', resetDateRange);
 
-                        // Disable endDate if startDate is after endDate
-                        if (startDate > endDate) {
-                            endDateInput.value = '';
-                        }
-
-                        // Automatically select period based on date range
-                        const diffTime = Math.abs(endDate - startDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                        if (diffDays === 0) {
-                            periodSelect.value = 'daily';
-                        } else if (diffDays == 7) {
-                            periodSelect.value = 'weekly';
-                        } else if (diffDays == 31) {
-                            periodSelect.value = 'monthly';
-                        } else if (diffDays == 365) {
-                            periodSelect.value = 'yearly';
-                        } else {
-                            periodSelect.value = 'custom';
-                        }
-                    });
-
-                    endDateInput.addEventListener('change', function () {
+                    function updatePeriodBasedOnDates() {
                         const startDate = new Date(startDateInput.value);
-                        const endDate = new Date(this.value);
+                        const endDate = new Date(endDateInput.value);
+                        const diffDays = calculateDiffInDays(startDate, endDate);
 
-                        // Disable startDate if endDate is before startDate
-                        if (endDate < startDate) {
-                            startDateInput.value = '';
-                        }
-
-                        // Automatically select period based on date range
-                        const diffTime = Math.abs(endDate - startDate);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                        if (diffDays === 0) {
-                            periodSelect.value = 'daily';
-                        } else if (diffDays == 7) {
-                            periodSelect.value = 'weekly';
-                        } else if (diffDays == 31) {
-                            periodSelect.value = 'monthly';
-                        } else if (diffDays == 365) {
-                            periodSelect.value = 'yearly';
-                        } else {
-                            periodSelect.value = 'custom';
-                        }
-                    });
-                });
-
-
-
-
-                function downloadPDF(order) {
-                    const printContents = document.getElementById('order').innerHTML;
-                    const originalContents = document.body.innerHTML;
-                    document.body.innerHTML = printContents;
-                    window.print();
-                    document.body.innerHTML = originalContents;
-                }
-
-                function downloadExcel(order) {
-                    const table = document.getElementById(order);
-                    const rows = Array.from(table.getElementsByTagName('tr'));
-                    let csvContent = "data:text/csv;charset=utf-8,";
-
-                    // Extract headers from the first row of the table
-                    const headers = Array.from(rows[1].getElementsByTagName('th')).map(th => th.textContent.trim());
-
-                    // Add headers to the CSV content
-                    csvContent += headers.join(',') + '\r\n';
-
-                    // Iterate over the remaining rows to add data rows
-                    for (let i = 2; i < rows.length; i++) {
-                        const rowData = Array.from(rows[i].getElementsByTagName('td')).map(td => td.textContent.trim());
-                        csvContent += rowData.join(',') + '\r\n';
+                        periodSelect.value = getPeriodBasedOnDays(diffDays);
                     }
 
-                    // Create a blob from the CSV content
-                    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+                    function resetDateRange() {
+                        startDateInput.value = '';
+                        endDateInput.value = '';
+                    }
 
-                    // Create a URL for the blob
-                    const url = URL.createObjectURL(blob);
+                    function calculateDiffInDays(dateFrom, dateTo) {
+                        const diffTime = Math.abs(dateTo - dateFrom);
+                        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    }
 
-                    // Create a temporary anchor element to trigger the download
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'data.csv';
-                    document.body.appendChild(link);
-                    link.click();
-
-                    // Clean up
-                    document.body.removeChild(link);
-                }
-
-
-
-
+                    function getPeriodBasedOnDays(days) {
+                        if (days === 0) return 'daily';
+                        if (days === 7) return 'weekly';
+                        if (days === 31) return 'monthly';
+                        if (days === 365) return 'yearly';
+                        return 'custom';
+                    }
+                });
+            
 
             </script>

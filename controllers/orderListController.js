@@ -1,6 +1,7 @@
 const Order = require("../models/orderModel")
 const Wallet = require("../models/walletModel")
 const Product = require("../models/productModel")
+const PDFService = require('../services/pdfService');
 
 
 
@@ -123,10 +124,14 @@ const updateStatus = async (req, res) => {
 
 
 
-//for loading order list 
+//for loading sales report
 const loadSalesReport = async (req, res) => {
     try {
-        let { startDate, endDate, period } = req.query;
+        let { startDate, endDate, period,page=1,limit=2 } = req.query;
+  
+        page = parseInt(page);
+        limit = parseInt(limit);
+
         if (endDate && startDate) {
             startDate = new Date(startDate);
             startDate.setHours(0, 0, 0, 0);
@@ -134,24 +139,27 @@ const loadSalesReport = async (req, res) => {
             endDate.setHours(23, 59, 59, 999);
         }
 
-        let orders;
-        if(period==='daily' || period==='weekly' || period==='monthly' || period==='yearly'  || period==='custom') {
-        
-             orders = await Order.find({ 
-                    'items.orderStatus': 'delivered',
-                    expectedDelivery: {
-                        $gte: startDate,
-                        $lt: endDate
-                    }
-                })  .populate('items.productId')
-                .populate('userId');
-             
-        }else{
-             orders = await Order.find({ 'items.orderStatus': 'delivered' })  .populate('items.productId')
-             .populate('userId');
-
+    let query={};
+    if(period != undefined){
+        query['items.orderStatus'] = 'delivered';
+        if(startDate  && endDate){
+            query.expectedDelivery = {
+                $gte:startDate,
+                $lt: endDate
+            }
         }
+    }else{
+        query['items.orderStatus'] = 'delivered';
+    }
+    const totalOrders = await Order.countDocuments(query);
+    const totalPages = Math.ceil(totalOrders/limit);
 
+    const orders =  await Order.find(query)
+    .skip((page-1) * limit)
+    .limit(limit)
+    .populate('items.productId')
+    .populate('userId');
+   
         let totalSalesCount = 0;
         let totalSalesAmount = 0;
         let totalDiscountAmount = 0;
@@ -163,12 +171,18 @@ const loadSalesReport = async (req, res) => {
             const couponDiscount = order.couponDiscount || 0;
             totalDiscountAmount += offerDiscount + couponDiscount;
         });
-
+              
         res.render('salesReport', {
             orders,
             totalSalesCount,
             totalSalesAmount,
-            totalDiscountAmount
+            totalDiscountAmount,
+            currentPage: page,
+            totalPages: totalPages,
+            limit: limit,
+            startDate: req.query.startDate,
+            endDate: req.query.endDate,
+            period: req.query.period
         });
 
     } catch (error) {
@@ -176,7 +190,6 @@ const loadSalesReport = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
-
 
 
 

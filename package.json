@@ -17,6 +17,7 @@
     "currency-converter-lt": "^2.0.1",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.9",
+    "exceljs": "^4.4.0",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "install": "^0.13.0",
@@ -29,6 +30,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "paypal-rest-sdk": "^1.8.1",
+    "pdfkit": "^0.15.0",
     "sharp": "^0.33.2"
   }
 }
