@@ -27,6 +27,10 @@ const loadDashboard = async (req, res) => {
             const address = await Address.find({ userId });
             const orders = await Order.find({ userId}).populate('userId').populate('items.productId').sort({ createdAt: -1 });
             const wallet = await Wallet.findOne({ userId }).sort({ 'transactions.date': -1 });
+            if (!wallet) {
+                // wallet is not found
+                return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null });
+            }
             // Sorting new transactions
             wallet.transactions.sort((a, b) => b.date - a.date);
             

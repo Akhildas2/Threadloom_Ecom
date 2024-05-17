@@ -43,7 +43,7 @@
                                                                     <td class="cart_total_amount"><span
                                                                             class="font-lg fw-900 text-brand"><span>₹<%=
                                                                                     totalPrice.toFixed(2)%>
-                                                                                    </span></span></td>
+                                                                            </span></span></td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td class="cart_total_label">Shipping</td>
@@ -66,7 +66,7 @@
                                                     </div>
 
                                                 </div>
-                                               
+
                                             </div>
 
                                             <div class="col-lg-8 col-md-8 ">
@@ -119,7 +119,7 @@
                                                                             </div>
                                                                         </td>
                                                                         <td class="text-right" data-title="Subtotal">
-                                                                            <span>₹<%= product.total %></span>
+                                                                            <span>₹<%= product.total.toFixed(2) %></span>
                                                                         </td>
                                                                         <td class="action" data-title="Remove">
                                                                             <a href="#"
@@ -130,11 +130,12 @@
                                                                     </tr>
                                                                     <% }); %>
                                                                         <% }); %>
-                                                                                
+
                                                                             <tr>
-                                                                                <td colspan="4" class="text-end">
-                                                                                <b> Total : ₹<%= totalPrice.toFixed(2)  %></b>
-                                                                                   </td>
+                                                                                <td colspan="4" class="text-end" id="totalPriceCell">
+                                                                                    <b> Total : ₹<%=
+                                                                                            totalPrice.toFixed(2) %></b>
+                                                                                </td>
                                                                                 <td colspan="6" class="text-end">
                                                                                     <a href="#"
                                                                                         onclick="clearCartConfirmation()"
@@ -397,10 +398,14 @@
                             cartSubtotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
                             cartTotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
                         }
+                        const totalPriceElement = document.getElementById('totalPriceCell');
+                        if (totalPriceElement) {
+                            totalPriceElement.innerHTML = `<b>Total: ₹${totalPrice.toFixed(2)}</b>`;
+                        }
                     }
 
 
-             
+
 
 
                 </script>

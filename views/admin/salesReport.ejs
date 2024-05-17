@@ -34,7 +34,7 @@
 
             .summary-container {
                 margin-top: 20px;
-              
+
                 display: flex;
                 justify-content: space-around;
                 border-top: 1px solid white;
@@ -77,106 +77,230 @@
             </form>
 
             <br>
-        
 
-
-            <div class="summary-container">
-                <div class="summary-item">
-                    <h6>Total Sales Count :<%= totalSalesCount %>
-                    </h6>
-                </div>
-                <div class="summary-item">
-                    <h6>Total Sales Amount :₹<%= totalSalesAmount.toFixed(2) %>
-                    </h6>
-                </div>
-                <div class="summary-item">
-                    <h6>Total Discount Amount :₹<%= totalDiscountAmount.toFixed(2) %>
-                    </h6>
-                </div>
-            </div>
-            <br>
-            <button type="submit" class="btn btn-primary">
-                <i class="material-icons md-insert_chart_outlined"></i> Generate Report
+            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="downloadPDF('order')">
+                <i class="material-icons md-picture_as_pdf"></i> Generate PDF Report
             </button>
-           
-            <div class="table-responsive mt-4">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="center">#</th>
-                            <th class="center">Order ID</th>
-                            <th class="center">Delivery Date</th>
-                            <th class="center">Customer Name</th>
-                            <th class="center">Product Name</th>
-                            <th class="center">Quantity</th>
-                            <th class="center">Price</th>
-                            <th class="center">Full Discount</th>
-                            <th class="center">Payment</th>
-                            <th class="center">Total</th>
-                        </tr>
-                    </thead>
-                    <% let index=1; %>
-                        <tbody>
-                            <% orders.forEach(order=> { %>
-                                <% let isFirstProduct=true; %>
-                                    <% order.items.forEach((item)=> { %>
-                                        <tr>
+            <button id="excelDownloadBtn" class="btn btn-primary" onclick="downloadExcel('order')">
+                <i class="material-icons md-insert_chart"></i> Generate Excel Report
+            </button>
+            <br>
+            <div id="order">
+                <br>
+                <div class="summary-container">
+                    <div class="summary-item">
+                        <h6>Total Sales Count :<%= totalSalesCount %>
+                        </h6>
+                    </div>
+                    <div class="summary-item">
+                        <h6>Total Sales Amount :₹<%= totalSalesAmount.toFixed(2) %>
+                        </h6>
+                    </div>
+                    <div class="summary-item">
+                        <h6>Total Discount Amount :₹<%= totalDiscountAmount.toFixed(2) %>
+                        </h6>
+                    </div>
+                </div>
+                <br>
 
-                                            <% if (isFirstProduct) { %>
-                                                <td class="center" rowspan="<%= order.items.length %>">
-                                                    <%= index %>
-                                                </td>
-                                                <td class="center" rowspan="<%= order.items.length %>">
-                                                    <%= order.ordersId %>
-                                                </td>
-                                                <td class="center" rowspan="<%= order.items.length %>">
-                                                    <%= new Date(order.expectedDelivery).toDateString() %>
-                                                </td>
-                                                <td class="center" rowspan="<%= order.items.length %>">
-                                                    <%= order.deliveryAddress.fullName %>
-                                                </td>
-                                                <% } %>
-                                                    <td class="center">
-                                                        <%= item.productId.name %>
+
+
+                <div class="table-responsive mt-4">
+                    <table class="table">
+                        <thead>
+                            <tr class="line"></tr>
+
+                            <tr>
+                                <th class="center">#</th>
+                                <th class="center">Order ID</th>
+                                <th class="center">Delivery Date</th>
+                                <th class="center">Customer Name</th>
+                                <th class="center">Product Name</th>
+                                <th class="center">Quantity</th>
+                                <th class="center">Price</th>
+                                <th class="center">Full Discount</th>
+                                <th class="center">Payment</th>
+                                <th class="center">Total</th>
+                            </tr>
+                            <tr class="line"></tr>
+
+                        </thead>
+                        <% let index=1; %>
+                            <tbody>
+                                <% orders.forEach(order=> { %>
+                                    <% let isFirstProduct=true; %>
+                                        <% order.items.forEach((item)=> { %>
+                                            <tr>
+
+                                                <% if (isFirstProduct) { %>
+                                                    <td class="center" rowspan="<%= order.items.length %>">
+                                                        <%= index %>
                                                     </td>
-                                                    <td class="center">
-                                                        <%= item.quantity %>
+                                                    <td class="center" rowspan="<%= order.items.length %>">
+                                                        <%= order.ordersId %>
                                                     </td>
-                                                    <td class="center">
-                                                        ₹<%= item.price %>
+                                                    <td class="center" rowspan="<%= order.items.length %>">
+                                                        <%= new Date(order.expectedDelivery).toDateString() %>
                                                     </td>
-                                                    <% if (isFirstProduct) { %>
-                                                        <td class="center" rowspan="<%= order.items.length %>">
-                                                            <% let offerDiscount=order.offerDiscount ?
-                                                                order.offerDiscount : 0; let
-                                                                couponDiscount=order.couponDiscount ?
-                                                                order.couponDiscount : 0; let fullDiscount=offerDiscount
-                                                                + couponDiscount; %>
-                                                                <%= (fullDiscount===0) ? 0 : fullDiscount.toFixed(2) %>
+                                                    <td class="center" rowspan="<%= order.items.length %>">
+                                                        <%= order.deliveryAddress.fullName %>
+                                                    </td>
+                                                    <% } %>
+                                                        <td class="center">
+                                                            <%= item.productId.name %>
                                                         </td>
-                                                        <td class="center" rowspan="<%= order.items.length %>">
-                                                            <%= order.paymentMethod %>
+                                                        <td class="center">
+                                                            <%= item.quantity %>
                                                         </td>
-                                                        <td class="center" rowspan="<%= order.items.length %>">
-                                                            ₹<%= order.total %>
+                                                        <td class="center">
+                                                            ₹<%= item.price %>
                                                         </td>
-                                                        <% } %>
+                                                        <% if (isFirstProduct) { %>
+                                                            <td class="center" rowspan="<%= order.items.length %>">
+                                                                <% let offerDiscount=order.offerDiscount ?
+                                                                    order.offerDiscount : 0; let
+                                                                    couponDiscount=order.couponDiscount ?
+                                                                    order.couponDiscount : 0; let
+                                                                    fullDiscount=offerDiscount + couponDiscount; %>
+                                                                    <%= (fullDiscount===0) ? 0 : fullDiscount.toFixed(2)
+                                                                        %>
+                                                            </td>
+                                                            <td class="center" rowspan="<%= order.items.length %>">
+                                                                <%= order.paymentMethod %>
+                                                            </td>
+                                                            <td class="center" rowspan="<%= order.items.length %>">
+                                                                ₹<%= order.total %>
+                                                            </td>
+                                                            <% } %>
 
-                                        </tr>
-                                        <% isFirstProduct=false; %>
+                                            </tr>
+                                            <% isFirstProduct=false; %>
 
-                                            <% }) %>
-                                                <% index++; %>
+                                                <% }) %>
+                                                    <% index++; %>
 
-                                                    <tr class="line"></tr>
+                                                        <tr class="line"></tr>
 
-                                                    <% }) %>
-                        </tbody>
-                </table>
+                                                        <% }) %>
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-
         <br>
         <br>
 
         <%- include('../adminLayouts/footer.ejs') %>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const startDateInput = document.getElementById('startDate');
+                    const endDateInput = document.getElementById('endDate');
+                    const periodSelect = document.getElementById('period');
+                    const hiddenPeriodInput = document.getElementById('period');
+
+                    startDateInput.addEventListener('change', function () {
+                        const startDate = new Date(this.value);
+                        const endDate = new Date(endDateInput.value);
+
+                        // Disable endDate if startDate is after endDate
+                        if (startDate > endDate) {
+                            endDateInput.value = '';
+                        }
+
+                        // Automatically select period based on date range
+                        const diffTime = Math.abs(endDate - startDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays === 0) {
+                            periodSelect.value = 'daily';
+                        } else if (diffDays == 7) {
+                            periodSelect.value = 'weekly';
+                        } else if (diffDays == 31) {
+                            periodSelect.value = 'monthly';
+                        } else if (diffDays == 365) {
+                            periodSelect.value = 'yearly';
+                        } else {
+                            periodSelect.value = 'custom';
+                        }
+                    });
+
+                    endDateInput.addEventListener('change', function () {
+                        const startDate = new Date(startDateInput.value);
+                        const endDate = new Date(this.value);
+
+                        // Disable startDate if endDate is before startDate
+                        if (endDate < startDate) {
+                            startDateInput.value = '';
+                        }
+
+                        // Automatically select period based on date range
+                        const diffTime = Math.abs(endDate - startDate);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                        if (diffDays === 0) {
+                            periodSelect.value = 'daily';
+                        } else if (diffDays == 7) {
+                            periodSelect.value = 'weekly';
+                        } else if (diffDays == 31) {
+                            periodSelect.value = 'monthly';
+                        } else if (diffDays == 365) {
+                            periodSelect.value = 'yearly';
+                        } else {
+                            periodSelect.value = 'custom';
+                        }
+                    });
+                });
+
+
+
+
+                function downloadPDF(order) {
+                    const printContents = document.getElementById('order').innerHTML;
+                    const originalContents = document.body.innerHTML;
+                    document.body.innerHTML = printContents;
+                    window.print();
+                    document.body.innerHTML = originalContents;
+                }
+
+                function downloadExcel(order) {
+                    const table = document.getElementById(order);
+                    const rows = Array.from(table.getElementsByTagName('tr'));
+                    let csvContent = "data:text/csv;charset=utf-8,";
+
+                    // Extract headers from the first row of the table
+                    const headers = Array.from(rows[1].getElementsByTagName('th')).map(th => th.textContent.trim());
+
+                    // Add headers to the CSV content
+                    csvContent += headers.join(',') + '\r\n';
+
+                    // Iterate over the remaining rows to add data rows
+                    for (let i = 2; i < rows.length; i++) {
+                        const rowData = Array.from(rows[i].getElementsByTagName('td')).map(td => td.textContent.trim());
+                        csvContent += rowData.join(',') + '\r\n';
+                    }
+
+                    // Create a blob from the CSV content
+                    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+                    // Create a URL for the blob
+                    const url = URL.createObjectURL(blob);
+
+                    // Create a temporary anchor element to trigger the download
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'data.csv';
+                    document.body.appendChild(link);
+                    link.click();
+
+                    // Clean up
+                    document.body.removeChild(link);
+                }
+
+
+
+
+
+            </script>

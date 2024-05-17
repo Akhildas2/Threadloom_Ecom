@@ -35,7 +35,6 @@
                 <div class="row">
                     <div class="col-md-4">
                         <h3>Order Information</h3>
-                        <br>
                         <p><strong>Order ID:</strong>
                             <%= order.ordersId %>
                         </p>
@@ -45,20 +44,29 @@
                         <p><strong>Expected Delivery Date:</strong>
                             <%= new Date(order.expectedDelivery).toDateString() %>
                         </p>
-                        <p><strong>Payment Method:</strong>
-                            <%= order.paymentMethod %>
-                        </p>
-                        <p><strong>Payment Status:</strong>
-                            <%= order.status %>
-                        </p>
+                        <% if (order.paymentMethod === 'paypal' ) { %>
+                            <p><strong>Payment Method:</strong>
+                              <%= order.paymentMethod %>
+                            </p>
+                            <p><strong>Payment Status:</strong>
+                              <% if (order.status === 'retry' ) { %>
+                                <button id="retryButton" class=" btn-default btn-sm">Retry Payment</button>
+                
+                                <% } else { %>
+                                  <%= order.status %>
+                                <% } %>
+                                 
+                            </p>
+                            <% } %>
                         <p><strong>Order Status:</strong> <%= order.items[0].orderStatus %></p>
 
                         <p><strong>Total:</strong> ₹<%= order.totalAmount %>
                         </p>
                     </div>
+                    <br>
                     <div class="col-md-4">
-                        <h3>User Information</h3>
                         <br>
+                        <h3>User Information</h3>
                         <p><strong>Name:</strong>
                             <%= order.deliveryAddress.fullName %>
                         </p>
@@ -70,11 +78,10 @@
                         </p>
 
                     </div>
-
+                  
                     <div class="col-md-4">
-                        <h3>Billing Address</h3>
                         <br>
-                        
+                        <h3>Billing Address</h3>
                         <p><strong>House No:</strong>
                             <%= order.deliveryAddress.houseNo %>
                         </p>

@@ -1,17 +1,20 @@
 <%- include('../adminLayouts/header.ejs') %>
-<%- include('../adminLayouts/navbar.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
 
-<style>
-     .card, .icontext {
-        height: 100%;
-    }
-    .column-top-space {
-        margin-top: 20px; 
-    }
-    .column-bottom-space {
-        margin-top: 50px;
-    }
-</style>
+        <style>
+            .card,
+            .icontext {
+                height: 100%;
+            }
+
+            .column-top-space {
+                margin-top: 20px;
+            }
+
+            .column-bottom-space {
+                margin-top: 50px;
+            }
+        </style>
 
 
         <section class="content-main">
@@ -20,15 +23,14 @@
                     <h2 class="content-title card-title">Dashboard </h2>
                     <p>Whole data about your business here</p>
                 </div>
-                <div>
-                    <a href="#" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Create report</a>
-                </div>
+                
             </div>
             <div class="row">
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-primary-light"><i class="text-primary material-icons md-monetization_on"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-primary-light"><i
+                                    class="text-primary material-icons md-monetization_on"></i></span>
                             <div class="text">
                                 <h6 class="mb-1 card-title">Revenue</h6>
                                 <span>₹ <%= revenue[0] ? revenue[0].total.toFixed(2) : 0 %></span>
@@ -42,9 +44,12 @@
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-success-light"><i class="text-success material-icons md-local_shipping"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-success-light"><i
+                                    class="text-success material-icons md-local_shipping"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Orders</h6> <span><%= totalOrders  %></span>
+                                <h6 class="mb-1 card-title">Orders</h6> <span>
+                                    <%= totalOrders %>
+                                </span>
                                 <!-- <span class="text-sm">
                                     Excluding orders in transit
                                 </span> -->
@@ -55,22 +60,28 @@
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4 ">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-person"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                    class="text-info material-icons md-person"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Total Users</h6> <span><%= totalUsers  %></span>
+                                <h6 class="mb-1 card-title">Total Users</h6> <span>
+                                    <%= totalUsers %>
+                                </span>
                             </div>
                         </article>
                     </div>
                 </div>
-                
+
                 <div class="col-lg-3 column-top-space">
-                    <div class="card card-body mb-4" >
+                    <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-warning-light"><i class="text-warning material-icons md-qr_code"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-warning-light"><i
+                                    class="text-warning material-icons md-qr_code"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Products</h6> <span><%= totalProducts  %></span>
+                                <h6 class="mb-1 card-title">Products</h6> <span>
+                                    <%= totalProducts %>
+                                </span>
                                 <span class="text-sm">
-                                  In  <%= totalCategorys  %> Categorys
+                                    In <%= totalCategorys %> Categorys
                                 </span>
                             </div>
                         </article>
@@ -79,9 +90,11 @@
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-today"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                    class="text-info material-icons md-today"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Daily Earning</h6> <span>₹ <%= dailyRevenue[0] ? dailyRevenue[0].total.toFixed(2):0 %></span>
+                                <h6 class="mb-1 card-title">Daily Earning</h6> <span>₹ <%= dailyRevenue[0] ?
+                                        dailyRevenue[0].total.toFixed(2):0 %></span>
                             </div>
                         </article>
                     </div>
@@ -89,19 +102,11 @@
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-date_range"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                    class="text-info material-icons md-date_range"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Weekly Earning</h6> <span>₹ <%= weeklyRevenue[0] ? weeklyRevenue[0].total.toFixed(2) :0 %></span>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-                <div class="col-lg-3 column-top-space" >
-                    <div class="card card-body mb-4">
-                        <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-shopping_basket"></i></span>
-                            <div class="text">
-                                <h6 class="mb-1 card-title">Monthly Earning</h6><span>₹ <%= monthlyRevenue[0] ? monthlyRevenue[0].total.toFixed(2) :0   %></span>
+                                <h6 class="mb-1 card-title">Weekly Earning</h6> <span>₹ <%= weeklyRevenue[0] ?
+                                        weeklyRevenue[0].total.toFixed(2) :0 %></span>
                             </div>
                         </article>
                     </div>
@@ -109,34 +114,48 @@
                 <div class="col-lg-3 column-top-space">
                     <div class="card card-body mb-4">
                         <article class="icontext">
-                            <span class="icon icon-sm rounded-circle bg-info-light"><i class="text-info material-icons md-insert_invitation"></i></span>
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                    class="text-info material-icons md-shopping_basket"></i></span>
                             <div class="text">
-                                <h6 class="mb-1 card-title">Yearly Earning</h6> <span>₹ <%= yearlyRevenue[0] ? yearlyRevenue[0].total.toFixed(2) :0 %></span>
+                                <h6 class="mb-1 card-title">Monthly Earning</h6><span>₹ <%= monthlyRevenue[0] ?
+                                        monthlyRevenue[0].total.toFixed(2) :0 %></span>
                             </div>
                         </article>
                     </div>
                 </div>
-                
-                
+                <div class="col-lg-3 column-top-space">
+                    <div class="card card-body mb-4">
+                        <article class="icontext">
+                            <span class="icon icon-sm rounded-circle bg-info-light"><i
+                                    class="text-info material-icons md-insert_invitation"></i></span>
+                            <div class="text">
+                                <h6 class="mb-1 card-title">Yearly Earning</h6> <span>₹ <%= yearlyRevenue[0] ?
+                                        yearlyRevenue[0].total.toFixed(2) :0 %></span>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+
                 <div class="col-12 column-top-space">
-                    <div class="card mb-4 column-top-space">
+                    <!-- <div class="card mb-4 column-top-space">
                         <article class="card-body">
                             <h5 class="card-title">Sale statistics</h5>
                             <canvas id="myChart" height="120px"></canvas>
                         </article>
-                    </div>
-                   
+                    </div> -->
+
                 </div>
                 <div class="row">
-                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space">
+                    <div class="col-12 mb-4 column-bottom-space">
                         <div class="card w-100 ">
                             <article class="card-body">
-                                <h5 class="card-title">Revenue Based on Area</h5>
+                                <h5 class="card-title">Sale statistics</h5>
                                 <canvas id="myChart2" height="217"></canvas>
                             </article>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space" >
+                    <!-- <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space" >
                         <div class="card w-100">
                             <article class="card-body">
                                 <h5 class="card-title">Marketing Channel</h5>
@@ -162,14 +181,14 @@
                                 </div>
                             </article>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
-                
+
               
-                
-                
-         
-            <!-- <div class="pagination-area mt-30 mb-50">
+
+
+
+                <!-- <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
                         <li class="page-item active"><a class="page-link" href="#">01</a></li>
@@ -181,8 +200,7 @@
                     </ul>
                 </nav>
             </div> -->
-        </section> 
+        </section>
 
 
-<%- include('../adminLayouts/footer.ejs') %>
-       
+        <%- include('../adminLayouts/footer.ejs') %>

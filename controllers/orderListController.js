@@ -127,7 +127,6 @@ const updateStatus = async (req, res) => {
 const loadSalesReport = async (req, res) => {
     try {
         let { startDate, endDate, period } = req.query;
-        console.log("req.query", req.query);
         if (endDate && startDate) {
             startDate = new Date(startDate);
             startDate.setHours(0, 0, 0, 0);
@@ -144,13 +143,14 @@ const loadSalesReport = async (req, res) => {
                         $gte: startDate,
                         $lt: endDate
                     }
-                });
+                })  .populate('items.productId')
+                .populate('userId');
              
         }else{
-             orders = await Order.find({ 'items.orderStatus': 'delivered' });
+             orders = await Order.find({ 'items.orderStatus': 'delivered' })  .populate('items.productId')
+             .populate('userId');
 
         }
-        console.log("orders", orders);
 
         let totalSalesCount = 0;
         let totalSalesAmount = 0;

@@ -59,17 +59,17 @@
                                             <span> Featured <i class="fi-rs-angle-small-down"></i></span>
                                         </div>
                                     </div>
-                                    <div class="sort-by-dropdown" id="sortDropdown">
+                                    <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a class="active" data-sort="featured">Featured</a></li>
-                                            <li><a data-sort="priceinc">Price: Low to High</a></li>
-                                            <li><a data-sort="priceDesc">Price: High to Low</a></li>
-                                            <li><a data-sort="releaseDate">Release Date</a></li>
-                                            <li><a data-sort="avgRating">Avg. Rating</a></li>
-                                            <li><a data-sort="popularity">Popularity</a></li>
-                                            <li><a data-sort="newArrivals">New Arrivals</a></li>
-                                            <li><a data-sort="az">A-Z</a></li>
-                                            <li><a data-sort="za">Z-A</a></li>
+                                            <li><a class="active" href="?sort=featured">Featured</a></li>
+                                            <li><a href="?sort=priceinc">Price: Low to High</a></li>
+                                            <li><a href="?sort=priceDesc">Price: High to Low</a></li>
+                                            <li><a href="?sort=releaseDate">Release Date</a></li>
+                                            <li><a href="?sort=avgRating">Avg. Rating</a></li>
+                                            <li><a href="?sort=popularity">Popularity</a></li>
+                                            <li><a href="?sort=newArrivals">New Arrivals</a></li>
+                                            <li><a href="?sort=az">A-Z</a></li>
+                                            <li><a href="?sort=za">Z-A</a></li>
                                         </ul>
                                     </div>
 
@@ -90,21 +90,22 @@
                                     <h5 class="widget-title mb-10 text-center">Filter </h5>
                                     <hr class="sidebar-divider">
 
-                                    <div class="widget-header position-relative mb-20 pb-10" id="categoryWidget">
-                                        <label for="category fw-900">Category</label>
+                                    <div class="widget-header position-relative mb-20 pb-10">
+                                        <label for="category fw-900 " >Category</label>
                                         <hr class="sidebar-divider">
+                                        
                                         <ul class="text-center">
                                             <% categories.forEach(category=> { %>
-                                                <li>
-                                                    <a href="<%= category.categoryName %>"
-                                                        data-category="<%= category.categoryName %>"
-                                                        class="categoryLink">
-                                                        <%= category.categoryName %><span></span>
-                                                    </a>
+
+                                                <li class="categoryIsSelected(<%=category.categoryName %>) ? 'selected-category' : ''">
+                                                  <a href="/shop?category=<%= category.categoryName %>" >
+                                                    <%= category.categoryName %><span></span>
+                                                  </a>
                                                 </li>
                                                 <% }) %>
-                                        </ul>
+                                            </ul>
                                         <br>
+                                       
                                     </div>
 
                                     <!-- <div class="bt-1 border-color-1"></div>

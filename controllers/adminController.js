@@ -61,7 +61,7 @@ const loadAdminHome = async (req, res) => {
         ]);
         //daily
         const today = new Date();
-        today.setHours(0, 0, 0, 0); 
+        today.setHours(0, 0, 0, 0);
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1)
         const dailyRevenue = await Order.aggregate([
@@ -101,50 +101,64 @@ const loadAdminHome = async (req, res) => {
 
 
         //monthly 
-        const startOfMonth = new Date(today.getFullYear(),today.getMonth(),1);
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
         const monthlyRevenue = await Order.aggregate([
             {
-                $match:{
+                $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt:{$gte:startOfMonth,$lt:tomorrow}
+                    createdAt: { $gte: startOfMonth, $lt: tomorrow }
                 }
-            },{
-                $group:{
-                    _id:null,
-                    total:{$sum:'$total'}
+            }, {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total' }
                 }
             }
         ])
 
         //yearly
-        const startOfYear = new Date(today.getFullYear(),0,1);
-        const yearlyRevenue = await  Order.aggregate([
+        const startOfYear = new Date(today.getFullYear(), 0, 1);
+        const yearlyRevenue = await Order.aggregate([
             {
-                $match:{
+                $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt:{$gte:startOfYear,$lt:tomorrow} 
+                    createdAt: { $gte: startOfYear, $lt: tomorrow }
                 }
-            },{
-                $group:{
-                    _id:null,
-                    total:{$sum:'$total'}
+            }, {
+                $group: {
+                    _id: null,
+                    total: { $sum: '$total' }
                 }
             }
         ])
-      
-    const totalUsers = await User.find({}).countDocuments();
-    const totalOrders = await Order.find({ 'items.orderStatus': 'delivered' }).countDocuments();
-    const totalProducts = await Product.find({}).countDocuments()
-    const totalCategorys = await Category.find({}).countDocuments()
 
-    res.render('adminhome', { revenue, totalUsers, totalOrders, totalProducts, totalCategorys, dailyRevenue,weeklyRevenue,monthlyRevenue,yearlyRevenue})
+        const totalUsers = await User.find({}).countDocuments();
+        const totalOrders = await Order.find({ 'items.orderStatus': 'delivered' }).countDocuments();
+        const totalProducts = await Product.find({}).countDocuments()
+        const totalCategorys = await Category.find({}).countDocuments()
 
-}
+
+
+
+        res.render('adminhome', {
+            revenue,
+            totalUsers,
+            totalOrders,
+            totalProducts,
+            totalCategorys,
+            dailyRevenue,
+            weeklyRevenue,
+            monthlyRevenue,
+            yearlyRevenue
+
+        })
+
+    }
     catch (error) {
-    console.log(error.message);
-    res.status(500).send('Internal Server Error');
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
 
-}
+    }
 }
 
 //for verify admin login

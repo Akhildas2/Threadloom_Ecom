@@ -44,6 +44,16 @@ const loadRegister = async (req, res) => {
 }
 
 
+// for loading the 404 page
+const errorPage = async (req, res) => {
+    try {
+        res.render('404page')
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+}
+
 
 
 
@@ -514,7 +524,8 @@ module.exports = {
     userLogout,
     productDetails,
     findOrCreateGoogleUser,
-    shop
+    shop,
+    errorPage
 
 
 
