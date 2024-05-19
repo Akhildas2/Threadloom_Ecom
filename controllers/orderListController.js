@@ -1,8 +1,8 @@
 const Order = require("../models/orderModel")
 const Wallet = require("../models/walletModel")
 const Product = require("../models/productModel")
-const PDFService = require('../services/pdfService');
-
+const { generateSalesReportPDF } = require('../services/pdfService')
+const { generateSalesReportExcel } = require('../services/excelService')
 
 
 //for loading order list 
@@ -127,8 +127,8 @@ const updateStatus = async (req, res) => {
 //for loading sales report
 const loadSalesReport = async (req, res) => {
     try {
-        let { startDate, endDate, period,page=1,limit=2 } = req.query;
-  
+        let { startDate, endDate, period, page = 1, limit = 2, format } = req.query;
+
         page = parseInt(page);
         limit = parseInt(limit);
 
@@ -139,27 +139,27 @@ const loadSalesReport = async (req, res) => {
             endDate.setHours(23, 59, 59, 999);
         }
 
-    let query={};
-    if(period != undefined){
-        query['items.orderStatus'] = 'delivered';
-        if(startDate  && endDate){
-            query.expectedDelivery = {
-                $gte:startDate,
-                $lt: endDate
+        let query = {};
+        if (period != undefined) {
+            query['items.orderStatus'] = 'delivered';
+            if (startDate && endDate) {
+                query.expectedDelivery = {
+                    $gte: startDate,
+                    $lt: endDate
+                }
             }
+        } else {
+            query['items.orderStatus'] = 'delivered';
         }
-    }else{
-        query['items.orderStatus'] = 'delivered';
-    }
-    const totalOrders = await Order.countDocuments(query);
-    const totalPages = Math.ceil(totalOrders/limit);
+        const totalOrders = await Order.countDocuments(query);
+        const totalPages = Math.ceil(totalOrders / limit);
+    
+        const orders = await Order.find(query)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate('items.productId')
+            .populate('userId');
 
-    const orders =  await Order.find(query)
-    .skip((page-1) * limit)
-    .limit(limit)
-    .populate('items.productId')
-    .populate('userId');
-   
         let totalSalesCount = 0;
         let totalSalesAmount = 0;
         let totalDiscountAmount = 0;
@@ -171,7 +171,29 @@ const loadSalesReport = async (req, res) => {
             const couponDiscount = order.couponDiscount || 0;
             totalDiscountAmount += offerDiscount + couponDiscount;
         });
-              
+        if (format === 'pdf' || format === 'excel') {
+            // Add conditions specific to PDF and Excel formats
+            if (endDate && startDate) {
+                query['items.orderStatus'] = 'delivered';
+                query.expectedDelivery = {
+                    $gte: startDate,
+                    $lt: endDate
+                };
+            } else {
+                query['items.orderStatus'] = 'delivered';
+            }
+            const fullOrders = await Order.find(query) 
+            .populate('items.productId')
+            .populate('userId');
+            if (format === 'pdf') {
+                console.log("orders",fullOrders)
+                return generateSalesReportPDF(fullOrders, page, limit, res);
+                
+            } else if (format === 'excel') {
+                return generateSalesReportExcel(fullOrders, res);
+            }
+        } 
+      
         res.render('salesReport', {
             orders,
             totalSalesCount,

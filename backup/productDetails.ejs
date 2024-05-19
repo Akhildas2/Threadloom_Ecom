@@ -708,3 +708,89 @@ const filterSales = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 }
+
+
+
+
+
+
+
+
+
+const PDFDocument = require('pdfkit');
+
+const generateSalesReportPDF = (fullOrders, currentPage, limit, res) => {
+    const doc = new PDFDocument();
+
+    // Set the response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=sales_report.pdf');
+
+    // Pipe the document to the response
+    doc.pipe(res);
+
+    doc.fontSize(20).text('Sales Report', { align: 'center' });
+    doc.moveDown();
+
+    // Function to generate content for a single page
+    const generatePageContent = (startIndex, endIndex, pageNumber) => {
+        for (let i = startIndex; i < endIndex; i++) {
+            const order = fullOrders[i];
+            // Add order details to the PDF
+            doc.fontSize(16).text(`Order #${i + 1} ` , { align: 'center' });
+            doc.fontSize(12).text( `Order ID: ${order.ordersId}`);
+            doc.text(`Delivery Date: ${new Date(order.expectedDelivery).toDateString()}`);
+            doc.text(`Customer Name: ${order.deliveryAddress.fullName}`);
+            doc.moveDown();
+
+            doc.text('Products:');
+            order.items.forEach(item => {
+                doc.text(`  - ${item.productId ? item.productId.name : 'Product Name Not Available'}, Quantity: ${item.quantity}, Price: ₹${item.price}`);
+                
+            });
+            doc.moveDown();
+
+            const offerDiscount = order.offerDiscount || 0;
+            const couponDiscount = order.couponDiscount || 0;
+            const fullDiscount = offerDiscount + couponDiscount;
+
+            doc.text(`Total Discount: ₹${fullDiscount.toFixed(2)}`);
+            doc.text(`Payment Method: ${order.paymentMethod}`);
+            doc.text(`Total Amount: ₹${order.total.toFixed(2)}`);
+            doc.moveDown();
+            doc.strokeColor('black').lineWidth(1).moveTo(doc.x, doc.y).lineTo(doc.page.width - 50, doc.y).stroke();
+            doc.moveDown();
+        }
+        
+        // Add pagination to the footer
+        addFooter(pageNumber);
+    };
+
+    // Function to add pagination to the footer
+    const addFooter = (pageNumber) => {
+        doc.fontSize(10).text(`Page ${pageNumber}`, doc.page.width - 50, doc.page.height - 20, { align: 'right' });
+    };
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(fullOrders.length / limit);
+
+    // Loop through each page
+    for (let page = currentPage; page <= totalPages; page++) {
+        // Start a new page only if it's not the first page
+        if (page !== currentPage) {
+            doc.addPage();
+        }
+
+        // Calculate the starting and ending index based on pagination
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, fullOrders.length);
+
+        // Generate content for the current page
+        generatePageContent(startIndex, endIndex, page);
+    }
+
+    // Finalize the PDF document
+    doc.end();
+};
+
+module.exports = { generateSalesReportPDF };

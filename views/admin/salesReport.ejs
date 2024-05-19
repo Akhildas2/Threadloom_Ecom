@@ -76,14 +76,15 @@
             </form>
 
             <br>
-
-            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="generatePdf()">
+            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=pdf&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>'">
                 <i class="material-icons md-picture_as_pdf"></i> Generate PDF Report
             </button>
-
-            <button id="excelDownloadBtn" class="btn btn-primary" onclick="downloadExcel()">
+            
+            <button id="excelDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=excel&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>'">
                 <i class="material-icons md-insert_chart"></i> Generate Excel Report
             </button>
+            
+            
             <br>
             <div id="order">
                 <br>
