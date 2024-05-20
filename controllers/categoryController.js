@@ -2,7 +2,7 @@ const Category = require('../models/categoryModel');
 const multer = require('multer');
 const path = require('path');
 const sharp = require('sharp');
-const Offer= require('../models/offerModel')
+const Offer = require('../models/offerModel')
 
 
 
@@ -88,9 +88,14 @@ const addCategory = async (req, res) => {
 // Load List Category
 const loadListCategory = async (req, res) => {
     try {
-        const categories = await Category.find({});
-        const offers= await Offer.find({})
-        res.render('listCategories', { categories,offers });
+        const page = (req.query.page || 1)
+        const limit = 6
+        const categoriesCount = await Category.find({}).countDocuments()
+        const totalPages = Math.ceil(categoriesCount / limit)
+
+        const categories = await Category.find({}).skip((page - 1) * limit).limit(limit);
+        const offers = await Offer.find({})
+        res.render('listCategories', { categories, offers, currentPage: page ,totalPages});
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -236,7 +241,7 @@ const addOffer = async (req, res) => {
     try {
 
         const categoryId = req.params.categoryId;
-        
+
         const offerId = req.body.offerId;
 
         const category = await Category.findById(categoryId)

@@ -66,8 +66,12 @@ const insertOffer = async (req, res) => {
 //for listing offers
 const listOffer = async (req, res) => {
     try {
-        const offers = await Offer.find()
-        res.render("listOffer", { offers })
+        const page = (req.query.page || 1);
+        const limit = 5;
+        const offersCount = await Offer.find().countDocuments();
+        const totalPages = Math.ceil(offersCount / limit)
+        const offers = await Offer.find().skip((page - 1) * limit).limit(limit);
+        res.render("listOffer", { offers, currentPage: page, totalPages })
 
     } catch (error) {
         console.error(error);

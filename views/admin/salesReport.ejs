@@ -74,19 +74,22 @@
                     </div>
                 </div>
             </form>
-
             <br>
-            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=pdf&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>'">
+            <br>
+            <% if (orders.length > 0) { %>
+            <div class="center">
+
+            <button id="pdfDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=pdf&startDate=<%= startDate %>&endDate=<%= endDate %>'">
                 <i class="material-icons md-picture_as_pdf"></i> Generate PDF Report
             </button>
             
-            <button id="excelDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=excel&startDate=<%= startDate %>&endDate=<%= endDate %>&period=<%= period %>'">
+            <button id="excelDownloadBtn" class="btn btn-primary" onclick="window.location.href='/admin/orderList/salesReport?format=excel&startDate=<%= startDate %>&endDate=<%= endDate %>'">
                 <i class="material-icons md-insert_chart"></i> Generate Excel Report
             </button>
+        </div>
             
             
             <br>
-            <div id="order">
                 <br>
                 <div class="summary-container">
                     <div class="summary-item">
@@ -185,8 +188,16 @@
                                                         <% }) %>
                             </tbody>
                     </table>
-                </div>
             </div>
+            <% } else { %>
+                <!-- Display a message if there are no orders -->
+                <div class="center alert alert-info" role="alert">
+                    <p>No orders found.</p>
+                </div>
+                
+                    
+                
+            <% } %>
         </div>
         <!-- Pagination -->
         <div class="pagination-area mt-30 mb-50">

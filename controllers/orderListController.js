@@ -8,9 +8,26 @@ const { generateSalesReportExcel } = require('../services/excelService')
 //for loading order list 
 const loadOrderList = async (req, res) => {
     try {
-        const orders = await Order.find({}).populate('items.productId').populate('userId');
 
-        res.render('orderList', { orders })
+        const page = (req.query.page || 1);
+        const orderId = req.query.orderId;
+        let query={}
+        if(orderId){
+            query={$or:[{ordersId:{$regex:orderId ,$options: 'i'}}]}
+        }
+        const limit = 5;
+        const ordersCount = await Order.find(query).countDocuments();
+
+        const totalPages = Math.ceil(ordersCount/limit)
+
+        const orders = await Order.find(query)
+            .populate('items.productId')
+            .populate('userId')
+            .sort({ createdAt: -1 })
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        res.render('orderList', { orders,totalPages,currentPage:page })
 
     }
     catch (error) {
@@ -153,7 +170,7 @@ const loadSalesReport = async (req, res) => {
         }
         const totalOrders = await Order.countDocuments(query);
         const totalPages = Math.ceil(totalOrders / limit);
-    
+
         const orders = await Order.find(query)
             .skip((page - 1) * limit)
             .limit(limit)
@@ -182,18 +199,17 @@ const loadSalesReport = async (req, res) => {
             } else {
                 query['items.orderStatus'] = 'delivered';
             }
-            const fullOrders = await Order.find(query) 
-            .populate('items.productId')
-            .populate('userId');
+            const fullOrders = await Order.find(query)
+                .populate('items.productId')
+                .populate('userId');
             if (format === 'pdf') {
-                console.log("orders",fullOrders)
                 return generateSalesReportPDF(fullOrders, page, limit, res);
-                
+
             } else if (format === 'excel') {
                 return generateSalesReportExcel(fullOrders, res);
             }
-        } 
-      
+        }
+
         res.render('salesReport', {
             orders,
             totalSalesCount,

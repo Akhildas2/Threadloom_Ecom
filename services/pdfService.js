@@ -19,47 +19,112 @@ const generateSalesReportPDF = (fullOrders, currentPage, limit, res) => {
 
     // Function to generate content for a single page
     const generatePageContent = (startIndex, endIndex, pageNumber) => {
-        // Add table headers
-        const columnWidth = (doc.page.width - doc.page.margins.left - doc.page.margins.right) / 7;
-        const yHeader = doc.page.margins.top + 20; // Add margin for the header
+        const columnWidth = (doc.page.width - doc.page.margins.left - doc.page.margins.right) / 8; // Adjusted for 8 columns
+        const headerTopMargin = 70; // Adjust as needed
+        const spaceAfterHeading = 20; // Adjust as needed
+    
+        // Sales Report Heading
+        doc.font('Helvetica-Bold').fontSize(24).text('Sales Report', {
+            align: 'center'
+        });
+    
+        doc.moveDown();
+    
+        // Add space after the heading
+        doc.moveDown(spaceAfterHeading / 12); 
+    
+        // Add table headers with space
         doc.font('Helvetica-Bold').fontSize(10);
-        doc.text('Order ID', doc.page.margins.left, yHeader);
-        doc.text('User', doc.page.margins.left + columnWidth, yHeader);
-        doc.text('Product', doc.page.margins.left + 2 * columnWidth, yHeader);
-        doc.text('Quantity', doc.page.margins.left + 3 * columnWidth, yHeader);
-        doc.text('Total', doc.page.margins.left + 4 * columnWidth, yHeader);
-        doc.text('Discount', doc.page.margins.left + 5 * columnWidth, yHeader);
-        doc.text('Order Date', doc.page.margins.left + 6 * columnWidth, yHeader);
-
+        const yHeader = headerTopMargin + spaceAfterHeading; 
+    
+        // Add slno column header
+        doc.text('Sl No.', doc.page.margins.left, yHeader, {
+            width: columnWidth,
+            align: 'left'
+        });
+    
+        // Adjust y positions for table headers
+        const headerYPositions = {
+            orderId: yHeader,
+            user: yHeader,
+            product: yHeader,
+            quantity: yHeader,
+            total: yHeader,
+            discount: yHeader,
+            orderDate: yHeader
+        };
+    
+        // Draw table headers
+        Object.keys(headerYPositions).forEach((key, index) => {
+            doc.text(key.charAt(0).toUpperCase() + key.slice(1), doc.page.margins.left + (index + 1) * columnWidth, headerYPositions[key], {
+                width: columnWidth,
+                align: 'left'
+            });
+        });
+    
+        // Draw line below the headers
+        doc.moveTo(doc.page.margins.left, yHeader + 15).lineTo(doc.page.width - doc.page.margins.right, yHeader + 15).stroke();
+    
         // Add table rows
         doc.font('Helvetica').fontSize(10);
-        let y = yHeader + 20; // Start below the header
+        let y = yHeader + 20; // Start below the header and line
+        let slno =  1;
         for (let i = startIndex; i < endIndex; i++) {
             const order = fullOrders[i];
             order.items.forEach((item, index) => {
-                doc.text(order.ordersId, doc.page.margins.left, y);
-                doc.text(order.userId.name, doc.page.margins.left + columnWidth, y);
-                doc.text(item.productId.name.substring(0, 20), doc.page.margins.left + 2 * columnWidth, y);
-                doc.text(item.quantity.toString(), doc.page.margins.left + 3 * columnWidth, y);
-                doc.text(item.price.toString(), doc.page.margins.left + 4 * columnWidth, y);
+                doc.text(slno.toString(), doc.page.margins.left, y, { // Add slno
+                    width: columnWidth,
+                    align: 'left'
+                });
+
+                doc.text(order.ordersId, doc.page.margins.left + columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
+                doc.text(order.userId.name, doc.page.margins.left + 2 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
+                doc.text(item.productId.name.substring(0, 20), doc.page.margins.left + 3 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
+                doc.text(item.quantity.toString(), doc.page.margins.left + 4 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'center'
+                });
+                doc.text(item.price.toString(), doc.page.margins.left + 5 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
                 const offerDiscount = order.offerDiscount || 0;
                 const couponDiscount = order.couponDiscount || 0;
                 const fullDiscount = offerDiscount + couponDiscount;
-                doc.text(fullDiscount.toFixed(2), doc.page.margins.left + 5 * columnWidth, y);
-                doc.text(order.expectedDelivery.toLocaleDateString(), doc.page.margins.left + 6 * columnWidth, y);
-                y += 20; // Move to the next row
+                doc.text(fullDiscount.toFixed(2), doc.page.margins.left + 6 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
+                doc.text(order.expectedDelivery.toLocaleDateString(), doc.page.margins.left + 7 * columnWidth, y, {
+                    width: columnWidth,
+                    align: 'left'
+                });
+                slno++; // Increment slno
+                y += 30; // Move to the next row with increased space between lines
             });
         }
-
+    
         // Draw lines for each row
         doc.lineWidth(1);
-        for (let i = yHeader + 30; i <= y; i += 20) {
+        const yHeaders = yHeader + 15
+        for (let i = yHeaders + 30; i <= y; i += 30) {
             doc.moveTo(doc.page.margins.left, i).lineTo(doc.page.width - doc.page.margins.right, i).stroke();
         }
-
+    
         // Add pagination to the footer
         addFooter(pageNumber);
     };
+    
+    
 
     // Calculate the total number of pages
     const totalPages = Math.ceil(fullOrders.length / limit);

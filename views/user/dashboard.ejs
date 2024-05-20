@@ -1,5 +1,7 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
         <style>
             .modal-content .btn-primary {
                 background-color: #007bff;
@@ -176,7 +178,51 @@
                                                             </div>
                                                             <% } %>
                                                 </div>
+                                                <!-- Pagination -->
+                                                <div class="pagination-area mt-30 mb-50">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-end">
+                                                            <% if (orderCurrentPage> 1) { %>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                        href="?orderPage=<%= orderCurrentPage - 1 %>">
+                                                                        <span aria-hidden="true">&lt;</span>
+                                                                        <!-- Previous Page Symbol -->
+                                                                    </a>
+                                                                </li>
+                                                                <% } %>
+                                                                    <% for (let i=1; i <=orderTotalPages; i++) { %>
+                                                                        <% if (i===orderCurrentPage) { %>
+                                                                            <li class="page-item active">
+                                                                                <a class="page-link" href="#">
+                                                                                    <%= i %>
+                                                                                </a>
+                                                                            </li>
+                                                                            <% } else { %>
+                                                                                <li class="page-item">
+                                                                                    <a class="page-link"
+                                                                                        href="?orderPage=<%= i %>">
+                                                                                        <%= i %>
+                                                                                    </a>
+                                                                                </li>
+                                                                                <% } %>
+                                                                                    <% } %>
+                                                                                        <% if (orderCurrentPage <
+                                                                                            orderTotalPages) { %>
+                                                                                            <li class="page-item">
+                                                                                                <a class="page-link"
+                                                                                                    href="?orderPage=<%= orderCurrentPage + 1 %>">
+                                                                                                    <span
+                                                                                                        aria-hidden="true">&gt;</span>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                            <% } %>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+
                                             </div>
+
                                         </div>
 
                                         <!-- <div class="tab-pane fade" id="track-orders" role="tabpanel" aria-labelledby="track-orders-tab">
@@ -527,15 +573,16 @@
                                                 </div>
 
                                                 <div class="card-body" style="text-align: center;">
-                                                    <% if (wallet && wallet.balance !==null) { %>
+                                                    <% if (typeof balance !=='undefined' && wallet !==null) { %>
                                                         <h3 class="card-title">Balance: &#x20B9;<span
                                                                 style="color: green;">
-                                                                <%= wallet.balance %>
+                                                                <%= balance %>
                                                             </span></h3>
                                                         <% } else { %>
                                                             <h3 class="card-title">Balance:<span
                                                                     style="color: green;">000</span></h3>
                                                             <% } %>
+
                                                                 <br>
                                                                 <h4 style="color: red;">Transaction Historys:</h4>
                                                                 <br>
@@ -571,7 +618,7 @@
                                                                                                 transaction.date.toDateString()
                                                                                                 : 'N/A' %>
                                                                                         </p>
-                                                                                        <p class="card-text">
+                                                                                        <p class="card-text" >
                                                                                             Description: <%=
                                                                                                 transaction.description
                                                                                                 ?
@@ -586,22 +633,75 @@
                                                                                     <p>No transactions found.</p>
                                                                                     <% } %>
                                                                 </div>
+
+                                                                <!-- Pagination -->
+                                                                <div class="pagination-area mt-30 mb-50">
+                                                                    <nav aria-label="Page navigation example">
+                                                                        <ul class="pagination justify-content-end">
+                                                                            <% if (walletCurrentPage> 1) { %>
+                                                                                <li class="page-item">
+                                                                                    <a class="page-link"
+                                                                                        href="?walletPage=<%= walletCurrentPage  - 1 %>">
+                                                                                        <span
+                                                                                            aria-hidden="true">&lt;</span>
+                                                                                        <!-- Previous Page Symbol -->
+                                                                                    </a>
+                                                                                </li>
+                                                                                <% } %>
+                                                                                    <% for (let i=1; i
+                                                                                        <=walletTotalPages; i++) { %>
+                                                                                        <% if (i===walletCurrentPage ) {
+                                                                                            %>
+                                                                                            <li
+                                                                                                class="page-item active">
+                                                                                                <a class="page-link"
+                                                                                                    href="#">
+                                                                                                    <%= i %>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                            <% } else { %>
+                                                                                                <li class="page-item">
+                                                                                                    <a class="page-link"
+                                                                                                        href="?walletPage=<%= i %>">
+                                                                                                        <%= i %>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                                <% } %>
+                                                                                                    <% } %>
+                                                                                                        <% if
+                                                                                                            (walletCurrentPage
+                                                                                                            <
+                                                                                                            walletTotalPages)
+                                                                                                            { %>
+                                                                                                            <li
+                                                                                                                class="page-item">
+                                                                                                                <a class="page-link"
+                                                                                                                    href="?walletPage=<%= walletCurrentPage  + 1 %>">
+                                                                                                                    <span
+                                                                                                                        aria-hidden="true">&gt;</span>
+                                                                                                                </a>
+                                                                                                            </li>
+                                                                                                            <% } %>
+                                                                        </ul>
+                                                                    </nav>
+                                                                </div>
+
                                                 </div>
+
                                             </div>
+
+
+
+
+
+
+
                                         </div>
-
-
-
-
-
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </section>
         </main>
 
@@ -619,5 +719,5 @@
 
 
         <%- include('../layouts/footer.ejs') %>
-            <%- include('../layouts/preloader.ejs') %>
+            <%#- include('../layouts/preloader.ejs') %>
                 <%- include('../layouts/script.ejs') %>

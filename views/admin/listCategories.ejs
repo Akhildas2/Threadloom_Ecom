@@ -75,6 +75,35 @@
 
                 </div>
             </div>
+                <!-- Pagination -->
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item"><a class="page-link" href="?page=1"><i
+                                    class="material-icons md-chevron_left"></i></a></li>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <% if (i===currentPage) { %>
+                                    <li class="page-item active"><a class="page-link" href="#">
+                                            <%= i %>
+                                        </a></li>
+                                    <% } else { %>
+                                        <li class="page-item"><a class="page-link"
+                                                href="?page=<%= i %>">
+                                                <%= i %>
+                                            </a></li>
+                                        <% } %>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li class="page-item"><a class="page-link"
+                                                            href="?page=<%= totalPages %>"><i
+                                                                class="material-icons md-chevron_right"></i></a>
+                                                    </li>
+                                                    <% } %>
+                </ul>
+            </nav>
+        </div>
         </section>
         <!-- listOfferModal.ejs -->
         <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">

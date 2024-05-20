@@ -1,20 +1,23 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
 
-    <style>
-      .image-cell {
-    text-align: center;
-    }
-
-    </style>
+        <style>
+            .image-cell {
+                text-align: center;
+            }
+        </style>
         <section class="content-main">
             <div class="content-header">
                 <div>
                     <h2 class="content-title card-title">Order List</h2>
                 </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control " />
-                </div>
+                <form action="/admin/orderList/" method="GET">
+                    <div class="image-cell">
+                        <input type="text" name="orderId" placeholder="Search orderId" class="form-control" />
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                </form>
+                
             </div>
             <div class="card mb-4">
                 <!-- <header class="card-header">
@@ -71,14 +74,14 @@
                                                 </td>
                                                 <td class="image-cell">
                                                     <a href="/admin/orderList/orderDetails/<%= order._id %>">
-                                                            <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
-                                                                alt="<%= order.items[0].productId.name %> Image"
-                                                                style="width: 80px;">
-                                               
-                                                    <p class="">
-                                                        <%= order.items[0].productId.name %>
+                                                        <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
+                                                            alt="<%= order.items[0].productId.name %> Image"
+                                                            style="width: 80px;">
 
-                                                    </p>
+                                                        <p class="">
+                                                            <%= order.items[0].productId.name %>
+
+                                                        </p>
                                                     </a>
 
                                                 </td>
@@ -129,6 +132,35 @@
                             <% }; %>
                 </div>
             </div>
+             <!-- Pagination -->
+        <div class="pagination-area mt-30 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item"><a class="page-link" href="?page=1"><i
+                                    class="material-icons md-chevron_left"></i></a></li>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <% if (i===currentPage) { %>
+                                    <li class="page-item active"><a class="page-link" href="#">
+                                            <%= i %>
+                                        </a></li>
+                                    <% } else { %>
+                                        <li class="page-item"><a class="page-link"
+                                                href="?page=<%= i %>">
+                                                <%= i %>
+                                            </a></li>
+                                        <% } %>
+                                            <% } %>
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li class="page-item"><a class="page-link"
+                                                            href="?page=<%= totalPages %>"><i
+                                                                class="material-icons md-chevron_right"></i></a>
+                                                    </li>
+                                                    <% } %>
+                </ul>
+            </nav>
+        </div>
         </section>
-
+       
         <%- include('../adminLayouts/footer.ejs') %>

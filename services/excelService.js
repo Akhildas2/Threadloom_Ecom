@@ -15,7 +15,7 @@ const generateSalesReportExcel = (fullOrders, res) => {
         { header: 'Quantity', key: 'quantity', width: 10 },
         { header: 'Price', key: 'price', width: 10 },
         { header: 'Full Discount', key: 'fullDiscount', width: 15 },
-        { header: 'Payment Method', key: 'paymentMethod', width: 15 },
+        { header: 'Payment Method', key: 'paymentMethod', width: 25 },
         { header: 'Total', key: 'total', width: 15 },
     ];
     

@@ -16,13 +16,11 @@
 
         <section class="content-main">
             <div class="container">
-                <div class="row">
-                    <!-- Manage Products Title -->
-                    <div class="col-12 col-md-6">
+                <div class="content-header">
+                    <h2 class="content-title card-title">
                         <h2 class="content-title card-title">Manage Products</h2>
-                    </div>
-                    <!-- Search Form -->
-                    <div class="col-12 col-md-6">
+
+                        <!-- Search Form -->
                         <div class="col-search">
                             <form class="searchform" action="/admin/product/listproduct" method="get">
                                 <div class="input-group">
@@ -33,7 +31,8 @@
                                         <% categories.forEach(category=> { %>
                                             <option value="<%= category._id.toString() %>"
                                                 <%=selectedCategory.toString()===category._id.toString() ? 'selected'
-                                                : '' %>><%= category.categoryName %>
+                                                : '' %>>
+                                                <%= category.categoryName %>
                                             </option>
                                             <% }); %>
                                     </select>
@@ -42,7 +41,6 @@
                                 </div>
                             </form>
                         </div>
-                    </div>
                 </div>
                 <br>
                 <div class="row">
@@ -197,50 +195,62 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <div class="row">
-                                                        <% offers.forEach(offer => { %>
+                                                        <% offers.forEach(offer=> { %>
                                                             <div class="col-md-6">
                                                                 <div class="card mb-4">
                                                                     <div class="card-body">
-                                                                        <% const today = new Date(); %>
-                                                                        <% const offerDate = new Date(offer.endingDate); %>
-                                                                        <% if (offerDate >= today) { %>
-                                                                            <div class="form-check">
-                                                                                <input class="form-check-input" type="radio" name="selectedOffer" id="offer-<%= offer._id %>" value="<%= offer._id %>">
-                                                                                <label class="form-check-label" for="offer-<%= offer._id %>">
-                                                                                    <h5 class="card-title">
-                                                                                        <%= offer.offerName %>
-                                                                                    </h5>
-                                                                                </label>
-                                                                            </div>
-                                                                        <% } else { %>
-                                                                            <h5 class="card-title">
-                                                                                <%= offer.offerName %>
-                                                                            </h5>
-                                                                        <% } %>
-                                                                        <p class="card-text">
-                                                                            Starting Date: <%= offer.startingDate.toLocaleDateString() %> <br>
-                                                                            Ending Date: <%= offer.endingDate.toLocaleDateString() %> <br>
-                                                                            Discount: <%= offer.discount %>%
-                                                                        </p>
+                                                                        <% const today=new Date(); %>
+                                                                            <% const offerDate=new
+                                                                                Date(offer.endingDate); %>
+                                                                                <% if (offerDate>= today) { %>
+                                                                                    <div class="form-check">
+                                                                                        <input class="form-check-input"
+                                                                                            type="radio"
+                                                                                            name="selectedOffer"
+                                                                                            id="offer-<%= offer._id %>"
+                                                                                            value="<%= offer._id %>">
+                                                                                        <label class="form-check-label"
+                                                                                            for="offer-<%= offer._id %>">
+                                                                                            <h5 class="card-title">
+                                                                                                <%= offer.offerName %>
+                                                                                            </h5>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                    <% } else { %>
+                                                                                        <h5 class="card-title">
+                                                                                            <%= offer.offerName %>
+                                                                                        </h5>
+                                                                                        <% } %>
+                                                                                            <p class="card-text">
+                                                                                                Starting Date: <%=
+                                                                                                    offer.startingDate.toLocaleDateString()
+                                                                                                    %> <br>
+                                                                                                    Ending Date: <%=
+                                                                                                        offer.endingDate.toLocaleDateString()
+                                                                                                        %> <br>
+                                                                                                        Discount: <%=
+                                                                                                            offer.discount
+                                                                                                            %>%
+                                                                                            </p>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        <% }) %>
+                                                            <% }) %>
                                                     </div>
                                                 </div>
-                                                
-                                                </div>
-                                                <div id="offerError" class="text-danger"
-                                                    style="display: none; text-align: center;"></div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary" id="addOfferBtn">Add
-                                                        Offer</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Cancel</button>
-                                                </div>
+
+                                            </div>
+                                            <div id="offerError" class="text-danger"
+                                                style="display: none; text-align: center;"></div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" id="addOfferBtn">Add
+                                                    Offer</button>
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Cancel</button>
                                             </div>
                                         </div>
                                     </div>
+            </div>
 
 
 

@@ -22,20 +22,38 @@ const loadDashboard = async (req, res) => {
     try {
         const pageTitle = "Dashboard";
         const userId = req.session.user_id;
+        const orderPage = parseInt(req.query.orderPage) || 1;
+        const walletPage = parseInt(req.query.walletPage) || 1;
 
+        const pageSize = 5; 
             const userData = await User.findById(userId);
             const address = await Address.find({ userId });
-            const orders = await Order.find({ userId}).populate('userId').populate('items.productId').sort({ createdAt: -1 });
-            const wallet = await Wallet.findOne({ userId }).sort({ 'transactions.date': -1 });
+            const ordersCount = await Order.countDocuments({ userId });
+            const orders = await Order.find({ userId })
+                                       .populate('userId')
+                                       .populate('items.productId')
+                                       .sort({ createdAt: -1 })
+                                       .skip((orderPage - 1) * pageSize)
+                                       .limit(pageSize);
+
+            const orderTotalPages = Math.ceil(ordersCount / pageSize);
+            
+            const wallet = await Wallet.findOne({ userId }) 
+        
+
             if (!wallet) {
                 // wallet is not found
-                return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null });
+                return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null , orderTotalPages, orderCurrentPage: orderPage,walletCurrentPage: 0,walletTotalPages:0 });
             }
+
             // Sorting new transactions
             wallet.transactions.sort((a, b) => b.date - a.date);
-            
+            const transactionsCount = wallet.transactions.length;
+            const walletTotalPages = Math.ceil(transactionsCount / pageSize);
+            const transactions = wallet.transactions.slice((walletPage - 1) * pageSize, walletPage * pageSize);
+            const balance= wallet.balance 
 
-            res.render('dashboard', { req, pageTitle, userData, address, orders,wallet });
+            res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage , walletTotalPages, walletCurrentPage: walletPage ,balance});
     } catch (error) {
         console.log(error.message);
         return { success: false, message: 'Internal Server Error. Please try again later.' };
