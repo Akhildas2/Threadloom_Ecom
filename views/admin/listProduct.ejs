@@ -75,10 +75,13 @@
                                 <strong>#</strong>
                             </div>
                             <div class="col-lg-2 col-md-3 col-sm-4 col-6 col-name text-center">
-                                <strong>Product Image and Name</strong>
+                                <strong>Product Image & Name</strong>
                             </div>
                             <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
                                 <strong>Category</strong>
+                            </div>
+                            <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-brand text-center">
+                                <strong>Brand</strong>
                             </div>
                             <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Gender</strong>
@@ -92,28 +95,30 @@
                             <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Stock Count</strong>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-center">
+                            
+                            <div class="col-lg-2 col-md-3 col-sm-6 col-4 col-offer text-center">
                                 <strong>Offer</strong>
                             </div>
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-center">
+                            <div class="col-lg-1 col-md-3 col-sm-6 col-4 col-action text-center">
                                 <strong>Action</strong>
                             </div>
                         </div>
                         <% for (let i=0; i < products.length; i++) { %>
                             <article class="itemlist">
                                 <div class="row align-items-center">
+                                    
                                     <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
                                         <%= i + 1 %>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-4 col-6 col-name">
-                                        <a class="itemside" href="#">
+                                    <div class="col-lg-2 col-md-3 col-sm-4 col-6 col-name">
+                                        <a class="itemside" href="/admin/product/editproduct/<%= products[i]._id %>">
                                             <div class="left">
                                                 <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
                                                     alt="<%= products[i].name %> Image" style="width: 50px;">
                                             </div>
                                             <div class="info">
                                                 <h6 class="mb-0">
-                                                    <%= products[i].name %>
+                                                    <%= products[i].name.slice(0,13) %>
                                                 </h6>
                                             </div>
                                         </a>
@@ -127,6 +132,11 @@
                                                 <% } else { %>
                                                     <p>No category assigned</p>
                                                     <% } %>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-brand text-center">
+                                        <span>
+                                            <%= products[i].brand %>
                                         </span>
                                     </div>
                                     <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
@@ -149,7 +159,8 @@
                                             <%= products[i].stockCount %>
                                         </span>
                                     </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-offer text-center">
+                                    
+                                    <div class="col-lg-2 col-md-3 col-sm-4 col-4 col-offer text-center">
                                         <% if (!products[i].isUnlisted ) { %>
                                             <% if (!products[i].offer ) { %>
                                                 <button class="btn btn-success btn-sm rounded add-product"
@@ -163,7 +174,7 @@
                                                     <% } %>
                                                         <% } %>
                                     </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-6 col-6 col-action text-center">
+                                    <div class="col-lg-1 col-md-3 col-sm-4 col-4 col-action text-center">
                                         <a href="/admin/product/editproduct/<%= products[i]._id %>"
                                             class="btn btn-sm font-sm rounded btn-brand edit-product"
                                             data-product-id="<%= products[i]._id %>">

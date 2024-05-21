@@ -3,14 +3,14 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <section class="content-main">
             <div class="container">
-                <div class="content-header">
+                <div class="content-header" style="display: block;text-align: center;">
                     <h2 class="content-title card-title">Edit Product</h2>
                 </div>
                 <h4 class="content-title card-title">Edit an existing product</h4>
 
                 <div class="card">
                     <div class="card-body">
-                        <form enctype="multipart/form-data"  class="product-form">
+                        <form enctype="multipart/form-data" class="product-form" id="editProduct">
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" class="form-control" id="name" name="name"
@@ -22,6 +22,12 @@
                                 <textarea class="form-control" id="description" name="description"
                                     rows="3"><%= product.description %></textarea>
                                 <div class="error-message" id="description-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="brand">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand"
+                                    value="<%= product.brand %>">
+                                <div class="error-message" id="brand-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="price">Price</label>
@@ -116,36 +122,36 @@
                     </div>
                 </div>
             </div>
-        </section>
+            <div class="card mt-4">
+                <div class="card-body">
+                    <div class="row">
+                        <% for (let i=0; i < product.productImage.length; i++) { %>
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-4">
+                                <div class="card" style="border-color: white;" id="productImages">
 
-        <div class="card mt-4">
-
-            <div class="card-body">
-                <div class="category-grid d-flex flex-wrap justify-content-center">
-                    <% for (let i=0; i < product.productImage.length; i++) { %>
-                        <div class="category-box mr-3 mb-3">
-                            <div class="category-info">
-                                <img src="/uploads/product/resized/<%= product.productImage[i] %>"
-                                    id="currentPhoto<%= i %>" alt="Current Photo <%= i+1 %>" class="img-fluid"
-                                    style="cursor: pointer; width:200px;height:200px;">
+                                    <img src="/uploads/product/resized/<%= product.productImage[i] %>"
+                                        id="currentPhoto<%= i %>" alt="Current Photo <%= i+1 %>"
+                                        class="card-img-top img-fluid"
+                                        style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
+                                    <div class="card-body text-center">
+                                        <button
+                                            onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>')"
+                                            class="btn btn-danger" aria-label="Delete Image <%= i+1 %>">Delete</button>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center justify-content-center w-100">
-
-                                <!-- Delete button -->
-                                <button onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>')"
-                                    class="btn btn-danger ml-2" aria-label="Delete Image <%= i+1 %>">Delete</button>
-                            </div>
-
-                        </div>
-
-                        <% } %>
-                            <div class="error-message" id="productImages-error"></div>
-
+                            <% } %>
+                    </div>
+                    <div class="error-message" id="productImages-error" style="display: block; text-align: center;">
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
 
+
+        <br>
+        <br>
 
         <%- include('../adminLayouts/footer.ejs') %>
 
@@ -228,6 +234,7 @@
                     const errorMessages = {
                         name: 'Please enter a name',
                         description: 'Please enter a description',
+                        brand: 'Please enter a brand name',
                         price: 'Price must be a positive number',
                         gender: 'Please select a gender',
                         category: 'Please select a category',
@@ -240,6 +247,10 @@
                     let errors = false;
                     if (!formData.get('name').trim()) {
                         toggleError('name', errorMessages.name);
+                        errors = true;
+                    }
+                    if (!formData.get('brand').trim()) {
+                        toggleError('brand', errorMessages.brand);
                         errors = true;
                     }
                     if (!formData.get('description').trim()) {
@@ -310,15 +321,19 @@
                         errorField.textContent = message;
                     }
                 }
+                $('#editProduct input, #editProduct textarea, #editProduct select').on('input change', function () {
+                    let field = this.name;
+                    toggleError(field, '');
+                });
 
                 function deleteImage(productId, photoName) {
-                    if ($('.category-info').length <= 3) {
-                        const warningMessage = 'At least three photos are required. You can only delete photos when there are 4 or more.';
-
-                        $('#productImages-error').text(warningMessage);
+                    const ProductPhotoLength= `<% product.productImage.length %>`;
+                    console.log("ProductPhotoLength", ProductPhotoLength)
+                    if (ProductPhotoLength<= 1) {
+                        const warningMessage = 'At least 1 photo is required. You can only delete photos when there are 2 or more.';
+                        $('#productImages-error').text(warningMessage).show();
                         return;
                     }
-
                     Swal.fire({
                         title: 'Are you sure?',
                         text: 'You won\'t be able to revert this!',

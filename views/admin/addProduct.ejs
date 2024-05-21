@@ -4,7 +4,7 @@
 
         <section class="content-main">
             <div class="container">
-                <div class="content-header">
+                <div class="content-header" style="display: block;text-align: center;">
                     <h2 class="content-title card-title">Add Product</h2>
                 </div>
                 <h4 class="content-title card-title">Add a new product</h4>
@@ -22,6 +22,11 @@
                                 <label for="description">Description</label>
                                 <textarea class="form-control" id="description" name="description" rows="3"></textarea>
                                 <div class="error-message" id="description-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="brand">Brand</label>
+                                <input type="text" class="form-control" id="brand" name="brand">
+                                <div class="error-message" id="brand-error"></div>
                             </div>
                             <div class="form-group">
                                 <label for="price">Price</label>
@@ -105,6 +110,8 @@
                     </div>
                 </div>
             </div>
+
+
         </section>
         <!-- Add SweetAlert -->
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -113,49 +120,50 @@
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.3.js"
             integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
-            <script>
-                // regular expressions and error messages
-                const priceRegex = /^\d+(\.\d{1,2})?$/;
-                const allowedExtensions = ['jpg', 'jpeg', 'png'];
-            
-                const errorMessages = {
-                    name: "Name is required",
-                    description: "Description is required",
-                    price: "Price must be a positive number",
-                    gender: "Please choose a gender",
-                    category: "Please choose a category",
-                    stockCount: "Stock Count must be a positive integer",
-                    size: "Please select a size",
-                    productImages: "Please upload at least 3 images"
-                };
-            
-                let addedFiles = [];
-            
-                // Toggle error messages
-                function toggleError(field, message) {
-                    const errorMessage = document.getElementById(`${field}-error`);
-                    errorMessage.textContent = message;
-                    if (message) {
-                        errorMessage.classList.add('error');
-                    } else {
-                        errorMessage.classList.remove('error');
-                    }
+        <script>
+            // regular expressions and error messages
+            const priceRegex = /^\d+(\.\d{1,2})?$/;
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+            const errorMessages = {
+                name: "Name is required",
+                description: "Description is required",
+                brand: "Brand is required",
+                price: "Price must be a positive number",
+                gender: "Please choose a gender",
+                category: "Please choose a category",
+                stockCount: "Stock Count must be a positive integer",
+                size: "Please select a size",
+                productImages: "Please upload at least 3 images"
+            };
+
+            let addedFiles = [];
+
+            // Toggle error messages
+            function toggleError(field, message) {
+                const errorMessage = document.getElementById(`${field}-error`);
+                errorMessage.textContent = message;
+                if (message) {
+                    errorMessage.classList.add('error');
+                } else {
+                    errorMessage.classList.remove('error');
                 }
-            
-                $(document).ready(function () {
-                    $(".upload-area").click(function () {
-                        $('#productImages').trigger('click');
-                    });
-            
-                    $('#productImages').change(function (event) {
-                        if (event.target.files) {
-                            let filesAmount = event.target.files.length;
-                            $('.upload-img').html("");
-            
-                            for (let i = 0; i < filesAmount; i++) {
-                                let reader = new FileReader();
-                                reader.onload = function (event) {
-                                    let html = `
+            }
+
+            $(document).ready(function () {
+                $(".upload-area").click(function () {
+                    $('#productImages').trigger('click');
+                });
+
+                $('#productImages').change(function (event) {
+                    if (event.target.files) {
+                        let filesAmount = event.target.files.length;
+                        $('.upload-img').html("");
+
+                        for (let i = 0; i < filesAmount; i++) {
+                            let reader = new FileReader();
+                            reader.onload = function (event) {
+                                let html = `
                                         <div class="uploaded-img">
                                             <img src="${event.target.result}">
                                             <button type="button" class="remove-btn" data-index="${i}">
@@ -163,134 +171,142 @@
                                             </button>
                                         </div>
                                     `;
-                                    $(".upload-img").append(html);
-                                }
-                                reader.readAsDataURL(event.target.files[i]);
-            
-                                // Store the file along with its index
-                                addedFiles.push({ file: event.target.files[i], index: i });
-                                // console.log(`Added file: ${event.target.files[i].name}, Index: ${i}`);
+                                $(".upload-img").append(html);
                             }
-            
-                            $('.upload-info-value').text(filesAmount);
-                            $('.upload-img').css('padding', "20px");
+                            reader.readAsDataURL(event.target.files[i]);
+
+                            // Store the file along with its index
+                            addedFiles.push({ file: event.target.files[i], index: i });
+                            // console.log(`Added file: ${event.target.files[i].name}, Index: ${i}`);
                         }
-                    });
-            
-                    $(document).on('click', '.remove-btn', function () {
-                        let index = $(this).data('index');
-                        if (index !== undefined) {
-                            // console.log(`Removing file at index: ${index}`);
-                            // Find the file object by its index and remove it from the addedFiles array
-                            addedFiles = addedFiles.filter(fileObj => fileObj.index !== index);
-            
-                            $(this).parent().remove();
-                            $('.upload-info-value').text(addedFiles.length);
-            
-                            // Check if the number of images is less than 3
-                            if (addedFiles.length < 3) {
-                                toggleError('productImages', errorMessages.productImages);
-                            } else {
-                                toggleError('productImages', '');
-                            }
+
+                        $('.upload-info-value').text(filesAmount);
+                        $('.upload-img').css('padding', "20px");
+                    }
+                });
+
+                $(document).on('click', '.remove-btn', function () {
+                    let index = $(this).data('index');
+                    if (index !== undefined) {
+                        // console.log(`Removing file at index: ${index}`);
+                        // Find the file object by its index and remove it from the addedFiles array
+                        addedFiles = addedFiles.filter(fileObj => fileObj.index !== index);
+
+                        $(this).parent().remove();
+                        $('.upload-info-value').text(addedFiles.length);
+
+                        // Check if the number of images is less than 3
+                        if (addedFiles.length < 3) {
+                            toggleError('productImages', errorMessages.productImages);
                         } else {
-                            console.error('Index is undefined');
+                            toggleError('productImages', '');
                         }
-                    });
-                });
-            
-                document.getElementById('addProduct').addEventListener('submit', function (event) {
-                    event.preventDefault(); // Prevent default form submission
-            
-                    // Create FormData object and append images
-                    let formData = new FormData(this);
-                    formData.delete('productImages'); // Remove existing images from FormData
-                    addedFiles.forEach(file => {
-                        formData.append('productImages', file.file);
-                    });
-                    // Reset error messages
-                    Object.keys(errorMessages).forEach(field => toggleError(field, ''));
-            
-                    // Validate form fields
-                    let errors = false;
-                    if (!formData.get('name').trim()) {
-                        toggleError('name', errorMessages.name);
-                        errors = true;
-                    }
-                    if (!formData.get('description').trim()) {
-                        toggleError('description', errorMessages.description);
-                        errors = true;
-                    }
-                    if (!priceRegex.test(formData.get('price')) || formData.get('price') <= 0) {
-                        toggleError('price', errorMessages.price);
-                        errors = true;
-                    }
-            
-                    if (formData.get('gender') === '') {
-                        toggleError('gender', errorMessages.gender);
-                        errors = true;
-                    }
-            
-                    if (formData.get('category') === '') {
-                        toggleError('category', errorMessages.category);
-                        errors = true;
-                    }
-                    if (!priceRegex.test(formData.get('stockCount')) || formData.get('stockCount') <= 0) {
-                        toggleError('stockCount', errorMessages.stockCount);
-                        errors = true;
-                    }
-                    if (formData.get('size') === '') {
-                        toggleError('size', errorMessages.size);
-                        errors = true;
-                    }
-                    if (formData.getAll('productImages').length < 3) {
-                        toggleError('productImages', errorMessages.productImages);
-                        errors = true;
                     } else {
-                        const allImagesValid = Array.from(formData.getAll('productImages')).every(image => {
-                            const extension = image.name.split('.').pop().toLowerCase();
-                            return allowedExtensions.includes(extension);
-                        });
-                        if (!allImagesValid) {
-                            toggleError('productImages', 'Please upload only image files (jpg, jpeg, png)');
-                            errors = true;
-                        }
+                        console.error('Index is undefined');
                     }
-            
-                    if (errors) {
-                        return false; // Prevent form submission if there are errors
-                    }
-            
-                    // Post form data
-                    axios.post('/admin/product/addproduct', formData)
-                        .then(res => {
-                            if (res.data.status) {
-                                // Display success message
-                                Swal.fire({
-                                    icon: "success",
-                                    title: "Product Added Successfully",
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                });
-                                setTimeout(() => {
-                                    location.href = res.data.url;
-                                }, 2000);
-                            } else {
-                                console.error(res.data);
-                            }
-                        })
-                        .catch(err => {
-                            if (!err.response.data.success) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
-                                });
-                            } else {
-                                console.error(err);
-                            }
-                        });
                 });
-            </script>
+            });
             
+            $('#addProduct input, #addProduct textarea, #addProduct select').on('input change', function () {
+            let field = this.name;
+            toggleError(field, '');
+             });
+            document.getElementById('addProduct').addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Create FormData object and append images
+                let formData = new FormData(this);
+                formData.delete('productImages'); // Remove existing images from FormData
+                addedFiles.forEach(file => {
+                    formData.append('productImages', file.file);
+                });
+                // Reset error messages
+                Object.keys(errorMessages).forEach(field => toggleError(field, ''));
+
+                // Validate form fields
+                let errors = false;
+                if (!formData.get('name').trim()) {
+                    toggleError('name', errorMessages.name);
+                    errors = true;
+                }
+                if (!formData.get('brand').trim()) {
+                    toggleError('brand', errorMessages.brand);
+                    errors = true;
+                }
+                if (!formData.get('description').trim()) {
+                    toggleError('description', errorMessages.description);
+                    errors = true;
+                }
+                if (!priceRegex.test(formData.get('price')) || formData.get('price') <= 0) {
+                    toggleError('price', errorMessages.price);
+                    errors = true;
+                }
+
+                if (formData.get('gender') === '') {
+                    toggleError('gender', errorMessages.gender);
+                    errors = true;
+                }
+
+                if (formData.get('category') === '') {
+                    toggleError('category', errorMessages.category);
+                    errors = true;
+                }
+                if (!priceRegex.test(formData.get('stockCount')) || formData.get('stockCount') <= 0) {
+                    toggleError('stockCount', errorMessages.stockCount);
+                    errors = true;
+                }
+                if (formData.get('size') === '') {
+                    toggleError('size', errorMessages.size);
+                    errors = true;
+                }
+                if (formData.getAll('productImages').length < 3) {
+                    toggleError('productImages', errorMessages.productImages);
+                    errors = true;
+                } else {
+                    const allImagesValid = Array.from(formData.getAll('productImages')).every(image => {
+                        const extension = image.name.split('.').pop().toLowerCase();
+                        return allowedExtensions.includes(extension);
+                    });
+                    if (!allImagesValid) {
+                        toggleError('productImages', 'Please upload only image files (jpg, jpeg, png)');
+                        errors = true;
+                    }
+                }
+
+                if (errors) {
+                    return false; // Prevent form submission if there are errors
+                }
+              
+                // Post form data
+                axios.post('/admin/product/addproduct', formData)
+                    .then(res => {
+                        if (res.data.status) {
+                            // Display success message
+                            Swal.fire({
+                                icon: "success",
+                                title: "Product Added Successfully",
+                                showConfirmButton: false,
+                                timer: 2000
+                            });
+                            setTimeout(() => {
+                                location.href = res.data.url;
+                            }, 2000);
+                        } else {
+                            console.error(res.data);
+                        }
+                    })
+                    .catch(err => {
+                        if (!err.response.data.success) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: err.response.data.message,
+                            });
+                        } else {
+                            console.error(err);
+                        }
+                    });
+            });
+        </script>
+
         <%- include('../adminLayouts/footer.ejs') %>

@@ -44,7 +44,7 @@ const loadAddProduct = async (req, res) => {
 //for adding the product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, gender, category, stockCount, size } = req.body;
+        const { name, description, price,brand, gender, category, stockCount, size } = req.body;
         const unique = await Product.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
 
         if (unique) {
@@ -88,6 +88,7 @@ const addProduct = async (req, res) => {
             name,
             description,
             price,
+            brand,
             gender,
             category,
             stockCount,
@@ -178,7 +179,7 @@ const loadEditProduct = async (req, res) => {
 //for editing product
 const editProduct = async (req, res) => {
     const productId = req.params.productId;
-    const { name, description, price, gender, category, stockCount, size } = req.body;
+    const { name, description,brand, price, gender, category, stockCount, size } = req.body;
 
     const updateFields = {};
     try {
@@ -203,6 +204,7 @@ const editProduct = async (req, res) => {
 
         if (name) updateFields.name = name;
         if (description) updateFields.description = description;
+        if(brand) updateFields.brand=brand;
         if (price) updateFields.price = price;
         if (gender) updateFields.gender = gender;
         if (category) updateFields.category = category;

@@ -4888,8 +4888,14 @@ img {
 
 .upload-img {
  
-    max-height: 300px;
-    overflow-y: scroll;
+     width: 340px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 4 images per row */
+    gap: 20px; /* space between images */
+    padding: 20px; /* padding around the grid */
+    max-height: 300px; /* set a maximum height */
+    overflow-y: scroll; /* enable scrolling if content overflows */
+
 }
 
 .upload-img::-webkit-scrollbar-track {
@@ -4954,8 +4960,10 @@ img {
     align-items: center;
     justify-content: center;
     position: absolute;
-    top: -10px;
+    top: 5%;
+    left: 50%;
     right: 50%;
+    transform: translate(-50%, -50%);
     cursor: pointer;
     transition: var(--transition);
 }
