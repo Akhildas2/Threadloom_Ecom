@@ -10,22 +10,21 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 
     const email = data.email;
     const password = data.password;
-    const emailRegex = /^[^\s@]+@gmail\.com$/i;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(email)) {
-        errors.push("Invalid email. Please enter a valid Gmail address. eg:example@gmail.com");
-        document.getElementById('emailError').innerText = "Invalid email. Please enter a valid Gmail address. eg:example@gmail.com";
+        errors.push("Invalid email. Please enter a valid email address. eg:example@gmail.com");
+        document.getElementById('emailError').innerText = errors[errors.length - 1]; // Set the last error message
     } else {
         document.getElementById('emailError').innerText = ""; // Clear email error message if email is valid
     }
     if (!password) {
         errors.push("Please enter a password.");
-        document.getElementById('passwordError').innerText = "Please enter a password."; 
+        document.getElementById('passwordError').innerText = errors[errors.length - 1]; // Set the last error message
     } else {
         document.getElementById('passwordError').innerText = ""; // Clear password error message if password is entered
     }
 
     if (errors.length > 0) {
-      
         return false;
     }
 
@@ -33,12 +32,23 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     axios.post('/login', data)
         .then(res => {
             if (res.data.status) {
-                Swal.fire({
-                    icon: "success",
-                    title: "You Are Logged in Successfully",
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
                 });
+                Toast.fire({
+                    icon: "success",
+                    title: "You Are Logged in Successfully"
+                });
+
                 setTimeout(() => {
                     location.href = res.data.url;
                 }, 2000);
@@ -48,19 +58,32 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
         })
         .catch(err => {
             if (!err.response.data.success) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-center",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
                     text: err.response.data.message,
                 });
+               
             } else {
                 console.error(err);
             }
         });
+
 });
+
 // Toggle password visibility
-document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
+document.querySelectorAll('.toggle-password').forEach(function (toggle) {
+    toggle.addEventListener('click', function () {
         const passwordInput = this.previousElementSibling; // Assuming the input is always the previous element sibling
         passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
         this.classList.toggle('fa-eye-slash');

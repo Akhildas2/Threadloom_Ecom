@@ -10,12 +10,12 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
     const data = Object.fromEntries(new FormData(this));
 
     // Define regular expressions and error messages
-    const emailRegex = /^[^\s@]+@gmail\.com$/i;
+    const emailRegex =/^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
     const mobileRegex = /^\d{10}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const errorMessages = {
         name: "Please enter a valid name.",
-        email: "Invalid email. Please enter a valid Gmail address.  for Eg:example@gmail.com",
+        email: "Invalid email. Please enter a valid email address.  for Eg:example@gmail.com",
         mobile: "Invalid mobile number. Please enter a 10-digit number.",
         password: "Invalid password. It should be at least 8 characters long and include at least one uppercase letter(A), one lowercase letter(a), one number(1), and one special character(!).",
         confirmPassword: "Passwords do not match."
@@ -91,17 +91,69 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
         })
         .catch(err => {
             if (!err.response.data.success) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-center",
+                    showConfirmButton: false,
+                    timer: 2000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "error",
                     text: err.response.data.message,
                 });
+              
             } else {
                 console.error(err);
             }
         });
 });
 
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', function() {
+        const fieldName = this.name;
+        const errorMessageElement = document.getElementById(`${fieldName}Error`);
+        
+        // Clear existing error message
+        errorMessageElement.textContent = '';
+
+        // Check validation based on field name
+        switch(fieldName) {
+            case 'name':
+                if (!this.value.trim()) {
+                    errorMessageElement.textContent = errorMessages.name;
+                }
+                break;
+            case 'email':
+                if (!emailRegex.test(this.value.trim())) {
+                    errorMessageElement.textContent = errorMessages.email;
+                }
+                break;
+            case 'mobile':
+                if (!mobileRegex.test(this.value.trim())) {
+                    errorMessageElement.textContent = errorMessages.mobile;
+                }
+                break;
+            case 'password':
+                if (!passwordRegex.test(this.value.trim())) {
+                    errorMessageElement.textContent = errorMessages.password;
+                }
+                break;
+            case 'confirmPassword':
+                const passwordInput = document.querySelector('input[name="password"]');
+                if (this.value.trim() !== passwordInput.value.trim()) {
+                    errorMessageElement.textContent = errorMessages.confirmPassword;
+                }
+                break;
+            default:
+                break;
+        }
+    });
+});
 
 
 // Toggle password visibility

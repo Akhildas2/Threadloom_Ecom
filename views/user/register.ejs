@@ -25,6 +25,7 @@
                                                 <h3 class="mb-30">Create an Account</h3>
                                             </div>
                                             <form id="registerForm" action="/register" method="post" novalidate>
+                                                
                                                 <div class="form-group">
                                                     <input type="text" name="name" id="name" placeholder="Name">
                                                 </div>
@@ -47,6 +48,9 @@
                                                         <div class="error-container">
                                                             <span id="mobileError" class="error"></span>
                                                             <i id="mobileLoading" class="fas fa-spinner fa-spin hidden"></i>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input type="text" name="referralCode" id="referralCode" placeholder="Referral Code (optional)">
                                                         </div>
                                                 <div class="form-group position-relative">
                                                     <input type="password" name="password" id="password" placeholder="Password" class="form-control">

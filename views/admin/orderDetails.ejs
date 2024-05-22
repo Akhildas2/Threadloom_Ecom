@@ -107,10 +107,13 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
-                                            <th width="25%">Product</th>
-                                            <th width="25%">Product Name</th>
+                                            <th width="20%">Product</th>
+                                            <th width="20%">Product Name & Size</th>
                                             <th width="10%">Price</th>
-                                            <th width="20%">Order Status</th>
+                                            <% if (order.items.some(item => item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled')) { %>
+                                                <th width="20%">Cancellation Reason</th>
+                                            <% } %>
+                                            <th width="10%">Order Status</th> 
                                             <th width="10%">Sub Total</th>
                                             <th width="10%">Action</th>
                                         </tr>
@@ -128,9 +131,15 @@
                                                 <td class="align-middle">
                                                     <%= item.productId.name %>, <%= item.productId.size %>
 
-                                                <td class="align-middle">₹<%= item.price %>
+                                                <td class="align-middle">₹<%= item.price.toFixed(2) %>
                                                 </td>
-
+                                                <% if (order.items.some(item => item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled')) { %>
+                                                    <td class="align-middle">
+                                                        <% if (item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled') { %>
+                                                            <%= item.cancellationReason %>
+                                                        <% } %>
+                                                    </td>
+                                                <% } %>
                                                 <td class="align-middle">
                                                     <span class="badge rounded-pill 
                                                 <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
@@ -144,7 +153,7 @@
                                                         <%= item.orderStatus %>
                                                     </span>
                                                 </td>
-                                                <td class="align-middle">₹<%= item.total %>
+                                                <td class="align-middle">₹<%= item.total.toFixed(2) %>
                                                 </td>
                                                 <td class="align-middle">
                                                     <% if (item.orderStatus ==='awaiting approval' ) { %>
@@ -183,15 +192,18 @@
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="6" style="border-top: 1px solid #000;"></td> <!-- Add a horizontal line within the table row -->
+                                                <td colspan="7" style="border-top: 1px solid #000;"></td> <!-- Add a horizontal line within the table row -->
                                             </tr>
+                                           
+                                           
                                             <% }); %>
                                                 <tr>
-                                                    <td colspan="5" style="padding-top: 30px;">
+                                                   
+                                                    <td colspan="6" style="padding-top: 30px;">
                                                         <article class="float-end">
                                                             <dl class="dlist">
                                                                 <dt>Subtotal:</dt>
-                                                                <dd>₹<%= order.totalAmount %>
+                                                                <dd>₹<%= order.totalAmount.toFixed(2) %>
                                                                 </dd>
                                                             </dl>
                                                             <dl class="dlist">
@@ -200,7 +212,7 @@
                                                             </dl>
                                                             <dl class="dlist">
                                                                 <dt>Grand total:</dt>
-                                                                <dd><b class="h5">₹<%= order.totalAmount %></b></dd>
+                                                                <dd><b class="h5">₹<%= order.totalAmount.toFixed(2) %></b></dd>
                                                             </dl>
                                                         </article>
                                                     </td>

@@ -125,27 +125,26 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <div class="row">
-                        <% for (let i=0; i < product.productImage.length; i++) { %>
+                        <% for (let i = 0; i < product.productImage.length; i++) { %>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-4">
                                 <div class="card" style="border-color: white;" id="productImages">
-
                                     <img src="/uploads/product/resized/<%= product.productImage[i] %>"
-                                        id="currentPhoto<%= i %>" alt="Current Photo <%= i+1 %>"
-                                        class="card-img-top img-fluid"
-                                        style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
+                                         id="currentPhoto<%= i %>" alt="Current Photo <%= i + 1 %>"
+                                         class="card-img-top img-fluid"
+                                         style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
                                     <div class="card-body text-center">
-                                        <button
-                                            onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>')"
-                                            class="btn btn-danger" aria-label="Delete Image <%= i+1 %>">Delete</button>
+                                        <button onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>', '<%= product.productImage.length %>')"
+                                                class="btn btn-danger" aria-label="Delete Image <%= i + 1 %>">Delete</button>
                                     </div>
                                 </div>
                             </div>
-                            <% } %>
+                        <% } %>
                     </div>
                     <div class="error-message" id="productImages-error" style="display: block; text-align: center;">
                     </div>
                 </div>
             </div>
+            
         </section>
 
 
@@ -326,10 +325,8 @@
                     toggleError(field, '');
                 });
 
-                function deleteImage(productId, photoName) {
-                    const ProductPhotoLength= `<% product.productImage.length %>`;
-                    console.log("ProductPhotoLength", ProductPhotoLength)
-                    if (ProductPhotoLength<= 1) {
+                function deleteImage(productId, photoName,productPhotoLength) {
+                    if (productPhotoLength<= 1) {
                         const warningMessage = 'At least 1 photo is required. You can only delete photos when there are 2 or more.';
                         $('#productImages-error').text(warningMessage).show();
                         return;

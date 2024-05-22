@@ -72,6 +72,17 @@ const securePassword = async (password) => {
 
 
 
+//for generate refferal code
+function generateReferralCode() {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let referralCode = '';
+    for (let i = 0; i < 8; i++) {
+        referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return referralCode;
+}
+
+
 // Function to insert user
 const insertUser = async (req, res) => {
     try {
@@ -87,11 +98,13 @@ const insertUser = async (req, res) => {
         if (existing) {
             return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
         }
+        const referralCodes = generateReferralCode();
         const user = new User({
             name,
             email,
             mobile,
             password: spassword,
+            referralCode:referralCodes
         });
 
         const userData = await user.save();

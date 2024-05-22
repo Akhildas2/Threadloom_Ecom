@@ -39,9 +39,9 @@
             <section class="pt-150 pb-150">
                 <div class="container">
                     <div class="row">
-                        <div class="col-lg-10 m-auto">
+                        <div class="col-lg-12 m-auto">
                             <div class="row">
-                                <div class="col-md-4" style="margin-top: 30px;">
+                                <div class="col-md-3" style="margin-top: 30px;">
                                     <div class="dashboard-menu">
                                         <ul class="nav flex-column" role="tablist">
                                             <li class="nav-item">
@@ -70,6 +70,12 @@
                                                     aria-selected="true"><i class="fi-rs-user mr-10"></i>Profile</a>
                                             </li>
                                             <li class="nav-item">
+                                                <a class="nav-link" id="referral-tab" data-bs-toggle="tab"
+                                                    href="#referral" role="tab" aria-controls="referral"
+                                                    aria-selected="true"><i
+                                                        class="fas fa-user-friends referral-icon mr-10"></i>Referral</a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a class="nav-link" id="wallet-tab" data-bs-toggle="tab" href="#wallet"
                                                     role="tab" aria-controls="wallet" aria-selected="true"><i
                                                         class="fas fa-wallet mr-10"></i>Wallet</a>
@@ -85,7 +91,7 @@
                                         </ul>
                                     </div>
                                 </div>
-                                <div class="col-md-8">
+                                <div class="col-md-9">
                                     <div class="tab-content dashboard-content">
                                         <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                             aria-labelledby="dashboard-tab">
@@ -135,12 +141,17 @@
 
                                                                             <% order.items.forEach(item=> { %>
                                                                                 <tr>
+
                                                                                     <td>
                                                                                         <a
                                                                                             href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
                                                                                             <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
                                                                                                 style="width: 150px;height: 100px;"
                                                                                                 alt="<%= item.productId.name %>">
+                                                                                            <p>
+                                                                                                <%= order.ordersId %>
+                                                                                            </p>
+
                                                                                         </a>
 
                                                                                     </td>
@@ -149,7 +160,10 @@
                                                                                         <a
                                                                                             href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
 
-                                                                                            <%= item.productId.name %>
+                                                                                            <p>
+                                                                                                <%= item.productId.name
+                                                                                                    %>
+                                                                                            </p>
                                                                                         </a>
 
                                                                                     </td>
@@ -253,67 +267,70 @@
                                         <!--  add or edit address  -->
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
-                                            <div class="row" style="margin-top: 30px;">
-                                                <a href="#" class="btn-lg btn-primary " data-toggle="modal"
-                                                    data-target="#addAddressModal"
-                                                    style="width: auto; margin-left: 13px; ">Add Address</a>
+
+
+                                            <div class="card" style="margin-top: 30px;">
+                                                <div
+                                                    class="card-header d-flex align-items-center justify-content-between">
+                                                    <h5 class="mb-0">Manage Address</h5>
+                                                    <a href="#" class="btn-lg btn-primary" data-toggle="modal"
+                                                        data-target="#addAddressModal">Add Address</a>
+                                                </div>
+
                                                 <% if (address.length===0) { %>
                                                     <div class="alert alert-info" role="alert">
                                                         No addresses found.Please add address.
                                                     </div>
 
                                                     <% } else { %>
-                                                        <div class="card" style="margin-top: 30px;">
-                                                            <div class="card-header">
-                                                                <h5 class="mb-0">Manage Address</h5>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <div class="row">
-                                                                    <% address.forEach(address=> { %>
-                                                                        <div class="col-lg-6" style="margin-top: 30px;">
-                                                                            <div class="card mb-3">
-                                                                                <div class="card-header">
-                                                                                    <h5 class="mb-0">Address</h5>
-                                                                                </div>
-                                                                                <div class="card-body">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                                <% address.forEach(address=> { %>
+                                                                    <div class="col-lg-6" style="margin-top: 30px;">
+                                                                        <div class="card mb-3">
+                                                                            <div class="card-header">
+                                                                                <h5 class="mb-0">Address</h5>
+                                                                            </div>
+                                                                            <div class="card-body">
 
-                                                                                    <p>
-                                                                                        <%= address.fullName %>
-                                                                                    </p>
-                                                                                    <p>
-                                                                                        <%=address.mobileNumber %>
-                                                                                    </p>
-                                                                                    <p>
-                                                                                        <%= address.houseNo %>, <%=
-                                                                                                address.area %>
-                                                                                    </p>
-                                                                                    <p>
-                                                                                        <%= address.city %>, <%=
-                                                                                                address.state %> - <%=
-                                                                                                    address.pincode %>
-                                                                                    </p>
-                                                                                    <a href="#"
-                                                                                        class="btn-small edit-address-btn"
-                                                                                        data-toggle="modal"
-                                                                                        data-target="#editAddressModal-<%= address._id %>"
-                                                                                        data-address-id="<%= address._id %>">Edit</a>
-                                                                                    <br>
-                                                                                    <a href="#"
-                                                                                        class="btn-small delete-address-btn"
-                                                                                        data-toggle="modal"
-                                                                                        data-target="#editAddressModal-<%= address._id %>"
-                                                                                        data-address-id="<%= address._id %>">Delete</a>
+                                                                                <p>
+                                                                                    <%= address.fullName %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%=address.mobileNumber %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%= address.houseNo %>, <%=
+                                                                                            address.area %>
+                                                                                </p>
+                                                                                <p>
+                                                                                    <%= address.city %>, <%=
+                                                                                            address.state %> - <%=
+                                                                                                address.pincode %>
+                                                                                </p>
+                                                                                <a href="#"
+                                                                                    class="btn-small edit-address-btn"
+                                                                                    data-toggle="modal"
+                                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                                    data-address-id="<%= address._id %>">Edit</a>
+                                                                                <br>
+                                                                                <a href="#"
+                                                                                    class="btn-small delete-address-btn"
+                                                                                    data-toggle="modal"
+                                                                                    data-target="#editAddressModal-<%= address._id %>"
+                                                                                    data-address-id="<%= address._id %>">Delete</a>
 
 
-                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                        <% }); %>
-                                                                            <% } %>
-                                                                </div>
-
+                                                                    </div>
+                                                                    <% }); %>
                                                             </div>
+
                                                         </div>
+                                                        <% } %>
+
+
 
                                             </div>
                                             <!-- for add address modal -->
@@ -563,10 +580,113 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!--for referral -->
+                                        <style>
+                                            .share-button {
+                                                display: inline-block;
+                                                margin: 10px;
+                                                padding: 10px 20px;
+                                                color: white;
+                                                border: none;
+                                                border-radius: 5px;
+                                                text-decoration: none;
+                                                font-size: 16px;
+                                            }
+
+                                            .share-button i {
+                                                margin-right: 8px;
+                                            }
+
+                                            .referral-code-container {
+                                                display: flex;
+                                                justify-content: center;
+                                                margin-top: 20px;
+                                            }
+
+                                            .referral-code-box {
+                                                border: 2px solid #000;
+                                                padding: 10px;
+                                                text-align: center;
+                                                font-size: 18px;
+                                                font-weight: bold;
+                                            }
+                                        </style>
+
+                                        <div class="tab-pane fade" id="referral" role="tabpanel"
+                                            aria-labelledby="referral-tab">
+                                            <div class="card" style="margin-top: 30px;">
+                                                <div class="card-body">
+                                                    <h5 style="text-align: center;">
+                                                        Earn ₹150 for every referral
+                                                        <a href="#" data-toggle="modal" data-target="#shareModal">
+                                                            <i class="fas fa-share-alt"></i>
+                                                        </a>
+                                                    </h5>
+                                                    <br>
+                                                    <p>Introduce your friends to shopping on Threadloom and get ₹150 in
+                                                        rewards every time they join. Your friend also gets ₹50!</p>
+                                                    <div class="referral-code-container">
+                                                        <div class="referral-code-box">
+                                                            <%= userData.referralCode %>
+                                                        </div>
+                                                    </div>
+                                                    <div style="text-align: center; margin-top: 20px;">
+                                                        <a class="share-button"
+                                                            href="https://wa.me/?text=Use%20my%20referral%20code%20<%= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20" "encodeURIComponent(http://localhost:3434/register/refer?code=<%= userData.referralCode %>)"
+                                                            style="background-color: #25D366;">
+                                                            <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                                                        </a>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Share Modal -->
+                                        <div class="modal fade" id="shareModal" tabindex="-1"
+                                            aria-labelledby="shareModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="shareModalLabel">Share via</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="list-group">
+                                                            <a href="https://wa.me/?text=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                                class="list-group-item list-group-item-action">
+                                                                <i class="fab fa-whatsapp"></i> WhatsApp
+                                                            </a>
+                                                            <a href="sms:?body=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                                class="list-group-item list-group-item-action">
+                                                                <i class="fas fa-sms"></i> SMS
+                                                            </a>
+                                                            <a href="mailto:?subject=Join%20Threadloom&body=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                                class="list-group-item list-group-item-action">
+                                                                <i class="fas fa-envelope"></i> Email
+                                                            </a>
+                                                            <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:3434/register/refer?code:<%#= userData.referralCode %>&quote=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!"
+                                                                class="list-group-item list-group-item-action">
+                                                                <i class="fab fa-facebook"></i> Facebook
+                                                            </a>
+                                                            <a href="https://twitter.com/intent/tweet?text=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                                class="list-group-item list-group-item-action">
+                                                                <i class="fab fa-twitter"></i> Twitter
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <!-- for dashboard -->
                                         <div class="tab-pane fade" id="wallet" role="tabpanel"
                                             aria-labelledby="wallet-tab">
-                                            <div class="card">
+                                            <div class="card" style="margin-top: 30px;">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Hello <%= userData.name %>
                                                     </h5>
@@ -610,15 +730,15 @@
                                                                                                     </span>
                                                                                                     <% } %>
                                                                                         </h5>
-                                                                                        <p class="card-text">Amount: <%=
-                                                                                                transaction.amount %>
+                                                                                        <p class="card-text">Amount: ₹
+                                                                                            <%= transaction.amount %>
                                                                                         </p>
                                                                                         <p class="card-text">Date: <%=
                                                                                                 transaction.date ?
                                                                                                 transaction.date.toDateString()
                                                                                                 : 'N/A' %>
                                                                                         </p>
-                                                                                        <p class="card-text" >
+                                                                                        <p class="card-text">
                                                                                             Description: <%=
                                                                                                 transaction.description
                                                                                                 ?
