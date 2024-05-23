@@ -1126,3 +1126,120 @@ module.exports = { generateSalesReportPDF };
             </script>
             
         <%- include('../adminLayouts/footer.ejs') %>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+// Function to insert user
+const insertUser = async (req, res) => {
+    try {
+        const { name, email, mobile, password,referralCode } = req.body;
+     // Check if the user already exists
+     if (await User.findOne({ email })) {
+        return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
+    }
+    if (await User.findOne({ mobile })) {
+        return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
+    }
+       // Create a new user
+        const spassword = await securePassword(password);
+        const user = new User({
+            name,
+            email,
+            mobile,
+            password: spassword,
+        });
+
+        const userData = await user.save();
+        console.log("userData",userData)
+
+        const newReferralCode  = generateReferralCode();
+        while (await Referral.findOne({ referalCode: newReferralCode })) {
+            newReferralCode = generateReferralCode(); // Regenerate until unique
+        }
+        let referral;
+        if(referralCode){
+            const referredByUser = await Referral.findOne({referralCode}).populate('User');
+           console.log('referredByUser',referredByUser)
+           if(referredByUser && referredByUser.user._id.toString() !== userData._id.toString()){
+             referral = new Referral({
+                user:userData._id,
+                referralCode:newReferralCode ,
+                referedBy:referredByUser.user._id
+            })
+
+            const wallet = await Wallet.find({$or:{userId:userData._id,userId:referredByUser.user_id}})
+            console.log("wallet",wallet)
+            if(!wallet){
+                const wallet = new Wallet({
+                    userId:userData._id?userData._id:referredByUser.user_id,
+                    balance:userData._id?50:150,
+                    transactions: [{
+                        type: 'credit',
+                        amount: userData._id?50:150,
+                        date: new Date(),
+                        description: `Referral bonouse`
+                    }]
+                });
+            }else{
+                wallet.balance=userData._id?50:150;
+                wallet.transactions= [{
+                    type: 'credit',
+                    amount: userData._id?50:150,
+                    date: new Date(),
+                    description: `Referral bonouse`
+                }];
+            }
+
+           }else {
+            return res.status(400).json({ success: false, message: 'Invalid or self-referral code.' });
+        }
+           
+        }else{
+             referral = new Referral({
+                user:userData._id,
+                referalCode:newReferralCode 
+               })
+        }
+      
+        await referral.save();
+        console.log("referral", referral);
+         
+        if (userData) {
+            // Generate OTP and store it in cookie
+            const otp = generateOTP();
+            console.log(otp)
+            res.cookie('email', email); // Store email in cookie for verification
+            await sendVerifyOtp(name, email, otp); // Send OTP to user's email
+            res.status(200).json({
+                status: true,
+                url: '/verifyOtp'
+            });
+        } else {
+            return res.status(500).json({ success: false, message: 'Your registration has failed.' });
+        }
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+};

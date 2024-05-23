@@ -28,12 +28,10 @@ const walletSchema = new mongoose.Schema({
             orderId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Order',
-                required: true
             },
             itemId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'Product',
-                required: true
             },
             date: {
                 type: Date,

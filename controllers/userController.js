@@ -5,18 +5,23 @@ const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
 const Category = require("../models/categoryModel")
 const Wishlist = require("../models/wishListModel")
+const Referral = require("../models/referralModel")
+const Wallet = require("../models/walletModel")
+
 
 
 //for loading the home page
 const loadHome = async (req, res) => {
     try {
-
+        //for getting the products
         const products = await Product.find({ isUnlisted: false }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        
+          //for getting the categories
         const categories = await Category.find({});
         const userId = req.session.user_id;
+
         let userWishlist = [];
-        if (userId) { // If the user is logged in
+        // If the user is logged in show the userWishlist
+        if (userId) { 
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
         }
         res.render('home', { req, products, categories, userWishlist });
@@ -60,6 +65,7 @@ const errorPage = async (req, res) => {
 //for secure password
 const securePassword = async (password) => {
     try {
+        //for harsh the password
         const passwordHarsh = await bcrypt.hash(password, 10)
         return passwordHarsh
     } catch (error) {
@@ -83,34 +89,122 @@ function generateReferralCode() {
 }
 
 
+
+
+
+
+//for checking and generate unique referral code
+const generateUniqueReferralCode = async () => {
+    let newReferralCode;
+    do {
+        newReferralCode = generateReferralCode();
+    } while (await Referral.findOne({ referralCode: newReferralCode }));
+    return newReferralCode;
+};
+
+
+
+//for checking  and creating referral
+const handleReferral = async (referralCode, newUserId) => {
+    const newReferralCode = await generateUniqueReferralCode();
+    let  referral;
+
+    if (referralCode) {
+       const referredByUser = await Referral.findOne({ referralCode }).populate('user');
+        if (referredByUser && referredByUser.user._id.toString() !== newUserId.toString()) {
+            referral = new Referral({
+                user: newUserId,
+                referralCode: newReferralCode,
+                referredBy: referredByUser.user._id
+            });
+            await updateWalletBalance(newUserId, referredByUser.user._id);
+        } else {
+            throw new Error('Invalid or self-referral code.');
+
+        }
+    } else {
+        referral = new Referral({
+            user: newUserId,
+            referralCode: newReferralCode
+        });
+    }
+
+    await referral.save();
+    return referral;
+};
+
+
+
+//update or create the wallet
+const updateWalletBalance = async (newUserId, referredByUserId) => {
+    const newUserBonus = 50;
+    const referredUserBonus = 150;
+
+    const updateWallet = async (userId, bonus) => {
+        let userWallet = await Wallet.findOne({ userId });
+        if (!userWallet) {
+            userWallet = new Wallet({
+                userId,
+                balance: bonus,
+                transactions: [{
+                    type: 'credit',
+                    amount: bonus,
+                    date: new Date(),
+                    description: 'Referral bonus'
+                }]
+            });
+        } else {
+            userWallet.balance += bonus;
+            userWallet.transactions.push({
+                type: 'credit',
+                amount: bonus,
+                date: new Date(),
+                description: 'Referral bonus'
+            });
+        }
+        await userWallet.save();
+    };
+
+    await Promise.all([
+        updateWallet(newUserId, newUserBonus),
+        updateWallet(referredByUserId, referredUserBonus)
+    ]);
+};
+
+
+
+
+
+
 // Function to insert user
 const insertUser = async (req, res) => {
     try {
-        const { name, email, mobile, password } = req.body;
-
+        const { name, email, mobile, password,referralCode } = req.body;
+     // Check if the user already exists
+     if (await User.findOne({ email })) {
+        return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
+    }
+    if (await User.findOne({ mobile })) {
+        return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
+    }
+       // Create a new user
         const spassword = await securePassword(password);
-        const existingUser = await User.findOne({ email });
-        const existing = await User.findOne({ mobile });
-
-        if (existingUser) {
-            return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
-        }
-        if (existing) {
-            return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
-        }
-        const referralCodes = generateReferralCode();
         const user = new User({
             name,
             email,
             mobile,
             password: spassword,
-            referralCode:referralCodes
         });
 
         const userData = await user.save();
+        console.log("userData",userData)
 
+     // Generate and save referral code
+     const referral = await handleReferral(referralCode, userData._id);
+     console.log("referral", referral);
+
+    // Generate OTP and store it in cookie
         if (userData) {
-            // Generate OTP and store it in cookie
             const otp = generateOTP();
             console.log(otp)
             res.cookie('email', email); // Store email in cookie for verification
@@ -127,6 +221,7 @@ const insertUser = async (req, res) => {
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
+
 
 
 
