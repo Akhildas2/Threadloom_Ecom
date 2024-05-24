@@ -628,12 +628,12 @@
                                                         rewards every time they join. Your friend also gets ₹50!</p>
                                                     <div class="referral-code-container">
                                                         <div class="referral-code-box">
-                                                            <%= userData.referralCode %>
+                                                            <%= referral.referralCode %>
                                                         </div>
                                                     </div>
                                                     <div style="text-align: center; margin-top: 20px;">
                                                         <a class="share-button"
-                                                            href="https://wa.me/?text=Use%20my%20referral%20code%20<%= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20" "encodeURIComponent(http://localhost:3434/register/refer?code=<%= userData.referralCode %>)"
+                                                            href="https://wa.me/?text=Use%20my%20referral%20code%20<%= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20" "encodeURIComponent(http://localhost:3434/register/refer?code=<%= referral.referralCode %>)"
                                                             style="background-color: #25D366;">
                                                             <i class="fab fa-whatsapp"></i> Share on WhatsApp
                                                         </a>
@@ -657,23 +657,23 @@
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="list-group">
-                                                            <a href="https://wa.me/?text=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                            <a href="https://wa.me/?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
                                                                 class="list-group-item list-group-item-action">
                                                                 <i class="fab fa-whatsapp"></i> WhatsApp
                                                             </a>
-                                                            <a href="sms:?body=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                            <a href="sms:?body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
                                                                 class="list-group-item list-group-item-action">
                                                                 <i class="fas fa-sms"></i> SMS
                                                             </a>
-                                                            <a href="mailto:?subject=Join%20Threadloom&body=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                            <a href="mailto:?subject=Join%20Threadloom&body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
                                                                 class="list-group-item list-group-item-action">
                                                                 <i class="fas fa-envelope"></i> Email
                                                             </a>
-                                                            <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:3434/register/refer?code:<%#= userData.referralCode %>&quote=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!"
+                                                            <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:3434/register/refer?code:<%#= referral.referralCode %>&quote=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!"
                                                                 class="list-group-item list-group-item-action">
                                                                 <i class="fab fa-facebook"></i> Facebook
                                                             </a>
-                                                            <a href="https://twitter.com/intent/tweet?text=Use%20my%20referral%20code%20<%#= userData.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= userData.referralCode %>"
+                                                            <a href="https://twitter.com/intent/tweet?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
                                                                 class="list-group-item list-group-item-action">
                                                                 <i class="fab fa-twitter"></i> Twitter
                                                             </a>

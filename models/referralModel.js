@@ -6,13 +6,14 @@ const referralSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    referedBy: {
+    referredBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     },
     referralCode: {
         type: String,
         unique: true,
+        required: true
     },
     createdAt: {
         type: Date,

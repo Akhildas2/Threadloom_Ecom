@@ -1,56 +1,15 @@
 const CartItems = require('../models/cartModel');
 const Address = require('../models/addressModel');
 const Order = require('../models/orderModel');
-const paypal = require('paypal-rest-sdk');
 const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
-const axios = require('axios')
 const Coupon = require("../models/couponModel")
+const { fetchExchangeRate, generateRandomString } = require('../utils/orderHelper');
+const { createPayPalPayment } = require('../services/paymentService');
 
 
 
-
-// Create PayPal environment
-paypal.configure({
-    'mode': process.env.PAYPAL_MODE,
-    'client_id': process.env.PAYPAL_CLIENT_ID,
-    'client_secret': process.env.PAYPAL_CLIENT_SECRET
-});
-
-//Function to generate a random orderId
-function generateRandomString(length) {
-    const numberSet = '0123456789';
-
-    let result = 'threadLoom';
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * numberSet.length);
-        result += numberSet.charAt(randomIndex);
-    }
-    return result;
-}
-
-// Function to fetch exchange rate from INR to USD
-const fetchExchangeRate = async () => {
-    try {
-        const response = await axios.get('https://api.exchangerate-api.com/v4/latest/INR');
-        // console.log("response", response.data.rates.USD)
-        return response.data.rates.USD;
-    } catch (error) {
-        console.error('Error fetching exchange rate:', error);
-        throw new Error('Error fetching exchange rate');
-    }
-}
-
-
-// Function description for PayPal's limits
-function truncateDescription(description) {
-    const maxLength = 127; // Maximum length allowed by PayPal
-    if (description.length > maxLength) {
-        return description.substring(0, maxLength); // Truncate description
-    }
-    return description;
-}
 
 
 //for checkout process
@@ -92,7 +51,7 @@ const checkout = async (req, res) => {
                     continue;
                 }
                 let productTotal = 0;
-                originalTotalPrice += (product.price * product.quantity); 
+                originalTotalPrice += (product.price * product.quantity);
 
                 let productPricePerUnit = product.price;
 
@@ -118,8 +77,8 @@ const checkout = async (req, res) => {
             }
         }
 
-       let offerDiscount= originalTotalPrice-totalPrice
-       
+        let offerDiscount = originalTotalPrice - totalPrice
+
 
         // Iterate over each cart item
         for (const cartItem of cartItems) {
@@ -137,7 +96,7 @@ const checkout = async (req, res) => {
 
         const address = await Address.find({ userId: userId });
 
-        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId ,offerDiscount});
+        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount });
 
     } catch (error) {
         console.error(error.message);
@@ -152,25 +111,25 @@ const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod } = req.body;
-        
+
         if (paymentMethod === 'cod' && total >= 1000) {
             return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
         }
-        
+
         const address = await Address.findById(addressId);
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
         }
-        const couponDiscount=req.body.couponDiscount||0;
-        const offerDiscount=req.body.offerDiscount||0;
+        const couponDiscount = req.body.couponDiscount || 0;
+        const offerDiscount = req.body.offerDiscount || 0;
         const expectedDelivery = new Date();
         expectedDelivery.setDate(expectedDelivery.getDate() + 7);
         const randomOrderId = generateRandomString(5);
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
-    
-        
+
+
 
         for (const item of items) {
             for (const productDetail of item.products) {
@@ -205,123 +164,33 @@ const placeOrder = async (req, res) => {
             }));
         });
 
-
-
+        //create order
+        const order = new Order({
+            userId: userId,
+            ordersId: randomOrderId,
+            deliveryAddress: address.toObject(),
+            totalAmount: parseFloat(total),
+            expectedDelivery: expectedDelivery,
+            paymentMethod: paymentMethod,
+            total: total,
+            items: orderItems,
+            couponDiscount,
+            offerDiscount
+        });
+        const savedOrder = await order.save();
+        console.log("Order saved");
 
         // Check if the payment method is PayPal
         if (paymentMethod === 'paypal') {
 
-            // Calculate the total amount for each item's products
-            const itemTotalAmount = items.flatMap((item) => {
-                // Calculate the total amount for each item's products
-                const itemTotal = item.products.reduce((total, productDetail) => total + (productDetail.price * productDetail.quantity), 0);
-                return itemTotal;
-            });
-
-
-
             const exchangeRate = await fetchExchangeRate();
-            const itemTotal = itemTotalAmount * exchangeRate;
+            const approvalUrl = await createPayPalPayment(savedOrder._id, items, exchangeRate);
+            return res.status(200).json({ approvalUrl });
 
-            // Save order details
-            const order = new Order({
-                userId: userId,
-                ordersId: randomOrderId,
-                deliveryAddress: address.toObject(),
-                totalAmount: parseFloat(total),
-                expectedDelivery: expectedDelivery,
-                paymentMethod: paymentMethod,
-                total: total,
-                items: orderItems,
-                couponDiscount,
-                offerDiscount
-            });
+        }
 
-            // Save the order to the database
-            const savedOrder = await order.save();
-            console.log("savedOrder")
-            const orderId = savedOrder._id;
-
-
-            // Create PayPal payment request
-            const create_payment_json = {
-                "intent": "sale",
-                "payer": {
-                    "payment_method": "paypal"
-                },
-                "redirect_urls": {
-                    "return_url": process.env.BASE_URL + `/order/paymentSuccess/${orderId}`,
-                    "cancel_url": process.env.BASE_URL + `/order/paymentCancel/${orderId}`
-                },
-                "transactions": [{
-                    "item_list": {
-                        "items": items.flatMap(item => {
-                            // Map each product within an item
-                            return item.products.map(productDetail => ({
-                                "name": productDetail.productId.name,
-                                "description": truncateDescription(productDetail.productId.description),
-                                "quantity": productDetail.quantity,
-                                "price": (productDetail.price * exchangeRate).toFixed(2),
-                                "currency": "USD"
-                            }));
-                        }).flat()
-                    },
-                    "amount": {
-                        "currency": "USD",
-                        "total": itemTotal.toFixed(2)
-                    },
-                    "description": "Order summary of the product.",
-
-                }],
-                application_context: {
-                    shipping_preference: "NO_SHIPPING",
-                    brand_name: "threadloom"
-                }
-
-            };
-
-
-
-            // Create PayPal payment  
-            const createPayPalPayment = new Promise((resolve, reject) => {
-                paypal.payment.create(create_payment_json, function (error, payment) {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        // Assuming payerId is part of the payment response
-                        const payerId = payment.payer.payer_id;
-
-                        // Redirect user to paymentSuccess with payerId as a query parameter
-                        const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
-                        const paymentSuccessUrl = `${approvalUrl}?payerId=${payerId}`;
-
-                        resolve(paymentSuccessUrl);
-                    }
-                });
-            });
-
-            const paymentSuccessUrl = await createPayPalPayment;
-            return res.status(200).json({ approvalUrl: paymentSuccessUrl });
-
-        } 
-        
         if (paymentMethod === 'cod') {
 
-            const order = new Order({
-                userId: userId,
-                ordersId: randomOrderId,
-                deliveryAddress: address.toObject(),
-                totalAmount: parseFloat(total),
-                expectedDelivery: expectedDelivery,
-                paymentMethod: paymentMethod,
-                total: total,
-                items: orderItems,
-                couponDiscount,
-                offerDiscount
-            });
-            await order.save();
-
-            console.log("Order placed successfully.")
             // Clear cart
             await CartItems.deleteMany({ user: userId });
 
@@ -415,6 +284,35 @@ const paymentCancel = async (req, res) => {
 
 
 
+
+//for retry payment 
+const retryPayment = async (req, res) => {
+    try {
+        const { orderId } = req.params
+        console.log("enter ",orderId)
+       const order = await Order.findById(orderId);
+        console.log("order", order)
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found.' });
+        }
+         const orderItems = order.items.flatMap((item) => {
+            return item.products.map(productDetail => ({
+                productId: productDetail.productId._id,
+                quantity: productDetail.quantity,
+                price: productDetail.price,
+                total: productDetail.price * productDetail.quantity,
+            }));
+        });
+        const items=orderItem;
+        const exchangeRate = await fetchExchangeRate();
+        const approvalUrl = await createPayPalPayment(order._id,items, exchangeRate);
+        return res.status(200).json({ approvalUrl });
+
+    } catch (error) {
+        console.error('Error in payment retry:', error);
+        res.status(500).send('Server Error');
+    }
+}
 
 
 
@@ -599,7 +497,8 @@ module.exports = {
     cancelOrder,
     returnOrder,
     paymentSuccess,
-    paymentCancel
+    paymentCancel,
+    retryPayment
 }
 
 

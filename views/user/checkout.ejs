@@ -436,7 +436,7 @@
                                     }
                                     const formData = new FormData(this);
 
-                                    axios.post('/addAddress', Object.fromEntries(formData))
+                                    axios.post('/dashboard/addAddress', Object.fromEntries(formData))
                                         .then(response => {
                                             if (response.data.status) {
                                                 Swal.fire({
@@ -475,6 +475,7 @@
                             const addressRadios = document.querySelectorAll('input[name="shippingAddress"]');
                             const couponDiscount = `<%= appliedCouponId ? appliedCouponId.discountAmount : 0 %>`;
                             const offerDiscount = `<%= offerDiscount ? offerDiscount:0 %>`
+                            let selectedAddressId = null; 
 
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {

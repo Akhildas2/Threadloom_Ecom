@@ -15,13 +15,13 @@ const loadHome = async (req, res) => {
     try {
         //for getting the products
         const products = await Product.find({ isUnlisted: false }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-          //for getting the categories
+        //for getting the categories
         const categories = await Category.find({});
         const userId = req.session.user_id;
 
         let userWishlist = [];
         // If the user is logged in show the userWishlist
-        if (userId) { 
+        if (userId) {
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
         }
         res.render('home', { req, products, categories, userWishlist });
@@ -107,10 +107,11 @@ const generateUniqueReferralCode = async () => {
 //for checking  and creating referral
 const handleReferral = async (referralCode, newUserId) => {
     const newReferralCode = await generateUniqueReferralCode();
-    let  referral;
-
+    let referral;
+    console.log("referralCode", referralCode);
     if (referralCode) {
-       const referredByUser = await Referral.findOne({ referralCode }).populate('user');
+        const referredByUser = await Referral.findOne({ referralCode }).populate('user');
+        console.log("referredByUser", referredByUser)
         if (referredByUser && referredByUser.user._id.toString() !== newUserId.toString()) {
             referral = new Referral({
                 user: newUserId,
@@ -120,7 +121,6 @@ const handleReferral = async (referralCode, newUserId) => {
             await updateWalletBalance(newUserId, referredByUser.user._id);
         } else {
             throw new Error('Invalid or self-referral code.');
-
         }
     } else {
         referral = new Referral({
@@ -132,6 +132,7 @@ const handleReferral = async (referralCode, newUserId) => {
     await referral.save();
     return referral;
 };
+
 
 
 
@@ -179,15 +180,15 @@ const updateWalletBalance = async (newUserId, referredByUserId) => {
 // Function to insert user
 const insertUser = async (req, res) => {
     try {
-        const { name, email, mobile, password,referralCode } = req.body;
-     // Check if the user already exists
-     if (await User.findOne({ email })) {
-        return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
-    }
-    if (await User.findOne({ mobile })) {
-        return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
-    }
-       // Create a new user
+        const { name, email, mobile, password, referralCode } = req.body;
+        // Check if the user already exists
+        if (await User.findOne({ email })) {
+            return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
+        }
+        if (await User.findOne({ mobile })) {
+            return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
+        }
+        // Create a new user
         const spassword = await securePassword(password);
         const user = new User({
             name,
@@ -197,13 +198,11 @@ const insertUser = async (req, res) => {
         });
 
         const userData = await user.save();
-        console.log("userData",userData)
 
-     // Generate and save referral code
-     const referral = await handleReferral(referralCode, userData._id);
-     console.log("referral", referral);
+        // Generate and save referral code
+        await handleReferral(referralCode, userData._id);
 
-    // Generate OTP and store it in cookie
+        // Generate OTP and store it in cookie
         if (userData) {
             const otp = generateOTP();
             console.log(otp)

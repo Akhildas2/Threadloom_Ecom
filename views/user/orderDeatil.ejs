@@ -75,18 +75,18 @@
           <p><strong>Expected Delivery Date:</strong>
             <%= new Date(order.expectedDelivery).toDateString() %>
           </p>
-          <% if (order.paymentMethod === 'paypal' ) { %>
+          <% if (order.paymentMethod==='paypal' ) { %>
             <p><strong>Payment Method:</strong>
               <%= order.paymentMethod %>
             </p>
             <p><strong>Payment Status:</strong>
-              <% if (order.status === 'retry' ) { %>
+              <% if (order.status==='retry' ) { %>
                 <button id="retryButton" class=" btn-default btn-sm">Retry Payment</button>
 
                 <% } else { %>
                   <%= order.status %>
-                <% } %>
-                 
+                    <% } %>
+
             </p>
             <% } %>
 
@@ -196,6 +196,7 @@
         <%- include('../layouts/script.ejs') %>
           <!-- Add SweetAlert JS -->
           <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+          <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
           <script>
             document.querySelectorAll('.cancel-product, .return-product').forEach(button => {
@@ -271,5 +272,42 @@
                 });
               });
             });
-
-          </script>
+            document.getElementById('retryButton').addEventListener('click', function () {
+              var orderId = `<%= order._id %>`;
+              Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to retry the payment!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, retry!',
+                cancelButtonText: 'No, cancel!'
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  axios.put(`/order/retryPayment/${orderId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                      if (data.success) {
+                        Swal.fire(
+                          'Success!',
+                          'Payment retried successfully.',
+                          'success'
+                        );
+                        setTimeout(() => {
+                          window.location = URL
+                        }, 3000);
+                      } else {
+                        Swal.fire(
+                          'Error!',
+                          'Failed to retry payment.',
+                          'error'
+                        );
+                      }
+                    })
+                    .catch(error => console.error('Error retrying payment:', error));
+                }
+              });
+            });
+         
+         
+         
+         </script>

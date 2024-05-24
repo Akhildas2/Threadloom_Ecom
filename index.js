@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const session = require("express-session");
 const passport = require('passport'); 
-
+const { configurePayPal } = require('./config/paypalConfig');
 
 
 // Connect to MongoDB using Mongoose
@@ -22,6 +22,10 @@ app.use(session({
   saveUninitialized:true,
 
 }));
+
+// Configure PayPal
+configurePayPal();
+
 // Initialize passport and its session handling
 app.use(passport.initialize());
 app.use(passport.session());

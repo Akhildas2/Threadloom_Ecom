@@ -4,7 +4,7 @@ const User = require('../models/userModel')
 const Order = require("../models/orderModel")
 const bcrypt = require('bcrypt')
 const Wallet = require('../models/walletModel')
-
+const Referral = require("../models/referralModel")
 //for secure password
 const securePassword = async (password) => {
     try {
@@ -29,6 +29,7 @@ const loadDashboard = async (req, res) => {
             const userData = await User.findById(userId);
             const address = await Address.find({ userId });
             const ordersCount = await Order.countDocuments({ userId });
+            const referral= await Referral.findOne({user:userId})
             const orders = await Order.find({ userId })
                                        .populate('userId')
                                        .populate('items.productId')
@@ -43,7 +44,7 @@ const loadDashboard = async (req, res) => {
 
             if (!wallet) {
                 // wallet is not found
-                return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null , orderTotalPages, orderCurrentPage: orderPage,walletCurrentPage: 0,walletTotalPages:0 });
+                return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null , orderTotalPages, orderCurrentPage: orderPage,walletCurrentPage: 0,walletTotalPages:0,referral });
             }
 
             // Sorting new transactions
@@ -53,7 +54,7 @@ const loadDashboard = async (req, res) => {
             const transactions = wallet.transactions.slice((walletPage - 1) * pageSize, walletPage * pageSize);
             const balance= wallet.balance 
 
-            res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage , walletTotalPages, walletCurrentPage: walletPage ,balance});
+            res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage , walletTotalPages, walletCurrentPage: walletPage ,balance,referral});
     } catch (error) {
         console.log(error.message);
         return { success: false, message: 'Internal Server Error. Please try again later.' };
@@ -148,7 +149,6 @@ const changePassword = async (req, res) => {
 const addAddress = async (req, res) => {
     try {
         const { fullName, mobileNumber, pincode, houseNo, area, city, state } = req.body;
-
         const userId = req.session.user_id;
         const address = new Address({
             fullName,
