@@ -28,7 +28,7 @@
                     <div class="col-md-12">
                         <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0]  %>"
                             alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
-                            
+
                     </div>
                 </div>
                 <br>
@@ -44,24 +44,26 @@
                         <p><strong>Expected Delivery Date:</strong>
                             <%= new Date(order.expectedDelivery).toDateString() %>
                         </p>
-                        <% if (order.paymentMethod === 'paypal' ) { %>
+                        <% if (order.paymentMethod==='paypal' ) { %>
                             <p><strong>Payment Method:</strong>
-                              <%= order.paymentMethod %>
+                                <%= order.paymentMethod %>
                             </p>
                             <p><strong>Payment Status:</strong>
-                              <% if (order.status === 'retry' ) { %>
-                                <button id="retryButton" class=" btn-default btn-sm" >Retry Payment</button>
-                
-                                <% } else { %>
-                                  <%= order.status %>
-                                <% } %>
-                                 
+                                <% if (order.status==='retry' ) { %>
+                                    <button id="retryButton" class=" btn-default btn-sm">Retry Payment</button>
+
+                                    <% } else { %>
+                                        <%= order.status %>
+                                            <% } %>
+
                             </p>
                             <% } %>
-                        <p><strong>Order Status:</strong> <%= order.items[0].orderStatus %></p>
+                                <p><strong>Order Status:</strong>
+                                    <%= order.items[0].orderStatus %>
+                                </p>
 
-                        <p><strong>Total:</strong> ₹<%= order.totalAmount %>
-                        </p>
+                                <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+                                </p>
                     </div>
                     <br>
                     <div class="col-md-4">
@@ -78,7 +80,7 @@
                         </p>
 
                     </div>
-                  
+
                     <div class="col-md-4">
                         <br>
                         <h3>Billing Address</h3>
@@ -113,42 +115,54 @@
 
         <%- include('../layouts/footer.ejs') %>
             <%- include('../layouts/script.ejs') %>
-<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    document.getElementById('retryButton').addEventListener('click',function (){
-        var orderId = " <%= order._id %>";
-        Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to retry the payment!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Yes, retry!',
-                    cancelButtonText: 'No, cancel!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch('/retryPayment/' + orderId)
-                          .then(response => response.json())
-                          .then(data => {
-                                if (data.success) {
-                                    Swal.fire(
-                                        'Success!',
-                                        'Payment retried successfully.',
-                                        'success'
-                                    );
-                                    setTimeout(() => {
-                                        window.location= URL
-                                    }, 3000);
-                                } else {
-                                    Swal.fire(
-                                        'Error!',
-                                        'Failed to retry payment.',
-                                        'error'
-                                    );
-                                }
-                           })
-                          .catch(error => console.error('Error retrying payment:', error));
-                    }
-                });
-            });
-</script>
+                <script>
+                    document.getElementById('retryButton').addEventListener('click', function () {
+                        var ordersId = `<%= order.ordersId %>`;
+                        Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You are about to retry the payment.",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, retry!',
+                            cancelButtonText: 'No, cancel!'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                axios.put(`/order/retryPayment/${ordersId}`)
+                                    .then(response => {
+                                        if (response.data.approvalUrl) {
+                                            window.location.href = response.data.approvalUrl;
+                                        } else if (response.data.success) {
+                                            Swal.fire(
+                                                'Success!',
+                                                'Payment retried successfully.',
+                                                'success'
+                                            );
+                                            setTimeout(() => {
+                                                const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
+                                                window.location.href = orderConfirmationUrl;
+                                            }, 3000);
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'PayPal payment initiation failed. Please try again.',
+                                                confirmButtonText: 'Okay'
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error retrying payment:', error.response ? error.response.data : error.message);
+                                        Swal.fire(
+                                            'Error!',
+                                            'An error occurred while retrying the payment. Please try again.',
+                                            'error'
+                                        );
+                                    });
+                            }
+                        });
+                    });
+
+
+                </script>

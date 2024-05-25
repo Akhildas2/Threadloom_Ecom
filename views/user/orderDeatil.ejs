@@ -3,13 +3,11 @@
     <style>
       .containers {
         background-color: #f0f8ff;
-        /* Light Blue background color for the container */
         padding: 20px;
       }
 
       .order-Details {
         background-color: #d4edda;
-        /* Light Green background color for the order confirmation section */
         border-radius: 25px;
         padding: 20px;
         margin-bottom: 20px;
@@ -17,12 +15,36 @@
 
       .order-Details h2 {
         color: #013220;
-        /* Dark Green color for the headings */
+      }
+
+      .order-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .invoice {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .invoice:hover {
+        background-color: #0056b3;
       }
     </style>
     <div class="container">
       <br>
-      <h2>Order Details</h2>
+      <div class="order-details">
+        <h2>Order Details</h2>
+        <% if (selectedItem.orderStatus==='delivered' ) { %>
+          <button class="btn-sm invoice">Download Invoice</button>
+          <% } %>
+      </div>
+
       <hr>
       <div class="row order-Details">
         <div class="col-md-12 text-center">
@@ -34,9 +56,9 @@
               <img src="/uploads/product/resized/<%= selectedItem.productId.productImage[0] %>"
                 style="width: 200px;height: 200px;" alt="<%= selectedItem.productId.name %>">
               <p>
-                <%= selectedItem.productId.name %>
+                <%= selectedItem.productId.name %> (<%= selectedItem.price %> * <%= selectedItem.quantity %>)
               </p>
-              <p> ₹<%= selectedItem.price %>
+              <p> ₹<%= (selectedItem.price * selectedItem.quantity) %>
               </p>
               <p>
                 <%= selectedItem.orderStatus %>
@@ -90,7 +112,7 @@
             </p>
             <% } %>
 
-              <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+              <p><strong>Total:</strong> ₹<%= (selectedItem.price * selectedItem.quantity) %>
               </p>
         </div>
         <div class="col-md-6" style="margin-top: 30px;">
@@ -122,15 +144,15 @@
       <% if (OtherOrders.length> 0) { %>
         <div class="row">
           <div class="col-md-12">
-            <h3>Other Items</h3>
+            <h3>Other Orders:</h3>
             <br>
             <div class="table-responsive">
-              <table class="table">
+              <table class="table " style="text-align: center;">
                 <thead>
                   <tr>
-                    <th>Image</th>
+                    <th>Product Image</th>
                     <th>Name</th>
-                    <th>Price</th>
+                    <th>Total</th>
                     <th>Order status</th>
                   </tr>
                 </thead>
@@ -140,15 +162,15 @@
                       <td>
                         <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
                           <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                            style="width: 200px;height: 200px;" alt="<%= item.productId.name %>">
+                            style="width: 150px;height: 150px;" alt="<%= item.productId.name %>">
                         </a>
                       </td>
                       <td>
                         <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
-                          <%= item.productId.name %>
+                          <%= item.productId.name %> (<%= item.productId.price %>*<%= item.quantity %> )
                         </a>
                       </td>
-                      <td> ₹<%= item.price %>
+                      <td> ₹<%= item.productId.price * item.quantity %>
                       </td>
                       <td>
                         <%= item.orderStatus %>
@@ -156,6 +178,11 @@
                     </tr>
 
                     <% }); %>
+                      <tr>
+                        <td colspan="4" class="text-end">
+                          Total:₹<%= order.totalAmount %>
+                        </td>
+                      </tr>
                 </tbody>
               </table>
             </div>
@@ -189,6 +216,8 @@
         </div>
       </div>
     </div>
+    <br>
+    <br>
 
 
     <%- include('../layouts/footer.ejs') %>
@@ -272,42 +301,53 @@
                 });
               });
             });
+
             document.getElementById('retryButton').addEventListener('click', function () {
-              var orderId = `<%= order._id %>`;
+              var ordersId = `<%= order.ordersId %>`;
               Swal.fire({
                 title: 'Are you sure?',
-                text: "You won't be able to retry the payment!",
+                text: "You are about to retry the payment.",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'Yes, retry!',
                 cancelButtonText: 'No, cancel!'
               }).then((result) => {
                 if (result.isConfirmed) {
-                  axios.put(`/order/retryPayment/${orderId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                      if (data.success) {
+                  axios.put(`/order/retryPayment/${ordersId}`)
+                    .then(response => {
+                      if (response.data.approvalUrl) {
+                        window.location.href = response.data.approvalUrl;
+                      } else if (response.data.success) {
                         Swal.fire(
                           'Success!',
                           'Payment retried successfully.',
                           'success'
                         );
                         setTimeout(() => {
-                          window.location = URL
+                          const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
+                          window.location.href = orderConfirmationUrl;
                         }, 3000);
                       } else {
-                        Swal.fire(
-                          'Error!',
-                          'Failed to retry payment.',
-                          'error'
-                        );
+                        Swal.fire({
+                          icon: 'error',
+                          title: 'Oops...',
+                          text: 'PayPal payment initiation failed. Please try again.',
+                          confirmButtonText: 'Okay'
+                        });
                       }
                     })
-                    .catch(error => console.error('Error retrying payment:', error));
+                    .catch(error => {
+                      console.error('Error retrying payment:', error.response ? error.response.data : error.message);
+                      Swal.fire(
+                        'Error!',
+                        'An error occurred while retrying the payment. Please try again.',
+                        'error'
+                      );
+                    });
                 }
               });
             });
-         
-         
-         
-         </script>
+
+
+
+          </script>

@@ -308,7 +308,13 @@
                                         </tr>
                                         <tr>
                                             <th>Shipping</th>
-                                            <td><em>Free Shipping</em></td>
+                                            <td>
+                                                <% if (totalPrice.toFixed(2)<=500) { %>
+                                                    <em>₹ 40</em>
+                                                    <% } else { %>
+                                                        <em>Free Shipping</em>
+                                                        <% } %>
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Total</th>
@@ -475,7 +481,7 @@
                             const addressRadios = document.querySelectorAll('input[name="shippingAddress"]');
                             const couponDiscount = `<%= appliedCouponId ? appliedCouponId.discountAmount : 0 %>`;
                             const offerDiscount = `<%= offerDiscount ? offerDiscount:0 %>`
-                            let selectedAddressId = null; 
+                            let selectedAddressId = null;
 
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
@@ -552,7 +558,7 @@
                                         confirmButtonText: 'Okay'
                                     });
                                     return;
-                                    
+
                                 }
 
                                 axios.post('/order/placeOrder', {

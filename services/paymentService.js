@@ -3,12 +3,8 @@ const paypal = require('paypal-rest-sdk');
 const { truncateDescription } = require('../utils/orderHelper');
 
 const createPayPalPayment = async (orderId, items, exchangeRate) => {
-    // Calculate the total amount for all items
-    const itemTotal = items.reduce((total, item) => {
-        return total + item.products.reduce((subtotal, productDetail) => {
-            return subtotal + (productDetail.price * productDetail.quantity * exchangeRate);
-        }, 0);
-    }, 0).toFixed(2);
+    
+    console.log("orderId, items, exchangeRate",orderId, items, exchangeRate)
 
     // Prepare item list for PayPal
     const itemList = items.flatMap(item => {
@@ -20,6 +16,14 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             "currency": "USD"
         }));
     });
+    console.log("itemList",itemList)
+    // Calculate the total amount for all items
+    const itemTotal = items.reduce((total, item) => {
+        return total + item.products.reduce((subtotal, productDetail) => {
+            return subtotal + (productDetail.price * productDetail.quantity * exchangeRate);
+        }, 0);
+    }, 0).toFixed(2);
+    console.log("itemTotal",itemTotal)
 
     const create_payment_json = {
         "intent": "sale",

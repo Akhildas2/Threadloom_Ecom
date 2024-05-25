@@ -288,31 +288,38 @@ const paymentCancel = async (req, res) => {
 //for retry payment 
 const retryPayment = async (req, res) => {
     try {
-        const { orderId } = req.params
-        console.log("enter ",orderId)
-       const order = await Order.findById(orderId);
-        console.log("order", order)
+        const { ordersId } = req.params;
+        
+        const order = await Order.findOne({ ordersId: ordersId }).populate('items.productId');
         if (!order) {
             return res.status(404).json({ message: 'Order not found.' });
         }
-         const orderItems = order.items.flatMap((item) => {
-            return item.products.map(productDetail => ({
-                productId: productDetail.productId._id,
-                quantity: productDetail.quantity,
-                price: productDetail.price,
-                total: productDetail.price * productDetail.quantity,
-            }));
-        });
-        const items=orderItem;
+
+        console.log("Retrieved order:", order);
+        const orderItems = [{ products:order.items}]
+        const items = orderItems;
+        console.log("Items:", items);
+
         const exchangeRate = await fetchExchangeRate();
-        const approvalUrl = await createPayPalPayment(order._id,items, exchangeRate);
+
+        console.log("Exchange rate:", exchangeRate);
+
+        const approvalUrl = await createPayPalPayment(order._id, items, exchangeRate);
         return res.status(200).json({ approvalUrl });
 
     } catch (error) {
-        console.error('Error in payment retry:', error);
-        res.status(500).send('Server Error');
+        console.error('Error in retryPayment:', error.message || error);
+        if (error.response) {
+            return res.status(500).json({
+                message: 'Error in retrying payment',
+                error: error.response.data || error.message,
+            });
+        } else {
+            return res.status(500).json({ message: 'Server Error', error: error.message || error });
+        }
     }
-}
+};
+
 
 
 
