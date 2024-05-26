@@ -51,6 +51,11 @@ const loadLogin = async (req, res) => {
     }
 }
 
+
+
+
+
+
 // for loading admin home
 const loadAdminHome = async (req, res) => {
     try {
@@ -68,7 +73,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt: { $gte: today, $lt: tomorrow }
+                    updatedAt: { $gte: today, $lt: tomorrow }
                 }
             },
             {
@@ -88,7 +93,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt: { $gte: startOfWeek, $lt: tomorrow }
+                    updatedAt: { $gte: startOfWeek, $lt: tomorrow }
                 }
             },
             {
@@ -106,7 +111,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt: { $gte: startOfMonth, $lt: tomorrow }
+                    updatedAt: { $gte: startOfMonth, $lt: tomorrow }
                 }
             }, {
                 $group: {
@@ -122,7 +127,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $match: {
                     'items.orderStatus': 'delivered',
-                    createdAt: { $gte: startOfYear, $lt: tomorrow }
+                    updatedAt: { $gte: startOfYear, $lt: tomorrow }
                 }
             }, {
                 $group: {
@@ -137,8 +142,26 @@ const loadAdminHome = async (req, res) => {
         const totalProducts = await Product.find({}).countDocuments()
         const totalCategorys = await Category.find({}).countDocuments()
 
-
-
+        //sales data
+        const pastWeek = new Date();
+        pastWeek.setDate(pastWeek.getDate() - 6);
+        const salesData = await Order.aggregate([
+            {
+                $match:{
+                    'items.orderStatus':'delivered',
+                    updatedAt :{$gte:pastWeek }
+                }
+            },{
+                $group:{
+                    _id:{
+                        $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" }
+                    },
+                    total:{$sum:'$total'}
+                }
+            },{
+                $sort:{_id:1}
+            }
+        ]);
 
         res.render('adminhome', {
             revenue,
@@ -149,7 +172,8 @@ const loadAdminHome = async (req, res) => {
             dailyRevenue,
             weeklyRevenue,
             monthlyRevenue,
-            yearlyRevenue
+            yearlyRevenue,
+            salesDataJSON:salesData 
 
         })
 
@@ -160,6 +184,12 @@ const loadAdminHome = async (req, res) => {
 
     }
 }
+
+
+
+
+
+
 
 //for verify admin login
 const verifyLogin = async (req, res) => {

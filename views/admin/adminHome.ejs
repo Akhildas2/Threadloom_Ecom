@@ -23,7 +23,7 @@
                     <h2 class="content-title card-title">Dashboard </h2>
                     <p>Whole data about your business here</p>
                 </div>
-                
+
             </div>
             <div class="row">
                 <div class="col-lg-3 column-top-space">
@@ -137,28 +137,29 @@
                 </div>
 
 
-                <div class="col-12 column-top-space">
-                    <!-- <div class="card mb-4 column-top-space">
+                <!-- <div class="col-12 column-top-space">
+                    <div class="card mb-4 column-top-space">
                         <article class="card-body">
                             <h5 class="card-title">Sale statistics</h5>
                             <canvas id="myChart" height="120px"></canvas>
                         </article>
-                    </div> -->
+                    </div>
 
-                </div>
+                </div> -->
                 <div class="row">
                     <div class="col-12 mb-4 column-bottom-space">
                         <div class="card w-100 ">
                             <article class="card-body">
-                                <h5 class="card-title">Sale statistics</h5>
-                                <canvas id="myChart2" ></canvas>
+                                <h5 class="card-title">
+                                    Daily  Sale statistics</h5>
+                                <canvas id="myChart2"></canvas>
                             </article>
                         </div>
                     </div>
-                    <!-- <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space" >
+                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space" >
                         <div class="card w-100">
                             <article class="card-body">
-                                <h5 class="card-title">Marketing Channel</h5>
+                                <h5 class="card-title">Top Selling Brands</h5>
                                 <span class="text-muted font-xs">Facebook</span>
                                 <div class="progress mb-3">
                                     <div class="progress-bar" role="progressbar" style="width: 15%">15%</div>
@@ -181,10 +182,10 @@
                                 </div>
                             </article>
                         </div>
-                    </div> -->
+                    </div>
                 </div>
 
-              
+
 
 
 
@@ -201,6 +202,43 @@
                 </nav>
             </div> -->
         </section>
+        <!-- Add Chart.js script tag before your script -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <!-- Add jQuery script tag before your script -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+          
+          
+            <script>
+            const salesDataJSONWithQuotes = '<%- JSON.stringify(salesDataJSON) %>';
+            const salesDataJSON = salesDataJSONWithQuotes.replace(/^"(.*)"$/, '$1');
+            const salesData = JSON.parse(salesDataJSON);
+          
+            const labels = [];
+            const dates = [];
+            const salesArray = new Array(7).fill(0);
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          
+            const endDate = new Date();
+            endDate.setHours(0, 0, 0, 0);
+          
+            for (let i = 6; i >= 0; i--) {
+              const date = new Date();
+              date.setDate(endDate.getDate() - i);
+              const dayIndex = date.getDay();
+              const dayName = daysOfWeek[dayIndex];
+              const dateString = date.toISOString().split('T')[0];
+              labels.push(dayName);
+              dates.push(dateString);
+              for (const data of salesData) {
+                if (data._id === date.toISOString().split('T')[0]) {
+                  salesArray[6 - i] = data.total;
+                  break;
+                }
+              }
+            }
+          </script>
 
 
         <%- include('../adminLayouts/footer.ejs') %>
