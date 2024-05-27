@@ -147,21 +147,67 @@ const loadAdminHome = async (req, res) => {
         pastWeek.setDate(pastWeek.getDate() - 6);
         const salesData = await Order.aggregate([
             {
-                $match:{
-                    'items.orderStatus':'delivered',
-                    updatedAt :{$gte:pastWeek }
+                $match: {
+                    'items.orderStatus': 'delivered',
+                    updatedAt: { $gte: pastWeek }
                 }
-            },{
-                $group:{
-                    _id:{
+            }, {
+                $group: {
+                    _id: {
                         $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" }
                     },
-                    total:{$sum:'$total'}
+                    total: { $sum: '$total' }
                 }
-            },{
-                $sort:{_id:1}
+            }, {
+                $sort: { _id: 1 }
             }
         ]);
+
+
+
+        //top selling product
+        const topSellingProducts = await Order.aggregate([
+            { $unwind: "$items" },
+            { $match: { 'items.orderStatus': 'delivered' } },
+            { $group: { _id: "$items.productId", totalSold: { $sum: "$items.quantity" } } },
+            { $lookup: { from: "products", localField: "_id", foreignField: "_id", as: "productInfo" } },
+            { $unwind: "$productInfo" },
+            { $project: { name: "$productInfo.name", totalSold: 1 } },
+            { $sort: { totalSold: -1 } },
+            { $limit: 10 }
+        ]);
+
+        //top selling Category
+        const topSellingCategories = await Order.aggregate([
+            { $unwind: "$items" },
+            { $match: { 'items.orderStatus': 'delivered' } },
+            { $lookup: { from: "products", localField: "items.productId", foreignField: "_id", as: "product" } },
+            { $unwind: "$product" },
+            { $group: { _id: "$product.category", totalSold: { $sum: "$items.quantity" } } },
+            { $lookup: { from: "categories", localField: "_id", foreignField: "_id", as: "categoryInfo" } },
+            { $unwind: "$categoryInfo" },
+            { $project: { name: "$categoryInfo.categoryName", totalSold: 1 } },
+            { $sort: { totalSold: -1 } },
+            { $limit: 10 }
+        ])
+
+
+        //top 10 selling brands
+        const topSellingBrands = await Order.aggregate([
+            { $unwind: "$items" },
+            { $match: { 'items.orderStatus': 'delivered' } },
+            { $lookup: { from: "products", localField: "items.productId", foreignField: "_id", as: "product" } },
+            { $unwind: "$product" },
+            { $group: { _id: "$product.brand", totalSold: { $sum: "$items.quantity" } } },
+            { $sort: { totalSold: -1 } },
+            { $limit: 10 }
+        ]);
+        // Calculate totals for percentages
+        const totalSoldAllBrands = topSellingBrands.reduce((acc, brand) => acc + brand.totalSold, 0);
+        const totalSoldAllCategories = topSellingCategories.reduce((acc, category) => acc + category.totalSold, 0);
+        const totalSoldAllProducts = topSellingProducts.reduce((acc, product) => acc + product.totalSold, 0);
+
+
 
         res.render('adminhome', {
             revenue,
@@ -173,7 +219,13 @@ const loadAdminHome = async (req, res) => {
             weeklyRevenue,
             monthlyRevenue,
             yearlyRevenue,
-            salesDataJSON:salesData 
+            salesDataJSON: salesData,
+            topSellingProducts,
+            topSellingCategories,
+            topSellingBrands,
+            totalSoldAllBrands,
+            totalSoldAllCategories,
+            totalSoldAllProducts
 
         })
 

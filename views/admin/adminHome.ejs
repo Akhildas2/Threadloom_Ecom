@@ -151,36 +151,75 @@
                         <div class="card w-100 ">
                             <article class="card-body">
                                 <h5 class="card-title">
-                                    Daily  Sale statistics</h5>
+                                    Daily Sale statistics</h5>
                                 <canvas id="myChart2"></canvas>
                             </article>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space" >
+                    <!-- Top Selling Brands -->
+                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space">
                         <div class="card w-100">
                             <article class="card-body">
                                 <h5 class="card-title">Top Selling Brands</h5>
-                                <span class="text-muted font-xs">Facebook</span>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar" style="width: 15%">15%</div>
-                                </div>
-                                <span class="text-muted font-xs">Instagram</span>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar" style="width: 65%">65%</div>
-                                </div>
-                                <span class="text-muted font-xs">Google</span>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar" style="width: 51%">51%</div>
-                                </div>
-                                <span class="text-muted font-xs">Twitter</span>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar" style="width: 80%">80%</div>
-                                </div>
-                                <span class="text-muted font-xs">Other</span>
-                                <div class="progress mb-3">
-                                    <div class="progress-bar" role="progressbar" style="width: 80%">80%</div>
-                                </div>
+                                <% topSellingBrands.forEach(brand=> { %>
+                                    <span class="text-muted font-xs">
+                                        <%= brand._id %>,( count:<%= brand.totalSold %>)
+                                    </span>
+                                    <div class="progress mb-3">
+                                        <% let width=(brand.totalSold / totalSoldAllBrands * 100).toFixed(2); %>
+                                            <div class="progress-bar" role="progressbar" data-width="<%= width %>">
+                                                <%= width %>%
+                                            </div>
+                                    </div>
+                                    <% }) %>
+
                             </article>
+                            <p class="text-end">Total count:<%= totalSoldAllBrands  %></p> 
+
+                        </div>
+                    </div>
+
+                    <!-- Top Selling Categories -->
+                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space">
+                        <div class="card w-100">
+                            <article class="card-body">
+                                <h5 class="card-title">Top Selling Categories</h5>
+                                <% topSellingCategories.forEach(category=> { %>
+                                    <span class="text-muted font-xs">
+                                        <%= category.name %>,( count:<%= category.totalSold %>)
+                                    </span>
+                                    <div class="progress mb-3">
+                                        <% let width=(category.totalSold / totalSoldAllCategories * 100).toFixed(2); %>
+                                            <div class="progress-bar" role="progressbar" data-width="<%= width %>">
+                                                <%= width %>%
+                                            </div>
+                                    </div>
+                                    <% }) %>
+                            </article>
+                            <p class="text-end">Total count:<%= totalSoldAllCategories  %></p> 
+
+                        </div>
+                    </div>
+
+                    <!-- Top Selling Products -->
+                    <div class="col-lg-6 col-sm-12 mb-4 column-bottom-space">
+                        <div class="card w-100">
+                            <article class="card-body">
+                                <h5 class="card-title">Top Selling Products</h5>
+                                <% topSellingProducts.forEach(product=> { %>
+                                    <span class="text-muted font-xs">
+                                        <%= product.name %>, ( count:<%= product.totalSold %>)
+                                    </span>
+                                    <div class="progress mb-3">
+                                        <% let width=(product.totalSold / totalSoldAllProducts * 100).toFixed(2); %>
+                                            <div class="progress-bar" role="progressbar" data-width="<%= width %>">
+                                                <%= width %>%
+                                            </div>
+                                    </div>
+                                    <% }) %>
+                            </article>
+                            <p class="text-end">Total count:<%= totalSoldAllProducts  %></p> 
+
                         </div>
                     </div>
                 </div>
@@ -208,37 +247,45 @@
         <!-- Add jQuery script tag before your script -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-          
-          
-            <script>
+
+
+        <script>
             const salesDataJSONWithQuotes = '<%- JSON.stringify(salesDataJSON) %>';
             const salesDataJSON = salesDataJSONWithQuotes.replace(/^"(.*)"$/, '$1');
             const salesData = JSON.parse(salesDataJSON);
-          
+
             const labels = [];
             const dates = [];
             const salesArray = new Array(7).fill(0);
             const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-          
+
             const endDate = new Date();
             endDate.setHours(0, 0, 0, 0);
-          
+
             for (let i = 6; i >= 0; i--) {
-              const date = new Date();
-              date.setDate(endDate.getDate() - i);
-              const dayIndex = date.getDay();
-              const dayName = daysOfWeek[dayIndex];
-              const dateString = date.toISOString().split('T')[0];
-              labels.push(dayName);
-              dates.push(dateString);
-              for (const data of salesData) {
-                if (data._id === date.toISOString().split('T')[0]) {
-                  salesArray[6 - i] = data.total;
-                  break;
+                const date = new Date();
+                date.setDate(endDate.getDate() - i);
+                const dayIndex = date.getDay();
+                const dayName = daysOfWeek[dayIndex];
+                const dateString = date.toISOString().split('T')[0];
+                labels.push(dayName);
+                dates.push(dateString);
+                for (const data of salesData) {
+                    if (data._id === date.toISOString().split('T')[0]) {
+                        salesArray[6 - i] = data.total;
+                        break;
+                    }
                 }
-              }
             }
-          </script>
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const progressBars = document.querySelectorAll('.progress-bar');
+                progressBars.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width + '%';
+                });
+            });
+        </script>
 
 
         <%- include('../adminLayouts/footer.ejs') %>

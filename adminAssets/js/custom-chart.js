@@ -10,14 +10,14 @@
 
             // The data for our dataset
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                labels:labels,
                 datasets: [{
                     label: 'Sales',
                     tension: 0.3,
                     fill: true,
                     backgroundColor: 'rgba(44, 120, 220, 0.2)',
                     borderColor: 'rgba(44, 120, 220)',
-                    data: [18, 17, 4, 3, 2, 20, 25, 31, 25, 22, 20, 9]
+                    data: salesArray,
                 },
                 {
                     label: 'Visitors',

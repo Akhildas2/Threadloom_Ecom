@@ -70,10 +70,10 @@ const orderSchema = mongoose.Schema({
         enum: ['pending', 'paid', 'retry'],
         default: 'pending'
     },
-    total: {
+    shippingCharge: {
         type: Number,
-        required: true
-    }, 
+        default:0
+    },
     offerDiscount: {
         type: Number,
         default:0

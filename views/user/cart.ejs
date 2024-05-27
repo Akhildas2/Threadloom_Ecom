@@ -29,46 +29,9 @@
                                             href="/shop">shopping</a> .
                                     </div>
                                     <% } else { %>
+
                                         <div class="row">
-                                            <div class="col-lg-4 col-md-4 col-md-4">
-                                                <div class="border p-md-4 p-30 border-radius cart-totals">
-                                                    <div class="heading_s1 mb-3">
-                                                        <h4>Cart Totals</h4>
-                                                    </div>
-                                                    <div class="table-responsive">
-                                                        <table class="table">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td class="cart_total_label">Cart Subtotal</td>
-                                                                    <td class="cart_total_amount"><span
-                                                                            class="font-lg fw-900 text-brand"><span>₹<%=
-                                                                                    totalPrice.toFixed(2)%>
-                                                                            </span></span></td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td class="cart_total_label">Shipping</td>
-                                                                    <td class="cart_total_amount"> <i
-                                                                            class="ti-gift mr-5"></i>
-                                                                        Free
-                                                                        Shipping</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td class="cart_total_label">Total</td>
-                                                                    <td class="cart_total_amount"><strong><span
-                                                                                class="font-xl fw-900 text-brand"><span>₹
-                                                                                    <%= totalPrice.toFixed(2) %>
-                                                                                </span></span></strong>
-                                                                    </td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-
-                                                    </div>
-
-                                                </div>
-
-                                            </div>
-
+                                            
                                             <div class="col-lg-8 col-md-8 ">
                                                 <div class="table-responsive">
                                                     <table class="table shopping-summery text-center clean">
@@ -119,7 +82,8 @@
                                                                             </div>
                                                                         </td>
                                                                         <td class="text-right" data-title="Subtotal">
-                                                                            <span>₹<%= product.total.toFixed(2) %></span>
+                                                                            <span>₹<%= product.total.toFixed(2) %>
+                                                                            </span>
                                                                         </td>
                                                                         <td class="action" data-title="Remove">
                                                                             <a href="#"
@@ -132,7 +96,8 @@
                                                                         <% }); %>
 
                                                                             <tr>
-                                                                                <td colspan="4" class="text-end" id="totalPriceCell">
+                                                                                <td colspan="4" class="text-end"
+                                                                                    id="totalPriceCell">
                                                                                     <b> Total : ₹<%=
                                                                                             totalPrice.toFixed(2) %></b>
                                                                                 </td>
@@ -149,6 +114,53 @@
                                                     </table>
                                                 </div>
                                             </div>
+
+
+                                            <div class="col-lg-4 col-md-4 col-md-4">
+                                                <div class="border p-md-4 p-30 border-radius cart-totals">
+                                                    <div class="heading_s1 mb-3">
+                                                        <h4>Cart Totals</h4>
+                                                    </div>
+                                                    <div class="table-responsive">
+                                                        <table class="table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Cart Subtotal</td>
+                                                                    <td class="cart_total_amount"><span
+                                                                            class="font-lg fw-900 text-brand"><span>₹<%=
+                                                                                    totalPrice.toFixed(2)%>
+                                                                            </span></span></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Shipping</td>
+                                                                    <td class="cart_total_amount"> <i
+                                                                            class="ti-gift mr-5"></i>
+                                                                        <% if (totalPrice.toFixed(2)<500) { %>
+                                                                            <em>₹ 40</em>
+                                                                            <% } else { %>
+                                                                                <em>Free Shipping</em>
+                                                                                <% } %>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="cart_total_label">Total</td>
+                                                                    <td class="cart_total_amount"><strong><span
+                                                                                class="font-xl fw-900 text-brand">
+                                                                                <span>₹ <%= (totalPrice + (totalPrice <
+                                                                                        500 ? 40 : 0)).toFixed(2) %>
+                                                                                </span>
+                                                                            </span></strong>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+
                                         </div>
 
                                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i>
@@ -185,7 +197,6 @@
 
                 <script>
                     function removeFromCart(id) {
-                        console.log("Removing item with ID:", id);
                         Swal.fire({
                             title: 'Are you sure?',
                             text: "You won't be able to revert this!",
@@ -389,7 +400,11 @@
                                 totalPrice += subtotal;
                             }
                         });
-
+                        // Calculate the shipping charges
+                        let shippingCharges = 0;
+                        if (totalPrice < 500) {
+                            shippingCharges = 40;
+                        }
                         // Update the cart subtotal and total
                         const cartSubtotalElement = document.querySelector('.cart_total_amount span');
                         const cartTotalElement = document.querySelector('.cart_total_amount strong span');
@@ -397,6 +412,10 @@
                         if (cartSubtotalElement && cartTotalElement) {
                             cartSubtotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
                             cartTotalElement.textContent = `₹${totalPrice.toFixed(2)}`;
+                        }
+                        const shippingElement = document.querySelector('.cart_total_label + .cart_total_amount em');
+                        if (shippingElement) {
+                            shippingElement.textContent = shippingCharges ? `₹ ${shippingCharges}` : 'Free Shipping';
                         }
                         const totalPriceElement = document.getElementById('totalPriceCell');
                         if (totalPriceElement) {

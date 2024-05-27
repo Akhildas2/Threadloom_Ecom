@@ -157,7 +157,7 @@
                                                             <%= item.quantity %>
                                                         </td>
                                                         <td class="center">
-                                                            ₹<%= item.price %>
+                                                            ₹<%= item.price.toFixed(2)%>
                                                         </td>
                                                         <% if (isFirstProduct) { %>
                                                             <td class="center" rowspan="<%= order.items.length %>">
@@ -173,7 +173,7 @@
                                                                 <%= order.paymentMethod %>
                                                             </td>
                                                             <td class="center" rowspan="<%= order.items.length %>">
-                                                                ₹<%= order.total %>
+                                                                ₹<%= order.total.toFixed(2) %>
                                                             </td>
                                                             <% } %>
 

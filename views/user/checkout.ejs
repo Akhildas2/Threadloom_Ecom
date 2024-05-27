@@ -309,7 +309,7 @@
                                         <tr>
                                             <th>Shipping</th>
                                             <td>
-                                                <% if (totalPrice.toFixed(2)<=500) { %>
+                                                <% if (totalPrice.toFixed(2)<500) { %>
                                                     <em>₹ 40</em>
                                                     <% } else { %>
                                                         <em>Free Shipping</em>
@@ -319,12 +319,14 @@
                                         <tr>
                                             <th>Total</th>
                                             <td class="product-subtotal"><span class="font-xl text-brand fw-900">₹<%=
-                                                        totalPrice.toFixed(2) %>
+                                                        (totalPrice + (totalPrice <500 ? 40 : 0)).toFixed(2) %>
                                                 </span>
                                                 <input type="hidden" name="offerDiscount" value="<%= offerDiscount %>">
                                             </td>
                                         </tr>
                                     </table>
+                                <p style="color: green;">you have saved ₹<%= ( offerDiscount+couponDiscount ).toFixed(2) %></p>
+
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
 
@@ -482,7 +484,7 @@
                             const couponDiscount = `<%= appliedCouponId ? appliedCouponId.discountAmount : 0 %>`;
                             const offerDiscount = `<%= offerDiscount ? offerDiscount:0 %>`
                             let selectedAddressId = null;
-
+                            const shippingCharge = totalPrice < 500 ? 40 : 0;
                             document.querySelectorAll('input[name="paymentMethod"]').forEach(input => {
                                 input.addEventListener('change', function () {
                                     selectedPaymentMethod = this.value;
@@ -567,7 +569,8 @@
                                     addressId: selectedAddressId,
                                     paymentMethod: selectedPaymentMethod,
                                     couponDiscount: couponDiscount,
-                                    offerDiscount: offerDiscount
+                                    offerDiscount: offerDiscount,
+                                    shippingCharge: shippingCharge,
                                 })
                                     .then(response => {
                                         if (selectedPaymentMethod === 'paypal') {

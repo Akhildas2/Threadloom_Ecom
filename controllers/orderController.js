@@ -18,11 +18,12 @@ const checkout = async (req, res) => {
     try {
         const cartItems = await CartItems.find({ user: userId }).populate('products.productId').populate('coupondiscount');
         let appliedCouponId = null;
+        let totalCouponDiscount = 0; 
         for (const cartItem of cartItems) {
             if (cartItem.coupondiscount) {
                 const coupon = await Coupon.findById(cartItem.coupondiscount);
                 appliedCouponId = coupon;
-                break;
+                totalCouponDiscount += cartItem.coupondiscount.discountAmount;
             }
         }
 
@@ -79,7 +80,6 @@ const checkout = async (req, res) => {
 
         let offerDiscount = originalTotalPrice - totalPrice
 
-
         // Iterate over each cart item
         for (const cartItem of cartItems) {
 
@@ -92,11 +92,12 @@ const checkout = async (req, res) => {
 
             }
         }
+        let couponDiscount = totalCouponDiscount
 
 
         const address = await Address.find({ userId: userId });
 
-        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount });
+        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount ,couponDiscount});
 
     } catch (error) {
         console.error(error.message);
@@ -110,7 +111,7 @@ const checkout = async (req, res) => {
 const placeOrder = async (req, res) => {
     try {
         const userId = req.session.user_id;
-        const { items, total, addressId, paymentMethod } = req.body;
+        const { items, total, addressId, paymentMethod, couponDiscount, offerDiscount, shippingCharge } = req.body;
 
         if (paymentMethod === 'cod' && total >= 1000) {
             return res.status(400).json({ message: 'Cash on delivery is only available for purchases below 1000.' });
@@ -120,11 +121,14 @@ const placeOrder = async (req, res) => {
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
         }
-        const couponDiscount = req.body.couponDiscount || 0;
-        const offerDiscount = req.body.offerDiscount || 0;
+        const couponDiscountAmount = couponDiscount || 0;
+        const shippingChargeAmount = shippingCharge || 0;
+        const offerDiscountAmount = offerDiscount || 0;
         const expectedDelivery = new Date();
         expectedDelivery.setDate(expectedDelivery.getDate() + 7);
         const randomOrderId = generateRandomString(5);
+        const totalAmount = parseFloat(total) + shippingChargeAmount;
+
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
@@ -160,22 +164,21 @@ const placeOrder = async (req, res) => {
                 productId: productDetail.productId._id,
                 quantity: productDetail.quantity,
                 price: productDetail.price,
-                total: productDetail.price * productDetail.quantity,
+                total: productDetail.price * productDetail.quantity
             }));
         });
-
         //create order
         const order = new Order({
             userId: userId,
             ordersId: randomOrderId,
             deliveryAddress: address.toObject(),
-            totalAmount: parseFloat(total),
+            totalAmount: parseFloat(totalAmount),
             expectedDelivery: expectedDelivery,
             paymentMethod: paymentMethod,
-            total: total,
             items: orderItems,
-            couponDiscount,
-            offerDiscount
+            couponDiscount: couponDiscountAmount,
+            offerDiscount: offerDiscountAmount,
+            shippingCharge: shippingChargeAmount
         });
         const savedOrder = await order.save();
         console.log("Order saved");
@@ -289,14 +292,14 @@ const paymentCancel = async (req, res) => {
 const retryPayment = async (req, res) => {
     try {
         const { ordersId } = req.params;
-        
+
         const order = await Order.findOne({ ordersId: ordersId }).populate('items.productId');
         if (!order) {
             return res.status(404).json({ message: 'Order not found.' });
         }
 
         console.log("Retrieved order:", order);
-        const orderItems = [{ products:order.items}]
+        const orderItems = [{ products: order.items }]
         const items = orderItems;
         console.log("Items:", items);
 

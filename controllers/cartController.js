@@ -24,7 +24,6 @@ const loadCart = async (req, res) => {
 
         // Find  offer and category offer
         const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
-        // console.log("productWithOffer", productWithOffer);
 
         if (!productWithOffer) {
           console.error("Product not found in products:", product.productId._id);
@@ -101,8 +100,12 @@ const addToCart = async (req, res) => {
       })
       await cartItem.save();
     } else {
-      const existingProduct = cartItem.products.find(p => p.productId.equals(productId));
-      if (existingProduct) {
+      const existingProductIndex = cartItem.products.findIndex(p => p.productId.equals(productId));
+      if (existingProductIndex !== -1) {
+        const existingProduct = cartItem.products[existingProductIndex];
+        if (existingProduct.quantity + quantity > product.stockCount) {
+          return res.status(400).json({ message: 'Insufficient stock' });
+        }
         existingProduct.quantity += quantity;
         existingProduct.total += price * quantity;
         await cartItem.save();
@@ -156,7 +159,10 @@ const removeFromCart = async (req, res) => {
     if (!cartItem) {
       return res.status(404).send('Item not found in cart');
     }
-
+    const remainingItems = cartItem.products.length;
+    if(remainingItems === 0){
+      await CartItem.deleteMany({ user: userId });
+    }
     res.status(200).json({ status: true, message: 'Cart item removed successfully' });
   } catch (error) {
     res.status(500).json({ message: error.message });
