@@ -8,9 +8,20 @@ const passport = require('passport');
 const { configurePayPal } = require('./config/paypalConfig');
 
 
-// Connect to MongoDB using Mongoose
-mongoose.connect(process.env.MONGODB_URL);
+// Connect to MongoDB
+const connectDB = async () => {
+  try {
+      await mongoose.connect(process.env.MONGO_URI);
+      console.log('MongoDB connected...');
+  } catch (err) {
+      console.error('MongoDB connection error:', err);
+      process.exit(1);
+  }
+};
 
+connectDB();
+
+  
 //connection  of local host
 const port = parseInt(process.env.PORT) || 6969;
 
