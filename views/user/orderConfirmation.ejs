@@ -1,15 +1,19 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
         <style>
+            .container {
+                margin-top: 30px;
+            }
+
             .containers {
                 background-color: #f0f8ff;
-                /* Light Blue background color for the container */
                 padding: 20px;
+                border-radius: 25px;
+
             }
 
             .order-confirmation {
                 background-color: #d4edda;
-                /* Light Green background color for the order confirmation section */
                 border-radius: 10px;
                 padding: 20px;
                 margin-bottom: 20px;
@@ -17,7 +21,6 @@
 
             .order-confirmation h2 {
                 color: #14ee47;
-                /* Dark Green color for the headings */
             }
 
             .order-info,
@@ -26,7 +29,7 @@
                 background-color: #f9f9f9;
                 padding: 20px;
                 margin-bottom: 20px;
-                border-radius: 5px;
+                border-radius: 10px;
                 height: 100%;
             }
 
@@ -52,100 +55,156 @@
                 font-weight: bold;
             }
         </style>
-        <br>
         <div class="container">
             <div class="order-confirmation text-center">
                 <h2 class="my-4"><i class="fas fa-check-circle" style="color: green;"></i> Order Confirmation</h2>
                 <div class="row">
                     <div class="col-md-12">
-                        <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>" 
-                             alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
+                        <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
+                            alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
                     </div>
                 </div>
                 <br>
                 <div class="row">
-                    <% if (order.shippingCharge > 0 || order.offerDiscount > 0 || order.couponDiscount > 0) { %>
+                    <% if (order.shippingCharge> 0 || order.offerDiscount > 0 || order.couponDiscount > 0) { %>
                         <div class="col-md-4">
                             <div class="order-info">
                                 <h3>Order Information</h3>
                                 <hr>
-                                <p><strong>Order ID:</strong> <%= order.ordersId %></p>
-                                <p><strong>Date:</strong> <%= order.date.toDateString() %></p>
-                                <p><strong>Expected Delivery Date:</strong> <%= new Date(order.expectedDelivery).toDateString() %></p>
-                                <% if (order.paymentMethod === 'paypal') { %>
-                                    <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                                    <p><strong>Payment Status:</strong>
-                                        <% if (order.status === 'retry') { %>
-                                            <button id="retryButton" class="btn btn-default btn-sm">Retry Payment</button>
-                                        <% } else { %>
-                                            <%= order.status %>
-                                        <% } %>
-                                    </p>
-                                <% } %>
-                                <p><strong>Order Status:</strong> <%= order.items[0].orderStatus %></p>
-                                <p><strong>Total:</strong> ₹<%= order.totalAmount %></p>
+                                <p><strong>Order ID:</strong>
+                                    <%= order.ordersId %>
+                                </p>
+                                <p><strong>Date:</strong>
+                                    <%= order.date.toDateString() %>
+                                </p>
+                                <p><strong>Expected Delivery Date:</strong>
+                                    <%= new Date(order.expectedDelivery).toDateString() %>
+                                </p>
+                              
+                                        <p><strong>Order Status:</strong>
+                                            <%= order.items[0].orderStatus %>
+                                        </p>
+                                        <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+                                        </p>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="order-charges">
+                                <h3>Payment Deatils</h3>
+                                <hr>
+                                    <p><strong>Payment Method:</strong>
+                                        <%= order.paymentMethod %>
+                                    </p>
+                                    <p><strong>Payment Status:</strong>
+                                        <% if (order.status==='retry' ) { %>
+                                            <button id="retryButton" class="btn btn-default btn-sm">Retry
+                                                Payment</button>
+                                            <% } else { %>
+                                                <%= order.status %>
+                                                    <% } %>
+                                    </p>
                                 <h3> Charges & Discount</h3>
                                 <hr>
-                                <% if (order.shippingCharge > 0) { %>
-                                    <p><strong>Shipping Charges:</strong> <%= order.shippingCharge %></p>
-                                <% } %>
-                                <% if (order.offerDiscount > 0) { %>
-                                    <p><strong>Offer Discount:</strong> <%= order.offerDiscount %></p>
-                                <% } %>
-                                <% if (order.couponDiscount > 0) { %>
-                                    <p><strong>Coupon Discount:</strong> <%= order.couponDiscount %></p>
-                                <% } %>
+                                <% if (order.shippingCharge> 0) { %>
+                                    <p><strong>Shipping Charges:</strong>
+                                        <%= order.shippingCharge %>
+                                    </p>
+                                    <% } %>
+                                        <% if (order.offerDiscount> 0) { %>
+                                            <p><strong>Offer Discount:</strong>
+                                                <%= order.offerDiscount %>
+                                            </p>
+                                            <% } %>
+                                                <% if (order.couponDiscount> 0) { %>
+                                                    <p><strong>Coupon Discount:</strong>
+                                                        <%= order.couponDiscount %>
+                                                    </p>
+                                                    <% } %>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="billing-address">
                                 <h3>Billing Address</h3>
                                 <hr>
-                                <p><strong>Name:</strong> <%= order.deliveryAddress.fullName %></p>
-                                <p><strong>Email:</strong> <%= order.userId.email %></p>
-                                <p><strong>Phone Number:</strong> <%= order.deliveryAddress.mobileNumber %></p>
-                                <p><strong>Address:</strong> <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %></p>
-                                <p><strong>Pincode:</strong> <%= order.deliveryAddress.pincode %></p>
+                                <p><strong>Name:</strong>
+                                    <%= order.deliveryAddress.fullName %>
+                                </p>
+                                <p><strong>Email:</strong>
+                                    
+                                    <%= order.userId.email %>
+                                </p>
+                                <p><strong>Phone Number:</strong>
+                                    <%= order.deliveryAddress.mobileNumber %>
+                                </p>
+                                <p><strong>Address:</strong>
+                                    <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%=
+                                                order.deliveryAddress.city %>
+                                </p>
+                                <p><strong>State:</strong>
+                                    <%= order.deliveryAddress.state %>
+                                </p>
+                                <p><strong>Pincode:</strong>
+                                    <%= order.deliveryAddress.pincode %>
+                                </p>
                             </div>
                         </div>
-                    <% } else { %>
-                        <div class="col-md-6">
-                            <div class="order-info">
-                                <h3>Order Information</h3>
-                                <hr>
-                                <p><strong>Order ID:</strong> <%= order.ordersId %></p>
-                                <p><strong>Date:</strong> <%= order.date.toDateString() %></p>
-                                <p><strong>Expected Delivery Date:</strong> <%= new Date(order.expectedDelivery).toDateString() %></p>
-                                <% if (order.paymentMethod === 'paypal') { %>
-                                    <p><strong>Payment Method:</strong> <%= order.paymentMethod %></p>
-                                    <p><strong>Payment Status:</strong>
-                                        <% if (order.status === 'retry') { %>
-                                            <button id="retryButton" class="btn btn-default btn-sm">Retry Payment</button>
-                                        <% } else { %>
-                                            <%= order.status %>
-                                        <% } %>
+                        <% } else { %>
+                            <div class="col-md-6">
+                                <div class="order-info">
+                                    <h3>Order Information</h3>
+                                    <hr>
+                                    <p><strong>Order ID:</strong>
+                                        <%= order.ordersId %>
                                     </p>
-                                <% } %>
-                                <p><strong>Order Status:</strong> <%= order.items[0].orderStatus %></p>
-                                <p><strong>Total:</strong> ₹<%= order.totalAmount %></p>
+                                    <p><strong>Date:</strong>
+                                        <%= order.date.toDateString() %>
+                                    </p>
+                                    <p><strong>Expected Delivery Date:</strong>
+                                        <%= new Date(order.expectedDelivery).toDateString() %>
+                                    </p>
+                                    <% if (order.paymentMethod==='paypal' ) { %>
+                                        <p><strong>Payment Method:</strong>
+                                            <%= order.paymentMethod %>
+                                        </p>
+                                        <p><strong>Payment Status:</strong>
+                                            <% if (order.status==='retry' ) { %>
+                                                <button id="retryButton" class="btn btn-default btn-sm">Retry
+                                                    Payment</button>
+                                                <% } else { %>
+                                                    <%= order.status %>
+                                                        <% } %>
+                                        </p>
+                                        <% } %>
+                                            <p><strong>Order Status:</strong>
+                                                <%= order.items[0].orderStatus %>
+                                            </p>
+                                            <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+                                            </p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="billing-address">
-                                <h3>Billing Address</h3>
-                                <hr>
-                                <p><strong>Name:</strong> <%= order.deliveryAddress.fullName %></p>
-                                <p><strong>Email:</strong> <%= order.userId.email %></p>
-                                <p><strong>Phone Number:</strong> <%= order.deliveryAddress.mobileNumber %></p>
-                                <p><strong>Address:</strong> <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%= order.deliveryAddress.city %>, <%= order.deliveryAddress.state %></p>
-                                <p><strong>Pincode:</strong> <%= order.deliveryAddress.pincode %></p>
+                            <div class="col-md-6">
+                                <div class="billing-address">
+                                    <h3>Billing Address</h3>
+                                    <hr>
+                                    <p><strong>Name:</strong>
+                                        <%= order.deliveryAddress.fullName %>
+                                    </p>
+                                    <p><strong>Email:</strong>
+                                        <%= order.userId.email %>
+                                    </p>
+                                    <p><strong>Phone Number:</strong>
+                                        <%= order.deliveryAddress.mobileNumber %>
+                                    </p>
+                                    <p><strong>Address:</strong>
+                                        <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%=
+                                                    order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>
+                                    </p>
+                                    <p><strong>Pincode:</strong>
+                                        <%= order.deliveryAddress.pincode %>
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                    <% } %>
+                            <% } %>
                 </div>
                 <br>
                 <div class="row">
@@ -155,8 +214,8 @@
                 </div>
             </div>
         </div>
-        
-        
+
+
         <br>
         <br>
 
