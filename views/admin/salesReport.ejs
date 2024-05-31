@@ -173,7 +173,7 @@
                                                                 <%= order.paymentMethod %>
                                                             </td>
                                                             <td class="center" rowspan="<%= order.items.length %>">
-                                                                ₹<%= order.total %>
+                                                                ₹<%= order.totalAmount.toFixed(2) %>
                                                             </td>
                                                             <% } %>
 

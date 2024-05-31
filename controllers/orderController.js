@@ -7,8 +7,9 @@ const Wallet = require('../models/walletModel')
 const Coupon = require("../models/couponModel")
 const { fetchExchangeRate, generateRandomString } = require('../utils/orderHelper');
 const { createPayPalPayment } = require('../services/paymentService');
-
-
+const fs = require('fs');
+const path = require('path');
+const invoicePdfService = require('../services/invoicePdfService');
 
 
 
@@ -18,7 +19,7 @@ const checkout = async (req, res) => {
     try {
         const cartItems = await CartItems.find({ user: userId }).populate('products.productId').populate('coupondiscount');
         let appliedCouponId = null;
-        let totalCouponDiscount = 0; 
+        let totalCouponDiscount = 0;
         for (const cartItem of cartItems) {
             if (cartItem.coupondiscount) {
                 const coupon = await Coupon.findById(cartItem.coupondiscount);
@@ -97,7 +98,7 @@ const checkout = async (req, res) => {
 
         const address = await Address.find({ userId: userId });
 
-        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount ,couponDiscount});
+        res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount, couponDiscount });
 
     } catch (error) {
         console.error(error.message);
@@ -496,19 +497,51 @@ const returnOrder = async (req, res) => {
 };
 
 
+const downloadInvoice = async (req, res) => {
+    const orderId = req.params.orderId;
+    const userId = req.session.user_id;
 
+        try {
+            // Fetch order details from the database using the orderId
+            const order = await Order.findById(orderId).populate('userId').populate('items.productId');
+            if (!order) {
+                return res.status(404).json({ message: 'Order not found' });
+            }
+
+            // Generate the PDF using the PDF service
+            const invoicePath = await invoicePdfService.generateInvoicePDF(order);
+
+            // Send the PDF file to the client
+            res.download(invoicePath, `invoice-${order.ordersId}.pdf`, (err) => {
+                if (err) {
+                    console.error('Error sending the invoice:', err);
+                    return res.status(500).json({ message: 'Error sending the invoice' });
+                }
+                // Optionally delete the file after sending it
+                fs.unlink(invoicePath, (unlinkErr) => {
+                    if (unlinkErr) {
+                        console.error('Error deleting the invoice file:', unlinkErr);
+                    }
+                });
+            });
+
+        } catch (error) {
+            res.status(500).json({ success: false, message: 'Server error.' });
+        }
+    }
 
 
 module.exports = {
-    checkout,
-    placeOrder,
-    orderDetails,
-    orderConfirmation,
-    cancelOrder,
-    returnOrder,
-    paymentSuccess,
-    paymentCancel,
-    retryPayment
-}
+        checkout,
+        placeOrder,
+        orderDetails,
+        orderConfirmation,
+        cancelOrder,
+        returnOrder,
+        paymentSuccess,
+        paymentCancel,
+        retryPayment,
+        downloadInvoice
+    }
 
 

@@ -18,6 +18,7 @@ orderRoute.get('/orderConfirmation/:orderId', auth.isLogin, orderController.orde
 orderRoute.post('/cancel/:orderId/:itemId', auth.isLogin,orderController.cancelOrder);
 orderRoute.post('/return/:orderId/:itemId', auth.isLogin,orderController.returnOrder);
 orderRoute.put('/retryPayment/:ordersId', auth.isLogin,orderController.retryPayment);
+orderRoute.get('/invoice/:orderId',auth.isLogin,orderController.downloadInvoice)
 
 
 module.exports=orderRoute;
