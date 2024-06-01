@@ -1,13 +1,15 @@
 <style>
-/*======================
+    /*======================
     404 page
 =======================*/
 
 
     .page_404 {
-        padding: 40px 0;
+        padding: 20px 0;
         background: #fff;
         font-family: 'Arvo', serif;
+        text-align: center;
+        height: 100vh;
     }
 
     .page_404 img {
@@ -17,51 +19,43 @@
     .four_zero_four_bg {
 
         background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
-        height: 400px;
+        height: calc(100vh - 100px);
         background-position: center;
+        background-size: cover;
     }
 
 
     .four_zero_four_bg h1 {
-        font-size: 80px;
+        font-size: 12vw;
+        margin: 0;
+        color: #000;
     }
 
     .four_zero_four_bg h3 {
-        font-size: 80px;
+        font-size: 8vw; 
     }
 
     .link_404 {
         color: #fff !important;
-        padding: 10px 20px;
+        padding: 1.5vw 3vw;
         background: #39ac31;
-        margin: 20px 0;
+        margin: 4vw 0;
         display: inline-block;
     }
-
-    .contant_box_404 {
-        margin-top: -50px;
-    }
 </style>
-
 
 <section class="page_404">
     <div class="container">
         <div class="row">
-            <div class="col-sm-12 ">
-                <div class="col-sm-10 col-sm-offset-1  text-center">
+            <div class="col-sm-12">
+                <div class="col-sm-10 text-center">
                     <div class="four_zero_four_bg">
-                        <h1 class="text-center ">404</h1>
-
-
+                        <h1 class="text-center">404</h1>
                     </div>
 
                     <div class="contant_box_404">
-                        <h3 class="h2">
-                            Look like you're lost
-                        </h3>
-
-                        <p>the page you are looking for not avaible!</p>
-
+                        <h3 class="h2">Look like you're lost</h3>
+                        <p>The page you are looking for is not available!</p>
                         <a href="/" class="link_404">Go to Home</a>
                     </div>
                 </div>

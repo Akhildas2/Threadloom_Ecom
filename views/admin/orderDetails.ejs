@@ -201,7 +201,22 @@
                                                    
                                                     <td colspan="6" style="padding-top: 30px;">
                                                         <article class="float-end">
+                                                            <% if (order.shippingCharge > 0) { %>
+                                                                <dl class="dlist">
+                                                                <dt>Subtotal:</dt>
+                                                                <dd>₹<%= (order.totalAmount - order.shippingCharge ).toFixed(2) %>
+                                                                </dd>
+                                                            </dl>
                                                             <dl class="dlist">
+                                                                <dt>Shipping cost:</dt>
+                                                                <dd>₹<%= order.shippingCharge.toFixed(2) %></dd>
+                                                            </dl>
+                                                            <dl class="dlist">
+                                                                <dt>Grand total:</dt>
+                                                                <dd><b class="h5">₹<%= order.totalAmount.toFixed(2) %></b></dd>
+                                                            </dl>
+                                                            <% } else { %>
+                                                                <dl class="dlist">
                                                                 <dt>Subtotal:</dt>
                                                                 <dd>₹<%= order.totalAmount.toFixed(2) %>
                                                                 </dd>
@@ -214,6 +229,7 @@
                                                                 <dt>Grand total:</dt>
                                                                 <dd><b class="h5">₹<%= order.totalAmount.toFixed(2) %></b></dd>
                                                             </dl>
+                                                            <% } %>
                                                         </article>
                                                     </td>
                                                 </tr>

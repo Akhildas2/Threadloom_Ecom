@@ -32,7 +32,7 @@ const generateSalesReportExcel = (fullOrders, res) => {
                 price: `₹${item.price}`,
                 fullDiscount: itemIndex === 0 ? `₹${(order.offerDiscount + order.couponDiscount).toFixed(2)}` : '',
                 paymentMethod: itemIndex === 0 ? order.paymentMethod : '',
-                total: itemIndex === 0 ? `₹${order.total.toFixed(2)}` : '',
+                total: itemIndex === 0 ? `₹${order.totalAmount.toFixed(2)}` : '',
             });
         });
     });

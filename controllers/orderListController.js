@@ -183,7 +183,7 @@ const loadSalesReport = async (req, res) => {
 
         orders.forEach(order => {
             totalSalesCount += order.items.length;
-            totalSalesAmount += order.total;
+            totalSalesAmount += order.totalAmount;
             const offerDiscount = order.offerDiscount || 0;
             const couponDiscount = order.couponDiscount || 0;
             totalDiscountAmount += offerDiscount + couponDiscount;

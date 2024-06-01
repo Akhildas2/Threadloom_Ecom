@@ -46,8 +46,8 @@ app.use((req, res, next) => {
   next();
 });
 
-
-
+app.set('view engine', 'ejs');
+app.set('views', './views/user');
 
 
 app.use(express.json());
@@ -110,7 +110,9 @@ app.use('/dashboard',dashboardRoute)
 app.use('/admin/coupon',couponRoute)
 app.use('/admin/offer',offerRoute)
 
-
+app.get("*", function (req, res) {
+  res.status(404).render("404page")
+})
 
 app.listen(port, () => {
   console.log(`Sever Running on port number http://localhost:${port}`);

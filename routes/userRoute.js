@@ -11,8 +11,6 @@ userRoute.set('views', './views/user');
 
 
 userRoute.get('/',userController.loadHome);
-userRoute.get('/404Page',userController.errorPage);
-
 userRoute.get('/shop',userController.shop);
 userRoute.get('/register',  auth.isLogout,userController.loadRegister);
 userRoute.post('/register', userController.insertUser);
