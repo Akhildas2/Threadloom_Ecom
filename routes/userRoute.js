@@ -22,6 +22,7 @@ userRoute.post('/login',userController.verifyLogin)
 userRoute.post('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/productdetails/:productId', userController.productDetails);
+userRoute.get('/forgotPassword',userController.forgotPasswordLoad);
 
 // Route for initiating Google authentication
 userRoute.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

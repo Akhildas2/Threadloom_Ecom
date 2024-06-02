@@ -4372,9 +4372,19 @@ body.dark .bg-light {
 }
 
 body.dark .brand-wrap .logo {
-    -webkit-filter: brightness(2);
-    filter: brightness(2);
+    margin-left: 20px;
+    -webkit-filter: invert(1) brightness(2);
+    filter: invert(1) brightness(2);
+    transform: scale(1.2);
+    transition: filter 0.3s ease; /* Smooth transition */
 }
+
+body.dark .brand-wrap .logo:hover {
+    -webkit-filter: invert(0) brightness(1);
+    filter: invert(0) brightness(1);
+}
+
+
 
 body.dark .navbar-aside {
     background-color: #2f3446;

@@ -7,8 +7,7 @@ const Category = require("../models/categoryModel")
 const Wishlist = require("../models/wishListModel")
 const Referral = require("../models/referralModel")
 const Wallet = require("../models/walletModel")
-
-
+const randomstring = require('randomstring');
 
 //for loading the home page
 const loadHome = async (req, res) => {
@@ -440,7 +439,6 @@ const verifyLogin = async (req, res) => {
 const userLogout = async (req, res) => {
     try {
         delete req.session.user_id;
-
         res.redirect('/')
     } catch (error) {
         console.log(error.message);
@@ -606,15 +604,42 @@ const shop = async (req, res) => {
 };
 
 
-//for forgot password
-const forgotPassword = async (req,res)=>{
+//for forgot password page load
+const forgotPasswordLoad = async (req, res) => {
     try {
-        
+        res.render("forgotPassword ",{req})
+
     } catch (error) {
         console.log(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' }); 
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 }
+
+
+
+
+//for forgot password page load
+const forgotPassword = async (req, res) => {
+    try {
+        const {email} =req.body;
+        const user = await User.findOne({email});
+        if(!user){
+            return res.status(400).json({ success: false, message: 'User not found.' });
+
+        }
+        if(user.isVerified === 0){
+            return res.status(400).json({ success: false, message: 'Please verify your email.' });
+
+        }else{
+
+        }
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+}
+
+
 
 
 
@@ -633,7 +658,8 @@ module.exports = {
     userLogout,
     productDetails,
     findOrCreateGoogleUser,
-    shop
+    shop,
+    forgotPasswordLoad
 
 
 
