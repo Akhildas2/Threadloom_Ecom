@@ -20,9 +20,11 @@ userRoute.post('/resendOtp',userController.resendOtp)
 userRoute.get('/login', auth.isLogout,userController.loadLogin);
 userRoute.post('/login',userController.verifyLogin)
 userRoute.post('/logout', auth.isLogin, userController.userLogout);
-userRoute.get('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/productdetails/:productId', userController.productDetails);
-userRoute.get('/forgotPassword',userController.forgotPasswordLoad);
+userRoute.get('/forgotPassword', auth.isLogout,userController.forgotPasswordLoad);
+userRoute.post('/forgotPassword', auth.isLogout,userController.forgotPassword);
+userRoute.get('/resetPassword', auth.isLogout,userController.loadResetPassword);
+userRoute.post('/resetPassword', auth.isLogout,userController.verifyResetPassword);
 
 // Route for initiating Google authentication
 userRoute.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));

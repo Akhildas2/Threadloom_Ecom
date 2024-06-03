@@ -7,7 +7,12 @@ const Category = require("../models/categoryModel")
 const Wishlist = require("../models/wishListModel")
 const Referral = require("../models/referralModel")
 const Wallet = require("../models/walletModel")
-const randomstring = require('randomstring');
+const crypto = require('crypto');
+const sendResetPasswordEmail = require("../services/forgotEmailService")
+const mongoose = require('mongoose');
+
+
+
 
 //for loading the home page
 const loadHome = async (req, res) => {
@@ -404,6 +409,7 @@ const verifyLogin = async (req, res) => {
                     if (userData.isBlocked === false) {
                         // Set user_id in session and redirect
                         req.session.user_id = userData._id;
+
                         return res.status(200).json({
                             status: true,
                             url: '/'
@@ -437,14 +443,17 @@ const verifyLogin = async (req, res) => {
 
 //for user logout
 const userLogout = async (req, res) => {
+    console.log('Logout initiated'); // Log to see if this function is called
     try {
-        delete req.session.user_id;
-        res.redirect('/')
+            delete req.session.user_id;
+            console.log('Session destroyed successfully'); // Log success
+            res.redirect('/');
+      
     } catch (error) {
-        console.log(error.message);
+        console.error('Error during logout:', error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
-}
+};
 
 
 
@@ -476,31 +485,29 @@ const productDetails = async (req, res) => {
 
 
 //for add google user
-
 const findOrCreateGoogleUser = async (id, displayName, email, req) => {
     try {
         let user = await User.findOne({ email });
         if (user) {
             return { success: false, message: 'Email Already Exists.' };
         } else {
-            const spassword = await securePassword(id);
 
             const newUser = new User({
                 name: displayName,
                 email,
                 mobile: 0,
-                password: spassword,
+                password:await securePassword(id),
                 google: true,
                 isVerified: true
             });
 
-            const userData = await newUser.save();
-            console.log("New user created:", userData);
-            if (userData) {
-                req.session.user_id = userData._id;
-                console.log("User ID stored in session:", userData._id);
+            const savedUser  = await newUser.save();
+            console.log("New user created:", savedUser );
+            if (savedUser ) {
+                req.session.user_id = savedUser._id;
+                console.log("User ID stored in session:", savedUser ._id);
             }
-            return userData;
+            return savedUser ;
         }
     } catch (error) {
         console.log(error.message);
@@ -607,39 +614,97 @@ const shop = async (req, res) => {
 //for forgot password page load
 const forgotPasswordLoad = async (req, res) => {
     try {
-        res.render("forgotPassword ",{req})
-
+        res.render("forgotPassword", { req });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
-}
-
+};
 
 
 
 //for forgot password page load
 const forgotPassword = async (req, res) => {
     try {
-        const {email} =req.body;
-        const user = await User.findOne({email});
-        if(!user){
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
             return res.status(400).json({ success: false, message: 'User not found.' });
-
         }
-        if(user.isVerified === 0){
+
+        if (user.isVerified === 0) {
             return res.status(400).json({ success: false, message: 'Please verify your email.' });
+        }
 
-        }else{
+        const token = crypto.randomBytes(20).toString('hex');
 
+        const userData = await User.updateOne(
+            { email: email },
+            { $set: { token: token } }
+        );
+
+        console.log("user", userData);
+
+        sendResetPasswordEmail(
+            user.name,
+            user.email,
+            token
+        );
+
+        console.log(`Reset token for ${email}: ${token}`);
+
+        return res.status(200).json({ success: true, message: 'Please check your mail to reset your password.' });
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+};
+
+
+
+//for load reset password page
+const loadResetPassword = async (req, res) => {
+    try {
+        const token = req.query.token;
+        const tokenData = await User.findOne({ token: token });
+        if (tokenData) {
+            res.render("resetpassword", { req, tokenData });
+        } else {
+            res.redirect("/404page");
         }
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
-}
+};
 
 
+
+//for verify reset password
+const verifyResetPassword = async (req, res) => {
+    try {
+        const { password, user_id } = req.body;
+        if (password && user_id) {
+        const spassword = await securePassword(password);
+            await User.findByIdAndUpdate(
+                { _id: user_id },
+                {
+                    $set: {
+                        password: spassword,
+                        token: ''
+                    }
+                }
+            );
+        return res.status(200).json({ url: "/login", success: true, message: 'Your password has been reset successfully.' });
+
+        }
+
+    } catch (error) {
+        console.log(error.message);
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+};
 
 
 
@@ -659,7 +724,10 @@ module.exports = {
     productDetails,
     findOrCreateGoogleUser,
     shop,
-    forgotPasswordLoad
+    forgotPasswordLoad,
+    forgotPassword,
+    loadResetPassword,
+    verifyResetPassword
 
 
 

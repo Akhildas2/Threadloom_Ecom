@@ -1,4 +1,3 @@
-
 const passport = require('passport'); 
 require("dotenv").config();
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
@@ -18,13 +17,13 @@ async (req, accessToken, refreshToken, profile, done) => {
 		// Find or create Google user
 		const user = await userController.findOrCreateGoogleUser(id, displayName, email, req);
 
-		done(null, user);
+		return done(null, user);
 	} catch (err) {
 		done(err, null);
 	}
 }));
 
-passport.serializeUser((user, done) => { 
+passport.serializeUser((user, done) => {
 	done(null, user._id); 
 	
 });
