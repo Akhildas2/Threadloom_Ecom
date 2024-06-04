@@ -91,9 +91,9 @@
               <img src="/uploads/product/resized/<%= selectedItem.productId.productImage[0] %>"
                 style="width: 200px;height: 200px;" alt="<%= selectedItem.productId.name %>">
               <p>
-                <%= selectedItem.productId.name %> (<%= selectedItem.price %> * <%= selectedItem.quantity %>)
+                <%= selectedItem.productId.name %> (<%= selectedItem.price.toFixed(2) %> * <%= selectedItem.quantity %>)
               </p>
-              <p> ₹<%= (selectedItem.price * selectedItem.quantity) %>
+              <p> ₹<%= (selectedItem.price.toFixed(2)* selectedItem.quantity) %>
               </p>
               <p>
                 <%= selectedItem.orderStatus %>
@@ -139,7 +139,7 @@
               <p><strong>Order Status:</strong>
                 <%= order.items[0].orderStatus %>
               </p>
-              <p><strong>Total:</strong> ₹<%= (selectedItem.price * selectedItem.quantity) %>
+              <p><strong>Total:</strong> ₹<%= (selectedItem.price.toFixed(2) * selectedItem.quantity) %>
             </div>
           </div>
           <div class="col-md-4">
@@ -227,7 +227,7 @@
                 <p><strong>Order Status:</strong>
                   <%= order.items[0].orderStatus %>
                 </p>
-                <p><strong>Total:</strong> ₹<%= (selectedItem.price * selectedItem.quantity) %>
+                <p><strong>Total:</strong> ₹<%= (selectedItem.price.toFixed(2)* selectedItem.quantity) %>
               </div>
             </div>
             <div class="col-md-6">
@@ -280,10 +280,10 @@
                       </td>
                       <td>
                         <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
-                          <%= item.productId.name %> (<%= item.productId.price %>*<%= item.quantity %> )
+                          <%= item.productId.name %> (<%= item.price.toFixed(2) %>*<%= item.quantity %> )
                         </a>
                       </td>
-                      <td> ₹<%= item.productId.price * item.quantity %>
+                      <td> ₹<%= item.price.toFixed(2) * item.quantity %>
                       </td>
                       <td>
                         <%= item.orderStatus %>
@@ -293,7 +293,7 @@
                     <% }); %>
                       <tr>
                         <td colspan="4" class="text-end">
-                          Total:₹<%= order.totalAmount %>
+                          Total:₹<%= order.totalAmount.toFixed(2) %>
                         </td>
                       </tr>
                 </tbody>

@@ -286,11 +286,11 @@
                                                             <h5 class="product-name"> <a
                                                                     href="/productdetails/<%= product.productId._id %>">
                                                                     <%= product.name %>
-                                                            </h5> (<%= product.price %>) <span class="product-qty"> *
+                                                            </h5> (<%= product.price.toFixed(2) %>) <span class="product-qty"> *
                                                                     <%= product.quantity %> </a>
                                                                 </span>
                                                         </td>
-                                                        <td>₹<%= product.total %>
+                                                        <td>₹<%= product.total.toFixed(2)%>
                                                         </td>
 
                                                     </tr>

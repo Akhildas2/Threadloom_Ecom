@@ -44,7 +44,7 @@ const loadAddProduct = async (req, res) => {
 //for adding the product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price,brand, gender, category, stockCount, size } = req.body;
+        const { name, description, price, brand, gender, category, stockCount, size } = req.body;
         const unique = await Product.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
 
         if (unique) {
@@ -66,7 +66,8 @@ const addProduct = async (req, res) => {
 
         // Loop through uploaded files to resize and save images
         for (const file of req.files) {
-            const resizedImagePath = `uploads/product/resized/resized_${file.filename}`;
+            const uniqueFilename = `${Date.now()}_${file.filename}`;
+            const resizedImagePath = `uploads/product/resized/resized_${uniqueFilename}`;
             await sharp(file.path)
                 .resize({ width: 1000, height: 1000, fit: 'fill' })
                 .toFile(resizedImagePath);
@@ -77,11 +78,6 @@ const addProduct = async (req, res) => {
             productImages.push(resizedImageFilename);
         }
 
-        // Check for duplicate filenames in productImages
-        const uniqueProductImages = new Set(productImages);
-        if (uniqueProductImages.size !== productImages.length) {
-            return res.status(400).json({ success: false, message: 'Duplicate photos detected. Please ensure all photos are unique.' });
-        }
 
         // Create a new product instance
         const newProduct = new Product({
@@ -98,7 +94,6 @@ const addProduct = async (req, res) => {
 
         // Save the new product to the database
         await newProduct.save();
-        console.log("Product added successfully");
 
         return res.status(200).json({
             status: true,
@@ -179,7 +174,7 @@ const loadEditProduct = async (req, res) => {
 //for editing product
 const editProduct = async (req, res) => {
     const productId = req.params.productId;
-    const { name, description,brand, price, gender, category, stockCount, size } = req.body;
+    const { name, description, brand, price, gender, category, stockCount, size } = req.body;
 
     const updateFields = {};
     try {
@@ -204,7 +199,7 @@ const editProduct = async (req, res) => {
 
         if (name) updateFields.name = name;
         if (description) updateFields.description = description;
-        if(brand) updateFields.brand=brand;
+        if (brand) updateFields.brand = brand;
         if (price) updateFields.price = price;
         if (gender) updateFields.gender = gender;
         if (category) updateFields.category = category;
@@ -216,7 +211,8 @@ const editProduct = async (req, res) => {
             const productImages = [];
 
             for (const file of req.files) {
-                const resizedImagePath = `uploads/product/resized/resized_${file.filename}`;
+                const uniqueFilename = `${Date.now()}_${file.filename}`;
+                const resizedImagePath = `uploads/product/resized/resized_${uniqueFilename}`;
                 await sharp(file.path)
                     .resize({ width: 1000, height: 1000, fit: 'fill' })
                     .toFile(resizedImagePath);
@@ -242,7 +238,6 @@ const editProduct = async (req, res) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        console.log("Product edited successfully");
         return res.status(200).json({
             status: true,
             url: '/admin/product/listproduct'
@@ -279,17 +274,14 @@ const deletePhoto = async (req, res) => {
             // Delete the photo from the server storage
             fs.unlink(`uploads/product/resized/${photoName}`, (err) => {
                 if (err) {
-                    console.error('Error deleting photo:', err);
                     return res.status(500).json({ success: false, message: 'Failed to delete photo' });
                 }
-                console.log("Photo deleted successfully");
                 res.json({ success: true, message: 'Photo deleted successfully' });
             });
         } else {
             return res.status(404).json({ success: false, message: 'Photo not found in product' });
         }
     } catch (error) {
-        console.error('Error deleting photo:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
@@ -310,14 +302,12 @@ const unlistProduct = async (req, res) => {
             return res.status(404).render('error', { message: 'Product not found' });
         }
 
-        console.log("Unlisted successful");
         res.status(200).json({
             status: true,
             url: '/admin/product/listProduct'
         });
 
     } catch (error) {
-        console.log(error.message);
         res.status(500).json('Internal Server Error');
     }
 };
@@ -333,11 +323,10 @@ const listProduct = async (req, res) => {
         const productId = req.params.productId;
         const product = await Product.findByIdAndUpdate(productId, { isUnlisted: false }, { new: true });
 
-        if (!productId) {
+        if (!product) {
             return res.status(404).render('error', { message: 'Product not found' });
         }
 
-        console.log("Listed successful");
         res.status(200).json({
             status: true,
             url: '/admin/product/listProduct'
@@ -345,7 +334,6 @@ const listProduct = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error.message);
         res.status(500).send('Internal Server Error');
     }
 };
@@ -358,8 +346,9 @@ const listProduct = async (req, res) => {
 const addOffer = async (req, res) => {
     try {
         const productId = req.params.productId;
-        const offerId = req.body.offerId; 
+        const offerId = req.body.offerId;
     
+
         // Find the product by productId
         const product = await Product.findById(productId);
 
@@ -367,7 +356,7 @@ const addOffer = async (req, res) => {
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
-        
+
         product.offer = offerId;
 
         // Save the updated product
@@ -379,7 +368,6 @@ const addOffer = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error adding offer:', error);
         return res.status(500).json({ success: false, message: 'Internal server error' });
     }
 }
@@ -391,25 +379,24 @@ const addOffer = async (req, res) => {
 
 
 //for offer remove
-const removeOffer = async(req,res)=>{
+const removeOffer = async (req, res) => {
     try {
-        const productId=req.params.productId;
+        const productId = req.params.productId;
 
-        const product= await Product.findById(productId)
+        const product = await Product.findById(productId)
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
 
-        product.offer=undefined;
+        product.offer = undefined;
         await product.save();
         return res.status(200).json({
             status: true,
             url: '/admin/product/listproduct'
         });
     } catch (error) {
-        console.error('Error deleting photo:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
-   
+
     }
 }
 

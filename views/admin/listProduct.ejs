@@ -95,7 +95,7 @@
                             <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
                                 <strong>Stock Count</strong>
                             </div>
-                            
+
                             <div class="col-lg-2 col-md-3 col-sm-6 col-4 col-offer text-center">
                                 <strong>Offer</strong>
                             </div>
@@ -106,7 +106,7 @@
                         <% for (let i=0; i < products.length; i++) { %>
                             <article class="itemlist">
                                 <div class="row align-items-center">
-                                    
+
                                     <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
                                         <%= i + 1 %>
                                     </div>
@@ -159,13 +159,11 @@
                                             <%= products[i].stockCount %>
                                         </span>
                                     </div>
-                                    
+
                                     <div class="col-lg-2 col-md-3 col-sm-4 col-4 col-offer text-center">
                                         <% if (!products[i].isUnlisted ) { %>
                                             <% if (!products[i].offer ) { %>
-                                                <button class="btn btn-success btn-sm rounded add-product"
-                                                    data-toggle="modal" data-target="#addOfferModal"
-                                                    data-product-id="<%= products[i]._id %>">Add offer</button>
+                                                <button class="btn btn-success btn-sm rounded btn-add-offer" data-toggle="modal" data-target="#addOfferModal" data-product-id="<%= products[i]._id %>">Add offer</button>
 
                                                 <% } else { %>
                                                     <button class="btn btn-danger btn-sm remove-offer"
@@ -193,7 +191,7 @@
                             </article>
                             <% } %>
                                 <% } %>
-                                    <!-- listOfferModal.ejs -->
+                                    <!-- listOfferModal -->
                                     <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
@@ -238,7 +236,8 @@
                                                                                                     %> <br>
                                                                                                     Ending Date: <%=
                                                                                                         offer.endingDate.toLocaleDateString()
-                                                                                                        %> <br>
+                                                                                                        %>
+                                                                                                        <br>
                                                                                                         Discount: <%=
                                                                                                             offer.discount
                                                                                                             %>%
@@ -249,15 +248,14 @@
                                                             <% }) %>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                            <div id="offerError" class="text-danger"
-                                                style="display: none; text-align: center;"></div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-primary" id="addOfferBtn">Add
-                                                    Offer</button>
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Cancel</button>
+                                                <div id="offerError" class="text-danger"
+                                                    style="display: none; text-align: center;"></div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-primary" id="addOfferBtn">Add
+                                                        Offer</button>
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancel</button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -267,7 +265,6 @@
 
 
 
-            </div>
 
 
 
@@ -440,11 +437,12 @@
 
                 $(document).ready(function () {
                     // Add click event listener for "Add offer" button
-                    $('.add-product').click(function () {
+                    $('.btn-add-offer').click(function () {
                         const productId = $(this).data('product-id');
-                        $('#addOfferModal').data('product-id', productId); // Store the product ID in the modal data
+                        $('#addOfferModal').data('product-id', productId);  // Store the category ID in the modal data
                         $('#addOfferModal').modal('show'); // Show the modal
                     });
+
                     $('.close').click(function () {
                         $('#addOfferModal').modal('hide');
 
@@ -453,6 +451,9 @@
                             $('.modal-backdrop').remove();
                         });
                     });
+
+
+
                     // Handle "Add Offer" button click inside the modal
                     $('#addOfferBtn').click(function () {
                         const productId = $('#addOfferModal').data('product-id');
@@ -465,9 +466,8 @@
                             isValid = false;
                             errorMessage = 'Please select an offer.';
                             $('#offerError').text(errorMessage).show();
-                        } else {
-                            $('#offerError').hide();
                         }
+                        $('#offerError').text(errorMessage).toggle(!isValid);
                         if (isValid) {
                             axios.put(`/admin/product/${productId}/addOffer`, { offerId: selectedOfferId })
                                 .then(response => {
@@ -492,6 +492,9 @@
                         }
                     });
                 });
+
+
+
                 document.addEventListener('DOMContentLoaded', function () {
                     const removeOfferButtons = document.querySelectorAll('.remove-offer');
 

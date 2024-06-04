@@ -27,7 +27,7 @@
                             <li>
                                 <a class="language-dropdown-active" href="#"><i class="fi-rs-world"></i> English</a>
                             </li>
-                            <% if (!req.session.user_id && !req.user) { %>
+                            <% if (!req.session.user_id ) { %>
                                 <li>
                                     <i class="fi-rs-user"></i>
                                     <a href="/login">Log In</a>
@@ -562,7 +562,7 @@
                 </div>
                 <div class="single-mobile-header-info">
 
-                    <% if (!req.session.user_id && !req.user) { %>
+                    <% if (!req.session.user_id) { %>
                         <a href="/login">Log In</a>
                 </div>
                 <div class="single-mobile-header-info">

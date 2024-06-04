@@ -18,7 +18,7 @@ categoryRoute.get('/listcategories', auth.isLogin, categoryController.loadListCa
 categoryRoute.put('/listCategories/:categoryId', auth.isLogin, categoryController.listCategory);
 
 categoryRoute.get('/editcategory/:categoryId', auth.isLogin, categoryController.loadEditCategory);
-categoryRoute.put('/editcategory/:C', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
+categoryRoute.put('/editcategory/:categoryId', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
 
 categoryRoute.put('/unlistCategories/:categoryId', auth.isLogin, categoryController.unlistCategory);
 

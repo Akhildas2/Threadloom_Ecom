@@ -1,16 +1,16 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
-    <style>
-        /* Modal colors */
-        .modal-content {
-            background-color: #ffffff;
+        <style>
+            /* Modal colors */
+            .modal-content {
+                background-color: #ffffff;
 
-        }
+            }
 
-        .modal-header {
-            background-color: #088178;
-        }
-    </style>
+            .modal-header {
+                background-color: #088178;
+            }
+        </style>
         <section class="content-main">
             <div class="container">
                 <div class="content-header">
@@ -45,18 +45,13 @@
                                         <div class="category-offer" style="text-align: center;">
                                             <% if (!categories[i].isUnlisted ) { %>
                                                 <% if (!categories[i].offer ) { %>
-                                                    <button class="btn btn-success btn-sm rounded add-category"
-                                                        data-toggle="modal" data-target="#addOfferModal"
-                                                        data-category-id="<%= categories[i]._id %>">Add offer</button>
-
-                                                    <% } else { %>
-                                                        <button class="btn btn-danger btn-sm remove-offer"
-                                                            data-category-id="<%= categories[i]._id %>">Remove
-                                                            offer</button>
-
-                                                        <% } %>
-                                                            <% } %>
+                                                    <button class="btn btn-success btn-sm rounded btn-add-offer" data-toggle="modal" data-target="#addOfferModal" data-category-id="<%= categories[i]._id %>">Add offer</button>
+                                                <% } else { %>
+                                                    <button class="btn btn-danger btn-sm remove-offer" data-category-id="<%= categories[i]._id %>">Remove offer</button>
+                                                <% } %>
+                                            <% } %>
                                         </div>
+                                        
                                         <div class="category-actions col-12">
                                             <a href="#" class="btn btn-primary btn-sm edit-category "
                                                 data-category-id="<%= categories[i]._id %>">Edit</a>
@@ -75,37 +70,36 @@
 
                 </div>
             </div>
-                <!-- Pagination -->
-        <div class="pagination-area mt-30 mb-50">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <% if (currentPage> 1) { %>
-                        <li class="page-item"><a class="page-link" href="?page=1"><i
-                                    class="material-icons md-chevron_left"></i></a></li>
-                        <% } %>
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <% if (i===currentPage) { %>
-                                    <li class="page-item active"><a class="page-link" href="#">
-                                            <%= i %>
-                                        </a></li>
-                                    <% } else { %>
-                                        <li class="page-item"><a class="page-link"
-                                                href="?page=<%= i %>">
+            <!-- Pagination -->
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item"><a class="page-link" href="?page=1"><i
+                                        class="material-icons md-chevron_left"></i></a></li>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <% if (i===currentPage) { %>
+                                        <li class="page-item active"><a class="page-link" href="#">
                                                 <%= i %>
                                             </a></li>
-                                        <% } %>
+                                        <% } else { %>
+                                            <li class="page-item"><a class="page-link" href="?page=<%= i %>">
+                                                    <%= i %>
+                                                </a></li>
                                             <% } %>
-                                                <% if (currentPage < totalPages) { %>
-                                                    <li class="page-item"><a class="page-link"
-                                                            href="?page=<%= totalPages %>"><i
-                                                                class="material-icons md-chevron_right"></i></a>
-                                                    </li>
-                                                    <% } %>
-                </ul>
-            </nav>
-        </div>
+                                                <% } %>
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item"><a class="page-link"
+                                                                href="?page=<%= totalPages %>"><i
+                                                                    class="material-icons md-chevron_right"></i></a>
+                                                        </li>
+                                                        <% } %>
+                    </ul>
+                </nav>
+            </div>
         </section>
-        <!-- listOfferModal.ejs -->
+        <!-- listOfferModal -->
         <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -117,35 +111,41 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <% offers.forEach(offer => { %>
+                            <% offers.forEach(offer=> { %>
                                 <div class="col-md-6">
                                     <div class="card mb-4">
                                         <div class="card-body">
-                                            <% const today = new Date(); %>
-                                            <% const offerDate = new Date(offer.endingDate); %>
-                                            <% if (offerDate >= today) { %>
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="radio" name="selectedOffer" id="offer-<%= offer._id %>" value="<%= offer._id %>">
-                                                    <label class="form-check-label" for="offer-<%= offer._id %>">
-                                                        <h5 class="card-title">
-                                                            <%= offer.offerName %>
-                                                        </h5>
-                                                    </label>
-                                                </div>
-                                            <% } else { %>
-                                                <h5 class="card-title">
-                                                    <%= offer.offerName %>
-                                                </h5>
-                                            <% } %>
-                                            <p class="card-text">
-                                                Starting Date: <%= offer.startingDate.toLocaleDateString() %> <br>
-                                                Ending Date: <%= offer.endingDate.toLocaleDateString() %> <br>
-                                                Discount: <%= offer.discount %>%
-                                            </p>
+                                            <% const today=new Date(); %>
+                                                <% const offerDate=new Date(offer.endingDate); %>
+                                                    <% if (offerDate>= today) { %>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="selectedOffer" id="offer-<%= offer._id %>"
+                                                                value="<%= offer._id %>">
+                                                            <label class="form-check-label"
+                                                                for="offer-<%= offer._id %>">
+                                                                <h5 class="card-title">
+                                                                    <%= offer.offerName %>
+                                                                </h5>
+                                                            </label>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <h5 class="card-title">
+                                                                <%= offer.offerName %>
+                                                            </h5>
+                                                            <% } %>
+                                                                <p class="card-text">
+                                                                    Starting Date: <%=
+                                                                        offer.startingDate.toLocaleDateString() %> <br>
+                                                                        Ending Date: <%=
+                                                                            offer.endingDate.toLocaleDateString() %>
+                                                                            <br>
+                                                                            Discount: <%= offer.discount %>%
+                                                                </p>
                                         </div>
                                     </div>
                                 </div>
-                            <% }) %>
+                                <% }) %>
                         </div>
                     </div>
                     <div id="offerError" class="text-danger" style="display: none; text-align: center;"></div>
@@ -157,10 +157,11 @@
             </div>
         </div>
         <!-- Include jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Include Bootstrap JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
+        <!-- Include Bootstrap JS -->
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"></script>
 
 
         <!-- Add SweetAlert -->
@@ -269,11 +270,12 @@
 
             $(document).ready(function () {
                 // Add click event listener for "Add offer" button
-                $('.add-category').click(function () {
+                $('.btn-add-offer').click(function () {
                     const categoryId = $(this).data('category-id');
-                    $('#addOfferModal').data('category-id', categoryId); // Store the product ID in the modal data
+                    $('#addOfferModal').data('category-id', categoryId); // Store the category ID in the modal data
                     $('#addOfferModal').modal('show'); // Show the modal
                 });
+
                 $('.close').click(function () {
                     $('#addOfferModal').modal('hide');
 
@@ -321,6 +323,8 @@
                     }
                 });
             });
+          
+           
             document.addEventListener('DOMContentLoaded', function () {
                 const removeOfferButtons = document.querySelectorAll('.remove-offer');
 

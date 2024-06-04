@@ -11,7 +11,7 @@ const { configurePayPal } = require('./config/paypalConfig');
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-      await mongoose.connect(process.env.MONGODB_URL);
+      await mongoose.connect(process.env.MONGO_URI);
       console.log('MongoDB connected...');
   } catch (err) {
       console.error('MongoDB connection error:', err);
@@ -31,7 +31,6 @@ app.use(session({
   name: process.env.SESSION_NAME,
   resave: false,
   saveUninitialized:true,
-  cookie: { secure: false } // Set to true if using HTTPS
 }));
 
 // Configure PayPal

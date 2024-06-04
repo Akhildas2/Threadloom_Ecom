@@ -20,6 +20,7 @@ userRoute.post('/resendOtp',userController.resendOtp)
 userRoute.get('/login', auth.isLogout,userController.loadLogin);
 userRoute.post('/login',userController.verifyLogin)
 userRoute.post('/logout', auth.isLogin, userController.userLogout);
+userRoute.get('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/productdetails/:productId', userController.productDetails);
 userRoute.get('/forgotPassword', auth.isLogout,userController.forgotPasswordLoad);
 userRoute.post('/forgotPassword', auth.isLogout,userController.forgotPassword);

@@ -17,7 +17,6 @@ const addOffer = async (req, res) => {
 const insertOffer = async (req, res) => {
     try {
         const { offerName, startingDate, endingDate, discount } = req.body;
-        console.log(" req.body", req.body)
         // Check if starting date is greater than or equal to today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -54,7 +53,6 @@ const insertOffer = async (req, res) => {
 
         // Save the offer
         await newOffer.save();
-        console.log("newOffer", newOffer)
         return res.status(200).json({ success: true, url: '/admin/offer/listOffer' });
     } catch (error) {
         console.error(error);
