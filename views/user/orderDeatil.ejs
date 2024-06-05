@@ -150,7 +150,7 @@
                 <%= order.paymentMethod %>
               </p>
               <p><strong>Payment Status:</strong>
-                <% if (order.status==='retry' ) { %>
+                <% if (order.status==='retry' && selectedItem.orderStatus !='cancelled' ) { %>
                   <button id="retryButton" class="btn-sm btn-primary">Retry Payment</button>
                   <% } else { %>
                     <%= order.status %>
@@ -218,7 +218,7 @@
                   <%= order.paymentMethod %>
                 </p>
                 <p><strong>Payment Status:</strong>
-                  <% if (order.status==='retry' ) { %>
+                  <% if (order.status==='retry' && selectedItem.orderStatus !='cancelled' ) { %>
                     <button id="retryButton" class="btn-sm btn-primary">Retry Payment</button>
                     <% } else { %>
                       <%= order.status %>
