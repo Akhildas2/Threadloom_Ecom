@@ -1,4 +1,3 @@
-
 const paypal = require('paypal-rest-sdk');
 const { truncateDescription } = require('../utils/orderHelper');
 require("dotenv").config();
