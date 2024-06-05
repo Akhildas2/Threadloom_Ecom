@@ -305,7 +305,6 @@ const userList = async (req, res) => {
         res.render('userList', { users, currentPage: page, totalPages, selectedStatus: req.query.category || '' });
 
     } catch (error) {
-        console.log(error.message);
         // Handle errors appropriately
         res.status(500).send("Internal Server Error");
     }
@@ -349,7 +348,6 @@ const blockUser = async (req, res) => {
         user.isBlocked = true;
         await user.save();
 
-        console.log('User blocked successfully');
         res.status(200).json({
             status: true,
             url: '/admin/userList'
@@ -368,7 +366,6 @@ const unblockUser = async (req, res) => {
         const userId = req.params.id;
 
         await User.findByIdAndUpdate(userId, { isBlocked: false });
-        console.log('User unblocked successfully');
         res.status(200).json({
             status: true,
             url: '/admin/userList'
