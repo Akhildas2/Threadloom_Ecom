@@ -62,7 +62,7 @@ const loadAdminHome = async (req, res) => {
 
         const revenue = await Order.aggregate([
             { $match: { 'items.orderStatus': 'delivered' } },
-            { $group: { _id: null, total: { $sum: '$total' } } }
+            { $group: { _id: null, total: { $sum: '$totalAmount' } } }
         ]);
         //daily
         const today = new Date();
@@ -79,7 +79,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    total: { $sum: '$total' }
+                    total: { $sum: '$totalAmount' }
                 }
             }
         ]);
@@ -99,7 +99,7 @@ const loadAdminHome = async (req, res) => {
             {
                 $group: {
                     _id: null,
-                    total: { $sum: '$total' }
+                    total: { $sum: '$totalAmount' }
                 }
             }
         ]);
@@ -116,7 +116,7 @@ const loadAdminHome = async (req, res) => {
             }, {
                 $group: {
                     _id: null,
-                    total: { $sum: '$total' }
+                    total: { $sum: '$totalAmount' }
                 }
             }
         ])
@@ -132,7 +132,7 @@ const loadAdminHome = async (req, res) => {
             }, {
                 $group: {
                     _id: null,
-                    total: { $sum: '$total' }
+                    total: { $sum: '$totalAmount' }
                 }
             }
         ])
@@ -156,7 +156,7 @@ const loadAdminHome = async (req, res) => {
                     _id: {
                         $dateToString: { format: "%Y-%m-%d", date: "$updatedAt" }
                     },
-                    total: { $sum: '$total' }
+                    total: { $sum: '$totalAmount' }
                 }
             }, {
                 $sort: { _id: 1 }
