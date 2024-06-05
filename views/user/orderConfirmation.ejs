@@ -86,7 +86,7 @@
                                 <p><strong>Order Status:</strong>
                                     <%= order.items[0].orderStatus %>
                                 </p>
-                                <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+                                <p><strong>Total:</strong> ₹<%= order.totalAmount.toFixed(2) %>
                                 </p>
                             </div>
                         </div>
@@ -179,7 +179,7 @@
                                     <p><strong>Order Status:</strong>
                                         <%= order.items[0].orderStatus %>
                                     </p>
-                                    <p><strong>Total:</strong> ₹<%= order.totalAmount %>
+                                    <p><strong>Total:</strong> ₹<%= order.totalAmount.toFixed(2)%>
                                     </p>
                                 </div>
                             </div>
