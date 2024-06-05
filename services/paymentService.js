@@ -28,8 +28,8 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             "payment_method": "paypal"
         },
         "redirect_urls": {
-            "return_url": process.env.BASE_URL + `/order/paymentSuccess/${orderId}`,
-            "cancel_url": process.env.BASE_URL + `/order/paymentCancel/${orderId}`
+            "return_url": `${process.env.BASE_URL}/order/paymentSuccess/${orderId}`,
+            "cancel_url": `${process.env.BASE_URL}/order/paymentCancel/${orderId}`
         },
         "transactions": [{
             "item_list": {
@@ -50,6 +50,7 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
     return new Promise((resolve, reject) => {
         paypal.payment.create(create_payment_json, (error, payment) => {
             if (error) {
+                console.error('PayPal Error:', error);
                 reject(error);
             } else {
                 const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
