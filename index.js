@@ -48,7 +48,6 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', './views/user');
 
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -88,7 +87,7 @@ const offerRoute=require('./routes/offerRoute')
 
 
 
-
+app.set('views', path.join(__dirname, 'views'));
 app.use('/admin', express.static('adminAssets'));
 app.use('/uploads', express.static('uploads'));
 app.use(express.static('assets'));
