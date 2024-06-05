@@ -22,7 +22,7 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
     }, 0);
 
     // Round the total amount to 2 decimal places for display
-    const roundedItemTotal = itemTotal.toFixed(2);
+    const roundedItemTotal = parseFloat(itemTotal.toFixed(2)); // Convert the rounded total back to a number
 
     const create_payment_json = {
         "intent": "sale",
@@ -39,7 +39,7 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             },
             "amount": {
                 "currency": "USD",
-                "total": roundedItemTotal // Use the rounded total here
+                "total": roundedItemTotal.toString() // Use the rounded total here as a string
             },
             "description": "Order summary of the product."
         }],
