@@ -16,7 +16,7 @@ adminRoute.post('/register',adminController.registerAdmin);
 
 adminRoute.get('/',auth.isLogout,adminController.loadLogin);
 adminRoute.post('/', auth.isLogout, adminController.verifyLogin);
-adminRoute.get('/adminhome', auth.isLogin, adminController.loadAdminHome);
+adminRoute.get('/adminHome', auth.isLogin, adminController.loadAdminHome);
 adminRoute.get('/logout',auth.isLogin, adminController.logout);
 adminRoute.get('/userlist', auth.isLogin, adminController.userList);
 adminRoute.put('/block/:id', adminController.blockUser);
