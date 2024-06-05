@@ -45,9 +45,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Set view engine and views directory
 app.set('view engine', 'ejs');
-app.set('views', [path.join(__dirname, 'views/user'), path.join(__dirname, 'views/admin')]);
+app.set('views', './views/user');
 
 
 app.use(express.json());
@@ -89,6 +88,7 @@ const offerRoute=require('./routes/offerRoute')
 
 
 
+
 app.use('/admin', express.static('adminAssets'));
 app.use('/uploads', express.static('uploads'));
 app.use(express.static('assets'));
@@ -117,4 +117,3 @@ app.listen(port, () => {
   console.log(`Sever Running on port number http://localhost:${port}`);
   console.log(`Sever Running on port number http://localhost:${port}/admin/`);
 });
-
