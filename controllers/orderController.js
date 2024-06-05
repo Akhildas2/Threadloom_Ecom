@@ -289,9 +289,11 @@ const paymentCancel = async (req, res) => {
 
 
 
+
 //for retry payment 
 const retryPayment = async (req, res) => {
     try {
+        
         const { ordersId } = req.params;
 
         const order = await Order.findOne({ ordersId: ordersId }).populate('items.productId');
@@ -299,20 +301,16 @@ const retryPayment = async (req, res) => {
             return res.status(404).json({ message: 'Order not found.' });
         }
 
-        console.log("Retrieved order:", order);
         const orderItems = [{ products: order.items }]
         const items = orderItems;
-        console.log("Items:", items);
 
         const exchangeRate = await fetchExchangeRate();
 
-        console.log("Exchange rate:", exchangeRate);
 
         const approvalUrl = await createPayPalPayment(order._id, items, exchangeRate);
         return res.status(200).json({ approvalUrl });
 
     } catch (error) {
-        console.error('Error in retryPayment:', error.message || error);
         if (error.response) {
             return res.status(500).json({
                 message: 'Error in retrying payment',
