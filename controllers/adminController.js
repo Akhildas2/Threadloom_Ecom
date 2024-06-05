@@ -209,7 +209,7 @@ const loadAdminHome = async (req, res) => {
 
 
 
-        res.render('adminhome', {
+        res.render('adminHome', {
             revenue,
             totalUsers,
             totalOrders,
