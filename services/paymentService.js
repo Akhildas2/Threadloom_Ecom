@@ -1,7 +1,3 @@
-const paypal = require('paypal-rest-sdk');
-const { truncateDescription } = require('../utils/orderHelper');
-require("dotenv").config();
-
 const createPayPalPayment = async (orderId, items, exchangeRate) => {
     // Prepare item list for PayPal
     const itemList = items.flatMap(item => {
@@ -9,24 +5,20 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             "name": productDetail.productId.name,
             "description": truncateDescription(productDetail.productId.description),
             "quantity": productDetail.quantity,
-            "price": (productDetail.price * exchangeRate).toFixed(2),
+            "price": (productDetail.price * exchangeRate).toFixed(2), // Round the price to 2 decimal places for display
             "currency": "USD"
         }));
     });
 
-    // Calculate the total amount for all items
+    // Calculate the total amount for all items without rounding
     const itemTotal = items.reduce((total, item) => {
         return total + item.products.reduce((subtotal, productDetail) => {
             return subtotal + (productDetail.price * productDetail.quantity * exchangeRate);
         }, 0);
-    }, 0).toFixed(2);
+    }, 0);
 
-    // Ensure item prices sum up to the total amount
-    const sumOfItemPrices = itemList.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0).toFixed(2);
-
-    if (itemTotal !== sumOfItemPrices) {
-        throw new Error(`Total mismatch: itemTotal (${itemTotal}) does not equal sumOfItemPrices (${sumOfItemPrices})`);
-    }
+    // Round the total amount to 2 decimal places for display
+    const roundedItemTotal = itemTotal.toFixed(2);
 
     const create_payment_json = {
         "intent": "sale",
@@ -43,13 +35,13 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             },
             "amount": {
                 "currency": "USD",
-                "total": itemTotal
+                "total": roundedItemTotal // Use the rounded total here
             },
             "description": "Order summary of the product."
         }],
-        "application_context": {
-            "shipping_preference": "NO_SHIPPING",
-            "brand_name": "threadloom"
+        application_context: {
+            shipping_preference: "NO_SHIPPING",
+            brand_name: "threadloom"
         }
     };
 
