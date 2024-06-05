@@ -10,15 +10,15 @@ categoryRoute.use(express.static('admin'));
 categoryRoute.set('view engine', 'ejs');
 categoryRoute.set('views', './views/admin');
 
-categoryRoute.get('/addcategory', auth.isLogin, categoryController.loadAddCategory)
+categoryRoute.get('/addCategory', auth.isLogin, categoryController.loadAddCategory)
 
-categoryRoute.post('/addcategory', auth.isLogin, categoryController.upload.single('categoryPhoto'), categoryController.addCategory);
+categoryRoute.post('/addCategory', auth.isLogin, categoryController.upload.single('categoryPhoto'), categoryController.addCategory);
 
-categoryRoute.get('/listcategories', auth.isLogin, categoryController.loadListCategory);
+categoryRoute.get('/listCategories', auth.isLogin, categoryController.loadListCategory);
 categoryRoute.put('/listCategories/:categoryId', auth.isLogin, categoryController.listCategory);
 
-categoryRoute.get('/editcategory/:categoryId', auth.isLogin, categoryController.loadEditCategory);
-categoryRoute.put('/editcategory/:categoryId', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
+categoryRoute.get('/editCategory/:categoryId', auth.isLogin, categoryController.loadEditCategory);
+categoryRoute.put('/editCategory/:categoryId', auth.isLogin, categoryController.upload.single('categoryPhoto'),categoryController.editCategory);
 
 categoryRoute.put('/unlistCategories/:categoryId', auth.isLogin, categoryController.unlistCategory);
 

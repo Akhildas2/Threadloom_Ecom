@@ -25,7 +25,7 @@ const upload = multer({ storage: storage });
 const loadAddCategory = async (req, res) => {
     try {
 
-        res.render('addcategory');
+        res.render('addCategory');
     } catch (error) {
         console.log(error.message);
         res.status(500).send('Internal Server Error');
@@ -72,7 +72,7 @@ const addCategory = async (req, res) => {
         console.log("Category added successfully");
         res.status(200).json({
             status: true,
-            url: '/admin/category/listcategories'
+            url: '/admin/category/listCategories'
         });
 
     } catch (error) {
@@ -167,10 +167,9 @@ const editCategory = async (req, res) => {
             return res.status(404).render('error', { message: 'Category not found' });
         }
 
-        console.log("Category edited successfully");
         res.status(200).json({
             status: true,
-            url: '/admin/category/listcategories'
+            url: '/admin/category/listCategories'
         });
 
     } catch (error) {
@@ -225,7 +224,7 @@ const listCategory = async (req, res) => {
         console.log("Listed successful");
         res.status(200).json({
             status: true,
-            url: '/admin/category/listcategories'
+            url: '/admin/category/listCategories'
         });
 
     } catch (error) {
@@ -255,7 +254,7 @@ const addOffer = async (req, res) => {
         await category.save()
         res.status(200).json({
             status: true,
-            url: '/admin/category/listcategories'
+            url: '/admin/category/listCategories'
         });
     } catch (error) {
         console.error('Error adding offer:', error);
@@ -281,7 +280,7 @@ const removeOffer = async (req, res) => {
         await category.save()
         res.status(200).json({
             status: true,
-            url: '/admin/category/listcategories'
+            url: '/admin/category/listCategories'
         });
     } catch (error) {
         console.error('Error adding offer:', error);

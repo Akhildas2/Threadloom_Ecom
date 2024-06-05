@@ -97,7 +97,7 @@ const addProduct = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            url: '/admin/product/listproduct'
+            url: '/admin/product/listProduct'
         });
     } catch (error) {
         console.error(error.message);
@@ -240,7 +240,7 @@ const editProduct = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            url: '/admin/product/listproduct'
+            url: '/admin/product/listProduct'
         });
 
     } catch (err) {
@@ -364,7 +364,7 @@ const addOffer = async (req, res) => {
 
         return res.status(200).json({
             status: true,
-            url: '/admin/product/listproduct'
+            url: '/admin/product/listProduct'
         });
 
     } catch (error) {
@@ -392,7 +392,7 @@ const removeOffer = async (req, res) => {
         await product.save();
         return res.status(200).json({
             status: true,
-            url: '/admin/product/listproduct'
+            url: '/admin/product/listProduct'
         });
     } catch (error) {
         res.status(500).json({ success: false, message: 'Internal server error' });
