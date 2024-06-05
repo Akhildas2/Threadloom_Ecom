@@ -46,11 +46,11 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             brand_name: "threadloom"
         }
     };
-
+    console.log('create_payment_json:', JSON.stringify(create_payment_json, null, 2));
     return new Promise((resolve, reject) => {
         paypal.payment.create(create_payment_json, (error, payment) => {
             if (error) {
-                console.error('PayPal Error:', error);
+                console.error('PayPal Error:', error.response ? error.response.details : error);
                 reject(error);
             } else {
                 const approvalUrl = payment.links.find(link => link.rel === 'approval_url').href;
