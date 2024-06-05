@@ -237,20 +237,15 @@ const paymentSuccess = async (req, res) => {
         // Check if payerId is provided
         if (payerId) {
             order.payerId = payerId;
-        } else {
-            console.log("payerId not provided");
-
-        }
+        } 
 
         await order.save();
 
-        console.log("Paypal order Sucessfull.",);
         // Clear cart
         await CartItems.deleteMany({ user: userId });
         res.render('paymentSuccess', { req, orderId });
 
     } catch (error) {
-        console.error('Error in payment success:', error);
         res.status(500).send('Server Error');
     }
 };
@@ -277,10 +272,9 @@ const paymentCancel = async (req, res) => {
         order.status = 'retry';
         await order.save();
         await CartItems.deleteMany({ user: userId });
-        res.render('paymentCancel', { req, orderId });
+        res.render('PaymentCancel', { req, orderId });
 
     } catch (error) {
-        console.error('Error in payment cancellation:', error);
         res.status(500).send('Server Error');
     }
 };
