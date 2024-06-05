@@ -1,3 +1,7 @@
+const paypal = require('paypal-rest-sdk');
+const { truncateDescription } = require('../utils/orderHelper');
+require("dotenv").config();
+
 const createPayPalPayment = async (orderId, items, exchangeRate) => {
     // Prepare item list for PayPal
     const itemList = items.flatMap(item => {
