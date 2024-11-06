@@ -140,7 +140,7 @@ const handleReferral = async (referralCode, newUserId) => {
 //update or create the wallet
 const updateWalletBalance = async (newUserId, referredByUserId) => {
     const newUserBonus = 50;
-    const referredUserBonus = 150;
+    const referredUserBonus = 100;
 
     const updateWallet = async (userId, bonus) => {
         let userWallet = await Wallet.findOne({ userId });

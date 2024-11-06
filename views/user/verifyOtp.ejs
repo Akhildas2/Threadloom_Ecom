@@ -5,136 +5,174 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OTP Verification</title>
+  <link rel="shortcut icon" type="image/x-icon" href="/imgs/theme/favicon.jpg">
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  .container {
-    background-color: #fff;
-    border-radius: 25px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-  }
+    .container {
+      display: flex;
+      max-width: 100%;
+      width: 90%;
+      background-color: #fff;
+      border-radius: 25px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
 
-  input[type="text"] {
-    width: 40px;
-    height: 40px;
-    font-size: 20px;
-    margin: 0 2px;
-    border-radius: 25px;
-    text-align: center;
-  }
+    .container .image-section {
+      width: 50%;
+      background-color: #f8f8f8;
+    }
 
-  button[type="submit"] {
-    background-color: #088178;
-    color: #fff;
-    border: none;
-    border-radius: 25px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-top: 20px;
-  }
+    .container .image-section img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-  .error-message {
-    color: red; /* Set error message color to red */
-    margin-top: 5px; /* Add some space between error messages */
-  }
+    .container .form-section {
+      width: 50%;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
 
-  @media (max-width: 600px) {
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
     input[type="text"] {
       width: 30px;
       height: 30px;
-      font-size: 16px;
+      font-size: 20px;
+      margin: 0 5px;
+      border-radius: 5px;
+      text-align: center;
     }
 
     button[type="submit"] {
-      font-size: 14px;
-      padding: 8px 16px;
-    }
-  }
-   /* Style for the paragraph */
-   p {
-        font-family: Arial, sans-serif;
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 10px; /* Adjust margin as needed */
+      background-color: #088178;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
     }
 
-    /* Style for the resend link */
+    .error-message {
+      color: red;
+      margin-top: 5px;
+    }
+
+    p {
+      font-size: 16px;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
     a#resendLink {
-        color: #007bff; /* Blue color */
-        text-decoration: none; /* Remove underline */
-        cursor: pointer; /* Show pointer cursor on hover */
-        margin-right: 5px; /* Adjust margin as needed */
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+      margin-right: 5px;
     }
 
     a#resendLink:hover {
-        text-decoration: underline; /* Underline on hover */
+      text-decoration: underline;
     }
 
- #timerDisplay span:first-child {
-  color: red;
+    #timerDisplay span:first-child {
+      color: red;
+    }
+/* Responsive Design for smaller screens */
+@media (max-width: 600px) {
+  .container {
+    flex-direction: column;
+    width: 100%;
+  
+  }
+
+  .container .image-section,
+  .container .form-section {
+    width: 100%;
+  }
+
+  .container .form-section {
+    padding: 20px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  input[type="text"] {
+    width: 20px;
+    height: 20px;
+    font-size: 16px;
+    margin: 5px 3px;
+  }
+
+  button[type="submit"] {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
 }
 
 
-</style>
-
+  </style>
 </head>
 
 <body>
   <div class="container">
-    <h2>Enter OTP</h2>
-    <form action="javascript:void(0);" method="post" id="otpForm">
-
-      <input type="text" id="otp1" name="otp1" maxlength="1" oninput="moveToNext(this, 'otp2', null)" onkeydown="moveOnBackspace(event, 'otp1', null)">
-      <input type="text" id="otp2" name="otp2" maxlength="1" prevInputId="otp1" oninput="moveToNext(this, 'otp3', 'otp1')" onkeydown="moveOnBackspace(event, 'otp2', 'otp1')">
-      <input type="text" id="otp3" name="otp3" maxlength="1" prevInputId="otp2" oninput="moveToNext(this, 'otp4', 'otp2')" onkeydown="moveOnBackspace(event, 'otp3', 'otp2')"> 
-      <input type="text" id="otp4" name="otp4" maxlength="1" prevInputId="otp3" oninput="moveToNext(this, 'otp5', 'otp3')" onkeydown="moveOnBackspace(event, 'otp4', 'otp3')">
-      <input type="text" id="otp5" name="otp5" maxlength="1" prevInputId="otp4" oninput="moveToNext(this, 'otp6', 'otp4')" onkeydown="moveOnBackspace(event, 'otp5', 'otp4')">  
-      <input type="text" id="otp6" name="otp6" maxlength="1" prevInputId="otp5" oninput="moveToNext(this, null, 'otp5')" onkeydown="moveOnBackspace(event, 'otp6', 'otp5')">
-    
-      <button type="submit" class="btn btn-primary ">Verify</button>
-    </form>
-
-    <div id="otp1Error" class="error-message"></div> 
-    <div id="otp2Error" class="error-message"></div> 
-    <div id="otp3Error" class="error-message"></div> 
-    <div id="otp4Error" class="error-message"></div> 
-    <div id="otp5Error" class="error-message"></div> 
-    <div id="otp6Error" class="error-message"></div> 
-    <!-- Add a div for the timer display -->
-    <div id="timerDisplay"></div>
-
-    <div id="resendLinkContainer" style="display: none;">
-      <a href="#" onclick="resendOtp()">Resend OTP</a>
+    <div class="image-section">
+      <img src="/imgs/pages/otpPage.jpg" alt="OTP Image">
     </div>
-    
 
-   
+    <div class="form-section">
+      <h2>Enter OTP</h2>
+      <form action="javascript:void(0);" method="post" id="otpForm">
+        <input type="text" id="otp1" name="otp1" maxlength="1" oninput="moveToNext(this, 'otp2', null)" onkeydown="moveOnBackspace(event, 'otp1', null)">
+        <input type="text" id="otp2" name="otp2" maxlength="1" oninput="moveToNext(this, 'otp3', 'otp1')" onkeydown="moveOnBackspace(event, 'otp2', 'otp1')">
+        <input type="text" id="otp3" name="otp3" maxlength="1" oninput="moveToNext(this, 'otp4', 'otp2')" onkeydown="moveOnBackspace(event, 'otp3', 'otp2')">
+        <input type="text" id="otp4" name="otp4" maxlength="1" oninput="moveToNext(this, 'otp5', 'otp3')" onkeydown="moveOnBackspace(event, 'otp4', 'otp3')">
+        <input type="text" id="otp5" name="otp5" maxlength="1" oninput="moveToNext(this, 'otp6', 'otp4')" onkeydown="moveOnBackspace(event, 'otp5', 'otp4')">
+        <input type="text" id="otp6" name="otp6" maxlength="1" oninput="moveToNext(this, null, 'otp5')" onkeydown="moveOnBackspace(event, 'otp6', 'otp5')">
+        <br>
+        <button type="submit" class="btn btn-primary">Verify</button>
+      </form>
+
+      <div id="otp1Error" class="error-message"></div>
+      <div id="otp2Error" class="error-message"></div>
+      <div id="otp3Error" class="error-message"></div>
+      <div id="otp4Error" class="error-message"></div>
+      <div id="otp5Error" class="error-message"></div>
+      <div id="otp6Error" class="error-message"></div>
+
+      <div id="timerDisplay"></div>
+      <div id="resendLinkContainer" style="display: none;">
+        <a href="#" onclick="resendOtp()">Resend OTP</a>
+      </div>
+    </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
-    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
-    integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <!-- Include SweetAlert -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-  <script src="/js/otpValidation.js" ></script>
- 
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js" integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/otpValidation.js"></script>
 </body>
 
 </html>
