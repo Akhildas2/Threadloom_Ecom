@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OTP Verification</title>
   <link rel="shortcut icon" type="image/x-icon" href="/imgs/theme/favicon.jpg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
   <style>
     body {
@@ -100,39 +101,46 @@
     #timerDisplay span:first-child {
       color: red;
     }
-/* Responsive Design for smaller screens */
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-    width: 100%;
-  
-  }
 
-  .container .image-section,
-  .container .form-section {
-    width: 100%;
-  }
+    input[type="text"].valid {
+      border: 2px solid green;
+    }
 
-  .container .form-section {
-    padding: 20px;
-    margin-left: 0;
-    margin-right: 0;
-  }
+    input[type="text"].invalid {
+      border: 2px solid red;
+    }
 
-  input[type="text"] {
-    width: 20px;
-    height: 20px;
-    font-size: 16px;
-    margin: 5px 3px;
-  }
+    /* Responsive Design for smaller screens */
+    @media (max-width: 600px) {
+      .container {
+        flex-direction: column;
+        width: 100%;
 
-  button[type="submit"] {
-    font-size: 14px;
-    padding: 8px 16px;
-  }
-}
+      }
 
+      .container .image-section,
+      .container .form-section {
+        width: 100%;
+      }
 
+      .container .form-section {
+        padding: 20px;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      input[type="text"] {
+        width: 20px;
+        height: 20px;
+        font-size: 16px;
+        margin: 5px 3px;
+      }
+
+      button[type="submit"] {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+    }
   </style>
 </head>
 
@@ -143,16 +151,25 @@
     </div>
 
     <div class="form-section">
-      <h2>Enter OTP</h2>
+      <h1>OTP Verification</h1>
+      <p>Enter the OTP you received to <span id="email">
+          <%= email %>
+        </span></p>
       <form action="javascript:void(0);" method="post" id="otpForm">
-        <input type="text" id="otp1" name="otp1" maxlength="1" oninput="moveToNext(this, 'otp2', null)" onkeydown="moveOnBackspace(event, 'otp1', null)">
-        <input type="text" id="otp2" name="otp2" maxlength="1" oninput="moveToNext(this, 'otp3', 'otp1')" onkeydown="moveOnBackspace(event, 'otp2', 'otp1')">
-        <input type="text" id="otp3" name="otp3" maxlength="1" oninput="moveToNext(this, 'otp4', 'otp2')" onkeydown="moveOnBackspace(event, 'otp3', 'otp2')">
-        <input type="text" id="otp4" name="otp4" maxlength="1" oninput="moveToNext(this, 'otp5', 'otp3')" onkeydown="moveOnBackspace(event, 'otp4', 'otp3')">
-        <input type="text" id="otp5" name="otp5" maxlength="1" oninput="moveToNext(this, 'otp6', 'otp4')" onkeydown="moveOnBackspace(event, 'otp5', 'otp4')">
-        <input type="text" id="otp6" name="otp6" maxlength="1" oninput="moveToNext(this, null, 'otp5')" onkeydown="moveOnBackspace(event, 'otp6', 'otp5')">
+        <input type="text" id="otp1" name="otp1" maxlength="1">
+        <input type="text" id="otp2" name="otp2" maxlength="1">
+        <input type="text" id="otp3" name="otp3" maxlength="1">
+        <span class="splitter">&ndash;</span>
+        <input type="text" id="otp4" name="otp4" maxlength="1">
+        <input type="text" id="otp5" name="otp5" maxlength="1">
+        <input type="text" id="otp6" name="otp6" maxlength="1">
         <br>
-        <button type="submit" class="btn btn-primary">Verify</button>
+
+        <br>
+        <button type="submit" class="btn btn-primary">
+          Verify <i class="fas fa-check-circle" style="margin-left: 10px;"></i>
+        </button>
+
       </form>
 
       <div id="otp1Error" class="error-message"></div>
@@ -162,15 +179,25 @@
       <div id="otp5Error" class="error-message"></div>
       <div id="otp6Error" class="error-message"></div>
 
-      <div id="timerDisplay"></div>
-      <div id="resendLinkContainer" style="display: none;">
-        <a href="#" onclick="resendOtp()">Resend OTP</a>
+      <div class="resend-text">
+        Didn't receive the code?
+        <div id="timerDisplay"></div>
+        <div id="resendLinkContainer" style="display: none;">
+          <a href="#" onclick="resendOtp()">
+            Resend Code <i class="fas fa-sync-alt"></i>
+          </a>
+
+        </div>
       </div>
+
     </div>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js" integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+    integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+    integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="/js/otpValidation.js"></script>
 </body>

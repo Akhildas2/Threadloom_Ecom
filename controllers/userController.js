@@ -182,28 +182,29 @@ const updateWalletBalance = async (newUserId, referredByUserId) => {
 const insertUser = async (req, res) => {
     try {
         const { name, email, mobile, password, referralCode } = req.body;
-       // Check if the user already exists by email
-       const existingUserByEmail = await User.findOne({ email });
-       if (existingUserByEmail) {
-        if (!existingUserByEmail.isVerified) {
-            // If the user is not verified, resend the OTP
-            const otp = generateOTP();
-            res.cookie('email', email); // Store email in cookie for verification
-            await sendVerifyOtp(name, email, otp); // Send OTP to user's email
-            res.status(200).json({
-                status: true,
-                url: '/verifyOtp'
-            });
-            return; // Ensure we exit here to prevent further execution
-        }
-        return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
-    }
+        // Check if the user already exists by mobile
+        const existingUserByMobile = await User.findOne({ mobile });
 
-       // Check if the user already exists by mobile
-       const existingUserByMobile = await User.findOne({ mobile });
-       if (existingUserByMobile) {
-           return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
-       }
+        // Check if the user already exists by email
+        const existingUserByEmail = await User.findOne({ email });
+        if (existingUserByMobile) {
+            return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
+        } else if (existingUserByEmail) {
+            if (!existingUserByEmail.isVerified) {
+                // If the user is not verified, resend the OTP
+                const otp = generateOTP();
+                res.cookie('email', email); // Store email in cookie for verification
+                await sendVerifyOtp(name, email, otp); // Send OTP to user's email
+                res.status(200).json({
+                    status: true,
+                    url: '/verifyOtp'
+                });
+                return; // Ensure we exit here to prevent further execution
+            }
+            return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
+        }
+
+
         // Create a new user
         const spassword = await securePassword(password);
         const user = new User({
@@ -289,9 +290,21 @@ const sendVerifyOtp = async (name, email, otp) => {
 
 
 // for loading the verify otp page
-const loadVerfiyOtp = async (req, res) => {
+const loadVerifyOtp  = async (req, res) => {
     try {
-        res.render('verifyOtp', { req })
+        const email = req.cookies.email;
+        // Find the corresponding OTP record
+        const otpRecord = await Otp.findOne({ email });
+        
+        
+
+        // Mask the email
+        const maskedEmail = email.replace(/^(.*)(.{4}@.*)$/, (match, p1, p2) => {
+            const masked = p1.replace(/./g, '*'); // Mask all characters before the last 6
+            return masked + p2; // Combine the masked part with the last 6 characters
+        });
+
+        res.render('verifyOtp', { req, email: maskedEmail })
 
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
@@ -508,16 +521,16 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
                 name: displayName,
                 email,
                 mobile: 0,
-                password:await securePassword(id),
+                password: await securePassword(id),
                 google: true,
                 isVerified: true
             });
 
-            const savedUser  = await newUser.save();
-            if (savedUser ) {
+            const savedUser = await newUser.save();
+            if (savedUser) {
                 req.session.user_id = savedUser._id;
             }
-            return savedUser ;
+            return savedUser;
         }
     } catch (error) {
         return { success: false, message: 'Internal Server Error. Please try again later.' };
@@ -688,7 +701,7 @@ const verifyResetPassword = async (req, res) => {
     try {
         const { password, user_id } = req.body;
         if (password && user_id) {
-        const spassword = await securePassword(password);
+            const spassword = await securePassword(password);
             await User.findByIdAndUpdate(
                 { _id: user_id },
                 {
@@ -698,7 +711,7 @@ const verifyResetPassword = async (req, res) => {
                     }
                 }
             );
-        return res.status(200).json({ url: "/login", success: true, message: 'Your password has been reset successfully.' });
+            return res.status(200).json({ url: "/login", success: true, message: 'Your password has been reset successfully.' });
 
         }
 
@@ -715,7 +728,7 @@ module.exports = {
     loadRegister,
     securePassword,
     insertUser,
-    loadVerfiyOtp,
+    loadVerifyOtp ,
     sendVerifyOtp,
     verifyOtp,
     verifyLogin,

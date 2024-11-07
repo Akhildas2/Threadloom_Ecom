@@ -1,5 +1,5 @@
 
-document.querySelector('#registerForm').addEventListener('submit', async function(event) {
+document.querySelector('#registerForm').addEventListener('submit', async function (event) {
     event.preventDefault(); // Prevent default form submission
 
     // Reset error messages, hide loading icons, and remove green border
@@ -10,7 +10,7 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
     const data = Object.fromEntries(new FormData(this));
 
     // Define regular expressions and error messages
-    const emailRegex =/^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
     const mobileRegex = /^\d{10}$/;
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     const errorMessages = {
@@ -54,22 +54,21 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
     // Display error messages
     errors.forEach(field => {
         document.getElementById(`${field}Error`).textContent = errorMessages[field];
-     document.getElementById(`${field}Loading`).classList.remove('hidden');
+        document.getElementById(`${field}Loading`).classList.remove('hidden');
     });
 
     if (errors.length > 0) {
         return false;
     }
 
-   // Post form data
+    // Post form data
     axios.post('/register', data)
         .then(res => {
             if (res.data.status) {
-            // Display success toast
-
+                // Display success toast
                 const Toast = Swal.mixin({
                     toast: true,
-                    position: "top-end",
+                    position: "center",
                     showConfirmButton: false,
                     timer: 5000,
                     timerProgressBar: true,
@@ -82,9 +81,9 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                     icon: "success",
                     title: "Please verify OTP"
                 });
-              setTimeout(() => {
-                location.href = res.data.url;
-            }, 5000);
+                setTimeout(() => {
+                    location.href = res.data.url;
+                }, 5000);
             } else {
                 console.error(res.data);
             }
@@ -93,9 +92,9 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
             if (!err.response.data.success) {
                 const Toast = Swal.mixin({
                     toast: true,
-                    position: "top-center",
+                    position: "center",
                     showConfirmButton: false,
-                    timer: 2000,
+                    timer: 3000,
                     timerProgressBar: true,
                     didOpen: (toast) => {
                         toast.onmouseenter = Swal.stopTimer;
@@ -106,7 +105,7 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                     icon: "error",
                     text: err.response.data.message,
                 });
-              
+
             } else {
                 console.error(err);
             }
@@ -114,15 +113,15 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
 });
 
 document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', function() {
+    input.addEventListener('input', function () {
         const fieldName = this.name;
         const errorMessageElement = document.getElementById(`${fieldName}Error`);
-        
+
         // Clear existing error message
         errorMessageElement.textContent = '';
 
         // Check validation based on field name
-        switch(fieldName) {
+        switch (fieldName) {
             case 'name':
                 if (!this.value.trim()) {
                     errorMessageElement.textContent = errorMessages.name;
@@ -157,8 +156,8 @@ document.querySelectorAll('input').forEach(input => {
 
 
 // Toggle password visibility
-document.querySelectorAll('.toggle-password').forEach(function(toggle) {
-    toggle.addEventListener('click', function() {
+document.querySelectorAll('.toggle-password').forEach(function (toggle) {
+    toggle.addEventListener('click', function () {
         const passwordInput = this.previousElementSibling; // Assuming the input is always the previous element sibling
         passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
         this.classList.toggle('fa-eye-slash');
