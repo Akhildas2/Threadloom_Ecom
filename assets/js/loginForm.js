@@ -37,7 +37,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
                     toast: true,
                     position: "top-end",
                     showConfirmButton: false,
-                    timer: 2000,
+                    timer: 3000,
                     timerProgressBar: true,
                     didOpen: (toast) => {
                         toast.onmouseenter = Swal.stopTimer;
@@ -51,7 +51,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 
                 setTimeout(() => {
                     location.href = res.data.url;
-                }, 2000);
+                }, 3000);
             } else {
                 console.error(res.data);
             }
@@ -62,7 +62,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
                     toast: true,
                     position: "top-center",
                     showConfirmButton: false,
-                    timer: 2000,
+                    timer: 3000,
                     timerProgressBar: true,
                     didOpen: (toast) => {
                         toast.onmouseenter = Swal.stopTimer;
@@ -73,7 +73,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
                     icon: "error",
                     text: err.response.data.message,
                 });
-               
+
             } else {
                 console.error(err);
             }

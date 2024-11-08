@@ -3,7 +3,7 @@ const inputs = document.querySelectorAll('input[type="text"]');
 const timerDisplay = document.getElementById('timerDisplay');
 const resendLinkContainer = document.getElementById('resendLinkContainer');
 const form = document.getElementById('otpForm');
-const timerDuration = 60; // 60 seconds
+const timerDuration = 60;
 let timerValue = parseInt(sessionStorage.getItem('timerValue')) || timerDuration;
 let timerInterval;
 

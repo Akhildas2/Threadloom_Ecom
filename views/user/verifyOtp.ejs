@@ -22,17 +22,21 @@
 
     .container {
       display: flex;
-      max-width: 100%;
-      width: 90%;
+      max-width: 90%;
+      width: 100%;
       background-color: #fff;
-      border-radius: 25px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
       overflow: hidden;
+      flex-direction: row;
     }
 
     .container .image-section {
       width: 50%;
       background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .container .image-section img {
@@ -51,18 +55,26 @@
       text-align: center;
     }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
+    h1 {
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    p {
+      font-size: 18px;
+      color: #000;
+      margin-bottom: 15px;
     }
 
     input[type="text"] {
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
       font-size: 20px;
       margin: 0 5px;
+      border: 2px solid #000000;
       border-radius: 5px;
       text-align: center;
+      transition: border-color 0.2s;
     }
 
     button[type="submit"] {
@@ -70,32 +82,41 @@
       color: #fff;
       border: none;
       border-radius: 25px;
-      padding: 10px 20px;
+      padding: 10px 25px;
       cursor: pointer;
       font-size: 16px;
       margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #065f5a;
     }
 
     .error-message {
       color: red;
+      font-size: 14px;
       margin-top: 5px;
-    }
-
-    p {
-      font-size: 16px;
-      color: #333;
-      margin-bottom: 10px;
+      text-align: left;
+      width: 100%;
     }
 
     a#resendLink {
       color: #007bff;
       text-decoration: none;
       cursor: pointer;
-      margin-right: 5px;
+      margin-top: 15px;
+      display: inline-block;
     }
 
     a#resendLink:hover {
       text-decoration: underline;
+    }
+
+    #timerDisplay {
+      font-size: 14px;
+      margin-top: 10px;
+      color: #000;
     }
 
     #timerDisplay span:first-child {
@@ -110,12 +131,11 @@
       border: 2px solid red;
     }
 
-    /* Responsive Design for smaller screens */
-    @media (max-width: 600px) {
-      .container {
-        flex-direction: column;
-        width: 100%;
+    /* Responsive Styles */
 
+    @media (max-width: 768px) {
+      .container {
+        width: 95%;
       }
 
       .container .image-section,
@@ -125,21 +145,45 @@
 
       .container .form-section {
         padding: 20px;
-        margin-left: 0;
-        margin-right: 0;
       }
 
       input[type="text"] {
-        width: 20px;
-        height: 20px;
-        font-size: 16px;
-        margin: 5px 3px;
+        width: 30px;
+        height: 30px;
+        font-size: 20px;
       }
 
       button[type="submit"] {
-        font-size: 14px;
-        padding: 8px 16px;
+        padding: 10px 25px;
+        font-size: 16px;
       }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .container .image-section,
+      .container .form-section {
+        width: 100%;
+      }
+
+      .form-section {
+        box-sizing: border-box;
+        padding: 10px;
+      }
+
+      input[type="text"] {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+        margin: 5px 0;
+      }
+
+
     }
   </style>
 </head>
@@ -152,7 +196,7 @@
 
     <div class="form-section">
       <h1>OTP Verification</h1>
-      <p>Enter the OTP you received to <span id="email">
+      <p>Enter the OTP you received to <span id="email" style="color: green;">
           <%= email %>
         </span></p>
       <form action="javascript:void(0);" method="post" id="otpForm">
@@ -163,33 +207,28 @@
         <input type="text" id="otp4" name="otp4" maxlength="1">
         <input type="text" id="otp5" name="otp5" maxlength="1">
         <input type="text" id="otp6" name="otp6" maxlength="1">
-        <br>
 
-        <br>
+        <div id="otp1Error" class="error-message"></div>
+        <div id="otp2Error" class="error-message"></div>
+        <div id="otp3Error" class="error-message"></div>
+        <div id="otp4Error" class="error-message"></div>
+        <div id="otp5Error" class="error-message"></div>
+        <div id="otp6Error" class="error-message"></div>
         <button type="submit" class="btn btn-primary">
           Verify <i class="fas fa-check-circle" style="margin-left: 10px;"></i>
         </button>
-
       </form>
 
-      <div id="otp1Error" class="error-message"></div>
-      <div id="otp2Error" class="error-message"></div>
-      <div id="otp3Error" class="error-message"></div>
-      <div id="otp4Error" class="error-message"></div>
-      <div id="otp5Error" class="error-message"></div>
-      <div id="otp6Error" class="error-message"></div>
-
       <div class="resend-text">
+        <br>
         Didn't receive the code?
         <div id="timerDisplay"></div>
         <div id="resendLinkContainer" style="display: none;">
           <a href="#" onclick="resendOtp()">
             Resend Code <i class="fas fa-sync-alt"></i>
           </a>
-
         </div>
       </div>
-
     </div>
   </div>
 

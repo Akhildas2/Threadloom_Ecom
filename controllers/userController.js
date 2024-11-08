@@ -98,41 +98,49 @@ const generateUniqueReferralCode = async () => {
 
 //for checking  and creating referral
 const handleReferral = async (referralCode, newUserId) => {
-    // Generate a unique referral code
-    const newReferralCode = await generateUniqueReferralCode();
+    try {
+        // Generate a unique referral code
+        const newReferralCode = await generateUniqueReferralCode();
 
-    // Check if a referral code was provided
-    if (!referralCode) {
-        // Creating a new referral
-        const referral = new Referral({
-            user: newUserId,
-            referralCode: newReferralCode
-        });
-
-        await referral.save();
-        return referral; // Return the newly created referral
-    } else {
-        // Find the user who referred the new user
-        const referredByUser = await Referral.findOne({ referralCode }).populate('user');
-
-        if (!referredByUser) {
-            throw new Error('The referral code you provided is invalid.');
-        } else if (referredByUser.user._id.toString() === newUserId.toString()) {
-            throw new Error('Cannot refer yourself.');
-        } else {
+        // Check if a referral code was provided
+        if (!referralCode) {
+            // No referral code provided, creating a new referral without "referredBy"
             const referral = new Referral({
                 user: newUserId,
-                referralCode: newReferralCode,
-                referredBy: referredByUser.user._id
+                referralCode: newReferralCode
             });
 
-            await updateWalletBalance(newUserId, referredByUser.user._id);
-
             await referral.save();
-            return referral;
+            return referral; // Return the newly created referral
+        } else {
+            // Referral code provided, find the user who referred the new user
+            const referredByUser = await Referral.findOne({ referralCode }).populate('user');
+
+            if (!referredByUser) {
+                throw new Error('The referral code you provided is invalid.'); // Invalid referral code
+            } else if (referredByUser.user._id.toString() === newUserId.toString()) {
+                throw new Error('Cannot refer yourself.'); // User cannot refer themselves
+            } else {
+                // Create a new referral entry with the "referredBy" user
+                const referral = new Referral({
+                    user: newUserId,
+                    referralCode: newReferralCode,
+                    referredBy: referredByUser.user._id
+                });
+
+                // Update wallet balance for both the new user and the referrer
+                await updateWalletBalance(newUserId, referredByUser.user._id);
+
+                await referral.save();
+                return referral; // Return the newly created referral
+            }
         }
+    } catch (error) {
+
+        throw new Error(error.message || 'Internal server error.'); // Throw error to be handled outside
     }
 };
+
 
 
 
@@ -182,30 +190,42 @@ const updateWalletBalance = async (newUserId, referredByUserId) => {
 const insertUser = async (req, res) => {
     try {
         const { name, email, mobile, password, referralCode } = req.body;
+
         // Check if the user already exists by mobile
         const existingUserByMobile = await User.findOne({ mobile });
 
         // Check if the user already exists by email
         const existingUserByEmail = await User.findOne({ email });
+
+        // If user already exists by mobile and is not verified
         if (existingUserByMobile) {
-            return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
-        } else if (existingUserByEmail) {
-            if (!existingUserByEmail.isVerified) {
-                // If the user is not verified, resend the OTP
+            if (!existingUserByMobile.isVerified) {
                 const otp = generateOTP();
                 res.cookie('email', email); // Store email in cookie for verification
                 await sendVerifyOtp(name, email, otp); // Send OTP to user's email
-                res.status(200).json({
+                return res.status(200).json({
                     status: true,
                     url: '/verifyOtp'
                 });
-                return; // Ensure we exit here to prevent further execution
+            }
+            return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
+        }
+
+        // If user already exists by email and is not verified
+        if (existingUserByEmail) {
+            if (!existingUserByEmail.isVerified) {
+                const otp = generateOTP();
+                res.cookie('email', email); // Store email in cookie for verification
+                await sendVerifyOtp(name, email, otp); // Send OTP to user's email
+                return res.status(200).json({
+                    status: true,
+                    url: '/verifyOtp'
+                });
             }
             return res.status(400).json({ success: false, message: 'Email Already Exists. Please Use a Different Email.' });
         }
 
-
-        // Create a new user
+        // Create a new user if neither mobile nor email exists
         const spassword = await securePassword(password);
         const user = new User({
             name,
@@ -216,26 +236,27 @@ const insertUser = async (req, res) => {
 
         const userData = await user.save();
 
-        // Generate and save referral code
-        await handleReferral(referralCode, userData._id);
-
-        // Generate OTP and store it in cookie
-        if (userData) {
-            const otp = generateOTP();
-            console.log(otp)
-            res.cookie('email', email); // Store email in cookie for verification
-            await sendVerifyOtp(name, email, otp); // Send OTP to user's email
-            res.status(200).json({
-                status: true,
-                url: '/verifyOtp'
-            });
-        } else {
-            return res.status(500).json({ success: false, message: 'Your registration has failed.' });
+        // Handle referral code if provided
+        if (referralCode) {
+            await handleReferral(referralCode, userData._id);
         }
+
+        // Generate OTP and send it to the user's email for verification
+        const otp = generateOTP();
+        res.cookie('email', email); // Store email in cookie for verification
+        await sendVerifyOtp(name, email, otp); // Send OTP to user's email
+
+        return res.status(200).json({
+            status: true,
+            url: '/verifyOtp'
+        });
+
     } catch (error) {
+        console.error(error);
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
+
 
 
 
@@ -290,13 +311,13 @@ const sendVerifyOtp = async (name, email, otp) => {
 
 
 // for loading the verify otp page
-const loadVerifyOtp  = async (req, res) => {
+const loadVerifyOtp = async (req, res) => {
     try {
         const email = req.cookies.email;
         // Find the corresponding OTP record
         const otpRecord = await Otp.findOne({ email });
-        
-        
+
+
 
         // Mask the email
         const maskedEmail = email.replace(/^(.*)(.{4}@.*)$/, (match, p1, p2) => {
@@ -728,7 +749,7 @@ module.exports = {
     loadRegister,
     securePassword,
     insertUser,
-    loadVerifyOtp ,
+    loadVerifyOtp,
     sendVerifyOtp,
     verifyOtp,
     verifyLogin,

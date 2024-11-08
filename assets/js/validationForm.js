@@ -70,7 +70,7 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                     toast: true,
                     position: "center",
                     showConfirmButton: false,
-                    timer: 5000,
+                    timer: 3000,
                     timerProgressBar: true,
                     didOpen: (toast) => {
                         toast.onmouseenter = Swal.stopTimer;
@@ -83,7 +83,7 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                 });
                 setTimeout(() => {
                     location.href = res.data.url;
-                }, 5000);
+                }, 3000);
             } else {
                 console.error(res.data);
             }
