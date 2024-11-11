@@ -52,7 +52,24 @@ const loadRegister = async (req, res) => {
 
 
 
+// for loading the contact page
+const loadContact = async (req, res) => {
+    try {
+        res.render('contact', { req })
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+}
 
+
+// for loading the about page
+const loadAbout = async (req, res) => {
+    try {
+        res.render('about', { req })
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+    }
+}
 
 
 //for secure password
@@ -762,8 +779,9 @@ module.exports = {
     forgotPasswordLoad,
     forgotPassword,
     loadResetPassword,
-    verifyResetPassword
-
+    verifyResetPassword,
+    loadContact,
+    loadAbout
 
 
 }
