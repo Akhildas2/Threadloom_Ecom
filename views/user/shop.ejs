@@ -4,10 +4,37 @@
             .sidebar-divider {
                 border-top: 1px solid #e2e9e1;
                 margin-top: 5px;
-                /* Adjust this value to control the space between the label and the line */
                 margin-bottom: 10px;
-                /* Adjust this value to control the space between the line and the next element */
             }
+            .filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px; 
+    flex-wrap: wrap;
+}
+
+.filter-buttons a {
+    display: flex;
+    align-items: center;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-decoration: none;
+    border: 1px solid #ccc;
+    background-color: #f8f9fa;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.filter-buttons a:hover {
+    background-color: #e0e0e0;
+}
+
+.filter-buttons a i {
+    margin-right: 5px;
+}
+
+            
         </style>
 
         <main class="main">
@@ -31,48 +58,73 @@
                             </div>
 
                             <div class="sort-by-product-area">
-                                <!-- <div class="sort-by-cover mr-10">
+                                <div class="sort-by-cover mr-10">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
                                             <span><i class="fi-rs-apps"></i>Show:</span>
                                         </div>
                                         <div class="sort-by-dropdown-wrap">
-                                            <span> 10 <i class="fi-rs-angle-small-down"></i></span>
+                                            <span> <%= limit %> <i class="fi-rs-angle-small-down"></i></span>
                                         </div>
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a class="active" href="#">10</a></li>
-                                            <li><a href="#">50</a></li>
-                                            <li><a href="#">100</a></li>
-                                            <li><a href="#">200</a></li>
-                                            <li><a href="#">All</a></li>
+                                            <% [1,2, 3, 4, 5].forEach(l => { %>
+                                                <li>
+                                                    <a href="/shop?<%= new URLSearchParams({
+                                                        page: '1', // Reset to first page
+                                                        sort: sort || 'featured',
+                                                        category: category || '',
+                                                        minPrice: minPrice || '',
+                                                        maxPrice: maxPrice || '',
+                                                        size: selectedSizes || '',
+                                                        limit: l
+                                                    }).toString() %>">
+                                                        <%= l %>
+                                                    </a>
+                                                </li>
+                                            <% }) %>
                                         </ul>
                                     </div>
-                                </div> -->
+                                </div>
                                 <div class="sort-by-cover">
                                     <div class="sort-by-product-wrap">
                                         <div class="sort-by">
                                             <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
                                         </div>
                                         <div class="sort-by-dropdown-wrap">
-                                            <span> Featured <i class="fi-rs-angle-small-down"></i></span>
+                                            <span>
+                                                <%= sort === 'priceinc' ? 'Price: Low to High' :
+                                                sort === 'priceDesc' ? 'Price: High to Low' :
+                                                sort === 'newArrivals' ? 'New Arrivals' :
+                                                sort === 'az' ? 'A-Z' :
+                                                sort === 'za' ? 'Z-A' :
+                                                sort === 'popularity' ? 'Popularity' : 'Featured' %>
+                                                <i class="fi-rs-angle-small-down"></i> 
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="sort-by-dropdown">
                                         <ul>
-                                            <li><a class="active" href="?sort=featured">Featured</a></li>
-                                            <li><a href="?sort=priceinc">Price: Low to High</a></li>
-                                            <li><a href="?sort=priceDesc">Price: High to Low</a></li>
-                                            <li><a href="?sort=releaseDate">Release Date</a></li>
-                                            <li><a href="?sort=avgRating">Avg. Rating</a></li>
-                                            <li><a href="?sort=popularity">Popularity</a></li>
-                                            <li><a href="?sort=newArrivals">New Arrivals</a></li>
-                                            <li><a href="?sort=az">A-Z</a></li>
-                                            <li><a href="?sort=za">Z-A</a></li>
+                                            <% ['featured', 'priceInc' , 'priceDesc' , 'newArrivals' , 'az' , 'za'
+                                                , 'popularity' ].forEach(s=> { %>
+                                                <li>
+                                                    <a href="/shop?<%= new URLSearchParams({
+                                                        sort: s, 
+                                                        category: category || '', 
+                                                        minPrice: minPrice || '', 
+                                                        maxPrice: maxPrice || '', 
+                                                        size: selectedSizes || '' 
+                                                    }).toString() %>">
+                                                        <%= s==='priceInc' ? 'Price: Low to High' : s==='priceDesc'
+                                                            ? 'Price: High to Low' : s==='newArrivals' ? 'New Arrivals'
+                                                            : s==='az' ? 'A-Z' : s==='za' ? 'Z-A' : s==='popularity'
+                                                            ? 'Popularity' : 'Featured' %>
+                                                    </a>
+                                                </li>
+                                                <% }) %>
                                         </ul>
                                     </div>
-
 
                                 </div>
                             </div>
@@ -91,76 +143,76 @@
                                     <hr class="sidebar-divider">
 
                                     <div class="widget-header position-relative mb-20 pb-10">
-                                        <label for="category fw-900 " >Category</label>
+                                        <label for="category fw-900 ">Category</label>
                                         <hr class="sidebar-divider">
-                                        
-                                        <ul class="text-center">
-                                            <% categories.forEach(category=> { %>
 
-                                                <li class="categoryIsSelected(<%=category.categoryName %>) ? 'selected-category' : ''">
-                                                  <a href="/shop?category=<%= category.categoryName %>" >
-                                                    <%= category.categoryName %><span></span>
-                                                  </a>
+                                        <ul class="text-center">
+                                            <% categories.forEach(cat=> { %>
+                                                <li
+                                                    class="<%= cat.categoryName === category ? 'selected-category' : '' %>">
+                                                    <a href="/shop?<%= new URLSearchParams({ 
+                                                        sort: sort || 'createdAt', 
+                                                        category: cat.categoryName || '', 
+                                                        minPrice: minPrice || '', 
+                                                        maxPrice: maxPrice || '', 
+                                                        size: selectedSizes || '' 
+                                                    }).toString() %>">
+                                                        <%= cat.categoryName %>
+                                                    </a>
                                                 </li>
                                                 <% }) %>
-                                            </ul>
+                                        </ul>
+
                                         <br>
-                                       
+
                                     </div>
 
-                                    <!-- <div class="bt-1 border-color-1"></div>
+                                    <div class="bt-1 border-color-1"></div>
                                     <label for="price" class="fw-900">Price</label>
                                     <hr class="sidebar-divider">
-                                    
+
 
                                     <div class="price-filter">
                                         <div class="price-filter-inner">
                                             <div id="slider-range"></div>
                                             <div class="price_slider_amount">
                                                 <div class="label-input">
-                                                    <span>Range:</span><input type="text" id="amount" name="price"
-                                                        placeholder="Add Your Price" />
+                                                    <span>Range:</span>
+                                                    <input type="text" id="amount" name="price"
+                                                        value="<%= minPrice ? `${minPrice}-${maxPrice}`: '' %>"
+                                                        readonly />
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> -->
-                                    <!-- <div class="list-group">
+                                    </div>
+                                    <div class="list-group">
                                         <div class="list-group-item mb-10 mt-10">
                                             <hr class="sidebar-divider">
                                             <label class="fw-900">Size</label>
                                             <hr class="sidebar-divider ">
-
-
                                             <div class="custome-checkbox">
-                                                <input class="form-check-input" type="checkbox" name="checkbox"
-                                                    id="exampleCheckbox1" value="S">
-                                                <label class="form-check-label"
-                                                    for="exampleCheckbox1"><span>S</span></label><br>
-                                                <input class="form-check-input" type="checkbox" name="checkbox"
-                                                    id="exampleCheckbox2" value="M">
-                                                <label class="form-check-label"
-                                                    for="exampleCheckbox2"><span>M</span></label><br>
-                                                <input class="form-check-input" type="checkbox" name="checkbox"
-                                                    id="exampleCheckbox3" value="L">
-                                                <label class="form-check-label"
-                                                    for="exampleCheckbox3"><span>L</span></label><br>
-                                                <input class="form-check-input" type="checkbox" name="checkbox"
-                                                    id="exampleCheckbox4" value="XL">
-                                                <label class="form-check-label"
-                                                    for="exampleCheckbox4"><span>XL</span></label><br>
-                                                <input class="form-check-input" type="checkbox" name="checkbox"
-                                                    id="exampleCheckbox5" value="XXL">
-                                                <label class="form-check-label"
-                                                    for="exampleCheckbox5"><span>XXL</span></label><br>
+                                                <% ['S', 'M' , 'L' , 'XL' , 'XXL' ].forEach(size=> { %>
+                                                    <div class=" custom-checkbox">
+                                                        <input type="checkbox" class="form-check-input"
+                                                            id="size<%= size %>" name="size" value="<%= size %>" <% if
+                                                            (size.includes(size)) { %><% } %>>
+                                                            <label class="form-check-label" for="size<%= size %>">
+                                                                <%= size %>
+                                                            </label>
+                                                    </div>
+                                                    <% }); %>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="text-center">
+                                    <div class="text-center filter-buttons">
                                         <a href="#" class="btn-sm btn-default" id="applyFilterBtn">
-                                            <span><i class="fi-rs-filter"></i>Filter</span>
+                                            <i class="fi-rs-filter"></i> Filter
                                         </a>
-                                    </div> -->
-
+                                        <a href="/shop" class="btn-sm btn-default" id="clearFilterBtn">
+                                            <i class="fi-rs-refresh"></i> Clear
+                                        </a>
+                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class="col-lg-9 col-md-8 col-sm-8 col-6">
@@ -229,7 +281,7 @@
                                                                 </a>
                                                             </div>
                                                             <h2><a href="/productdetails/<%= products[i]._id %>">
-                                                                    <%= products[i].name%>
+                                                                <%= products[i].name.length > 20 ? products[i].name.substring(0, 20) + '...' : products[i].name %>
                                                                 </a></h2>
                                                             <div class="rating-result" title="90%">
                                                                 <span><span>90%</span></span>
@@ -297,13 +349,13 @@
                                                                                                                                                     <del>₹
                                                                                                                                                         <%= products[i].price.toFixed(2)
                                                                                                                                                             %>
-                                                                                                                                                            </del>
+                                                                                                                                                    </del>
                                                                                                                                                     &nbsp;<span
                                                                                                                                                         class="discounted-price"
                                                                                                                                                         style="color: green;">₹
                                                                                                                                                         <%= discountedPrice.toFixed(2)
                                                                                                                                                             %>
-                                                                                                                                                            </span>
+                                                                                                                                                    </span>
                                                                                                                                                     &nbsp;<span
                                                                                                                                                         class="discounted-precentage"
                                                                                                                                                         style="color: red;">(
@@ -314,7 +366,8 @@
                                                                                                                                                             products[i].category.offer.discount
                                                                                                                                                             %>
                                                                                                                                                             %
-                                                                                                                                                            off)</span>
+                                                                                                                                                            off)
+                                                                                                                                                    </span>
 
                                                                                                                                                 </span>
                                                                                                                                                 <% } else
@@ -324,7 +377,7 @@
                                                                                                                                                         class="money price">₹
                                                                                                                                                         <%= products[i].price.toFixed(2)
                                                                                                                                                             %>
-                                                                                                                                                            </span>
+                                                                                                                                                    </span>
                                                                                                                                                     <% }
                                                                                                                                                         %>
                                                             </div>
@@ -359,28 +412,45 @@
                 </div>
                 </div>
                 <!-- Pagination -->
-                <div class="pagination-area mt-30 mb-50" id="pagination-container">
+                <div class="pagination-area mt-30 mb-50">
                     <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-end">
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <% if (i===currentPage) { %>
-                                    <li class="page-item active">
-                                        <a class="page-link" onclick="handlePaginationChange('<%= i %>')">
-                                            <%= i %>
-                                        </a>
-                                    </li>
-                                    <% } else { %>
-                                        <li class="page-item">
-                                            <a class="page-link" onclick="handlePaginationChange('<%= i %>')">
-                                                <%= i %>
-                                            </a>
-                                        </li>
-                                        <% } %>
-                                            <% } %>
-
+                        <ul class="pagination justify-content-center">
+                            <% 
+                                let startPage = Math.max(1, currentPage - 2); 
+                                let endPage = Math.min(totalPages, startPage + 4); // Show only 5 pages
+                
+                                if (currentPage > 1) { 
+                            %>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
+                                        &lt; 
+                                    </a>
+                                </li>
+                            <% } %>
+                
+                            <% for (let i = startPage; i <= endPage; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link"
+                                        href="/shop?page=<%= i %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                            <% } %>
+                
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link"
+                                        href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
+                                        &gt; <!-- Right arrow -->
+                                    </a>
+                                </li>
+                            <% } %>
                         </ul>
                     </nav>
                 </div>
+                
+
 
             </section>
         </main>
@@ -545,10 +615,50 @@
                         }
 
 
+                        document.getElementById('applyFilterBtn').addEventListener('click', (e) => {
+                            e.preventDefault();
+                            const url = new URL(window.location.href);
+
+                            // Get selected filters
+                            const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'))
+                                .map(el => el.value);
+
+                            const sliderValues = $("#slider-range").slider("values"); // Get min/max from slider
+                            const minPrice = sliderValues[0];
+                            const maxPrice = sliderValues[1];
+
+                            const currentSort = url.searchParams.get('sort') || 'createdAt';
+                            const currentCategory = url.searchParams.get('category') || '';
+
+                            // Clear previous price filters
+                            url.searchParams.delete('minPrice');
+                            url.searchParams.delete('maxPrice');
+                            url.searchParams.delete('size');
+                            url.search = '';
+
+                            // Preserve sorting and category
+                            if (currentSort) {
+                                url.searchParams.set('sort', currentSort);
+                            }
+                            if (currentCategory) {
+                                url.searchParams.set('category', currentCategory);
+                            }
+
+                            // Apply size filters
+                            if (sizes.length > 0) {
+                                url.searchParams.set('size', sizes);
+                            }
 
 
+                            // Apply new price range values
+                            url.searchParams.set('minPrice', minPrice);
+                            url.searchParams.set('maxPrice', maxPrice);
 
+                            // Reset page to 1 when filters change
+                            url.searchParams.set('page', '1');
 
+                            window.location.href = url.toString().replace(/%2C/g, ',');
+                        });
 
 
 

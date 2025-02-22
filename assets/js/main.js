@@ -1,7 +1,7 @@
-(function($) {
+(function ($) {
     "use strict";
     // Page loading
-    $(window).on('load', function() {
+    $(window).on('load', function () {
         $('#preloader-active').delay(450).fadeOut('slow');
         $('body').delay(450).css({
             'overflow': 'visible'
@@ -13,7 +13,7 @@
     -----------------*/
     var header = $('.sticky-bar');
     var win = $(window);
-    win.on('scroll', function() {
+    win.on('scroll', function () {
         var scroll = win.scrollTop();
         if (scroll < 200) {
             header.removeClass('stick');
@@ -47,7 +47,7 @@
             min: 0,
             max: 500,
             values: [130, 250],
-            slide: function(event, ui) {
+            slide: function (event, ui) {
                 $("#amount").val("$" + ui.values[0] + " - $" + ui.values[1]);
             }
         });
@@ -70,7 +70,7 @@
     });
 
     /*Carausel 6 columns*/
-    $(".carausel-6-columns").each(function(key, item) {
+    $(".carausel-6-columns").each(function (key, item) {
         var id = $(this).attr("id");
         var sliderID = '#' + id;
         var appendArrowsClassName = '#' + id + '-arrows'
@@ -86,26 +86,26 @@
             loop: true,
             adaptiveHeight: true,
             responsive: [{
-                    breakpoint: 1025,
-                    settings: {
-                        slidesToShow: 4,
-                        slidesToScroll: 1,
-                    }
-                },
-                {
-                    breakpoint: 768,
-                    settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 1,
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1
-                    }
+                breakpoint: 1025,
+                settings: {
+                    slidesToShow: 4,
+                    slidesToScroll: 1,
                 }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 1,
+                }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }
             ],
             prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-angle-left"></i></span>',
             nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-angle-right"></i></span>',
@@ -114,7 +114,7 @@
     });
 
     /*Carausel 4 columns*/
-    $(".carausel-4-columns").each(function(key, item) {
+    $(".carausel-4-columns").each(function (key, item) {
         var id = $(this).attr("id");
         var sliderID = '#' + id;
         var appendArrowsClassName = '#' + id + '-arrows'
@@ -130,19 +130,19 @@
             loop: true,
             adaptiveHeight: true,
             responsive: [{
-                    breakpoint: 1025,
-                    settings: {
-                        slidesToShow: 3,
-                        slidesToScroll: 3,
-                    }
-                },
-                {
-                    breakpoint: 480,
-                    settings: {
-                        slidesToShow: 1,
-                        slidesToScroll: 1
-                    }
+                breakpoint: 1025,
+                settings: {
+                    slidesToShow: 3,
+                    slidesToScroll: 3,
                 }
+            },
+            {
+                breakpoint: 480,
+                settings: {
+                    slidesToShow: 1,
+                    slidesToScroll: 1
+                }
+            }
             ],
             prevArrow: '<span class="slider-btn slider-prev"><i class="fi-rs-angle-left"></i></span>',
             nextArrow: '<span class="slider-btn slider-next"><i class="fi-rs-angle-right"></i></span>',
@@ -152,16 +152,16 @@
 
     /*Fix Bootstrap 5 tab & slick slider*/
 
-    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(e) {
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
         $('.carausel-4-columns').slick('setPosition');
     });
 
     /*------ Timer Countdown ----*/
 
-    $('[data-countdown]').each(function() {
+    $('[data-countdown]').each(function () {
         var $this = $(this),
             finalDate = $(this).data('countdown');
-        $this.countdown(finalDate, function(event) {
+        $this.countdown(finalDate, function (event) {
             $(this).html(
                 event.strftime('' +
                     '<span class="countdown-section"><span class="countdown-amount hover-up">%d</span><span class="countdown-period"> days </span></span>' +
@@ -185,29 +185,29 @@
         prevArrow: '<span class="pro-icon-1-prev"><i class="fi-rs-angle-small-left"></i></span>',
         nextArrow: '<span class="pro-icon-1-next"><i class="fi-rs-angle-small-right"></i></span>',
         responsive: [{
-                breakpoint: 1199,
-                settings: {
-                    slidesToShow: 3,
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 575,
-                settings: {
-                    slidesToShow: 1,
-                }
+            breakpoint: 1199,
+            settings: {
+                slidesToShow: 3,
             }
+        },
+        {
+            breakpoint: 991,
+            settings: {
+                slidesToShow: 2,
+            }
+        },
+        {
+            breakpoint: 767,
+            settings: {
+                slidesToShow: 2,
+            }
+        },
+        {
+            breakpoint: 575,
+            settings: {
+                slidesToShow: 1,
+            }
+        }
         ]
     });
 
@@ -222,29 +222,29 @@
         prevArrow: '<span class="pro-icon-1-prev"><i class="fi-rs-angle-small-left"></i></span>',
         nextArrow: '<span class="pro-icon-1-next"><i class="fi-rs-angle-small-right"></i></span>',
         responsive: [{
-                breakpoint: 1199,
-                settings: {
-                    slidesToShow: 3,
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 1,
-                }
-            },
-            {
-                breakpoint: 575,
-                settings: {
-                    slidesToShow: 1,
-                }
+            breakpoint: 1199,
+            settings: {
+                slidesToShow: 3,
             }
+        },
+        {
+            breakpoint: 991,
+            settings: {
+                slidesToShow: 2,
+            }
+        },
+        {
+            breakpoint: 767,
+            settings: {
+                slidesToShow: 1,
+            }
+        },
+        {
+            breakpoint: 575,
+            settings: {
+                slidesToShow: 1,
+            }
+        }
         ]
     });
 
@@ -257,29 +257,29 @@
         dots: true,
         arrows: false,
         responsive: [{
-                breakpoint: 1199,
-                settings: {
-                    slidesToShow: 3,
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 1,
-                }
-            },
-            {
-                breakpoint: 575,
-                settings: {
-                    slidesToShow: 1,
-                }
+            breakpoint: 1199,
+            settings: {
+                slidesToShow: 3,
             }
+        },
+        {
+            breakpoint: 991,
+            settings: {
+                slidesToShow: 2,
+            }
+        },
+        {
+            breakpoint: 767,
+            settings: {
+                slidesToShow: 1,
+            }
+        },
+        {
+            breakpoint: 575,
+            settings: {
+                slidesToShow: 1,
+            }
+        }
         ]
     });
 
@@ -292,29 +292,29 @@
         dots: false,
         arrows: false,
         responsive: [{
-                breakpoint: 1199,
-                settings: {
-                    slidesToShow: 4,
-                }
-            },
-            {
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 3,
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 2,
-                }
-            },
-            {
-                breakpoint: 575,
-                settings: {
-                    slidesToShow: 1,
-                }
+            breakpoint: 1199,
+            settings: {
+                slidesToShow: 4,
             }
+        },
+        {
+            breakpoint: 991,
+            settings: {
+                slidesToShow: 3,
+            }
+        },
+        {
+            breakpoint: 767,
+            settings: {
+                slidesToShow: 2,
+            }
+        },
+        {
+            breakpoint: 575,
+            settings: {
+                slidesToShow: 1,
+            }
+        }
         ]
     });
 
@@ -322,7 +322,7 @@
         Category toggle function
     ------------------------------*/
     var searchToggle = $('.categori-button-active');
-    searchToggle.on('click', function(e) {
+    searchToggle.on('click', function (e) {
         e.preventDefault();
         if ($(this).hasClass('open')) {
             $(this).removeClass('open');
@@ -337,21 +337,34 @@
     /*---------------------
         Price range
     --------------------- */
-    var sliderrange = $('#slider-range');
-    var amountprice = $('#amount');
-    $(function() {
+    $(function () {
+        var sliderrange = $('#slider-range');
+        var amountprice = $('#amount');
+
+        // Get min/max values from URL if they exist
+        const urlParams = new URLSearchParams(window.location.search);
+
+        let minPrice = urlParams.has("minPrice") ? parseInt(urlParams.get("minPrice")) : 0;
+        let maxPrice = urlParams.has("maxPrice") ? parseInt(urlParams.get("maxPrice")) : 1000;
+
+        // Ensure minPrice and maxPrice are valid numbers
+        if (isNaN(minPrice) || minPrice < 0) minPrice = 0;
+        if (isNaN(maxPrice) || maxPrice > 5000) maxPrice = 1000;
+
         sliderrange.slider({
             range: true,
-            min: 100,
+            min: 0,
             max: 5000,
-            values: [0, 1000],
-            slide: function(event, ui) {
-                amountprice.val(" ₹" + ui.values[0] + " -  ₹" + ui.values[1]);
+            values: [minPrice, maxPrice],  // Use dynamic values
+            slide: function (event, ui) {
+                amountprice.val(" ₹" + ui.values[0] + " - ₹" + ui.values[1]);
             }
         });
-        amountprice.val(" ₹" + sliderrange.slider("values", 0) +
-            " -  ₹" + sliderrange.slider("values", 1));
+
+        amountprice.val(" ₹" + sliderrange.slider("values", 0) + " - ₹" + sliderrange.slider("values", 1));
     });
+
+
 
     /*-------------------------------
         Sort by active
@@ -360,7 +373,7 @@
         var $body = $('body'),
             $cartWrap = $('.sort-by-product-area'),
             $cartContent = $cartWrap.find('.sort-by-dropdown');
-        $cartWrap.on('click', '.sort-by-product-wrap', function(e) {
+        $cartWrap.on('click', '.sort-by-product-wrap', function (e) {
             e.preventDefault();
             var $this = $(this);
             if (!$this.parent().hasClass('show')) {
@@ -370,7 +383,7 @@
             }
         });
         /*Close When Click Outside*/
-        $body.on('click', function(e) {
+        $body.on('click', function (e) {
             var $target = e.target;
             if (!$($target).is('.sort-by-product-area') && !$($target).parents().is('.sort-by-product-area') && $cartWrap.hasClass('show')) {
                 $cartWrap.removeClass('show');
@@ -382,12 +395,12 @@
     /*-----------------------
         Shop filter active
     ------------------------- */
-    $('.shop-filter-toogle').on('click', function(e) {
+    $('.shop-filter-toogle').on('click', function (e) {
         e.preventDefault();
         $('.shop-product-fillter-header').slideToggle();
     })
     var shopFiltericon = $('.shop-filter-toogle');
-    shopFiltericon.on('click', function() {
+    shopFiltericon.on('click', function () {
         $('.shop-filter-toogle').toggleClass('active');
     })
 
@@ -415,23 +428,23 @@
         fade: false,
         arrows: false,
         responsive: [{
-                breakpoint: 991,
-                settings: {
-                    slidesToShow: 3,
-                }
-            },
-            {
-                breakpoint: 767,
-                settings: {
-                    slidesToShow: 4,
-                }
-            },
-            {
-                breakpoint: 575,
-                settings: {
-                    slidesToShow: 2,
-                }
+            breakpoint: 991,
+            settings: {
+                slidesToShow: 3,
             }
+        },
+        {
+            breakpoint: 767,
+            settings: {
+                slidesToShow: 4,
+            }
+        },
+        {
+            breakpoint: 575,
+            settings: {
+                slidesToShow: 2,
+            }
+        }
         ]
     });
 
@@ -445,12 +458,12 @@
         }
     });
 
-    $('.btn-close').on('click', function(e) {
+    $('.btn-close').on('click', function (e) {
         $('.zoomContainer').remove();
     });
 
-    $('#quickViewModal').on('show.bs.modal', function(e) {
-        $(document).click(function(e) {
+    $('#quickViewModal').on('show.bs.modal', function (e) {
+        $(document).click(function (e) {
             var modalDialog = $('.modal-dialog');
             if (!modalDialog.is(e.target) && modalDialog.has(e.target).length === 0) {
                 $('.zoomContainer').remove();
@@ -464,13 +477,13 @@
     $('.select-active').select2();
 
     /*--- Checkout toggle function ----*/
-    $('.checkout-click1').on('click', function(e) {
+    $('.checkout-click1').on('click', function (e) {
         e.preventDefault();
         $('.checkout-login-info').slideToggle(900);
     });
 
     /*--- Checkout toggle function ----*/
-    $('.checkout-click3').on('click', function(e) {
+    $('.checkout-click3').on('click', function (e) {
         e.preventDefault();
         $('.checkout-login-info3').slideToggle(1000);
     });
@@ -478,11 +491,11 @@
     /*-------------------------
         Create an account toggle
     --------------------------*/
-    $('.checkout-toggle2').on('click', function() {
+    $('.checkout-toggle2').on('click', function () {
         $('.open-toggle2').slideToggle(1000);
     });
 
-    $('.checkout-toggle').on('click', function() {
+    $('.checkout-toggle').on('click', function () {
         $('.open-toggle').slideToggle(1000);
     });
 
@@ -494,7 +507,7 @@
     function paymentMethodChanged() {
         var $order_review = $('.payment-method');
 
-        $order_review.on('click', 'input[name="payment_method"]', function() {
+        $order_review.on('click', 'input[name="payment_method"]', function () {
             var selectedClass = 'payment-selected';
             var parent = $(this).parents('.sin-payment').first();
             parent.addClass(selectedClass).siblings().removeClass(selectedClass);
@@ -508,7 +521,7 @@
     });
 
     // Isotope active
-    $('.grid').imagesLoaded(function() {
+    $('.grid').imagesLoaded(function () {
         // init Isotope
         var $grid = $('.grid').isotope({
             itemSelector: '.grid-item',
@@ -527,12 +540,12 @@
             endTriggersearch = $('.search-close'),
             container = $('.main-search-active');
 
-        searchTrigger.on('click', function(e) {
+        searchTrigger.on('click', function (e) {
             e.preventDefault();
             container.addClass('search-visible');
         });
 
-        endTriggersearch.on('click', function() {
+        endTriggersearch.on('click', function () {
             container.removeClass('search-visible');
         });
 
@@ -548,18 +561,18 @@
 
         wrapper4.prepend('<div class="body-overlay-1"></div>');
 
-        navbarTrigger.on('click', function(e) {
+        navbarTrigger.on('click', function (e) {
             e.preventDefault();
             container.addClass('sidebar-visible');
             wrapper4.addClass('mobile-menu-active');
         });
 
-        endTrigger.on('click', function() {
+        endTrigger.on('click', function () {
             container.removeClass('sidebar-visible');
             wrapper4.removeClass('mobile-menu-active');
         });
 
-        $('.body-overlay-1').on('click', function() {
+        $('.body-overlay-1').on('click', function () {
             container.removeClass('sidebar-visible');
             wrapper4.removeClass('mobile-menu-active');
         });
@@ -580,7 +593,7 @@
     $offCanvasNavSubMenu.slideUp();
 
     /*Category Sub Menu Toggle*/
-    $offCanvasNav.on('click', 'li a, li .menu-expand', function(e) {
+    $offCanvasNav.on('click', 'li a, li .menu-expand', function (e) {
         var $this = $(this);
         if (($this.parent().attr('class').match(/\b(menu-item-has-children|has-children|has-sub-menu)\b/)) && ($this.attr('href') === '#' || $this.hasClass('menu-expand'))) {
             e.preventDefault();
@@ -597,34 +610,34 @@
     });
 
     /*--- language currency active ----*/
-    $('.mobile-language-active').on('click', function(e) {
+    $('.mobile-language-active').on('click', function (e) {
         e.preventDefault();
         $('.lang-dropdown-active').slideToggle(900);
     });
 
     /*--- Categori-button-active-2 ----*/
-    $('.categori-button-active-2').on('click', function(e) {
+    $('.categori-button-active-2').on('click', function (e) {
         e.preventDefault();
         $('.categori-dropdown-active-small').slideToggle(900);
     });
 
     /*--- Mobile demo active ----*/
     var demo = $('.tm-demo-options-wrapper');
-    $('.view-demo-btn-active').on('click', function(e) {
+    $('.view-demo-btn-active').on('click', function (e) {
         e.preventDefault();
         demo.toggleClass('demo-open');
     });
 
     /*-----More Menu Open----*/
     $('.more_slide_open').slideUp();
-    $('.more_categories').on('click', function() {
+    $('.more_categories').on('click', function () {
         $(this).toggleClass('show');
         $('.more_slide_open').slideToggle();
     });
 
     /*-----Modal----*/
 
-    $('.modal').on('shown.bs.modal', function(e) {
+    $('.modal').on('shown.bs.modal', function (e) {
         $('.product-image-slider').slick('setPosition');
         $('.slider-nav-thumbnails').slick('setPosition');
 

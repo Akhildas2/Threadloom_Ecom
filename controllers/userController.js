@@ -582,11 +582,15 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort, page, limit = 10, category, filter } = req.query;
+        const { sort = 'createdAt', page = '1', limit='1' , category, minPrice, maxPrice, size = ''  } = req.query;
 
-        const currentPage = parseInt(page, 10) || 1;
+        console.log("size",req.query.size);
+        
+        const currentPage = parseInt(page);
 
         const userId = req.session.user_id;
+
+        // Initialize wishlist array
         let userWishlist = [];
         if (userId) { // If the user is logged in
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
@@ -598,40 +602,36 @@ const shop = async (req, res) => {
             const categoryId = await Category.findOne({ categoryName: category }).select('_id');
             if (categoryId) {
                 query.category = categoryId;
-                console.log(`Filtering by category ID: ${categoryId}`);
-            } else {
-                console.log(`Category not found: ${category}`);
             }
         }
 
 
+        if (minPrice && maxPrice) {
+            query.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
+        }
 
+
+        if (size) {
+            const sizeArray = typeof size === 'string' ? size.split(',') : size;
+            console.log("sizeArrayy",sizeArray);
+            
+            query.size = { $in: sizeArray };
+        }
+        
+        
+        
         let sortQuery = {};
         switch (sort) {
-            case 'popularity':
-                sortQuery = { popularity: -1 };
-                break;
-            case 'priceinc':
-                sortQuery = { price: 1 };
-                break;
-            case 'priceDesc':
-                sortQuery = { price: -1 };
-                break;
-            case 'featured':
-                sortQuery = { isFeatured: -1 };
-                break;
-            case 'newArrivals':
-                sortQuery = { createdAt: -1 };
-                break;
-            case 'az':
-                sortQuery = { name: 1 };
-                break;
-            case 'za':
-                sortQuery = { name: -1 };
-                break;
-            default:
-                sortQuery = { createdAt: -1 };
+            case 'popularity': sortQuery = { popularity: -1 }; break;
+            case 'priceInc': sortQuery = { price: 1 }; break;
+            case 'priceDesc': sortQuery = { price: -1 }; break;
+            case 'featured': sortQuery = { isFeatured: -1 }; break;
+            case 'newArrivals': sortQuery = { createdAt: -1 }; break;
+            case 'az': sortQuery = { name: 1 }; break;
+            case 'za': sortQuery = { name: -1 }; break;
+            default: sortQuery = { createdAt: -1 };
         }
+
         console.log("sortQuery", sortQuery)
 
         const products = await Product.find(query)
@@ -655,12 +655,18 @@ const shop = async (req, res) => {
             currentPage,
             limit,
             sort,
-            filter,
+            category,
             categories,
             userWishlist,
-            totalCount
+            totalCount,
+            minPrice,
+            maxPrice,
+            size: size || '', 
+            selectedSizes: size || [] 
         });
     } catch (error) {
+        console.log("error",error);
+        
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
