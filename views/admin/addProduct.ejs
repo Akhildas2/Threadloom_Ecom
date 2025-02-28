@@ -75,6 +75,66 @@
                                 </select>
                                 <div class="error-message" id="size-error"></div>
                             </div>
+
+                            <div class="form-group">
+                                <label for="fit">Fit</label>
+                                <input type="text" class="form-control" id="fit" name="fit">
+                                <div class="error-message" id="fit-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fabric">Fabric</label>
+                                <input type="text" class="form-control" id="fabric" name="fabric">
+                                <div class="error-message" id="fabric-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sleeve">Sleeve</label>
+                                <select class="form-control" id="sleeve" name="sleeve">
+                                    <option value="">-----Choose sleeve type-----</option>
+                                    <option value="Full Sleeve">Full Sleeve</option>
+                                    <option value="Half Sleeve">Half Sleeve</option>
+                                    <option value="Sleeveless">Sleeveless</option>
+                                </select>
+                                <div class="error-message" id="sleeve-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pattern">Pattern</label>
+                                <input type="text" class="form-control" id="pattern" name="pattern">
+                                <div class="error-message" id="pattern-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="color">Color</label>
+                                <input type="text" class="form-control" id="color" name="color">
+                                <div class="error-message" id="color-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fabricCare">Fabric Care</label>
+                                <input type="text" class="form-control" id="fabricCare" name="fabricCare">
+                                <div class="error-message" id="fabricCare-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="origin">Origin</label>
+                                <input type="text" class="form-control" id="origin" name="origin">
+                                <div class="error-message" id="origin-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="product-status">Product Status</label>
+                                <select class="form-control" id="productStatus" name="productStatus">
+                                    <option value="">-----Choose Product Status-----</option>
+                                    <option value="isHot">Featured</option>
+                                    <option value="isNewArrival">New Arrival</option>
+                                    <option value="isBestSeller">Best Seller</option>
+                                </select>
+                                <div class="error-message" id="productStatus-error"></div>
+                            </div>
+
+
                             <label for="productImages" style="display: block; text-align: center;">Product
                                 Images</label>
                             <br>
@@ -134,8 +194,17 @@
                 category: "Please choose a category",
                 stockCount: "Stock Count must be a positive integer",
                 size: "Please select a size",
-                productImages: "Please upload at least 3 images"
+                productImages: "Please upload at least 3 images",
+                fit: "Fit is required",
+                fabric: "Fabric is required",
+                sleeve: "Please choose a sleeve type",
+                pattern: "Pattern is required",
+                color: "Color is required",
+                fabricCare: "Fabric Care is required",
+                origin: "Origin is required",
+                productStatus: "Product status is required"
             };
+
 
             let addedFiles = [];
 
@@ -206,11 +275,11 @@
                     }
                 });
             });
-            
+
             $('#addProduct input, #addProduct textarea, #addProduct select').on('input change', function () {
-            let field = this.name;
-            toggleError(field, '');
-             });
+                let field = this.name;
+                toggleError(field, '');
+            });
             document.getElementById('addProduct').addEventListener('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission
 
@@ -229,14 +298,17 @@
                     toggleError('name', errorMessages.name);
                     errors = true;
                 }
+
                 if (!formData.get('brand').trim()) {
                     toggleError('brand', errorMessages.brand);
                     errors = true;
                 }
+
                 if (!formData.get('description').trim()) {
                     toggleError('description', errorMessages.description);
                     errors = true;
                 }
+
                 if (!priceRegex.test(formData.get('price')) || formData.get('price') <= 0) {
                     toggleError('price', errorMessages.price);
                     errors = true;
@@ -251,14 +323,57 @@
                     toggleError('category', errorMessages.category);
                     errors = true;
                 }
+
                 if (!priceRegex.test(formData.get('stockCount')) || formData.get('stockCount') <= 0) {
                     toggleError('stockCount', errorMessages.stockCount);
                     errors = true;
                 }
+
                 if (formData.get('size') === '') {
                     toggleError('size', errorMessages.size);
                     errors = true;
                 }
+
+                if (!formData.get('fit').trim()) {
+                    toggleError('fit', errorMessages.fit);
+                    errors = true;
+                }
+
+                if (!formData.get('fabric').trim()) {
+                    toggleError('fabric', errorMessages.fabric);
+                    errors = true;
+                }
+
+                if (formData.get('sleeve') === '') {
+                    toggleError('sleeve', errorMessages.sleeve);
+                    errors = true;
+                }
+
+                if (!formData.get('pattern').trim()) {
+                    toggleError('pattern', errorMessages.pattern);
+                    errors = true;
+                }
+
+                if (!formData.get('color').trim()) {
+                    toggleError('color', errorMessages.color);
+                    errors = true;
+                }
+
+                if (!formData.get('fabricCare').trim()) {
+                    toggleError('fabricCare', errorMessages.fabricCare);
+                    errors = true;
+                }
+
+                if (!formData.get('origin').trim()) {
+                    toggleError('origin', errorMessages.origin);
+                    errors = true;
+                }
+
+                if (formData.get('productStatus') === '') {
+                    toggleError('productStatus', errorMessages.productStatus);
+                    errors = true;
+                }
+
                 if (formData.getAll('productImages').length < 3) {
                     toggleError('productImages', errorMessages.productImages);
                     errors = true;
@@ -276,7 +391,7 @@
                 if (errors) {
                     return false; // Prevent form submission if there are errors
                 }
-              
+
                 // Post form data
                 axios.post('/admin/product/addproduct', formData)
                     .then(res => {

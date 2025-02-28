@@ -1,0 +1,85 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickViewLabel">Product Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Product Image -->
+                    <div class="col-lg-6 col-md-12">
+                        <div class="detail-gallery">
+                            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                            <!-- MAIN SLIDES -->
+                            <div class="product-image-slider" id="quickViewImages">
+                                <!-- Images will be dynamically added here -->
+                            </div>
+                            <!-- THUMBNAILS -->
+                            <div class="slider-nav-thumbnails" id="quickViewThumbnails">
+                                <!-- Thumbnails will be dynamically added here -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Product Details -->
+                    <div class="col-lg-6 col-md-12">
+                        <div class="detail-info">
+                            <h2 id="quickViewName" class="title-detail text-center" style="margin-top: 20px;">
+                            </h2>
+                        </div>
+                        <hr>
+                        <div class="product-detail-rating">
+                            <div class="pro-details-brand">
+                                <span>
+                                    <strong><i class="fa-solid fa-list"
+                                            style="margin-right: 5px;"></i></strong>
+                                    <span id="quickViewCategory"></span>
+                                </span>
+                            </div>
+                            <div class="product-rate-cover text-end">
+                                <div class="product-rate d-inline-block">
+                                    <div class="product-rating" style="width:90%"></div>
+                                </div>
+                                <span class="font-small ml-5 text-muted">(25 reviews)</span>
+                            </div>
+                        </div>
+                        <div class="product-detail-rating">
+                            <div class="pro-details-brand">
+                                <strong><i class="fa-solid fa-tags" style="margin-right: 5px;"></i></strong>
+                                <span id="quickViewBrand"></span>
+                            </div>
+                            <div class="pro-details-brand">
+                                <strong><i class="fa-solid fa-venus-mars"
+                                        style="margin-right: 5px;"></i></strong>
+                                <span id="quickViewGender"></span>
+                            </div>
+                        </div>
+                        <div class="product-detail-rating">
+                            <div class="product-card__price d-flex">
+                                <p><strong>₹</strong> <span id="quickViewPrice"></span></p>
+                            </div>
+                            <div class="attr-detail attr-size">
+                                <strong class="mr-10">
+                                    <i class="fa fa-tshirt" aria-hidden="true"></i> 
+                                  </strong>
+                                  
+                                <ul class="list-filter size-filter font-small">
+                                    <li class="active">
+                                        <a href="#" >
+                                            <span id="quickViewSize"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="quickViewStock"></div>
+                        </div>
+                        <hr>
+                        <p><strong>Description:</strong> <span id="description"></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

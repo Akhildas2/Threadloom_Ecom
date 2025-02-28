@@ -1,463 +1,832 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
+        <%- include('../layouts/quickView.ejs') %>
 
-        <section class="mt-50 mb-50">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="product-detail accordion-detail">
-                            <div class="row mb-50">
-                                <div class="page-header breadcrumb-wrap">
-                                    <div class="container">
-                                        <div class="breadcrumb">
-                                            <a href="/" rel="nofollow">Home</a>
-                                            <span></span>
-                                            <%= products.category.categoryName %>
+            <section class="mt-50 mb-50">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="product-detail accordion-detail">
+                                <div class="row mb-50">
+                                    <div class="page-header breadcrumb-wrap">
+                                        <div class="container">
+                                            <div class="breadcrumb">
+                                                <a href="/" rel="nofollow">Home</a>
                                                 <span></span>
-                                                <%= products.name %>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12 col-xs-12">
-
-                                    <div class="detail-gallery">
-                                        <span class="zoom-icon"><i class="fi-rs-search"></i></span>
-                                        <!-- MAIN SLIDES -->
-                                        <div class="product-image-slider">
-
-
-                                            <% for (var i=0; i < products.productImage.length; i++) { %>
-                                                <figure class="border-radius-10">
-
-                                                    <img src="/uploads/product/resized/<%= products.productImage[i] %>"
-                                                        alt="<%= products.name %>">
-
-                                                </figure>
-                                                <% } %>
-
-
-                                        </div>
-                                        <!-- THUMBNAILS -->
-                                        <div class="slider-nav-thumbnails pl-15 pr-15">
-                                            <% for (var i=0; i < products.productImage.length; i++) { %>
-                                                <div class="thumbnail">
-                                                    <img src="/uploads/product/resized/<%= products.productImage[i] %>"
-                                                        alt="<%= products.name %>" style="width: 100px; height: 100px;">
-                                                </div>
-                                                <% } %>
-                                                    <div>
-                                                        <span class="prev-thumbnail"></span>
-                                                        <span class="next-thumbnail"></span>
-                                                    </div>
-                                        </div>
-
-                                    </div>
-                                    <!-- End Gallery -->
-                                </div>
-                                <div class="col-md-6 col-sm-12 col-xs-12">
-                                    <div class="detail-info">
-                                        <h2 class="title-detail">
-                                            <%= products.name %>
-                                        </h2>
-                                        <div class="product-detail-rating">
-                                            <div class="pro-details-brand">
-                                                <span> Category: <%= products.category.categoryName %></span>
-                                            </div>
-                                            <div class="product-rate-cover text-end">
-                                                <div class="product-rate d-inline-block">
-                                                    <div class="product-rating" style="width:90%">
-                                                    </div>
-                                                </div>
-                                                <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                                <%= product.category.categoryName %>
+                                                    <span></span>
+                                                    <%= product.name %>
                                             </div>
                                         </div>
-                                        <div class="clearfix product-price-cover">
-                                            <div class="product-price primary-color float-left">
-                                                <div class="product-card__price d-flex">
-                                                    <% let discountedPrice=products.price; %>
-                                                        <% let hasDiscount=false; %>
-                                                            <% if (products.offer) { %>
-                                                                <% const offer=products.offer; %>
-                                                                    <% const currentDate=new Date(); %>
-                                                                        <% const offerEndDate=new
-                                                                            Date(offer.endingDate); %>
+                                    </div>
 
-                                                                            <% if (currentDate <=offerEndDate) { %>
-                                                                                <% discountedPrice=discountedPrice -
-                                                                                    (discountedPrice * (offer.discount /
-                                                                                    100)); %>
-                                                                                    <% hasDiscount=true; %>
-                                                                                        <% } %>
-                                                                                            <% } else if
-                                                                                                (products.category.offer)
-                                                                                                { %>
-                                                                                                <% const
-                                                                                                    categoryOffer=products.category.offer;
-                                                                                                    %>
+                                    <div class="col-md-6 col-sm-12 col-xs-12">
+                                        <div class="detail-gallery">
+                                            <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                            <!-- MAIN SLIDES -->
+                                            <div class="product-image-slider">
+                                                <% for (var i=0; i < product.productImage.length; i++) { %>
+                                                    <figure class="border-radius-10">
+                                                        <img src="/uploads/product/resized/<%= product.productImage[i] %>"
+                                                            alt="<%= product.name %>">
+                                                    </figure>
+                                                    <% } %>
+                                            </div>
+                                            <!-- THUMBNAILS -->
+                                            <div class="slider-nav-thumbnails">
+                                                <% for (var i=0; i < product.productImage.length; i++) { %>
+                                                    <div class="thumbnail">
+                                                        <img src="/uploads/product/resized/<%= product.productImage[i] %>"
+                                                            alt="<%= product.name %>"
+                                                            style="width: 100px; height: 100px;">
+                                                    </div>
+                                                    <% } %>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-12 col-xs-12">
+                                        <div class="detail-info">
+                                            <h2 class="title-detail text-center" style="margin-top: 20px;">
+                                                <%= product.name %>
+                                            </h2>
+                                            <div class="product-detail-rating">
+                                                <div class="pro-details-brand">
+                                                    <span><i class="fa-solid fa-list" style="margin-right: 5px;"></i>
+                                                        <%= product.category.categoryName %>
+                                                    </span>
+                                                </div>
+
+                                                <div class="product-rate-cover text-end">
+                                                    <div class="product-rate d-inline-block">
+                                                        <div class="product-rating" style="width:90%">
+                                                        </div>
+                                                    </div>
+                                                    <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                                </div>
+                                            </div>
+                                            <div class="product-detail-rating">
+                                                <span><i class="fa-solid fa-tags" style="margin-right: 5px;"></i>
+                                                    <%= product.brand %>
+                                                </span>
+                                                <span><i class="fa-solid fa-venus-mars" style="margin-right: 5px;"></i>
+                                                    <%= product.gender %>
+                                                </span>
+                                            </div>
+
+                                            <div class="clearfix product-price-cover">
+                                                <div class="product-price primary-color float-left">
+                                                    <div class="product-card__price d-flex">
+                                                        <% let discountedPrice=product.price; %>
+                                                            <% let hasDiscount=false; %>
+                                                                <% if (product.offer) { %>
+                                                                    <% const offer=product.offer; %>
+                                                                        <% const currentDate=new Date(); %>
+                                                                            <% const offerEndDate=new
+                                                                                Date(offer.endingDate); %>
+
+                                                                                <% if (currentDate <=offerEndDate) { %>
+                                                                                    <% discountedPrice=discountedPrice -
+                                                                                        (discountedPrice *
+                                                                                        (offer.discount / 100)); %>
+                                                                                        <% hasDiscount=true; %>
+                                                                                            <% } %>
+                                                                                                <% } else if
+                                                                                                    (product.category.offer)
+                                                                                                    { %>
                                                                                                     <% const
-                                                                                                        currentDate=new
-                                                                                                        Date(); %>
+                                                                                                        categoryOffer=product.category.offer;
+                                                                                                        %>
                                                                                                         <% const
-                                                                                                            offerEndDate=new
-                                                                                                            Date(categoryOffer.endingDate);
-                                                                                                            %>
+                                                                                                            currentDate=new
+                                                                                                            Date(); %>
+                                                                                                            <% const
+                                                                                                                offerEndDate=new
+                                                                                                                Date(categoryOffer.endingDate);
+                                                                                                                %>
 
-                                                                                                            <% if
-                                                                                                                (currentDate
-                                                                                                                <=offerEndDate)
-                                                                                                                { %>
-                                                                                                                <% discountedPrice=discountedPrice
-                                                                                                                    -
-                                                                                                                    (discountedPrice
-                                                                                                                    *
-                                                                                                                    (categoryOffer.discount
-                                                                                                                    /
-                                                                                                                    100));
-                                                                                                                    %>
-                                                                                                                    <% hasDiscount=true;
+                                                                                                                <% if
+                                                                                                                    (currentDate
+                                                                                                                    <=offerEndDate)
+                                                                                                                    { %>
+                                                                                                                    <% discountedPrice=discountedPrice
+                                                                                                                        -
+                                                                                                                        (discountedPrice
+                                                                                                                        *
+                                                                                                                        (categoryOffer.discount
+                                                                                                                        /
+                                                                                                                        100));
                                                                                                                         %>
-                                                                                                                        <% }
+                                                                                                                        <% hasDiscount=true;
                                                                                                                             %>
                                                                                                                             <% }
                                                                                                                                 %>
-
-                                                                                                                                <% if
-                                                                                                                                    (hasDiscount)
-                                                                                                                                    {
+                                                                                                                                <% }
                                                                                                                                     %>
 
-                                                                                                                                    <span
-                                                                                                                                        class="money price">
-                                                                                                                                        <ins><del>₹
-                                                                                                                                                <%= products.price.toFixed(2)
-                                                                                                                                                    %>
-                                                                                                                                                    </del></ins>
-                                                                                                                                        <ins
-                                                                                                                                            style="margin-left: 20px;"><span
-                                                                                                                                                class="discounted-price"
-                                                                                                                                                style="color: green;">₹
-                                                                                                                                                <%= discountedPrice.toFixed(2)
-                                                                                                                                                    %>
-                                                                                                                                                    </span></ins>
-                                                                                                                                        <ins
-                                                                                                                                            style="margin-left: 20px;"><span
-                                                                                                                                                class="discount-percentage"
-                                                                                                                                                style="color: red;">(
-                                                                                                                                                <%= products.offer
-                                                                                                                                                    ?
-                                                                                                                                                    products.offer.discount
-                                                                                                                                                    :
-                                                                                                                                                    products.category.offer.discount
-                                                                                                                                                    %>
-                                                                                                                                                    %
-                                                                                                                                                    off)</span></ins>
-                                                                                                                                    </span>
-
-
-                                                                                                                                    <% } else
+                                                                                                                                    <% if
+                                                                                                                                        (hasDiscount)
                                                                                                                                         {
                                                                                                                                         %>
-                                                                                                                                        <ins><span
-                                                                                                                                                class="money price">₹
-                                                                                                                                                <%= products.price.toFixed(2)
-                                                                                                                                                    %>
-                                                                                                                                                    </span></ins>
-                                                                                                                                        <% }
+
+                                                                                                                                        <span
+                                                                                                                                            class="money price">
+                                                                                                                                            <ins><del>₹
+                                                                                                                                                    <%= product.price.toFixed(2)
+                                                                                                                                                        %>
+                                                                                                                                                </del></ins>
+                                                                                                                                            <ins
+                                                                                                                                                style="margin-left: 20px;"><span
+                                                                                                                                                    class="discounted-price"
+                                                                                                                                                    style="color: green;">₹
+                                                                                                                                                    <%= discountedPrice.toFixed(2)
+                                                                                                                                                        %>
+                                                                                                                                                </span></ins>
+                                                                                                                                            <ins
+                                                                                                                                                style="margin-left: 20px;"><span
+                                                                                                                                                    class="discount-percentage"
+                                                                                                                                                    style="color: red;">(
+                                                                                                                                                    <%= product.offer
+                                                                                                                                                        ?
+                                                                                                                                                        product.offer.discount
+                                                                                                                                                        :
+                                                                                                                                                        product.category.offer.discount
+                                                                                                                                                        %>
+                                                                                                                                                        %
+                                                                                                                                                        off)
+                                                                                                                                                </span></ins>
+                                                                                                                                        </span>
+
+
+                                                                                                                                        <% } else
+                                                                                                                                            {
                                                                                                                                             %>
-                                                </div>
-                                                <!-- <ins><span class="text-brand">₹<#%= products.price %></span></ins> -->
-                                                <!-- <ins><span class="old-price font-md ml-15">₹<#%= products.firstPrice%>
+                                                                                                                                            <ins><span
+                                                                                                                                                    class="money price">₹
+                                                                                                                                                    <%= product.price.toFixed(2)
+                                                                                                                                                        %>
+                                                                                                                                                </span></ins>
+                                                                                                                                            <% }
+                                                                                                                                                %>
+                                                    </div>
+                                                    <!-- <ins><span class="text-brand">₹<#%= product.price %></span></ins> -->
+                                                    <!-- <ins><span class="old-price font-md ml-15">₹<#%= product.firstPrice%>
                                                     </span></ins> -->
-                                                <!-- <span class="save-price  font-md color3 ml-15">25% Off</span> -->
+                                                    <!-- <span class="save-price  font-md color3 ml-15">25% Off</span> -->
+                                                </div>
+                                            </div>
+
+                                            <div class="product_sort_info font-xs mb-30">
+                                                <ul>
+                                                    <!-- <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera
+                                                    Brand Warranty</li> -->
+                                                    <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 14 Day Return
+                                                        Policy</li>
+                                                    <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery
+                                                        available
+                                                    </li>
+                                                </ul>
+                                            </div>
+
+                                            <div class="attr-detail attr-size">
+                                                <strong class="mr-10">Size</strong>
+                                                <ul class="list-filter size-filter font-small">
+                                                    <li class="active"><a href="#">
+                                                            <%= product.size %>
+                                                        </a></li>
+                                                </ul>
+                                            </div>
+                                            <div class="bt-1 border-color-1 mt-30 mb-30">
+                                                <% if (product.stockCount> 0) { %>
+                                                    <div class="detail-extralink">
+                                                        <div class="detail-qty border radius">
+                                                            <a href="#" class="qty-down"><i
+                                                                    class="fi-rs-angle-small-down"></i></a>
+                                                            <span class="qty-val">1</span>
+                                                            <a href="#" class="qty-up"><i
+                                                                    class="fi-rs-angle-small-up"></i></a>
+                                                        </div>
+                                                        <div class="product-extra-link2">
+                                                            <form id="addToCartForm"
+                                                                action="/cart/addToCart/<%= product._id %>"
+                                                                method="post">
+                                                                <input type="hidden" name="quantity" value="1">
+                                                                <button type="submit"
+                                                                    class="button button-add-to-cart">Add
+                                                                    to cart</button>
+                                                                <% if (userWishlist.includes(product._id.toString())) {
+                                                                    %>
+                                                                    <a aria-label="Add To Wishlist" class="action-btn"
+                                                                        style="background-color: red;"
+                                                                        onclick="addToWishList('<%= product._id %>')">
+                                                                        <i class="fi-rs-heart"></i>
+                                                                    </a>
+                                                                    <% } else { %>
+                                                                        <a aria-label="Add To Wishlist"
+                                                                            class="action-btn hover-up"
+                                                                            onclick="addToWishList('<%= product._id %>')">
+                                                                            <i class="fi-rs-heart"></i>
+                                                                        </a>
+                                                                        <% } %>
+
+
+                                                                            <!-- <a aria-label="Compare"
+                                                                                class="action-btn hover-up" href="#"><i
+                                                                                    class="fi-rs-shuffle"></i></a> -->
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <% } else { %>
+                                                        <div class="product-extra-link2">
+                                                            <button class="button sold-out">Sold Out</button>
+                                                            <a aria-label="Add To Wishlist"
+                                                                class="action-btn hover-up wishlist"
+                                                                onclick="addToWishList('<%= product._id %>')"><i
+                                                                    class="fi-rs-heart"></i></a>
+                                                        </div>
+                                                        <% } %>
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- Detail Info -->
+                            </div>
+                        </div>
+                        <!---for navbar-->
+                        <section>
+
+
+
+
+                            <div class="row">
+                                <div class="col-lg-10 m-auto entry-main-content ">
+                                    <h2 class="section-title style-1 mb-30 "
+                                        onmouseover="toggleSection('descriptions')">
+                                        Descriptions</h2>
+
+                                    <div class="section-content descriptions active">
+                                        <!-- Description content goes here -->
+                                        <div class="bt-1 border-color-1 mt-15 mb-15">
+                                            <div class="short-desc mb-30">
+                                                <p>
+                                                    <%= product.description %>
+                                                </p>
                                             </div>
                                         </div>
+                                    </div>
+                                    <h3 class="section-title style-1 mb-30 mt-30"
+                                        onmouseover="toggleSection('additional-info')">Additional info</h3>
+                                    <div class="section-content additional-info">
+                                        <table class="table">
+                                            <tbody>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <td>
+                                                        <%= product.name %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Brand</th>
+                                                    <td>
+                                                        <%= product.brand %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fit</th>
+                                                    <td>
+                                                        <%= product.fit %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fabric</th>
+                                                    <td>
+                                                        <%= product.fabric %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Sleeve</th>
+                                                    <td>
+                                                        <%= product.sleeve %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Pattern</th>
+                                                    <td>
+                                                        <%= product.pattern %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Color</th>
+                                                    <td>
+                                                        <%= product.color %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>Fabric Care</th>
+                                                    <td>
+                                                        <%= product.fabricCare %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>origin</th>
+                                                    <td>
+                                                        <%= product.origin %>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <h3 class="section-title style-1 mb-30 mt-30"
+                                        onmouseover="toggleSection('reviews')">
+                                        Reviews (3)</h3>
+                                    <div class="section-content reviews ">
+                                        <!-- Reviews content goes here -->
+                                        <p>coming soon ...</p>
 
-                                        <div class="product_sort_info font-xs mb-30">
-                                            <ul>
-                                                <!-- <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera
-                                                    Brand Warranty</li> -->
-                                                <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 14 Day Return
-                                                    Policy</li>
-                                                <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery
-                                                    available
-                                                </li>
-                                            </ul>
-                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-                                        <div class="attr-detail attr-size">
-                                            <strong class="mr-10">Size</strong>
-                                            <ul class="list-filter size-filter font-small">
-                                                <li><a href="#">
-                                                        <%= products.size %>
-                                                    </a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="bt-1 border-color-1 mt-30 mb-30">
-                                            <% if (products.stockCount> 0) { %>
-                                                <div class="detail-extralink">
-                                                    <div class="detail-qty border radius">
-                                                        <a href="#" class="qty-down"><i
-                                                                class="fi-rs-angle-small-down"></i></a>
-                                                        <span class="qty-val">1</span>
-                                                        <a href="#" class="qty-up"><i
-                                                                class="fi-rs-angle-small-up"></i></a>
-                                                    </div>
-                                                    <div class="product-extra-link2">
-                                                        <form id="addToCartForm"
-                                                            action="/cart/addToCart/<%= products._id %>" method="post">
-                                                            <input type="hidden" name="quantity" value="1">
-                                                            <button type="submit" class="button button-add-to-cart">Add
-                                                                to cart</button>
-                                                            <% if (userWishlist) { %>
+
+                        </section>
+
+
+                        <div class="row mt-60">
+                            <% if (relatedProducts.length> 0) { %>
+                                <div class="col-12">
+                                    <h3 class="section-title style-1 mb-30">Related products</h3>
+                                </div>
+                                <div class="col-12">
+                                    <div class="row product-grid-4">
+                                        <% relatedProducts.forEach(product=> { %>
+                                            <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                                <div class="product-cart-wrap mb-30">
+                                                    <div class="product-img-action-wrap">
+                                                        <div class="product-img product-img-zoom">
+                                                            <a href="/productDetails/<%= product._id %>" tabindex="0">
+                                                                <img class="default-img"
+                                                                    src="/uploads/product/resized/<%= product.productImage[0] %>"
+                                                                    alt="<%= product.name %>">
+                                                                <% if(product.productImage &&
+                                                                    product.productImage.length>
+                                                                    1) { %>
+                                                                    <img class="hover-img"
+                                                                        src="/uploads/product/resized/<%= product.productImage[1] %>"
+                                                                        alt="<%= product.name %>">
+                                                                    <% } else { %>
+                                                                        <img class="hover-img"
+                                                                            src="/uploads/product/resized/<%= product.productImage[0] %>"
+                                                                            alt="<%= product.name %>">
+                                                                        <% } %>
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-action-1">
+                                                            <a aria-label="Quick view"
+                                                                class="action-btn hover-up quick-view-btn"
+                                                                data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                                                                data-product='<%= JSON.stringify(product) %>'>
+                                                                <i class="fi-rs-eye"></i>
+                                                            </a>
+
+                                                            <% if (userWishlist.includes(product._id.toString())) { %>
                                                                 <a aria-label="Add To Wishlist" class="action-btn"
                                                                     style="background-color: red;"
-                                                                    onclick="addToWishList('<%= products._id %>')"><i
-                                                                        class="fi-rs-heart"></i></a>
+                                                                    onclick="addToWishList('<%= product._id %>')">
+                                                                    <i class="fi-rs-heart"></i>
+                                                                </a>
                                                                 <% } else { %>
                                                                     <a aria-label="Add To Wishlist"
                                                                         class="action-btn hover-up"
-                                                                        onclick="addToWishList('<%= products._id %>')"><i
-                                                                            class="fi-rs-heart"></i></a>
+                                                                        onclick="addToWishList('<%= product._id %>')">
+                                                                        <i class="fi-rs-heart"></i>
+                                                                    </a>
                                                                     <% } %>
 
-                                                                        <a aria-label="Compare"
-                                                                            class="action-btn hover-up" href="#"><i
-                                                                                class="fi-rs-shuffle"></i></a>
-                                                        </form>
+
+                                                                        <!-- <a aria-label="Compare" class="action-btn small hover-up"
+                                                                href=#" tabindex="0">
+                                                                <i class="fi-rs-shuffle"></i>
+                                                            </a> -->
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="product-content-wrap">
+                                                        <h2>
+                                                            <a href="/productDetails/<%= product._id %>" tabindex="0">
+                                                                <%= product.name.length> 15 ?
+                                                                    product.name.substring(0,15) +
+                                                                    '...' : product.name %>
+                                                            </a>
+                                                        </h2>
+                                                        <div class="rating-result" title="90%">
+                                                            <span>
+                                                                <span>90%</span>
+                                                            </span>
+                                                        </div>
+                                                        <div class="money price">
+                                                            <span>₹<%= product.price.toFixed(2) %></span>
+                                                        </div>
+                                                        <div class="product-action-1 show">
+                                                            <button aria-label="Add To Cart" class="action-btn hover-up"
+                                                                onclick="addToCart('<%= product._id %>', '<%= product.name %>', '<%= product.price %>')">
+                                                                <i class="fi-rs-shopping-bag-add"></i>
+                                                            </button>
+                                                        </div>
+                                                        <div
+                                                            class="product-badges product-badges-position product-badges-mrg">
+                                                            <% if(product.isNewArrival) { %><span class="new">New</span>
+                                                                <% } %>
+                                                                    <% if(product.isHot) { %><span
+                                                                            class="hot">Hot</span>
+                                                                        <% } %>
+                                                                            <% if(product.isBestSeller) { %>
+                                                                                <span class="best">Best Sell</span>
+                                                                                <% } %>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <% } else { %>
-                                                    <div class="product-extra-link2">
-                                                        <button class="button sold-out">Sold Out</button>
-                                                        <a aria-label="Add To Wishlist"
-                                                            class="action-btn hover-up wishlist"
-                                                            onclick="addToWishList('<%= products._id %>')"><i
-                                                                class="fi-rs-heart"></i></a>
-                                                    </div>
-                                                    <% } %>
-                                        </div>
 
+                                            </div>
 
-
+                                            <% }); %>
                                     </div>
                                 </div>
-
-                            </div>
-                            <!-- Detail Info -->
+                                <% } %>
                         </div>
+
+
                     </div>
-                    <!---for navbar-->
-                    <section>
-
-
-
-
-                        <div class="row">
-                            <div class="col-lg-10 m-auto entry-main-content ">
-                                <h2 class="section-title style-1 mb-30 " onmouseover="toggleSection('descriptions')">
-                                    Descriptions</h2>
-
-                                <div class="section-content descriptions active">
-                                    <!-- Description content goes here -->
-                                    <div class="bt-1 border-color-1 mt-15 mb-15">
-                                        <div class="short-desc mb-30">
-                                            <p>
-                                                <%= products.description %>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <h3 class="section-title style-1 mb-30 mt-30"
-                                    onmouseover="toggleSection('additional-info')">Additional info</h3>
-                                <div class="section-content additional-info">
-                                    <!-- Additional info content goes here -->
-                                    <p>comming soon...</p>
-                                </div>
-                                <h3 class="section-title style-1 mb-30 mt-30" onmouseover="toggleSection('reviews')">
-                                    Reviews (3)</h3>
-                                <div class="section-content reviews ">
-                                    <!-- Reviews content goes here -->
-                                    <p>coming soon ...</p>
-
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </section>
-                    <!---for related product-->
-
-
-
                 </div>
-            </div>
-            </div>
-            </div>
-        </section>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                </div>
+                </div>
+            </section>
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        <script>
-            function toggleSection(section) {
-                // Hide all sections
-                const sections = document.querySelectorAll('.section-content');
-                sections.forEach(function (sec) {
-                    sec.classList.remove('active');
+            <script>
+                function toggleSection(section) {
+                    // Hide all sections
+                    const sections = document.querySelectorAll('.section-content');
+                    sections.forEach(function (sec) {
+                        sec.classList.remove('active');
+                    });
+
+                    // Show the clicked section
+                    document.querySelector('.' + section).classList.add('active');
+                }
+                document.getElementById('addToCartForm').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent the default form submission
+
+                    const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);
+                    const productId = '<%= product._id %>';
+                    const price = '<%= product.price %>';
+                    const name = `<%=product.name %>`
+                    fetch('/cart/addToCart/' + productId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId, name, quantity, price }),
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                return Swal.fire({
+                                    title: 'Login Required',
+                                    text: 'You must be logged in to add items to your cart.',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Login',
+                                    cancelButtonText: 'Cancel',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/login';
+                                    } else {
+                                        throw new Error('Action cancelled');
+                                    }
+                                });
+                            }
+                            return response.json();
+                        })
+
+                        .then(data => {
+                            if (data.status) {
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: "top-end",
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: 'Success!',
+                                    text: data.message,
+
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                // Handle errors
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message,
+                                    icon: 'error',
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            if (!err.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: err.response.data.message,
+                                });
+                            } else {
+                                console.error(err);
+                            }
+                        });
                 });
 
-                // Show the clicked section
-                document.querySelector('.' + section).classList.add('active');
-            }
-            document.getElementById('addToCartForm').addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent the default form submission
 
-                const quantity = parseInt(document.querySelector('.qty-val').textContent, 10);
-                const productId = '<%= products._id %>';
-                const price = '<%= products.price %>';
-                const name = `<%=products.name %>`
-                fetch('/cart/addToCart/' + productId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId, name, quantity, price }),
-                })
-                    .then(response => {
-                        if (response.redirected) {
-                            return Swal.fire({
-                                title: 'Login Required',
-                                text: 'You must be logged in to add items to your cart.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Login',
-                                cancelButtonText: 'Cancel',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '/login';
-                                } else {
-                                    throw new Error('Action cancelled');
-                                }
-                            });
-                        }
-                        return response.json();
+                function addToCart(productId, name, price) {
+                    // Assuming you want to add 1 quantity by default
+                    const quantity = 1;
+
+                    fetch('/cart/addToCart/' + productId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId, name, quantity, price }),
+                    })
+                        .then(response => {
+                            if (response.redirected) {
+                                return Swal.fire({
+                                    title: 'Login Required',
+                                    text: 'You must be logged in to add items to your cart.',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Login',
+                                    cancelButtonText: 'Cancel',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/login';
+                                    } else {
+                                        throw new Error('Action cancelled');
+                                    }
+                                });
+                            }
+                            return response.json();
+                        })
+
+                        .then(data => {
+                            if (data.status) {
+                                // Show a success message using SweetAlert2
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: "top-end",
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: 'Success!',
+                                    text: data.message,
+                                });
+                            } else {
+                                // Handle errors
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message,
+                                    icon: 'error',
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            if (!err.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: err.response.data.message,
+                                });
+                            } else {
+                                console.error(err);
+                            }
+                        });
+                }
+
+
+                function addToWishList(productId) {
+
+
+                    fetch('/wishList/addTowishList/' + productId, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ productId }),
                     })
 
-                    .then(data => {
-                        if (data.status) {
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                            Toast.fire({
-                                icon: "success",
-                                title: 'Success!',
-                                text: data.message,
+                        .then(response => {
+                            if (response.redirected) {
+                                return Swal.fire({
+                                    title: 'Login Required',
+                                    text: 'You must be logged in to add items to your Wishlist.',
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonText: 'Login',
+                                    cancelButtonText: 'Cancel',
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = '/login';
+                                    } else {
+                                        throw new Error('Action cancelled');
+                                    }
+                                });
+                            }
+                            return response.json();
+                        })
 
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            // Handle errors
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message,
-                                icon: 'error',
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        if (!err.data.success) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: err.response.data.message,
-                            });
-                        } else {
-                            console.error(err);
-                        }
+                        .then(data => {
+                            if (data.status) {
+                                // Show a success message using SweetAlert2
+                                const Toast = Swal.mixin({
+                                    toast: true,
+                                    position: "top-end",
+                                    showConfirmButton: false,
+                                    timer: 3000,
+                                    timerProgressBar: true,
+                                    didOpen: (toast) => {
+                                        toast.onmouseenter = Swal.stopTimer;
+                                        toast.onmouseleave = Swal.resumeTimer;
+                                    }
+                                });
+                                Toast.fire({
+                                    icon: "success",
+                                    title: 'Success!',
+                                    text: data.message,
+                                }).then(() => {
+                                    location.reload();
+                                });
+
+                            } else {
+                                // Handle errors
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: data.message,
+                                    icon: 'error',
+                                });
+                            }
+                        })
+                        .catch(err => {
+                            if (!err.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: err.response.data.message,
+                                });
+                            } else {
+                                console.error(err);
+                            }
+                        });
+                }
+
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.querySelectorAll(".quick-view-btn").forEach(button => {
+                        button.addEventListener("click", function () {
+                            let product = JSON.parse(this.getAttribute("data-product"));
+
+                            // Populate Product Info
+                            document.getElementById("quickViewName").innerText = product.name;
+                            document.getElementById("quickViewCategory").innerText = product.category.categoryName;
+                            document.getElementById("quickViewBrand").innerText = product.brand;
+                            document.getElementById("quickViewGender").innerText = product.gender;
+                            document.getElementById("quickViewSize").innerText = product.size;
+                            document.getElementById("description").innerText = product.description;
+
+                            // Assume product is the object received (and it includes offer and category.offer if available)
+                            let discountedPrice = product.price;
+                            let hasDiscount = false;
+
+                            if (product.offer) {
+                                const offer = product.offer;
+                                const currentDate = new Date();
+                                const offerEndDate = new Date(offer.endingDate);
+                                if (currentDate <= offerEndDate) {
+                                    discountedPrice = discountedPrice - (discountedPrice * (offer.discount / 100));
+                                    hasDiscount = true;
+                                }
+                            } else if (product.category && product.category.offer) {
+                                const categoryOffer = product.category.offer;
+                                const currentDate = new Date();
+                                const offerEndDate = new Date(categoryOffer.endingDate);
+                                if (currentDate <= offerEndDate) {
+                                    discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100));
+                                    hasDiscount = true;
+                                }
+                            }
+
+                            const priceElement = document.getElementById("quickViewPrice");
+
+                            if (hasDiscount) {
+                                priceElement.innerHTML = `
+                                <span class="money price">
+                                <ins><del> ${product.price.toFixed(2)}</del></ins>
+                                <ins style="margin-left: 20px;">
+                                    <span class="discounted-price" style="color: green;"> ${discountedPrice.toFixed(2)}</span>
+                                </ins>
+                                <ins style="margin-left: 20px;">
+                                    <span class="discount-percentage" style="color: red;">
+                                    (${product.offer ? product.offer.discount : product.category.offer.discount}% off)
+                                    </span>
+                                </ins>
+                                </span>
+                            `;
+                            } else {
+                                priceElement.innerHTML = `<ins><span class="money price"> ${product.price.toFixed(2)}</span></ins>`;
+                            }
+
+                            // Stock status
+                            let stockDiv = document.getElementById("quickViewStock");
+                            stockDiv.innerHTML = product.stockCount > 0
+                                ? `<span class="badge bg-success">In Stock</span>`
+                                : `<span class="badge bg-danger">Out of Stock</span>`;
+
+                            // Get Image Containers
+                            let imageContainer = document.getElementById("quickViewImages");
+                            let thumbnailContainer = document.getElementById("quickViewThumbnails");
+
+                            // Clear Previous Content
+                            imageContainer.innerHTML = "";
+                            thumbnailContainer.innerHTML = "";
+
+                            if (product.productImage.length > 0) {
+                                product.productImage.forEach((image, index) => {
+                                    let mainSlide = `
+                                    <figure class="border-radius-10">
+                                    <img src="/uploads/product/resized/${image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </figure>
+                                `;
+                                    imageContainer.innerHTML += mainSlide;
+
+                                    let thumbSlide = `
+                                    <div class="thumbnail">
+                                    <img src="/uploads/product/resized/${image}" alt="${product.name}" style="width: 100px; height: 100px; object-fit: fill;">
+                                    </div>
+                                `;
+                                    thumbnailContainer.innerHTML += thumbSlide;
+                                });
+                            }
+
+                            // Show the modal (if not already being triggered by another mechanism)
+                            $('#quickViewModal').modal('show');
+                        });
                     });
-            });
 
-
-            function addToWishList(productId) {
-
-
-                fetch('/wishList/addTowishList/' + productId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ productId }),
-                })
-
-                    .then(response => {
-                        if (response.redirected) {
-                            return Swal.fire({
-                                title: 'Login Required',
-                                text: 'You must be logged in to add items to your Wishlist.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonText: 'Login',
-                                cancelButtonText: 'Cancel',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = '/login';
-                                } else {
-                                    throw new Error('Action cancelled');
-                                }
-                            });
-                        }
-                        return response.json();
-                    })
-
-                    .then(data => {
-                        if (data.status) {
-                            // Show a success message using SweetAlert2
-                            const Toast = Swal.mixin({
-                                toast: true,
-                                position: "top-end",
-                                showConfirmButton: false,
-                                timer: 3000,
-                                timerProgressBar: true,
-                                didOpen: (toast) => {
-                                    toast.onmouseenter = Swal.stopTimer;
-                                    toast.onmouseleave = Swal.resumeTimer;
-                                }
-                            });
-                            Toast.fire({
-                                icon: "success",
-                                title: 'Success!',
-                                text: data.message,
-                            });
-
-                        } else {
-                            // Handle errors
-                            Swal.fire({
-                                title: 'Error!',
-                                text: data.message,
-                                icon: 'error',
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        if (!err.data.success) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: err.response.data.message,
-                            });
-                        } else {
-                            console.error(err);
-                        }
+                    // Initialize the slider after the modal is fully shown
+                    $('#quickViewModal').on('shown.bs.modal', function () {
+                        // Initialize the slider for the modal gallery
+                        window.initSlickSlider($('#quickViewModal .detail-gallery'));
                     });
-            }
 
-        </script>
-        <%- include('../layouts/footer.ejs') %>
-            <%- include('../layouts/script.ejs') %>
+                    $('#quickViewModal').on('hidden.bs.modal', function () {
+                        var $modalGallery = $(this).find('.detail-gallery');
+                        var $productImageSlider = $modalGallery.find('.product-image-slider');
+                        var $thumbnailSlider = $modalGallery.find('.slider-nav-thumbnails');
+
+                        // Unslick the sliders if initialized
+                        if ($productImageSlider.hasClass('slick-initialized')) {
+                            $productImageSlider.slick('unslick');
+                        }
+                        if ($thumbnailSlider.hasClass('slick-initialized')) {
+                            $thumbnailSlider.slick('unslick');
+                        }
+
+                        // Optionally, clear the content if needed
+                        $productImageSlider.empty();
+                        $thumbnailSlider.empty();
+                    });
+
+                });
+
+
+
+
+            </script>
+            <%- include('../layouts/footer.ejs') %>
+                <%- include('../layouts/script.ejs') %>

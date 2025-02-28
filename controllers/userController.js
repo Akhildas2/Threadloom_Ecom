@@ -16,10 +16,14 @@ const sendResetPasswordEmail = require("../services/forgotEmailService")
 //for loading the home page
 const loadHome = async (req, res) => {
     try {
-        //for getting the products
-        const products = await Product.find({ isUnlisted: false }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+
+        const featuredProducts = await Product.find({ isUnlisted: false, isHot: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+        const newProducts = await Product.find({ isUnlisted: false, isNewArrival: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+        const bestSellerProducts = await Product.find({ isUnlisted: false, isBestSeller: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+
         //for getting the categories
-        const categories = await Category.find({});
+        const categories = await Category.find({ isUnlisted: false }).limit(8);
+
         const userId = req.session.user_id;
 
         let userWishlist = [];
@@ -27,9 +31,7 @@ const loadHome = async (req, res) => {
         if (userId) {
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
         }
-        res.render('home', { req, products, categories, userWishlist });
-
-
+        res.render('home', { req, featuredProducts, newProducts, bestSellerProducts, categories, userWishlist });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
@@ -332,9 +334,7 @@ const loadVerifyOtp = async (req, res) => {
     try {
         const email = req.cookies.email;
         // Find the corresponding OTP record
-        const otpRecord = await Otp.findOne({ email });
-
-
+        await Otp.findOne({ email });
 
         // Mask the email
         const maskedEmail = email.replace(/^(.*)(.{4}@.*)$/, (match, p1, p2) => {
@@ -526,19 +526,20 @@ const userLogout = async (req, res) => {
 const productDetails = async (req, res) => {
     try {
         const productId = req.params.productId;
-
+        // Fetch product from the  products
         const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        let userWishlist = false;
+        // Fetch related products from the same category
+        const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } });
+
+        let userWishlist = [];
         const userId = req.session.user_id;
         // If the user is logged in
         if (userId) {
-            const wishlistItem = await Wishlist.findOne({ productId: productId, user: userId });
-            if (wishlistItem) {
-                userWishlist = true;
-            }
+            const wishlistItems = await Wishlist.find({ user: userId });
+            userWishlist = wishlistItems.map(item => item.productId.toString());
         }
 
-        res.render('productDetails', { products: productData, req, userWishlist });
+        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist});
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
@@ -582,12 +583,9 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
 //for shop showing product
 const shop = async (req, res) => {
     try {
-        const { sort = 'createdAt', page = '1', limit='1' , category, minPrice, maxPrice, size = ''  } = req.query;
+        const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '' } = req.query;
 
-        console.log("size",req.query.size);
-        
         const currentPage = parseInt(page);
-
         const userId = req.session.user_id;
 
         // Initialize wishlist array
@@ -610,16 +608,19 @@ const shop = async (req, res) => {
             query.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
         }
 
+        if (gender) {
+            const genderArray = typeof gender === 'string' ? [gender] : gender;
+            query.gender = { $in: genderArray };
+        }
+
 
         if (size) {
             const sizeArray = typeof size === 'string' ? size.split(',') : size;
-            console.log("sizeArrayy",sizeArray);
-            
             query.size = { $in: sizeArray };
         }
-        
-        
-        
+
+
+
         let sortQuery = {};
         switch (sort) {
             case 'popularity': sortQuery = { popularity: -1 }; break;
@@ -632,7 +633,6 @@ const shop = async (req, res) => {
             default: sortQuery = { createdAt: -1 };
         }
 
-        console.log("sortQuery", sortQuery)
 
         const products = await Product.find(query)
             .populate({ path: "category", populate: { path: "offer" } })
@@ -661,12 +661,11 @@ const shop = async (req, res) => {
             totalCount,
             minPrice,
             maxPrice,
-            size: size || '', 
-            selectedSizes: size || [] 
+            size: size || '',
+            gender,
+            selectedSizes: size || []
         });
     } catch (error) {
-        console.log("error",error);
-        
         return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
     }
 };
@@ -699,19 +698,8 @@ const forgotPassword = async (req, res) => {
 
         const token = crypto.randomBytes(20).toString('hex');
 
-        const userData = await User.updateOne(
-            { email: email },
-            { $set: { token: token } }
-        );
-
-        console.log("user", userData);
-
-        sendResetPasswordEmail(
-            user.name,
-            user.email,
-            token
-        );
-
+        await User.updateOne({ email: email }, { $set: { token: token } });
+        sendResetPasswordEmail(user.name, user.email, token);
 
         return res.status(200).json({ success: true, message: 'Please check your mail to reset your password.' });
     } catch (error) {

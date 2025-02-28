@@ -39,7 +39,6 @@
                             <div class="form-group">
                                 <label for="gender">Gender</label>
                                 <select class="form-control" id="gender" name="gender">
-                                    <option value="">-----Choose gender-----</option>
                                     <option value="Men" <%=product.gender==='Men' ? ' selected' : '' %>>Men</option>
                                     <option value="Women" <%=product.gender==='Women' ? ' selected' : '' %>>Women
                                     </option>
@@ -75,7 +74,6 @@
                             <div class="form-group">
                                 <label for="size">Size</label>
                                 <select class="form-control" id="size" name="size">
-                                    <option value="">-----Choose size-----</option>
                                     <option value="S" <%=product.size==='S' ? 'selected' : '' %>>S</option>
                                     <option value="M" <%=product.size==='M' ? 'selected' : '' %>>M</option>
                                     <option value="L" <%=product.size==='L' ? 'selected' : '' %>>L</option>
@@ -83,6 +81,67 @@
                                     <option value="XXL" <%=product.size==='XXL' ? 'selected' : '' %>>XXL</option>
                                 </select>
                                 <div class="error-message" id="size-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="fit">Fit</label>
+                                <input type="text" class="form-control" id="fit" name="fit" value="<%= product.fit %>">
+                                <div class="error-message" id="fit-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="fabric">Fabric</label>
+                                <input type="text" class="form-control" id="fabric" name="fabric"
+                                    value="<%= product.fabric %>">
+                                <div class="error-message" id="fabric-error"></div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="sleeve">Sleeve</label>
+                                <select class="form-control" id="sleeve" name="sleeve">
+                                    <option value="Full Sleeve" <%=product.sleeve==='Full Sleeve' ? 'selected' : '' %>
+                                        >Full Sleeve</option>
+                                    <option value="Half Sleeve" <%=product.sleeve==='Half Sleeve' ? 'selected' : '' %>
+                                        >Half Sleeve</option>
+                                    <option value="Sleeveless" <%=product.sleev==='Sleeveless' ? 'selected' : '' %>
+                                        >Sleeveless</option>
+                                </select>
+                                <div class="error-message" id="sleeve-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="pattern">Pattern</label>
+                                <input type="text" class="form-control" id="pattern" name="pattern"
+                                    value="<%= product.pattern %>">
+                                <div class="error-message" id="pattern-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="color">Color</label>
+                                <input type="text" class="form-control" id="color" name="color"
+                                    value="<%= product.color %>">
+                                <div class="error-message" id="color-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="fabricCare">Fabric Care</label>
+                                <input type="text" class="form-control" id="fabricCare" name="fabricCare"
+                                    value="<%= product.fabricCare %>">
+                                <div class="error-message" id="fabricCare-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="origin">Origin</label>
+                                <input type="text" class="form-control" id="origin" name="origin"
+                                    value="<%= product.origin %>">
+                                <div class="error-message" id="origin-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-status">Product Status</label>
+                                <select class="form-control" id="productStatus" name="productStatus">
+                                    <option value="isHot" <%=product.isHot ? 'selected' : '' %>>Featured</option>
+                                    <option value="isNewArrival" <%=product.isNewArrival ? 'selected' : '' %>>New
+                                        Arrival</option>
+                                    <option value="isBestSeller" <%=product.isBestSeller ? 'selected' : '' %>>Best
+                                        Seller</option>
+                                </select>
+                                <div class="error-message" id="productStatus-error"></div>
                             </div>
 
                             <br>
@@ -125,26 +184,28 @@
             <div class="card mt-4">
                 <div class="card-body">
                     <div class="row">
-                        <% for (let i = 0; i < product.productImage.length; i++) { %>
+                        <% for (let i=0; i < product.productImage.length; i++) { %>
                             <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-4">
                                 <div class="card" style="border-color: white;" id="productImages">
                                     <img src="/uploads/product/resized/<%= product.productImage[i] %>"
-                                         id="currentPhoto<%= i %>" alt="Current Photo <%= i + 1 %>"
-                                         class="card-img-top img-fluid"
-                                         style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
+                                        id="currentPhoto<%= i %>" alt="Current Photo <%= i + 1 %>"
+                                        class="card-img-top img-fluid"
+                                        style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
                                     <div class="card-body text-center">
-                                        <button onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>', '<%= product.productImage.length %>')"
-                                                class="btn btn-danger" aria-label="Delete Image <%= i + 1 %>">Delete</button>
+                                        <button
+                                            onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>', '<%= product.productImage.length %>')"
+                                            class="btn btn-danger"
+                                            aria-label="Delete Image <%= i + 1 %>">Delete</button>
                                     </div>
                                 </div>
                             </div>
-                        <% } %>
+                            <% } %>
                     </div>
                     <div class="error-message" id="productImages-error" style="display: block; text-align: center;">
                     </div>
                 </div>
             </div>
-            
+
         </section>
 
 
@@ -239,6 +300,14 @@
                         category: 'Please select a category',
                         stockCount: 'Please enter a valid stock count',
                         size: 'Please select a size',
+                        fit: "Fit is required",
+                        fabric: "Fabric is required",
+                        sleeve: "Please choose a sleeve type",
+                        pattern: "Pattern is required",
+                        color: "Color is required",
+                        fabricCare: "Fabric Care is required",
+                        origin: "Origin is required",
+                        productStatus: "Product status is required"
 
                     };
 
@@ -278,6 +347,45 @@
                         errors = true;
                     }
 
+                    if (!formData.get('fit').trim()) {
+                        toggleError('fit', errorMessages.fit);
+                        errors = true;
+                    }
+
+                    if (!formData.get('fabric').trim()) {
+                        toggleError('fabric', errorMessages.fabric);
+                        errors = true;
+                    }
+
+                    if (formData.get('sleeve') === '') {
+                        toggleError('sleeve', errorMessages.sleeve);
+                        errors = true;
+                    }
+
+                    if (!formData.get('pattern').trim()) {
+                        toggleError('pattern', errorMessages.pattern);
+                        errors = true;
+                    }
+
+                    if (!formData.get('color').trim()) {
+                        toggleError('color', errorMessages.color);
+                        errors = true;
+                    }
+
+                    if (!formData.get('fabricCare').trim()) {
+                        toggleError('fabricCare', errorMessages.fabricCare);
+                        errors = true;
+                    }
+
+                    if (!formData.get('origin').trim()) {
+                        toggleError('origin', errorMessages.origin);
+                        errors = true;
+                    }
+
+                    if (formData.get('productStatus') === '') {
+                        toggleError('productStatus', errorMessages.productStatus);
+                        errors = true;
+                    }
 
                     if (errors) {
                         return false; // Prevent form submission if there are errors
@@ -325,8 +433,8 @@
                     toggleError(field, '');
                 });
 
-                function deleteImage(productId, photoName,productPhotoLength) {
-                    if (productPhotoLength<= 1) {
+                function deleteImage(productId, photoName, productPhotoLength) {
+                    if (productPhotoLength <= 1) {
                         const warningMessage = 'At least 1 photo is required. You can only delete photos when there are 2 or more.';
                         $('#productImages-error').text(warningMessage).show();
                         return;

@@ -1,6 +1,24 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
 
+        <style>
+            .wishlist-container {
+                margin-top: 20px;
+                padding: 20px;
+            }
+
+            .wishlist-message {
+                font-size: 1.5rem;
+                font-weight: 500;
+                color: #333;
+                text-align: center;
+            }
+
+            .wishlist-img {
+                max-width: 100%;
+                height: auto;
+            }
+        </style>
         <main class="main">
             <div class="page-header breadcrumb-wrap">
                 <div class="container">
@@ -20,9 +38,25 @@
                                     Please <a href="/login">login</a> to view your wishlist.
                                 </div>
                                 <% } else if (wishlist.length===0) { %>
-                                    <div class="alert alert-info" role="alert">
-                                        hai buddy Your wishlist is empty. Please add some items to wishlist .
+                                    <div class="container">
+                                        <div class="wishlist-container">
+                                            <div class="row align-items-center">
+                                                <div
+                                                    class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
+                                                    <img src="/imgs/pages/wisheListPage.png" alt="Wishlist Image"
+                                                        class="wishlist-img">
+                                                </div>
+                                                <div
+                                                    class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
+                                                    <div class="alert alert-info wishlist-message" role="alert">
+                                                        Hi buddy, your wishlist is empty. Please add some items to your
+                                                        wishlist.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+
                                     <% } else { %>
                                         <div class="table-responsive">
                                             <table class="table shopping-summery text-center">
@@ -55,7 +89,7 @@
                                                             <td class="price" data-title="Price"><span>₹<%=
                                                                         items.productId.price%></span>
                                                             </td>
-                                                                  <% if (!items.productId.stockCount<=0) { %>
+                                                            <% if (!items.productId.stockCount<=0) { %>
                                                                 <td class="text-center" data-title="Stock">
                                                                     <span class="color3 font-weight-bold">In
                                                                         Stock</span>
@@ -68,11 +102,13 @@
                                                                     </td>
 
                                                                     <% } %>
-                                                                    <td>
-                                                                        <button aria-label="Add To Cart" style="background-color:#088178 ;" onclick="addToCart('<%= items.productId._id %>', '<%= items.productId.name %>', '<%= items.productId.price %>')">
-                                                                            <i class="fi-rs-shopping-bag-add"></i>
-                                                                        </button>
-                                                                    </td>
+                                                                        <td>
+                                                                            <button aria-label="Add To Cart"
+                                                                                style="background-color:#088178 ;"
+                                                                                onclick="addToCart('<%= items.productId._id %>', '<%= items.productId.name %>', '<%= items.productId.price %>')">
+                                                                                <i class="fi-rs-shopping-bag-add"></i>
+                                                                            </button>
+                                                                        </td>
 
                                                                         <td class="action" data-title="Remove">
                                                                             <a href="#"
@@ -222,76 +258,76 @@
                         }
 
                         function addToCart(productId, name, price) {
-                                // Assuming you want to add 1 quantity by default
-                                const quantity = 1;
+                            // Assuming you want to add 1 quantity by default
+                            const quantity = 1;
 
-                                fetch('/cart/addToCart/' + productId, {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ productId, name, quantity, price }),
+                            fetch('/cart/addToCart/' + productId, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ productId, name, quantity, price }),
+                            })
+                                .then(response => {
+                                    if (response.redirected) {
+                                        return Swal.fire({
+                                            title: 'Login Required',
+                                            text: 'You must be logged in to add items to your cart.',
+                                            icon: 'warning',
+                                            showCancelButton: true,
+                                            confirmButtonText: 'Login',
+                                            cancelButtonText: 'Cancel',
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = '/login';
+                                            } else {
+                                                throw new Error('Action cancelled');
+                                            }
+                                        });
+                                    }
+                                    return response.json();
                                 })
-                                    .then(response => {
-                                        if (response.redirected) {
-                                            return Swal.fire({
-                                                title: 'Login Required',
-                                                text: 'You must be logged in to add items to your cart.',
-                                                icon: 'warning',
-                                                showCancelButton: true,
-                                                confirmButtonText: 'Login',
-                                                cancelButtonText: 'Cancel',
-                                            }).then((result) => {
-                                                if (result.isConfirmed) {
-                                                    window.location.href = '/login';
-                                                } else {
-                                                    throw new Error('Action cancelled');
-                                                }
-                                            });
-                                        }
-                                        return response.json();
-                                    })
 
-                                    .then(data => {
-                                        if (data.status) {
-                                            // Show a success message using SweetAlert2
-                                            const Toast = Swal.mixin({
-                                                toast: true,
-                                                position: "top-end",
-                                                showConfirmButton: false,
-                                                timer: 3000,
-                                                timerProgressBar: true,
-                                                didOpen: (toast) => {
-                                                    toast.onmouseenter = Swal.stopTimer;
-                                                    toast.onmouseleave = Swal.resumeTimer;
-                                                }
-                                            });
-                                            Toast.fire({
-                                                icon: "success",
-                                                title: 'Success!',
-                                                text: data.message,
-                                            });
-                                        } else {
-                                            // Handle errors
-                                            Swal.fire({
-                                                title: 'Error!',
-                                                text: data.message,
-                                                icon: 'error',
-                                            });
-                                        }
-                                    })
-                                    .catch(err => {
-                                        if (!err.data.success) {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Error',
-                                                text: err.response.data.message,
-                                            });
-                                        } else {
-                                            console.error(err);
-                                        }
-                                    });
-                            }
+                                .then(data => {
+                                    if (data.status) {
+                                        // Show a success message using SweetAlert2
+                                        const Toast = Swal.mixin({
+                                            toast: true,
+                                            position: "top-end",
+                                            showConfirmButton: false,
+                                            timer: 3000,
+                                            timerProgressBar: true,
+                                            didOpen: (toast) => {
+                                                toast.onmouseenter = Swal.stopTimer;
+                                                toast.onmouseleave = Swal.resumeTimer;
+                                            }
+                                        });
+                                        Toast.fire({
+                                            icon: "success",
+                                            title: 'Success!',
+                                            text: data.message,
+                                        });
+                                    } else {
+                                        // Handle errors
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: data.message,
+                                            icon: 'error',
+                                        });
+                                    }
+                                })
+                                .catch(err => {
+                                    if (!err.data.success) {
+                                        Swal.fire({
+                                            icon: 'error',
+                                            title: 'Error',
+                                            text: err.response.data.message,
+                                        });
+                                    } else {
+                                        console.error(err);
+                                    }
+                                });
+                        }
 
 
                     </script>

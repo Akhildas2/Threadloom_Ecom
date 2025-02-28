@@ -18,14 +18,14 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    
+
     gender: {
         type: String,
         required: true
     },
     category: {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Category",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
         required: true,
     },
     size: {
@@ -45,8 +45,48 @@ const productSchema = new mongoose.Schema({
         default: false
     },
     offer: {
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Offer",
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Offer",
+    },
+    fit: {
+        type: String,
+        required: true
+    },
+    fabric: {
+        type: String,
+        required: true
+    },
+    sleeve: {
+        type: String,
+        required: true
+    },
+    pattern: {
+        type: String,
+        required: true
+    },
+    color: {
+        type: String,
+        required: true
+    },
+    fabricCare: {
+        type: String,
+        required: true
+    },
+    origin: {
+        type: String,
+        required: true
+    },
+    isHot: {
+        type: Boolean,
+        default: false
+    },
+    isNewArrival: {
+        type: Boolean,
+        default: false
+    },
+    isBestSeller: {
+        type: Boolean,
+        default: false
     }
 });
 

@@ -1,149 +1,148 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
-        <style>
-            .sidebar-divider {
-                border-top: 1px solid #e2e9e1;
-                margin-top: 5px;
-                margin-bottom: 10px;
-            }
-            .filter-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 10px; 
-    flex-wrap: wrap;
-}
+        <%- include('../layouts/quickView.ejs') %>
 
-.filter-buttons a {
-    display: flex;
-    align-items: center;
-    padding: 8px 15px;
-    font-size: 14px;
-    border-radius: 5px;
-    text-decoration: none;
-    border: 1px solid #ccc;
-    background-color: #f8f9fa;
-    color: #333;
-    transition: all 0.3s ease;
-}
+            <style>
+                .sidebar-divider {
+                    border-top: 1px solid #e2e9e1;
+                    margin-top: 5px;
+                    margin-bottom: 10px;
+                }
 
-.filter-buttons a:hover {
-    background-color: #e0e0e0;
-}
+                .filter-buttons {
+                    display: flex;
+                    justify-content: center;
+                    gap: 10px;
+                    flex-wrap: wrap;
+                }
 
-.filter-buttons a i {
-    margin-right: 5px;
-}
+                .filter-buttons a {
+                    display: flex;
+                    align-items: center;
+                    padding: 8px 15px;
+                    font-size: 14px;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    border: 1px solid #ccc;
+                    background-color: #088178;
+                    color: #ffffff;
+                    transition: all 0.3s ease;
+                }
 
-            
-        </style>
+                .filter-buttons a:hover {
+                    color: #000000;
+                }
 
-        <main class="main">
-            <div class="page-header breadcrumb-wrap">
-                <div class="container">
-                    <div class="breadcrumb">
-                        <a href="/" rel="nofollow">Home</a>
-                        <span></span>
-                        Shop
+                .filter-buttons a i {
+                    margin-right: 5px;
+                }
+            </style>
+
+            <main class="main">
+                <div class="page-header breadcrumb-wrap">
+                    <div class="container">
+                        <div class="breadcrumb">
+                            <a href="/" rel="nofollow">Home</a>
+                            <span></span>
+                            Shop
+                        </div>
                     </div>
                 </div>
-            </div>
-            <section class="mt-50 mb-50">
-                <div class="container">
-                    <div class="col-12">
-                        <div class="shop-product-fillter style-2">
-                            <div class="totall-product">
-                                <p>We found <strong class="text-brand">
-                                        <%= totalCount %>
-                                    </strong> items for you!</p>
-                            </div>
+                <section class="mt-50 mb-50">
+                    <div class="container">
+                        <div class="col-12">
+                            <div class="shop-product-fillter style-2">
+                                <div class="totall-product">
+                                    <p>We found <strong class="text-brand">
+                                            <%= totalCount %>
+                                        </strong> items for you!</p>
+                                </div>
 
-                            <div class="sort-by-product-area">
-                                <div class="sort-by-cover mr-10">
-                                    <div class="sort-by-product-wrap">
-                                        <div class="sort-by">
-                                            <span><i class="fi-rs-apps"></i>Show:</span>
+                                <div class="sort-by-product-area">
+                                    <div class="sort-by-cover mr-10">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps"></i>Show:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span>
+                                                    <%= limit %> <i class="fi-rs-angle-small-down"></i>
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div class="sort-by-dropdown-wrap">
-                                            <span> <%= limit %> <i class="fi-rs-angle-small-down"></i></span>
-                                        </div>
-                                    </div>
-                                    <div class="sort-by-dropdown">
-                                        <ul>
-                                            <% [1,2, 3, 4, 5].forEach(l => { %>
-                                                <li>
-                                                    <a href="/shop?<%= new URLSearchParams({
-                                                        page: '1', // Reset to first page
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <% [ 1,5,10, 20, 50, 100].forEach(l=> { %>
+                                                    <li>
+                                                        <a href="/shop?<%= new URLSearchParams({
+                                                        page: '1', 
                                                         sort: sort || 'featured',
                                                         category: category || '',
                                                         minPrice: minPrice || '',
                                                         maxPrice: maxPrice || '',
                                                         size: selectedSizes || '',
+                                                        gender: gender || '',
                                                         limit: l
                                                     }).toString() %>">
-                                                        <%= l %>
-                                                    </a>
-                                                </li>
-                                            <% }) %>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="sort-by-cover">
-                                    <div class="sort-by-product-wrap">
-                                        <div class="sort-by">
-                                            <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
-                                        </div>
-                                        <div class="sort-by-dropdown-wrap">
-                                            <span>
-                                                <%= sort === 'priceinc' ? 'Price: Low to High' :
-                                                sort === 'priceDesc' ? 'Price: High to Low' :
-                                                sort === 'newArrivals' ? 'New Arrivals' :
-                                                sort === 'az' ? 'A-Z' :
-                                                sort === 'za' ? 'Z-A' :
-                                                sort === 'popularity' ? 'Popularity' : 'Featured' %>
-                                                <i class="fi-rs-angle-small-down"></i> 
-                                            </span>
+                                                            <%= l %>
+                                                        </a>
+                                                    </li>
+                                                    <% }) %>
+                                            </ul>
                                         </div>
                                     </div>
-                                    <div class="sort-by-dropdown">
-                                        <ul>
-                                            <% ['featured', 'priceInc' , 'priceDesc' , 'newArrivals' , 'az' , 'za'
-                                                , 'popularity' ].forEach(s=> { %>
-                                                <li>
-                                                    <a href="/shop?<%= new URLSearchParams({
+                                    <div class="sort-by-cover">
+                                        <div class="sort-by-product-wrap">
+                                            <div class="sort-by">
+                                                <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
+                                            </div>
+                                            <div class="sort-by-dropdown-wrap">
+                                                <span>
+                                                    <%= sort==='priceinc' ? 'Price: Low to High' : sort==='priceDesc'
+                                                        ? 'Price: High to Low' : sort==='newArrivals' ? 'New Arrivals' :
+                                                        sort==='az' ? 'A-Z' : sort==='za' ? 'Z-A' : sort==='popularity'
+                                                        ? 'Popularity' : 'Featured' %>
+                                                        <i class="fi-rs-angle-small-down"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="sort-by-dropdown">
+                                            <ul>
+                                                <% ['featured', 'priceInc' , 'priceDesc' , 'newArrivals' , 'az' , 'za'
+                                                    , 'popularity' ].forEach(s=> { %>
+                                                    <li>
+                                                        <a href="/shop?<%= new URLSearchParams({
                                                         sort: s, 
                                                         category: category || '', 
                                                         minPrice: minPrice || '', 
                                                         maxPrice: maxPrice || '', 
-                                                        size: selectedSizes || '' 
+                                                        size: selectedSizes || '',
+                                                        gender: gender || '',
+                                                        limit:limit || 5
                                                     }).toString() %>">
-                                                        <%= s==='priceInc' ? 'Price: Low to High' : s==='priceDesc'
-                                                            ? 'Price: High to Low' : s==='newArrivals' ? 'New Arrivals'
-                                                            : s==='az' ? 'A-Z' : s==='za' ? 'Z-A' : s==='popularity'
-                                                            ? 'Popularity' : 'Featured' %>
-                                                    </a>
-                                                </li>
-                                                <% }) %>
-                                        </ul>
-                                    </div>
+                                                            <%= s==='priceInc' ? 'Price: Low to High' : s==='priceDesc'
+                                                                ? 'Price: High to Low' : s==='newArrivals'
+                                                                ? 'New Arrivals' : s==='az' ? 'A-Z' : s==='za' ? 'Z-A' :
+                                                                s==='popularity' ? 'Popularity' : 'Featured' %>
+                                                        </a>
+                                                    </li>
+                                                    <% }) %>
+                                            </ul>
+                                        </div>
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
 
 
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-lg-3 col-md-4 col-sm-4 col-6 primary-sidebar sticky-sidebar">
+                        <div class="container">
+                            <div class="row">
 
-                                <!-- Filter -->
-                                <div class="sidebar-widget price_range range mb-30">
-                                    <h5 class="widget-title mb-10 text-center">Filter </h5>
-                                    <hr class="sidebar-divider">
-
-                                    <div class="widget-header position-relative mb-20 pb-10">
-                                        <label for="category fw-900 ">Category</label>
+                                <div class="col-lg-3 col-md-4 col-sm-4 col-5 primary-sidebar sticky-sidebar">
+                                    <div class="widget-category mb-30">
+                                        <label for="category fw-900">Category</label>
                                         <hr class="sidebar-divider">
 
                                         <ul class="text-center">
@@ -151,516 +150,668 @@
                                                 <li
                                                     class="<%= cat.categoryName === category ? 'selected-category' : '' %>">
                                                     <a href="/shop?<%= new URLSearchParams({ 
-                                                        sort: sort || 'createdAt', 
-                                                        category: cat.categoryName || '', 
-                                                        minPrice: minPrice || '', 
-                                                        maxPrice: maxPrice || '', 
-                                                        size: selectedSizes || '' 
-                                                    }).toString() %>">
+                                                    sort: sort || 'createdAt', 
+                                                    category: cat.categoryName || '', 
+                                                    minPrice: minPrice || '', 
+                                                    maxPrice: maxPrice || '', 
+                                                    size: selectedSizes || '' ,
+                                                    gender: gender || '',
+                                                    limit:limit || 5
+                                                }).toString() %>">
                                                         <%= cat.categoryName %>
                                                     </a>
                                                 </li>
                                                 <% }) %>
                                         </ul>
 
-                                        <br>
-
                                     </div>
+                                    <!-- Filter -->
+                                    <div class="sidebar-widget price_range range mb-30">
+                                        <div class="widget-header position-relative  pb-10">
+                                            <h5 class="widget-title mb-10 text-center">Filter by</h5>
+                                            <div class="bt-1 border-color-1"></div>
+                                        </div>
 
-                                    <div class="bt-1 border-color-1"></div>
-                                    <label for="price" class="fw-900">Price</label>
-                                    <hr class="sidebar-divider">
+                                        <label for="price" class="fw-900 te">Price</label>
+                                        <hr class="sidebar-divider">
 
-
-                                    <div class="price-filter">
-                                        <div class="price-filter-inner">
-                                            <div id="slider-range"></div>
-                                            <div class="price_slider_amount">
-                                                <div class="label-input">
-                                                    <span>Range:</span>
-                                                    <input type="text" id="amount" name="price"
-                                                        value="<%= minPrice ? `${minPrice}-${maxPrice}`: '' %>"
-                                                        readonly />
+                                        <div class="price-filter">
+                                            <div class="price-filter-inner">
+                                                <div id="slider-range"></div>
+                                                <div class="price_slider_amount">
+                                                    <div class="label-input">
+                                                        <span>Range:</span>
+                                                        <input type="text" id="amount" name="price"
+                                                            value="<%= minPrice ? `${minPrice}-${maxPrice}`: '' %>"
+                                                            readonly />
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="list-group">
-                                        <div class="list-group-item mb-10 mt-10">
-                                            <hr class="sidebar-divider">
-                                            <label class="fw-900">Size</label>
-                                            <hr class="sidebar-divider ">
-                                            <div class="custome-checkbox">
-                                                <% ['S', 'M' , 'L' , 'XL' , 'XXL' ].forEach(size=> { %>
-                                                    <div class=" custom-checkbox">
-                                                        <input type="checkbox" class="form-check-input"
-                                                            id="size<%= size %>" name="size" value="<%= size %>" <% if
-                                                            (size.includes(size)) { %><% } %>>
-                                                            <label class="form-check-label" for="size<%= size %>">
-                                                                <%= size %>
-                                                            </label>
-                                                    </div>
-                                                    <% }); %>
+                                        <div class="list-group">
+                                            <div class="list-group-item mb-10 mt-10">
+                                                <hr class="sidebar-divider">
+                                                <label class="fw-900">Size</label>
+                                                <hr class="sidebar-divider">
+                                                <div class="custome-checkbox">
+                                                    <% ['S', 'M' , 'L' , 'XL' , 'XXL' ].forEach(size=> { %>
+                                                        <div class=" custom-checkbox">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="size<%= size %>" name="size" value="<%= size %>" <%
+                                                                if (size.includes(size)) { %>
+                                                            <% } %>>
+                                                                <label class="form-check-label" for="size<%= size %>">
+                                                                    <%= size %>
+                                                                </label>
+                                                        </div>
+                                                        <% }); %>
+                                                </div>
+                                                <hr class="sidebar-divider">
+                                                <label class="fw-900 mb-10">Gender</label>
+                                                <hr class="sidebar-divider">
+                                                <div class="custome-checkbox">
+                                                    <% ['Male', 'Female' , 'Kids' ].forEach(gender=> { %>
+                                                        <div class=" custom-checkbox">
+                                                            <input type="checkbox" class="form-check-input"
+                                                                id="gender<%= gender %>" name="gender"
+                                                                value="<%= gender %>" <% if (gender.includes(gender)) {
+                                                                %>
+                                                            <% } %>>
+                                                                <label class="form-check-label"
+                                                                    for="gender<%= gender %>">
+                                                                    <%= gender %>
+                                                                </label>
+                                                        </div>
+                                                        <% }); %>
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="text-center filter-buttons">
+                                            <a href="#" class="btn-sm btn-default" id="applyFilterBtn">
+                                                <i class="fi-rs-filter"></i> Filter
+                                            </a>
+                                            <a href="/shop" class="btn-sm btn-default" id="clearFilterBtn">
+                                                <i class="fi-rs-refresh"></i> Clear
+                                            </a>
+                                        </div>
+
                                     </div>
-                                    <div class="text-center filter-buttons">
-                                        <a href="#" class="btn-sm btn-default" id="applyFilterBtn">
-                                            <i class="fi-rs-filter"></i> Filter
-                                        </a>
-                                        <a href="/shop" class="btn-sm btn-default" id="clearFilterBtn">
-                                            <i class="fi-rs-refresh"></i> Clear
-                                        </a>
-                                    </div>
-                                    
                                 </div>
-                            </div>
-                            <div class="col-lg-9 col-md-8 col-sm-8 col-6">
-                                <div class="tab-content wow fadeIn animated" id="myTabContent">
-                                    <div class="tab-pane fade show active" id="tab-one" role="tabpanel"
-                                        aria-labelledby="tab-one">
-                                        <div class="row product-grid-4">
-                                            <% for(let i=0; i<products.length; i++) { %>
-                                                <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                                                    <div class="product-cart-wrap mb-30">
-                                                        <div class="product-img-action-wrap">
-                                                            <div class="product-img product-img-zoom">
-                                                                <a href="/productdetails/<%= products[i]._id %>">
-                                                                    <img class="default-img"
-                                                                        src="/uploads/product/resized/<%= products[i].productImage[0] %>"
-                                                                        alt="">
-                                                                    <img class="hover-img"
-                                                                        src="/uploads/product/resized/<%= products[i].productImage[1] %>"
-                                                                        alt="">
-                                                                </a>
-                                                            </div>
-                                                            <div class="product-action-1">
-                                                                <a aria-label="Quick view" class="action-btn hover-up"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#quickViewModal"><i
-                                                                        class="fi-rs-eye"></i></a>
-                                                                <% if (userWishlist.some(item=>
-                                                                    item.productId.equals(products[i]._id))) { %>
-                                                                    <a aria-label="Add To Wishlist" class="action-btn"
-                                                                        style="background-color: red;"
-                                                                        onclick="addToWishList('<%= products[i]._id %>')"><i
-                                                                            class="fi-rs-heart"></i></a>
-                                                                    <% } else { %>
+
+                                <div class="col-lg-9 col-md-8 col-sm-8 col-7">
+                                    <div class="tab-content wow fadeIn animated" id="myTabContent">
+                                        <div class="tab-pane fade show active" id="tab-one" role="tabpanel"
+                                            aria-labelledby="tab-one">
+                                            <div class="row product-grid-4">
+                                                <% for(let i=0; i<products.length; i++) { %>
+                                                    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+                                                        <div class="product-cart-wrap mb-30">
+                                                            <div class="product-img-action-wrap">
+                                                                <div class="product-img product-img-zoom">
+                                                                    <a href="/productdetails/<%= products[i]._id %>">
+                                                                        <img class="default-img"
+                                                                            src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                                            alt="">
+                                                                        <img class="hover-img"
+                                                                            src="/uploads/product/resized/<%= products[i].productImage[1] %>"
+                                                                            alt="">
+                                                                    </a>
+                                                                </div>
+                                                                <div class="product-action-1">
+                                                                    <a aria-label="Quick view"
+                                                                        class="action-btn hover-up quick-view-btn"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#quickViewModal"
+                                                                        data-product='<%= JSON.stringify(products[i]) %>'>
+                                                                        <i class="fi-rs-eye"></i>
+                                                                    </a>
+                                                                    <% if (userWishlist.some(item=>
+                                                                        item.productId.equals(products[i]._id))) { %>
                                                                         <a aria-label="Add To Wishlist"
-                                                                            class="action-btn hover-up"
+                                                                            class="action-btn"
+                                                                            style="background-color: red;"
                                                                             onclick="addToWishList('<%= products[i]._id %>')"><i
                                                                                 class="fi-rs-heart"></i></a>
-                                                                        <% } %>
-                                                                            <a aria-label="Compare"
-                                                                                class="action-btn hover-up" href="#"><i
-                                                                                    class="fi-rs-shuffle"></i></a>
-                                                            </div>
-                                                            <div
-                                                                class="product-badges product-badges-position product-badges-mrg">
-                                                                <% if(products[i].isNew) { %>
-                                                                    <span class="new">New</span>
-                                                                    <% } %>
-                                                                        <% if(products[i].isHot) { %>
-                                                                            <span class="hot">Hot</span>
-                                                                            <% } %>
-                                                                                <% if(products[i].isBestSeller) { %>
-                                                                                    <span class="best">Best Sell</span>
-                                                                                    <% } %>
-                                                            </div>
-                                                        </div>
-                                                        <div class="product-content-wrap">
-                                                            <div class="product-category">
-                                                                <a href="/productdetails/<%= products[i]._id %>">
-                                                                    <% if (products[i].category) { %>
-                                                                        <p>
-                                                                            <%= products[i].category.categoryName %>
-                                                                        </p>
                                                                         <% } else { %>
-                                                                            <p>Category: Not specified</p>
+                                                                            <a aria-label="Add To Wishlist"
+                                                                                class="action-btn hover-up"
+                                                                                onclick="addToWishList('<%= products[i]._id %>')"><i
+                                                                                    class="fi-rs-heart"></i></a>
                                                                             <% } %>
-                                                                </a>
+                                                                                <!-- <a aria-label="Compare"
+                                                                                    class="action-btn hover-up"
+                                                                                    href="#"><i
+                                                                                        class="fi-rs-shuffle"></i></a> -->
+                                                                </div>
+                                                                <div
+                                                                    class="product-badges product-badges-position product-badges-mrg">
+                                                                    <% if(products[i].isNewArrival) { %>
+                                                                        <span class="new">New</span>
+                                                                        <% } %>
+                                                                            <% if(products[i].isHot) { %>
+                                                                                <span class="hot">Hot</span>
+                                                                                <% } %>
+                                                                                    <% if(products[i].isBestSeller) { %>
+                                                                                        <span class="best">Best
+                                                                                            Sell</span>
+                                                                                        <% } %>
+                                                                </div>
                                                             </div>
-                                                            <h2><a href="/productdetails/<%= products[i]._id %>">
-                                                                <%= products[i].name.length > 20 ? products[i].name.substring(0, 20) + '...' : products[i].name %>
-                                                                </a></h2>
-                                                            <div class="rating-result" title="90%">
-                                                                <span><span>90%</span></span>
-                                                            </div>
+                                                            <div class="product-content-wrap">
+                                                                <div class="product-category">
+                                                                    <a href="/productdetails/<%= products[i]._id %>">
+                                                                        <% if (products[i].category) { %>
+                                                                            <p>
+                                                                                <%= products[i].category.categoryName %>
+                                                                            </p>
+                                                                            <% } else { %>
+                                                                                <p>Category: Not specified</p>
+                                                                                <% } %>
+                                                                    </a>
+                                                                </div>
+                                                                <h2><a href="/productdetails/<%= products[i]._id %>">
+                                                                        <%= products[i].name.length> 20 ?
+                                                                            products[i].name.substring(0, 20) + '...' :
+                                                                            products[i].name %>
+                                                                    </a></h2>
+                                                                <div class="rating-result" title="90%">
+                                                                    <span><span>90%</span></span>
+                                                                </div>
 
-                                                            <div class="product-card__price d-flex">
-                                                                <% let discountedPrice=products[i].price; %>
-                                                                    <% let hasDiscount=false; %>
+                                                                <div class="product-card__price d-flex">
+                                                                    <% let discountedPrice=products[i].price; %>
+                                                                        <% let hasDiscount=false; %>
 
-                                                                        <% if (products[i].offer) { %>
-                                                                            <% const offer=products[i].offer; %>
-                                                                                <% const currentDate=new Date(); %>
-                                                                                    <% const offerEndDate=new
-                                                                                        Date(offer.endingDate); %>
+                                                                            <% if (products[i].offer) { %>
+                                                                                <% const offer=products[i].offer; %>
+                                                                                    <% const currentDate=new Date(); %>
+                                                                                        <% const offerEndDate=new
+                                                                                            Date(offer.endingDate); %>
 
-                                                                                        <% if (currentDate
-                                                                                            <=offerEndDate) { %>
-                                                                                            <% discountedPrice=discountedPrice
-                                                                                                - (discountedPrice *
-                                                                                                (offer.discount / 100));
-                                                                                                %>
-                                                                                                <% hasDiscount=true; %>
-                                                                                                    <% } %>
-                                                                                                        <% } else if
-                                                                                                            (products[i].category.offer)
-                                                                                                            { %>
-                                                                                                            <% const
-                                                                                                                categoryOffer=products[i].category.offer;
-                                                                                                                %>
+                                                                                            <% if (currentDate
+                                                                                                <=offerEndDate) { %>
+                                                                                                <% discountedPrice=discountedPrice
+                                                                                                    - (discountedPrice *
+                                                                                                    (offer.discount /
+                                                                                                    100)); %>
+                                                                                                    <% hasDiscount=true;
+                                                                                                        %>
+                                                                                                        <% } %>
+                                                                                                            <% } else if
+                                                                                                                (products[i].category.offer)
+                                                                                                                { %>
                                                                                                                 <% const
-                                                                                                                    currentDate=new
-                                                                                                                    Date();
+                                                                                                                    categoryOffer=products[i].category.offer;
                                                                                                                     %>
                                                                                                                     <% const
-                                                                                                                        offerEndDate=new
-                                                                                                                        Date(categoryOffer.endingDate);
+                                                                                                                        currentDate=new
+                                                                                                                        Date();
                                                                                                                         %>
-
-                                                                                                                        <% if
-                                                                                                                            (currentDate
-                                                                                                                            <=offerEndDate)
-                                                                                                                            {
+                                                                                                                        <% const
+                                                                                                                            offerEndDate=new
+                                                                                                                            Date(categoryOffer.endingDate);
                                                                                                                             %>
-                                                                                                                            <% discountedPrice=discountedPrice
-                                                                                                                                -
-                                                                                                                                (discountedPrice
-                                                                                                                                *
-                                                                                                                                (categoryOffer.discount
-                                                                                                                                /
-                                                                                                                                100));
+
+                                                                                                                            <% if
+                                                                                                                                (currentDate
+                                                                                                                                <=offerEndDate)
+                                                                                                                                {
                                                                                                                                 %>
-                                                                                                                                <% hasDiscount=true;
+                                                                                                                                <% discountedPrice=discountedPrice
+                                                                                                                                    -
+                                                                                                                                    (discountedPrice
+                                                                                                                                    *
+                                                                                                                                    (categoryOffer.discount
+                                                                                                                                    /
+                                                                                                                                    100));
                                                                                                                                     %>
-                                                                                                                                    <% }
+                                                                                                                                    <% hasDiscount=true;
                                                                                                                                         %>
                                                                                                                                         <% }
                                                                                                                                             %>
-
-                                                                                                                                            <% if
-                                                                                                                                                (hasDiscount)
-                                                                                                                                                {
+                                                                                                                                            <% }
                                                                                                                                                 %>
-                                                                                                                                                <span
-                                                                                                                                                    class="money price">
-                                                                                                                                                    <del>₹
-                                                                                                                                                        <%= products[i].price.toFixed(2)
-                                                                                                                                                            %>
-                                                                                                                                                    </del>
-                                                                                                                                                    &nbsp;<span
-                                                                                                                                                        class="discounted-price"
-                                                                                                                                                        style="color: green;">₹
-                                                                                                                                                        <%= discountedPrice.toFixed(2)
-                                                                                                                                                            %>
-                                                                                                                                                    </span>
-                                                                                                                                                    &nbsp;<span
-                                                                                                                                                        class="discounted-precentage"
-                                                                                                                                                        style="color: red;">(
-                                                                                                                                                        <%= products[i].offer
-                                                                                                                                                            ?
-                                                                                                                                                            products[i].offer.discount
-                                                                                                                                                            :
-                                                                                                                                                            products[i].category.offer.discount
-                                                                                                                                                            %>
-                                                                                                                                                            %
-                                                                                                                                                            off)
-                                                                                                                                                    </span>
 
-                                                                                                                                                </span>
-                                                                                                                                                <% } else
+                                                                                                                                                <% if
+                                                                                                                                                    (hasDiscount)
                                                                                                                                                     {
                                                                                                                                                     %>
                                                                                                                                                     <span
-                                                                                                                                                        class="money price">₹
-                                                                                                                                                        <%= products[i].price.toFixed(2)
-                                                                                                                                                            %>
+                                                                                                                                                        class="money price">
+                                                                                                                                                        <del>₹
+                                                                                                                                                            <%= products[i].price.toFixed(2)
+                                                                                                                                                                %>
+                                                                                                                                                        </del>
+                                                                                                                                                        &nbsp;<span
+                                                                                                                                                            class="discounted-price"
+                                                                                                                                                            style="color: green;">₹
+                                                                                                                                                            <%= discountedPrice.toFixed(2)
+                                                                                                                                                                %>
+                                                                                                                                                        </span>
+                                                                                                                                                        &nbsp;<span
+                                                                                                                                                            class="discounted-precentage"
+                                                                                                                                                            style="color: red;">(
+                                                                                                                                                            <%= products[i].offer
+                                                                                                                                                                ?
+                                                                                                                                                                products[i].offer.discount
+                                                                                                                                                                :
+                                                                                                                                                                products[i].category.offer.discount
+                                                                                                                                                                %>
+                                                                                                                                                                %
+                                                                                                                                                                off)
+                                                                                                                                                        </span>
+
                                                                                                                                                     </span>
-                                                                                                                                                    <% }
+                                                                                                                                                    <% } else
+                                                                                                                                                        {
                                                                                                                                                         %>
-                                                            </div>
-                                                            <!-- <div class="product-price">
+                                                                                                                                                        <span
+                                                                                                                                                            class="money price">₹
+                                                                                                                                                            <%= products[i].price.toFixed(2)
+                                                                                                                                                                %>
+                                                                                                                                                        </span>
+                                                                                                                                                        <% }
+                                                                                                                                                            %>
+                                                                </div>
+                                                                <!-- <div class="product-price">
                                                         <span>₹<%#= products[i].price %> </span>
                                                         <%# if(products[i].price) { %>
                                                             <span class="old-price">₹<%#= products[i].price %></span>
                                                             <%# } %>
                                                     </div> -->
-                                                            <div class="product-action-1 show">
-                                                                <button aria-label="Add To Cart"
-                                                                    class="action-btn hover-up"
-                                                                    onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">
-                                                                    <i class="fi-rs-shopping-bag-add"></i>
-                                                                </button>
+                                                                <div class="product-action-1 show">
+                                                                    <button aria-label="Add To Cart"
+                                                                        class="action-btn hover-up"
+                                                                        onclick="addToCart('<%= products[i]._id %>', '<%= products[i].name %>', '<%= products[i].price %>')">
+                                                                        <i class="fi-rs-shopping-bag-add"></i>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <% } %>
+                                                    <% } %>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
+                    </div>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="pagination-area mt-30 mb-50">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <% let startPage=Math.max(1, currentPage - 2); let endPage=Math.min(totalPages,
+                                    startPage +4); if (currentPage> 1) { %>
+                                    <li class="page-item">
+                                        <a class="page-link"
+                                            href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&limit=<%= limit %>&gender=<%= gender %>">
+                                            &lt;
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <% for (let i=startPage; i <=endPage; i++) { %>
+                                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                <a class="page-link"
+                                                    href="/shop?page=<%= i %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&limit=<%= limit %>&gender=<%= gender %>">
+                                                    <%= i %>
+                                                </a>
+                                            </li>
+                                            <% } %>
+
+                                                <% if (currentPage < totalPages) { %>
+                                                    <li class="page-item">
+                                                        <a class="page-link"
+                                                            href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&limit=<%= limit %>&gender=<%= gender %>">
+                                                            &gt; <!-- Right arrow -->
+                                                        </a>
+                                                    </li>
+                                                    <% } %>
+                            </ul>
+                        </nav>
                     </div>
 
 
 
 
-
-                </div>
-                </div>
-                <!-- Pagination -->
-                <div class="pagination-area mt-30 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
-                            <% 
-                                let startPage = Math.max(1, currentPage - 2); 
-                                let endPage = Math.min(totalPages, startPage + 4); // Show only 5 pages
-                
-                                if (currentPage > 1) { 
-                            %>
-                                <li class="page-item">
-                                    <a class="page-link"
-                                        href="/shop?page=<%= currentPage - 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
-                                        &lt; 
-                                    </a>
-                                </li>
-                            <% } %>
-                
-                            <% for (let i = startPage; i <= endPage; i++) { %>
-                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                    <a class="page-link"
-                                        href="/shop?page=<%= i %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
-                                        <%= i %>
-                                    </a>
-                                </li>
-                            <% } %>
-                
-                            <% if (currentPage < totalPages) { %>
-                                <li class="page-item">
-                                    <a class="page-link"
-                                        href="/shop?page=<%= currentPage + 1 %>&sort=<%= sort %>&category=<%= category %>&size=<%= size %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>">
-                                        &gt; <!-- Right arrow -->
-                                    </a>
-                                </li>
-                            <% } %>
-                        </ul>
-                    </nav>
-                </div>
-                
+                </section>
+            </main>
 
 
-            </section>
-        </main>
-
-
-        <%- include('../layouts/footer.ejs') %>
-            <%- include('../layouts/preloader.ejs') %>
-                <%- include('../layouts/script.ejs') %>
+            <%- include('../layouts/footer.ejs') %>
+                <%- include('../layouts/preloader.ejs') %>
+                    <%- include('../layouts/script.ejs') %>
 
 
 
 
 
-                    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-                    <script>
-                        function addToCart(productId, name, price) {
-                            // Assuming you want to add 1 quantity by default
-                            const quantity = 1;
-                            fetch('/cart/addToCart/' + productId, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ productId, name, quantity, price }),
-                            })
-                                .then(response => {
-                                    if (response.redirected) {
-                                        return Swal.fire({
-                                            title: 'Login Required',
-                                            text: 'You must be logged in to add items to your cart.',
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonText: 'Login',
-                                            cancelButtonText: 'Cancel',
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.location.href = '/login';
-                                            } else {
-                                                throw new Error('Action cancelled');
-                                            }
-                                        });
-                                    }
-                                    return response.json();
+                        <script>
+                            function addToCart(productId, name, price) {
+                                // Assuming you want to add 1 quantity by default
+                                const quantity = 1;
+                                fetch('/cart/addToCart/' + productId, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ productId, name, quantity, price }),
+                                })
+                                    .then(response => {
+                                        if (response.redirected) {
+                                            return Swal.fire({
+                                                title: 'Login Required',
+                                                text: 'You must be logged in to add items to your cart.',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonText: 'Login',
+                                                cancelButtonText: 'Cancel',
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = '/login';
+                                                } else {
+                                                    throw new Error('Action cancelled');
+                                                }
+                                            });
+                                        }
+                                        return response.json();
+                                    })
+
+                                    .then(data => {
+                                        if (data.status) {
+                                            // Show a success message using SweetAlert2
+                                            const Toast = Swal.mixin({
+                                                toast: true,
+                                                position: "top-end",
+                                                showConfirmButton: false,
+                                                timer: 3000,
+                                                timerProgressBar: true,
+                                                didOpen: (toast) => {
+                                                    toast.onmouseenter = Swal.stopTimer;
+                                                    toast.onmouseleave = Swal.resumeTimer;
+                                                }
+                                            });
+                                            Toast.fire({
+                                                icon: "success",
+                                                title: 'Success!',
+                                                text: data.message,
+                                            });
+                                        } else {
+                                            // Handle errors
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: data.message,
+                                                icon: 'error',
+                                            });
+                                        }
+                                    })
+                                    .catch(err => {
+                                        if (!err.data.success) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: err.response.data.message,
+                                            });
+                                        } else {
+                                            console.error(err);
+                                        }
+                                    });
+                            }
+
+                            function addToWishList(productId) {
+
+
+                                fetch('/wishList/addTowishList/' + productId, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ productId }),
                                 })
 
-                                .then(data => {
-                                    if (data.status) {
-                                        // Show a success message using SweetAlert2
-                                        const Toast = Swal.mixin({
-                                            toast: true,
-                                            position: "top-end",
-                                            showConfirmButton: false,
-                                            timer: 3000,
-                                            timerProgressBar: true,
-                                            didOpen: (toast) => {
-                                                toast.onmouseenter = Swal.stopTimer;
-                                                toast.onmouseleave = Swal.resumeTimer;
+                                    .then(response => {
+                                        if (response.redirected) {
+                                            return Swal.fire({
+                                                title: 'Login Required',
+                                                text: 'You must be logged in to add items to your Wishlist.',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonText: 'Login',
+                                                cancelButtonText: 'Cancel',
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    window.location.href = '/login';
+                                                } else {
+                                                    throw new Error('Action cancelled');
+                                                }
+                                            });
+                                        }
+                                        return response.json();
+                                    })
+
+                                    .then(data => {
+                                        if (data.status) {
+                                            // Show a success message using SweetAlert2
+                                            const Toast = Swal.mixin({
+                                                toast: true,
+                                                position: "top-end",
+                                                showConfirmButton: false,
+                                                timer: 3000,
+                                                timerProgressBar: true,
+                                                didOpen: (toast) => {
+                                                    toast.onmouseenter = Swal.stopTimer;
+                                                    toast.onmouseleave = Swal.resumeTimer;
+                                                }
+                                            });
+                                            Toast.fire({
+                                                icon: "success",
+                                                title: 'Success!',
+                                                text: data.message,
+                                            });
+                                            setTimeout(() => {
+                                                location.reload();
+                                            }, 3000);
+
+                                        } else {
+                                            // Handle errors
+                                            Swal.fire({
+                                                title: 'Error!',
+                                                text: data.message,
+                                                icon: 'error',
+                                            });
+                                        }
+                                    })
+                                    .catch(err => {
+                                        if (!err.data.success) {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Error',
+                                                text: err.response.data.message,
+                                            });
+                                        } else {
+                                            console.error(err);
+                                        }
+                                    });
+                            }
+
+
+                            document.getElementById('applyFilterBtn').addEventListener('click', (e) => {
+                                e.preventDefault();
+                                const url = new URL(window.location.href);
+
+                                // Get selected filters
+                                const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'))
+                                    .map(el => el.value);
+
+                                const genders = Array.from(document.querySelectorAll('input[name="gender"]:checked'))
+                                    .map(el => el.value);
+
+                                const sliderValues = $("#slider-range").slider("values"); // Get min/max from slider
+                                const minPrice = sliderValues[0];
+                                const maxPrice = sliderValues[1];
+
+                                const currentSort = url.searchParams.get('sort') || 'createdAt';
+                                const currentCategory = url.searchParams.get('category') || '';
+
+                                // Clear previous price filters
+                                url.searchParams.delete('minPrice');
+                                url.searchParams.delete('maxPrice');
+                                url.searchParams.delete('genders');
+                                url.searchParams.delete('size');
+
+                                // Preserve sorting and category
+                                if (currentSort) {
+                                    url.searchParams.set('sort', currentSort);
+                                }
+                                if (currentCategory) {
+                                    url.searchParams.set('category', currentCategory);
+                                }
+
+                                // Apply size filters
+                                if (sizes.length > 0) {
+                                    url.searchParams.set('size', sizes.join(','));
+                                }
+
+                                // Apply gender filters
+                                if (genders.length > 0) {
+                                    url.searchParams.set('genders', genders.join(','));
+                                }
+
+
+                                // Apply new price range values
+                                url.searchParams.set('minPrice', minPrice);
+                                url.searchParams.set('maxPrice', maxPrice);
+
+                                // Reset page to 1 when filters change
+                                url.searchParams.set('page', '1');
+
+                                window.location.href = url.toString().replace(/%2C/g, ',');
+                            });
+
+
+                            document.addEventListener("DOMContentLoaded", function () {
+                                document.querySelectorAll(".quick-view-btn").forEach(button => {
+                                    button.addEventListener("click", function () {
+                                        let product = JSON.parse(this.getAttribute("data-product"));
+
+                                        // Populate Product Info
+                                        document.getElementById("quickViewName").innerText = product.name;
+                                        document.getElementById("quickViewCategory").innerText = product.category.categoryName;
+                                        document.getElementById("quickViewBrand").innerText = product.brand;
+                                        document.getElementById("quickViewGender").innerText = product.gender;
+                                        document.getElementById("quickViewSize").innerText = product.size;
+                                        document.getElementById("description").innerText = product.description;
+
+                                        // Assume product is the object received (and it includes offer and category.offer if available)
+                                        let discountedPrice = product.price;
+                                        let hasDiscount = false;
+
+                                        if (product.offer) {
+                                            const offer = product.offer;
+                                            const currentDate = new Date();
+                                            const offerEndDate = new Date(offer.endingDate);
+                                            if (currentDate <= offerEndDate) {
+                                                discountedPrice = discountedPrice - (discountedPrice * (offer.discount / 100));
+                                                hasDiscount = true;
                                             }
-                                        });
-                                        Toast.fire({
-                                            icon: "success",
-                                            title: 'Success!',
-                                            text: data.message,
-                                        });
-                                    } else {
-                                        // Handle errors
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: data.message,
-                                            icon: 'error',
-                                        });
-                                    }
-                                })
-                                .catch(err => {
-                                    if (!err.data.success) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: err.response.data.message,
-                                        });
-                                    } else {
-                                        console.error(err);
-                                    }
+                                        } else if (product.category && product.category.offer) {
+                                            const categoryOffer = product.category.offer;
+                                            const currentDate = new Date();
+                                            const offerEndDate = new Date(categoryOffer.endingDate);
+                                            if (currentDate <= offerEndDate) {
+                                                discountedPrice = discountedPrice - (discountedPrice * (categoryOffer.discount / 100));
+                                                hasDiscount = true;
+                                            }
+                                        }
+
+                                        const priceElement = document.getElementById("quickViewPrice");
+
+                                        if (hasDiscount) {
+                                            priceElement.innerHTML = `
+                                <span class="money price">
+                                <ins><del> ${product.price.toFixed(2)}</del></ins>
+                                <ins style="margin-left: 20px;">
+                                    <span class="discounted-price" style="color: green;"> ${discountedPrice.toFixed(2)}</span>
+                                </ins>
+                                <ins style="margin-left: 20px;">
+                                    <span class="discount-percentage" style="color: red;">
+                                    (${product.offer ? product.offer.discount : product.category.offer.discount}% off)
+                                    </span>
+                                </ins>
+                                </span>
+                            `;
+                                        } else {
+                                            priceElement.innerHTML = `<ins><span class="money price"> ${product.price.toFixed(2)}</span></ins>`;
+                                        }
+
+                                        // Stock status
+                                        let stockDiv = document.getElementById("quickViewStock");
+                                        stockDiv.innerHTML = product.stockCount > 0
+                                            ? `<span class="badge bg-success">In Stock</span>`
+                                            : `<span class="badge bg-danger">Out of Stock</span>`;
+
+                                        // Get Image Containers
+                                        let imageContainer = document.getElementById("quickViewImages");
+                                        let thumbnailContainer = document.getElementById("quickViewThumbnails");
+
+                                        // Clear Previous Content
+                                        imageContainer.innerHTML = "";
+                                        thumbnailContainer.innerHTML = "";
+
+                                        if (product.productImage.length > 0) {
+                                            product.productImage.forEach((image, index) => {
+                                                let mainSlide = `
+                                    <figure class="border-radius-10">
+                                    <img src="/uploads/product/resized/${image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    </figure>
+                                `;
+                                                imageContainer.innerHTML += mainSlide;
+
+                                                let thumbSlide = `
+                                    <div class="thumbnail">
+                                    <img src="/uploads/product/resized/${image}" alt="${product.name}" style="width: 100px; height: 100px; object-fit: fill;">
+                                    </div>
+                                `;
+                                                thumbnailContainer.innerHTML += thumbSlide;
+                                            });
+                                        }
+
+                                        // Show the modal (if not already being triggered by another mechanism)
+                                        $('#quickViewModal').modal('show');
+                                    });
                                 });
-                        }
 
-                        function addToWishList(productId) {
-
-
-                            fetch('/wishList/addTowishList/' + productId, {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({ productId }),
-                            })
-
-                                .then(response => {
-                                    if (response.redirected) {
-                                        return Swal.fire({
-                                            title: 'Login Required',
-                                            text: 'You must be logged in to add items to your Wishlist.',
-                                            icon: 'warning',
-                                            showCancelButton: true,
-                                            confirmButtonText: 'Login',
-                                            cancelButtonText: 'Cancel',
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                window.location.href = '/login';
-                                            } else {
-                                                throw new Error('Action cancelled');
-                                            }
-                                        });
-                                    }
-                                    return response.json();
-                                })
-
-                                .then(data => {
-                                    if (data.status) {
-                                        // Show a success message using SweetAlert2
-                                        const Toast = Swal.mixin({
-                                            toast: true,
-                                            position: "top-end",
-                                            showConfirmButton: false,
-                                            timer: 3000,
-                                            timerProgressBar: true,
-                                            didOpen: (toast) => {
-                                                toast.onmouseenter = Swal.stopTimer;
-                                                toast.onmouseleave = Swal.resumeTimer;
-                                            }
-                                        });
-                                        Toast.fire({
-                                            icon: "success",
-                                            title: 'Success!',
-                                            text: data.message,
-                                        });
-                                        setTimeout(() => {
-                                            location.reload();
-                                        }, 3000);
-
-                                    } else {
-                                        // Handle errors
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: data.message,
-                                            icon: 'error',
-                                        });
-                                    }
-                                })
-                                .catch(err => {
-                                    if (!err.data.success) {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: err.response.data.message,
-                                        });
-                                    } else {
-                                        console.error(err);
-                                    }
+                                // Initialize the slider after the modal is fully shown
+                                $('#quickViewModal').on('shown.bs.modal', function () {
+                                    // Initialize the slider for the modal gallery
+                                    window.initSlickSlider($('#quickViewModal .detail-gallery'));
                                 });
-                        }
 
+                                $('#quickViewModal').on('hidden.bs.modal', function () {
+                                    var $modalGallery = $(this).find('.detail-gallery');
+                                    var $productImageSlider = $modalGallery.find('.product-image-slider');
+                                    var $thumbnailSlider = $modalGallery.find('.slider-nav-thumbnails');
 
-                        document.getElementById('applyFilterBtn').addEventListener('click', (e) => {
-                            e.preventDefault();
-                            const url = new URL(window.location.href);
+                                    // Unslick the sliders if initialized
+                                    if ($productImageSlider.hasClass('slick-initialized')) {
+                                        $productImageSlider.slick('unslick');
+                                    }
+                                    if ($thumbnailSlider.hasClass('slick-initialized')) {
+                                        $thumbnailSlider.slick('unslick');
+                                    }
 
-                            // Get selected filters
-                            const sizes = Array.from(document.querySelectorAll('input[name="size"]:checked'))
-                                .map(el => el.value);
+                                    // Optionally, clear the content if needed
+                                    $productImageSlider.empty();
+                                    $thumbnailSlider.empty();
+                                });
 
-                            const sliderValues = $("#slider-range").slider("values"); // Get min/max from slider
-                            const minPrice = sliderValues[0];
-                            const maxPrice = sliderValues[1];
-
-                            const currentSort = url.searchParams.get('sort') || 'createdAt';
-                            const currentCategory = url.searchParams.get('category') || '';
-
-                            // Clear previous price filters
-                            url.searchParams.delete('minPrice');
-                            url.searchParams.delete('maxPrice');
-                            url.searchParams.delete('size');
-                            url.search = '';
-
-                            // Preserve sorting and category
-                            if (currentSort) {
-                                url.searchParams.set('sort', currentSort);
-                            }
-                            if (currentCategory) {
-                                url.searchParams.set('category', currentCategory);
-                            }
-
-                            // Apply size filters
-                            if (sizes.length > 0) {
-                                url.searchParams.set('size', sizes);
-                            }
-
-
-                            // Apply new price range values
-                            url.searchParams.set('minPrice', minPrice);
-                            url.searchParams.set('maxPrice', maxPrice);
-
-                            // Reset page to 1 when filters change
-                            url.searchParams.set('page', '1');
-
-                            window.location.href = url.toString().replace(/%2C/g, ',');
-                        });
+                            });
 
 
 
-
-                    </script>
+                        </script>

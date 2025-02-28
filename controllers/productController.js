@@ -44,12 +44,13 @@ const loadAddProduct = async (req, res) => {
 //for adding the product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, brand, gender, category, stockCount, size } = req.body;
-        const unique = await Product.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
+        const { name, description, price, brand, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
 
+        const unique = await Product.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
         if (unique) {
             return res.status(400).json({ success: false, message: 'Name already exists. Please use a different name.' });
         }
+
         const existingProduct = await Product.findOne({ category, size, gender });
         if (existingProduct) {
             return res.status(400).json({ success: false, message: 'Product with the same category, size, and gender already exists.' });
@@ -78,6 +79,9 @@ const addProduct = async (req, res) => {
             productImages.push(resizedImageFilename);
         }
 
+        const isHot = productStatus === 'isHot';
+        const isNewArrival = productStatus === 'isNewArrival';
+        const isBestSeller = productStatus === 'isBestSeller';
 
         // Create a new product instance
         const newProduct = new Product({
@@ -89,6 +93,17 @@ const addProduct = async (req, res) => {
             category,
             stockCount,
             size,
+            fit,
+            fabric,
+            sleeve,
+            pattern,
+            color,
+            fabricCare,
+            origin,
+            productStatus,
+            isHot,
+            isNewArrival,
+            isBestSeller,
             productImage: productImages // Assign the array of resized image filenames to productImage field
         });
 
@@ -174,7 +189,7 @@ const loadEditProduct = async (req, res) => {
 //for editing product
 const editProduct = async (req, res) => {
     const productId = req.params.productId;
-    const { name, description, brand, price, gender, category, stockCount, size } = req.body;
+    const { name, description, brand, price, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
 
     const updateFields = {};
     try {
@@ -205,6 +220,17 @@ const editProduct = async (req, res) => {
         if (category) updateFields.category = category;
         if (stockCount) updateFields.stockCount = stockCount;
         if (size) updateFields.size = size;
+        if (fit) updateFields.fit = fit;
+        if (fabric) updateFields.fabric = fabric;
+        if (sleeve) updateFields.sleeve = sleeve;
+        if (pattern) updateFields.pattern = pattern;
+        if (color) updateFields.color = color;
+        if (fabricCare) updateFields.fabricCare = fabricCare;
+        if (origin) updateFields.origin = origin;
+        updateFields.isHot = productStatus === 'isHot';
+        updateFields.isNewArrival = productStatus === 'isNewArrival';
+        updateFields.isBestSeller = productStatus === 'isBestSeller';
+
 
         // Check if new images are uploaded
         if (req.files && req.files.length > 0) {
@@ -347,7 +373,7 @@ const addOffer = async (req, res) => {
     try {
         const productId = req.params.productId;
         const offerId = req.body.offerId;
-    
+
 
         // Find the product by productId
         const product = await Product.findById(productId);
