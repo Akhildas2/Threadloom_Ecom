@@ -5,20 +5,21 @@ const { generateSalesReportPDF } = require('../services/pdfService')
 const { generateSalesReportExcel } = require('../services/excelService')
 
 
+
 //for loading order list 
-const loadOrderList = async (req, res) => {
+const loadOrderList = async (req, res, next) => {
     try {
 
         const page = (req.query.page || 1);
         const orderId = req.query.orderId;
-        let query={}
-        if(orderId){
-            query={$or:[{ordersId:{$regex:orderId ,$options: 'i'}}]}
+        let query = {}
+        if (orderId) {
+            query = { $or: [{ ordersId: { $regex: orderId, $options: 'i' } }] }
         }
+
         const limit = 5;
         const ordersCount = await Order.find(query).countDocuments();
-
-        const totalPages = Math.ceil(ordersCount/limit)
+        const totalPages = Math.ceil(ordersCount / limit)
 
         const orders = await Order.find(query)
             .populate('items.productId')
@@ -27,44 +28,33 @@ const loadOrderList = async (req, res) => {
             .skip((page - 1) * limit)
             .limit(limit);
 
-        res.render('orderList', { orders,totalPages,currentPage:page })
+        res.render('orderList', { orders, totalPages, currentPage: page })
 
     }
     catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-
-
+        next(error);
     }
 }
-
 
 
 
 //for deatil order list
-const deatilOrderList = async (req, res) => {
+const deatilOrderList = async (req, res, next) => {
     try {
         const id = req.params.id
         const order = await Order.findById(id).populate('items.productId').populate("userId");
-
         res.render('orderDetails', { order });
-
 
     }
     catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-
-
+        next(error);
     }
 }
 
 
 
-
-
 //change order status
-const updateStatus = async (req, res) => {
+const updateStatus = async (req, res, next) => {
     try {
         const { orderId, productId, newStatus } = req.body;
         const order = await Order.findById(orderId).populate('items.productId');
@@ -86,17 +76,14 @@ const updateStatus = async (req, res) => {
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
                 }
-
                 product.stockCount += item.quantity;
                 await product.save()
-                console.log("Quantity increased")
             }
         }
 
         const userId = order.userId;
         if (item.orderStatus == 'returned') {
 
-            console.log("userId", userId)
             const wallet = await Wallet.findOne({ userId })
             if (!wallet) {
                 // If the wallet doesn't exist, create a new one
@@ -133,16 +120,14 @@ const updateStatus = async (req, res) => {
         res.status(200).json({ message: 'success', order });
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-
+        next(error);
     }
 }
 
 
 
 //for loading sales report
-const loadSalesReport = async (req, res) => {
+const loadSalesReport = async (req, res, next) => {
     try {
         let { startDate, endDate, period, page = 1, limit = 2, format } = req.query;
 
@@ -224,15 +209,9 @@ const loadSalesReport = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
-
-
-
-
-
 
 
 

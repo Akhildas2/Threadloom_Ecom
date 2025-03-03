@@ -4,24 +4,24 @@ require("dotenv").config();
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const session = require("express-session");
-const passport = require('passport'); 
+const passport = require('passport');
 const { configurePayPal } = require('./config/paypalConfig');
 
 
 // Connect to MongoDB
 const connectDB = async () => {
   try {
-      await mongoose.connect(process.env.MONGO_URI);
-      console.log('MongoDB connected...');
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log('MongoDB connected...');
   } catch (err) {
-      console.error('MongoDB connection error:', err);
-      process.exit(1);
+    console.error('MongoDB connection error:', err);
+    process.exit(1);
   }
 };
 
 connectDB();
 
-  
+
 //connection  of local host
 const port = parseInt(process.env.PORT) || 6969;
 
@@ -30,7 +30,7 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   name: process.env.SESSION_NAME,
   resave: false,
-  saveUninitialized:true,
+  saveUninitialized: true,
 }));
 
 // Configure PayPal
@@ -60,31 +60,31 @@ const userRoute = require('./routes/userRoute')
 const adminRoute = require('./routes/adminRoute')
 
 //for category route
-const categoryRoute=require('./routes/categoryRoute')
+const categoryRoute = require('./routes/categoryRoute')
 
 //for product route
-const productRoute=require('./routes/productRoute')
+const productRoute = require('./routes/productRoute')
 
 //for cart route
-const cartRoute=require('./routes/cartRoute')
+const cartRoute = require('./routes/cartRoute')
 
 //for order route
-const orderRoute=require('./routes/orderRoute')
+const orderRoute = require('./routes/orderRoute')
 
 //for admin order list
- const orderListRoute = require('./routes/orderListRoute')
+const orderListRoute = require('./routes/orderListRoute')
 
 //for wishlist route
-const wishListRoute=require('./routes/wishListRoute')
+const wishListRoute = require('./routes/wishListRoute')
 
 //for dashboard route
-const dashboardRoute=require('./routes/dashboardRoute')
+const dashboardRoute = require('./routes/dashboardRoute')
 
 //for coupon route
-const couponRoute=require('./routes/couponRoute')
+const couponRoute = require('./routes/couponRoute')
 
 //for coupon route
-const offerRoute=require('./routes/offerRoute')
+const offerRoute = require('./routes/offerRoute')
 
 
 
@@ -98,20 +98,26 @@ app.use(cookieParser());
 
 
 app.use('/', userRoute)
-app.use('/admin',adminRoute)
-app.use('/admin/category',categoryRoute)
-app.use('/admin/product',productRoute)
-app.use('/cart',cartRoute)
-app.use('/order',orderRoute)
-app.use('/admin/orderList',orderListRoute)
-app.use('/wishList',wishListRoute)
-app.use('/dashboard',dashboardRoute)
-app.use('/admin/coupon',couponRoute)
-app.use('/admin/offer',offerRoute)
+app.use('/admin', adminRoute)
+app.use('/admin/category', categoryRoute)
+app.use('/admin/product', productRoute)
+app.use('/cart', cartRoute)
+app.use('/order', orderRoute)
+app.use('/admin/orderList', orderListRoute)
+app.use('/wishList', wishListRoute)
+app.use('/dashboard', dashboardRoute)
+app.use('/admin/coupon', couponRoute)
+app.use('/admin/offer', offerRoute)
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render('500page'); 
+});
 
 app.get("*", function (req, res) {
   res.status(404).render("404page")
 })
+
 
 app.listen(port, () => {
   console.log(`Sever Running on port number http://localhost:${port}`);

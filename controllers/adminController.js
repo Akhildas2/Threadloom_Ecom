@@ -3,67 +3,65 @@ const Admin = require("../models/adminModel")
 const Order = require('../models/orderModel')
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
-
 const bcrypt = require('bcrypt');
 
+
+
 //for secure password
-const securePassword = async (password) => {
+const securePassword = async (password, next) => {
     try {
         const passwordHarsh = await bcrypt.hash(password, 10)
         return passwordHarsh
+
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
+
+
 //for admin register
-const registerAdmin = async (req, res) => {
+const registerAdmin = async (req, res, next) => {
     try {
         const { name, email, mobile, password } = req.body;
         const spassword = await securePassword(password);
+
         const admin = new Admin({
             name,
             email,
             mobile,
             password: spassword,
         });
-
-        const adminData = await admin.save();
-        if (adminData) {
-            console.log("admin register successfull");
-        }
+        await admin.save();
 
     } catch (error) {
-        console.log(error.message);
+        next(error);
     }
 }
+
 
 
 //for load login function
-const loadLogin = async (req, res) => {
+const loadLogin = async (req, res, next) => {
     try {
         res.render('adminLogin')
-    } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
 
+    } catch (error) {
+        next(error);
     }
 }
-
-
-
 
 
 
 // for loading admin home
-const loadAdminHome = async (req, res) => {
+const loadAdminHome = async (req, res, next) => {
     try {
 
         const revenue = await Order.aggregate([
             { $match: { 'items.orderStatus': 'delivered' } },
             { $group: { _id: null, total: { $sum: '$totalAmount' } } }
         ]);
+
         //daily
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -163,8 +161,6 @@ const loadAdminHome = async (req, res) => {
             }
         ]);
 
-
-
         //top selling product
         const topSellingProducts = await Order.aggregate([
             { $unwind: "$items" },
@@ -231,63 +227,52 @@ const loadAdminHome = async (req, res) => {
 
     }
     catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-
+        next(error);
     }
 }
 
 
 
-
-
-
-
 //for verify admin login
-const verifyLogin = async (req, res) => {
+const verifyLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const adminData = await Admin.findOne({ email });
+
         if (adminData && await bcrypt.compare(password, adminData.password) && adminData.isAdmin) {
             req.session.admin_id = adminData._id;
             return res.status(200).json({ status: true, url: '/admin/adminhome' });
         } else {
             return res.status(400).json({ success: false, message: 'Email and Password is incorrect.' });
         }
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
-//for logout
-const logout = async (req, res) => {
-    try {
 
+//for logout
+const logout = async (req, res, next) => {
+    try {
         delete req.session.admin_id;
         res.redirect('/admin');
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
-
+        next(error);
     }
 }
 
 
 
-
-
 //for loading user list
-const userList = async (req, res) => {
+const userList = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
-
         let query = { isVerified: true };
-
 
         if (req.query.category) {
             if (req.query.category === 'active') {
@@ -296,6 +281,7 @@ const userList = async (req, res) => {
                 query.isBlocked = true;
             }
         }
+
         const users = await User.find(query)
             .skip(skip)
             .limit(limit);
@@ -305,20 +291,16 @@ const userList = async (req, res) => {
         res.render('userList', { users, currentPage: page, totalPages, selectedStatus: req.query.category || '' });
 
     } catch (error) {
-        // Handle errors appropriately
-        res.status(500).send("Internal Server Error");
+        next(error);
     }
 }
 
 
 
-
 //for block user 
-const blockUser = async (req, res) => {
+const blockUser = async (req, res, next) => {
     try {
         const userId = req.params.id;
-
-        // Find the user by ID
         const user = await User.findById(userId);
 
         // Check if the user exists
@@ -331,16 +313,13 @@ const blockUser = async (req, res) => {
             return res.status(403).send('Cannot block admin user');
         }
 
-
         //destroy only the user's session
         if (req.session.user_id === userId) {
             delete req.session.user_id;
             req.session.save(err => {
                 if (err) {
-                    console.error('Error saving session:', err);
-                    return res.status(500).send('Internal Server Error');
+                    next(error);
                 }
-
             });
         }
 
@@ -354,31 +333,27 @@ const blockUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Error blocking user:', error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 
 
 //for unblock user 
-const unblockUser = async (req, res) => {
+const unblockUser = async (req, res, next) => {
     try {
         const userId = req.params.id;
 
         await User.findByIdAndUpdate(userId, { isBlocked: false });
+
         res.status(200).json({
             status: true,
             url: '/admin/userList'
         });
 
-
-
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
-
 
 
 
@@ -392,5 +367,4 @@ module.exports = {
     userList,
     blockUser,
     unblockUser,
-
 }

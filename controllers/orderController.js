@@ -14,10 +14,11 @@ const invoicePdfService = require('../services/invoicePdfService');
 
 
 //for checkout process
-const checkout = async (req, res) => {
-    const userId = req.session.user_id;
+const checkout = async (req, res, next) => {
     try {
+        const userId = req.session.user_id;
         const cartItems = await CartItems.find({ user: userId }).populate('products.productId').populate('coupondiscount');
+
         let appliedCouponId = null;
         let totalCouponDiscount = 0;
         for (const cartItem of cartItems) {
@@ -31,9 +32,9 @@ const checkout = async (req, res) => {
         //for finding expiry
         const today = new Date();
         const coupons = await Coupon.find({ expiryDate: { $gte: today } });
-
         let totalPrice = 0;
         let originalTotalPrice = 0;
+
         // products offer
         const productsWithOffers = await Product.find({ isUnlisted: false })
             .populate({ path: "category", populate: { path: "offer" } })
@@ -43,37 +44,30 @@ const checkout = async (req, res) => {
         for (const item of cartItems) {
             // products
             for (const product of item.products) {
-
                 // Find  offer and category offer
                 const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
-                // console.log("productWithOffer", productWithOffer);
-
                 if (!productWithOffer) {
-                    console.error("Product not found in products:", product.productId._id);
                     continue;
                 }
+
                 let productTotal = 0;
                 originalTotalPrice += (product.price * product.quantity);
-
                 let productPricePerUnit = product.price;
 
                 // Check product offer
                 if (productWithOffer.offer && productWithOffer.offer.endingDate >= today) {
-
                     // Apply product offer
                     productPricePerUnit -= (productPricePerUnit * productWithOffer.offer.discount) / 100;
                 }
                 //check  category  offer
                 if (productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today) {
-
                     // Apply category offer
                     productPricePerUnit -= (productPricePerUnit * productWithOffer.category.offer.discount) / 100;
-
                 }
+
                 productTotal = productPricePerUnit * product.quantity;
                 product.price = productPricePerUnit;
                 product.total = productTotal;
-
                 // Add the discounted price to the total
                 totalPrice += productTotal;
             }
@@ -83,33 +77,27 @@ const checkout = async (req, res) => {
 
         // Iterate over each cart item
         for (const cartItem of cartItems) {
-
             // Check if coupondiscount exists
             if (cartItem.coupondiscount) {
                 // Access the discountAmount
                 const discountAmount = cartItem.coupondiscount.discountAmount;
                 totalPrice -= discountAmount
-
-
             }
         }
         let couponDiscount = totalCouponDiscount
-
-
         const address = await Address.find({ userId: userId });
 
         res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount, couponDiscount });
 
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
 //for place order
-const placeOrder = async (req, res) => {
+const placeOrder = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const { items, total, addressId, paymentMethod, couponDiscount, offerDiscount, shippingCharge } = req.body;
@@ -122,6 +110,7 @@ const placeOrder = async (req, res) => {
         if (!address) {
             return res.status(404).json({ message: 'Address not found.' });
         }
+
         const couponDiscountAmount = couponDiscount || 0;
         const shippingChargeAmount = shippingCharge || 0;
         const offerDiscountAmount = offerDiscount || 0;
@@ -134,28 +123,24 @@ const placeOrder = async (req, res) => {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
 
-
-
         for (const item of items) {
             for (const productDetail of item.products) {
                 // Ensure productDetail.productId is defined before accessing its _id
                 if (!productDetail.productId) {
                     return res.status(400).json({ message: `Product ID is undefined for item ${item._id}.` });
                 }
+
                 const productId = productDetail.productId._id;
                 const product = await Product.findById(productId);
-
                 if (!product) {
                     return res.status(404).json({ message: `Product with ID ${productId} not found.` });
                 }
-
                 if (product.stockCount < productDetail.quantity) {
                     return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
                 }
 
                 product.stockCount -= productDetail.quantity;
                 await product.save();
-                console.log("Quantity decreased");
             }
         }
 
@@ -168,6 +153,7 @@ const placeOrder = async (req, res) => {
                 total: productDetail.price * productDetail.quantity
             }));
         });
+
         //create order
         const order = new Order({
             userId: userId,
@@ -182,19 +168,15 @@ const placeOrder = async (req, res) => {
             shippingCharge: shippingChargeAmount
         });
         const savedOrder = await order.save();
-        console.log("Order saved");
 
         // Check if the payment method is PayPal
         if (paymentMethod === 'paypal') {
-
             const exchangeRate = await fetchExchangeRate();
             const approvalUrl = await createPayPalPayment(savedOrder._id, items, exchangeRate);
             return res.status(200).json({ approvalUrl });
-
         }
 
         if (paymentMethod === 'cod') {
-
             // Clear cart
             await CartItems.deleteMany({ user: userId });
 
@@ -206,17 +188,14 @@ const placeOrder = async (req, res) => {
         }
 
     } catch (error) {
-        console.error('Error placing order:', error);
-        res.status(500).json({ message: 'Error placing order', error: error.message });
+        next(error);
     }
 }
 
 
 
-
-
 // For payment success
-const paymentSuccess = async (req, res) => {
+const paymentSuccess = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const orderId = req.params.orderId;
@@ -233,61 +212,54 @@ const paymentSuccess = async (req, res) => {
         const paymentId = req.query.paymentId;
         const payerId = req.query.PayerID;
         order.paymentId = paymentId;
-
         // Check if payerId is provided
         if (payerId) {
             order.payerId = payerId;
-        } 
+        }
 
         await order.save();
-
         // Clear cart
         await CartItems.deleteMany({ user: userId });
+
         res.render('paymentSuccess', { req, orderId });
 
     } catch (error) {
-        res.status(500).send('Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
-
 // For payment cancellation
-const paymentCancel = async (req, res) => {
+const paymentCancel = async (req, res, next) => {
     try {
         const orderId = req.params.orderId;
         const userId = req.session.user_id;
-
         if (!orderId) {
             return res.status(400).send('Order ID is missing.');
         }
+
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(404).send('Order not found.');
         }
         order.status = 'retry';
         await order.save();
+
         await CartItems.deleteMany({ user: userId });
         res.render('PaymentCancel', { req, orderId });
 
     } catch (error) {
-        res.status(500).send('Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
 //for retry payment 
-const retryPayment = async (req, res) => {
+const retryPayment = async (req, res, next) => {
     try {
-        
+
         const { ordersId } = req.params;
 
         const order = await Order.findOne({ ordersId: ordersId }).populate('items.productId');
@@ -297,95 +269,74 @@ const retryPayment = async (req, res) => {
 
         const orderItems = [{ products: order.items }]
         const items = orderItems;
-
         const exchangeRate = await fetchExchangeRate();
-
-
         const approvalUrl = await createPayPalPayment(order._id, items, exchangeRate);
+
         return res.status(200).json({ approvalUrl });
 
     } catch (error) {
-        if (error.response) {
-            return res.status(500).json({
-                message: 'Error in retrying payment',
-                error: error.response.data || error.message,
-            });
-        } else {
-            return res.status(500).json({ message: 'Server Error', error: error.message || error });
-        }
+        next(error);
     }
 };
 
 
 
-
-
-
 //to show order deatils 
-const orderDetails = async (req, res) => {
+const orderDetails = async (req, res, next) => {
     try {
         const orderId = req.params.id;
         const productId = req.query.productId
         const productIdObject = new mongoose.Types.ObjectId(productId);
         const order = await Order.findById(orderId).populate('items.productId');
-
         let OtherOrders = []
         let selectedItem = null;
+
         for (const item of order.items) {
             if (productIdObject.toString() == item.productId._id.toString()) {
                 selectedItem = item;
-
             } else {
                 OtherOrders.push(item)
-
             }
         }
-
         if (!order) {
             return res.status(404).send('Order not found');
         }
+
         res.render('orderDeatil', { req, order, OtherOrders, selectedItem });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
-
 //this is for order confirmation
-const orderConfirmation = async (req, res) => {
+const orderConfirmation = async (req, res, next) => {
     try {
         const orderId = req.params.orderId;
         const order = await Order.findById(orderId).populate('userId').populate('items.productId');
         if (!order) {
             return res.status(404).send('Order not found');
         }
+
         res.render('orderConfirmation', { req, order });
+
     } catch (error) {
-        console.error(error);
-        res.status(500).send('Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
-
 //this is for oder cancellation
-const cancelOrder = async (req, res) => {
+const cancelOrder = async (req, res, next) => {
     try {
         const userId = req.session.user_id;
         const { orderId, itemId } = req.params;
         const { cancellationReason } = req.body;
-        const order = await Order.findById(orderId).populate('items.productId');
 
+        const order = await Order.findById(orderId).populate('items.productId');
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found.' });
         }
@@ -394,25 +345,22 @@ const cancelOrder = async (req, res) => {
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
+
         item.cancellationReason = cancellationReason;
-
         item.orderStatus = 'cancelled';
-
         await order.save();
+
         //for updating the product quantity
         const items = order.items;
         for (const item of items) {
-            const product = await Product.findById(item.productId)
-
+            const product = await Product.findById(item.productId);
             if (!product) {
                 return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
             }
-
             product.stockCount += item.quantity;
             await product.save()
-            console.log("Quantity increased")
-
         }
+
         if (order.status == 'paid') {
             const wallet = await Wallet.findOne({ userId })
             if (!wallet) {
@@ -430,7 +378,6 @@ const cancelOrder = async (req, res) => {
                     }]
                 });
                 await newWallet.save();
-
             } else {
                 wallet.balance += item.total;
 
@@ -444,28 +391,24 @@ const cancelOrder = async (req, res) => {
                 });
                 await wallet.save();
             }
-
-
         }
 
         res.json({ success: true, message: 'Product cancelled successfully.' });
+
     } catch (error) {
-        console.error('Error in /cancel/:orderId route:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
+        next(error);
     }
 };
 
 
 
-
-
 //for order return 
-const returnOrder = async (req, res) => {
+const returnOrder = async (req, res, next) => {
     try {
         const { orderId, itemId } = req.params;
         const { cancellationReason } = req.body;
-        const order = await Order.findById(orderId).populate('items.productId');
 
+        const order = await Order.findById(orderId).populate('items.productId');
         if (!order) {
             return res.status(404).json({ success: false, message: 'Order not found.' });
         }
@@ -474,66 +417,64 @@ const returnOrder = async (req, res) => {
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
+
         item.cancellationReason = cancellationReason;
-
         item.orderStatus = 'awaiting approval';
-
         await order.save();
 
-
         res.json({ success: true, message: 'Product return is awaiting approval.' });
+
     } catch (error) {
-        console.error('Error in /return/:orderId route:', error);
-        res.status(500).json({ success: false, message: 'Server error.' });
+        next(error);
     }
 };
 
 
-const downloadInvoice = async (req, res) => {
-    const orderId = req.params.orderId;
-    const userId = req.session.user_id;
 
-        try {
-            // Fetch order details from the database using the orderId
-            const order = await Order.findById(orderId).populate('userId').populate('items.productId');
-            if (!order) {
-                return res.status(404).json({ message: 'Order not found' });
-            }
+const downloadInvoice = async (req, res, next) => {
+    try {
+        const orderId = req.params.orderId;
+        const userId = req.session.user_id;
 
-            // Generate the PDF using the PDF service
-            const invoicePath = await invoicePdfService.generateInvoicePDF(order);
-
-            // Send the PDF file to the client
-            res.download(invoicePath, `invoice-${order.ordersId}.pdf`, (err) => {
-                if (err) {
-                    console.error('Error sending the invoice:', err);
-                    return res.status(500).json({ message: 'Error sending the invoice' });
-                }
-                // Optionally delete the file after sending it
-                fs.unlink(invoicePath, (unlinkErr) => {
-                    if (unlinkErr) {
-                        console.error('Error deleting the invoice file:', unlinkErr);
-                    }
-                });
-            });
-
-        } catch (error) {
-            res.status(500).json({ success: false, message: 'Server error.' });
+        // Fetch order details from the database using the orderId
+        const order = await Order.findById(orderId).populate('userId').populate('items.productId');
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
         }
+
+        // Generate the PDF using the PDF service
+        const invoicePath = await invoicePdfService.generateInvoicePDF(order);
+        // Send the PDF file to the client
+        res.download(invoicePath, `invoice-${order.ordersId}.pdf`, (err) => {
+            if (err) {
+                next(error);
+            }
+            // Optionally delete the file after sending it
+            fs.unlink(invoicePath, (unlinkErr) => {
+                if (unlinkErr) {
+                    next(error);
+                }
+            });
+        });
+
+    } catch (error) {
+        next(error);
     }
+}
+
 
 
 module.exports = {
-        checkout,
-        placeOrder,
-        orderDetails,
-        orderConfirmation,
-        cancelOrder,
-        returnOrder,
-        paymentSuccess,
-        paymentCancel,
-        retryPayment,
-        downloadInvoice
-    }
+    checkout,
+    placeOrder,
+    orderDetails,
+    orderConfirmation,
+    cancelOrder,
+    returnOrder,
+    paymentSuccess,
+    paymentCancel,
+    retryPayment,
+    downloadInvoice
+}
 
 

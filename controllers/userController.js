@@ -1,10 +1,7 @@
 const User = require('../models/userModel')
-const Product = require('../models/productModel')
 const Otp = require('../models/otpModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-const Category = require("../models/categoryModel")
-const Wishlist = require("../models/wishListModel")
 const Referral = require("../models/referralModel")
 const Wallet = require("../models/walletModel")
 const crypto = require('crypto');
@@ -12,80 +9,17 @@ const sendResetPasswordEmail = require("../services/forgotEmailService")
 
 
 
-
-//for loading the home page
-const loadHome = async (req, res) => {
-    try {
-
-        const featuredProducts = await Product.find({ isUnlisted: false, isHot: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        const newProducts = await Product.find({ isUnlisted: false, isNewArrival: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        const bestSellerProducts = await Product.find({ isUnlisted: false, isBestSeller: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-
-        //for getting the categories
-        const categories = await Category.find({ isUnlisted: false }).limit(8);
-
-        const userId = req.session.user_id;
-
-        let userWishlist = [];
-        // If the user is logged in show the userWishlist
-        if (userId) {
-            userWishlist = await Wishlist.find({ user: userId }).populate('productId');
-        }
-        res.render('home', { req, featuredProducts, newProducts, bestSellerProducts, categories, userWishlist });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
-
-
-
-// for loading the register page
-const loadRegister = async (req, res) => {
-    try {
-        const pageTitle = "Sign Up";
-        res.render('register', { req, pageTitle })
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
-
-
-// for loading the contact page
-const loadContact = async (req, res) => {
-    try {
-        res.render('contact', { req })
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
-// for loading the about page
-const loadAbout = async (req, res) => {
-    try {
-        res.render('about', { req })
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
 //for secure password
-const securePassword = async (password) => {
+const securePassword = async (password, next) => {
     try {
         //for harsh the password
         const passwordHarsh = await bcrypt.hash(password, 10)
         return passwordHarsh
+
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
-
-
 
 
 
@@ -97,10 +31,8 @@ function generateReferralCode() {
         referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return referralCode;
+
 }
-
-
-
 
 
 
@@ -111,6 +43,7 @@ const generateUniqueReferralCode = async () => {
         newReferralCode = generateReferralCode();
     } while (await Referral.findOne({ referralCode: newReferralCode }));
     return newReferralCode;
+
 };
 
 
@@ -120,7 +53,6 @@ const handleReferral = async (referralCode, newUserId) => {
     try {
         // Generate a unique referral code
         const newReferralCode = await generateUniqueReferralCode();
-
         // Check if a referral code was provided
         if (!referralCode) {
             // No referral code provided, creating a new referral without "referredBy"
@@ -131,6 +63,7 @@ const handleReferral = async (referralCode, newUserId) => {
 
             await referral.save();
             return referral; // Return the newly created referral
+
         } else {
             // Referral code provided, find the user who referred the new user
             const referredByUser = await Referral.findOne({ referralCode }).populate('user');
@@ -149,18 +82,15 @@ const handleReferral = async (referralCode, newUserId) => {
 
                 // Update wallet balance for both the new user and the referrer
                 await updateWalletBalance(newUserId, referredByUser.user._id);
-
                 await referral.save();
                 return referral; // Return the newly created referral
+
             }
         }
     } catch (error) {
-
         throw new Error(error.message || 'Internal server error.'); // Throw error to be handled outside
     }
 };
-
-
 
 
 
@@ -198,24 +128,19 @@ const updateWalletBalance = async (newUserId, referredByUserId) => {
         updateWallet(newUserId, newUserBonus),
         updateWallet(referredByUserId, referredUserBonus)
     ]);
+
 };
 
 
 
-
-
-
 // Function to insert user
-const insertUser = async (req, res) => {
+const insertUser = async (req, res, next) => {
     try {
         const { name, email, mobile, password, referralCode } = req.body;
-
         // Check if the user already exists by mobile
         const existingUserByMobile = await User.findOne({ mobile });
-
         // Check if the user already exists by email
         const existingUserByEmail = await User.findOne({ email });
-
         // If user already exists by mobile and is not verified
         if (existingUserByMobile) {
             if (!existingUserByMobile.isVerified) {
@@ -271,14 +196,9 @@ const insertUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
-
-
-
-
 
 
 
@@ -308,9 +228,6 @@ const sendVerifyOtp = async (name, email, otp) => {
             if (error) {
                 return res.status(500).json({ success: false, message: 'Internal mail Server Error. Please try again later.' });
             }
-            else {
-                console.log("email has been sent:", info.response);
-            }
         });
 
         // Save OTP record to the database
@@ -320,6 +237,7 @@ const sendVerifyOtp = async (name, email, otp) => {
             expiryTime
         });
         await otpRecord.save(); // Save OTP record to the database
+
     } catch (error) {
         throw error;
     }
@@ -327,61 +245,27 @@ const sendVerifyOtp = async (name, email, otp) => {
 
 
 
-
-
-// for loading the verify otp page
-const loadVerifyOtp = async (req, res) => {
-    try {
-        const email = req.cookies.email;
-        // Find the corresponding OTP record
-        await Otp.findOne({ email });
-
-        // Mask the email
-        const maskedEmail = email.replace(/^(.*)(.{4}@.*)$/, (match, p1, p2) => {
-            const masked = p1.replace(/./g, '*'); // Mask all characters before the last 6
-            return masked + p2; // Combine the masked part with the last 6 characters
-        });
-
-        res.render('verifyOtp', { req, email: maskedEmail })
-
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
-
-
-
 // for verifyOtp verification
-const verifyOtp = async (req, res) => {
+const verifyOtp = async (req, res, next) => {
     try {
-
         const { otp1, otp2, otp3, otp4, otp5, otp6 } = req.body;
         const otp = otp1 + otp2 + otp3 + otp4 + otp5 + otp6; // Concatenate OTP digits
-
         // Validate if all OTP digits are provided
         if (![otp1, otp2, otp3, otp4, otp5, otp6].every(otpDigit => otpDigit && otpDigit.length === 1)) {
-
             return res.status(400).json({ success: false, message: 'Invalid OTP format.' });
         }
 
         // Find the corresponding OTP record
         const otpRecord = await Otp.findOne({ email: req.cookies.email, otp });
-
         if (!otpRecord) {
             return res.status(400).json({ success: false, message: 'Invalid OTP.' });
-
         }
-
         // Check OTP expiry
         if (otpRecord.expiryTime < Date.now()) {
             return res.status(400).json({ success: false, message: 'OTP has expired. Please request a new one.' });
         }
-
         //for updating is_verified
         await User.updateOne({ email: req.cookies.email }, { isVerified: true });
-
         // OTP is valid, clear the OTP cookie
         res.clearCookie('email');
         // Delete OTP record from the database
@@ -391,21 +275,17 @@ const verifyOtp = async (req, res) => {
             url: '/login'
         });
 
-
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
-
-
 //resend otp
-const resendOtp = async (req, res) => {
+const resendOtp = async (req, res, next) => {
     try {
         const email = req.cookies.email;
-
         // Check if email exists in the database
         const existingUser = await User.findOne({ email });
         if (!existingUser) {
@@ -415,21 +295,15 @@ const resendOtp = async (req, res) => {
 
         // Generate a new OTP
         const otp = generateOTP();
-        console.log('new otp:' + otp)
         // Send the OTP to the user's email
         await sendVerifyOtp(existingUser.name, email, otp);
-
-
 
         res.status(200).json({ success: true, message: 'OTP has been sent to your email.' });
 
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
-
 }
-
-
 
 
 
@@ -440,31 +314,11 @@ function generateOTP() {
 
 
 
-
-
-
-// for loading the login page
-const loadLogin = async (req, res) => {
-    try {
-        const pageTitle = "Login";
-
-        res.render('login', { req, pageTitle })
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-}
-
-
-
-
-
 // for verifying login
-const verifyLogin = async (req, res) => {
+const verifyLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
-
         const userData = await User.findOne({ email });
-
         if (userData) {
             const passwordMatch = await bcrypt.compare(password, userData.password);
             if (passwordMatch) {
@@ -472,7 +326,6 @@ const verifyLogin = async (req, res) => {
                     if (userData.isBlocked === false) {
                         // Set user_id in session and redirect
                         req.session.user_id = userData._id;
-
                         return res.status(200).json({
                             status: true,
                             url: '/'
@@ -481,67 +334,37 @@ const verifyLogin = async (req, res) => {
                     } else {
                         return res.status(400).json({ success: false, message: 'Your account is blocked.' });
                     }
-
                 } else {
-
                     return res.status(400).json({ success: false, message: 'Your account is not verified yet.' });
                 }
             } else {
-
                 return res.status(400).json({ success: false, message: 'Email and Password is incorrect.' });
             }
         } else {
-
             return res.status(400).json({ success: false, message: 'Email and Password is incorrect.' });
         }
+
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
 
-
-
 //for user logout
-const userLogout = async (req, res) => {
-    console.log('Logout initiated'); // Log to see if this function is called
+const userLogout = async (req, res, next) => {
     try {
         req.session.destroy(err => {
             if (err) {
-                return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+                next(error);
             }
+
             res.clearCookie(process.env.SESSION_NAME); // Clear the session cookie
             res.redirect('/');
         });
+
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-};
-
-
-
-
-//for product deatils
-const productDetails = async (req, res) => {
-    try {
-        const productId = req.params.productId;
-        // Fetch product from the  products
-        const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        // Fetch related products from the same category
-        const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } });
-
-        let userWishlist = [];
-        const userId = req.session.user_id;
-        // If the user is logged in
-        if (userId) {
-            const wishlistItems = await Wishlist.find({ user: userId });
-            userWishlist = wishlistItems.map(item => item.productId.toString());
-        }
-
-        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist});
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
@@ -555,7 +378,6 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
             req.session.user_id = user._id;
             return user;
         } else {
-
             const newUser = new User({
                 name: displayName,
                 email,
@@ -571,165 +393,41 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
             }
             return savedUser;
         }
+
     } catch (error) {
-        return { success: false, message: 'Internal Server Error. Please try again later.' };
+        next(error);
     }
 }
 
 
 
-
-
-//for shop showing product
-const shop = async (req, res) => {
-    try {
-        const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '' } = req.query;
-
-        const currentPage = parseInt(page);
-        const userId = req.session.user_id;
-
-        // Initialize wishlist array
-        let userWishlist = [];
-        if (userId) { // If the user is logged in
-            userWishlist = await Wishlist.find({ user: userId }).populate('productId');
-        }
-
-        let query = { isUnlisted: false };
-
-        if (category) {
-            const categoryId = await Category.findOne({ categoryName: category }).select('_id');
-            if (categoryId) {
-                query.category = categoryId;
-            }
-        }
-
-
-        if (minPrice && maxPrice) {
-            query.price = { $gte: parseInt(minPrice), $lte: parseInt(maxPrice) };
-        }
-
-        if (gender) {
-            const genderArray = typeof gender === 'string' ? [gender] : gender;
-            query.gender = { $in: genderArray };
-        }
-
-
-        if (size) {
-            const sizeArray = typeof size === 'string' ? size.split(',') : size;
-            query.size = { $in: sizeArray };
-        }
-
-
-
-        let sortQuery = {};
-        switch (sort) {
-            case 'popularity': sortQuery = { popularity: -1 }; break;
-            case 'priceInc': sortQuery = { price: 1 }; break;
-            case 'priceDesc': sortQuery = { price: -1 }; break;
-            case 'featured': sortQuery = { isFeatured: -1 }; break;
-            case 'newArrivals': sortQuery = { createdAt: -1 }; break;
-            case 'az': sortQuery = { name: 1 }; break;
-            case 'za': sortQuery = { name: -1 }; break;
-            default: sortQuery = { createdAt: -1 };
-        }
-
-
-        const products = await Product.find(query)
-            .populate({ path: "category", populate: { path: "offer" } })
-            .populate('offer')
-            .sort(sortQuery)
-            .skip((currentPage - 1) * limit)
-            .limit(parseInt(limit));
-
-        const categories = await Category.find({ isUnlisted: false });
-
-        const totalCount = await Product.countDocuments(query);
-
-        const totalPages = Math.ceil(totalCount / limit);
-
-
-        res.render('shop', {
-            req,
-            products,
-            totalPages,
-            currentPage,
-            limit,
-            sort,
-            category,
-            categories,
-            userWishlist,
-            totalCount,
-            minPrice,
-            maxPrice,
-            size: size || '',
-            gender,
-            selectedSizes: size || []
-        });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-};
-
-
-//for forgot password page load
-const forgotPasswordLoad = async (req, res) => {
-    try {
-        res.render("forgotPassword", { req });
-    } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-};
-
-
-
-//for forgot password page load
-const forgotPassword = async (req, res) => {
+//for send password 
+const forgotPassword = async (req, res, next) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-
         if (!user) {
             return res.status(400).json({ success: false, message: 'User not found.' });
         }
-
         if (user.isVerified === 0) {
             return res.status(400).json({ success: false, message: 'Please verify your email.' });
         }
 
         const token = crypto.randomBytes(20).toString('hex');
-
         await User.updateOne({ email: email }, { $set: { token: token } });
         sendResetPasswordEmail(user.name, user.email, token);
 
         return res.status(200).json({ success: true, message: 'Please check your mail to reset your password.' });
+
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
-    }
-};
-
-
-
-//for load reset password page
-const loadResetPassword = async (req, res) => {
-    try {
-        const token = req.query.token;
-        const tokenData = await User.findOne({ token: token });
-        if (tokenData) {
-            res.render("resetpassword", { req, tokenData });
-        } else {
-            res.redirect("/404page");
-        }
-    } catch (error) {
-        console.log(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
 //for verify reset password
-const verifyResetPassword = async (req, res) => {
+const verifyResetPassword = async (req, res, next) => {
     try {
         const { password, user_id } = req.body;
         if (password && user_id) {
@@ -744,38 +442,24 @@ const verifyResetPassword = async (req, res) => {
                 }
             );
             return res.status(200).json({ url: "/login", success: true, message: 'Your password has been reset successfully.' });
-
         }
 
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
-
 module.exports = {
-    loadHome,
-    loadRegister,
     securePassword,
     insertUser,
-    loadVerifyOtp,
     sendVerifyOtp,
     verifyOtp,
     verifyLogin,
     resendOtp,
-    loadLogin,
     userLogout,
-    productDetails,
     findOrCreateGoogleUser,
-    shop,
-    forgotPasswordLoad,
     forgotPassword,
-    loadResetPassword,
     verifyResetPassword,
-    loadContact,
-    loadAbout
-
-
 }

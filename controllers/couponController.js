@@ -2,38 +2,38 @@ const Coupon = require('../models/couponModel')
 
 
 
-const listCoupon = async (req, res) => {
+const listCoupon = async (req, res, next) => {
     try {
         const page = (req.query.page || 1);
         const limit = 5;
+
         const couponsCount = await Coupon.find({}).countDocuments();
         const totalPages = Math.ceil(couponsCount / limit);
         const coupons = await Coupon.find({}).skip((page - 1) * limit).limit(limit);
-        res.render('listCoupon', { coupons,  currentPage: page, totalPages})
+
+        res.render('listCoupon', { coupons, currentPage: page, totalPages })
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 
 
 
-
 //for loading the add coupon page 
-const addCoupon = async (req, res) => {
+const addCoupon = async (req, res, next) => {
     try {
         res.render('addCoupon')
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 
 
 
 //for adding coupon
-const insertCoupon = async (req, res) => {
+const insertCoupon = async (req, res, next) => {
     try {
         const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
 
@@ -61,36 +61,38 @@ const insertCoupon = async (req, res) => {
             expiryDate: dateMidnight,
             criteriaAmount,
         });
-
         // Save the new coupon to the database
         await newCoupon.save();
 
         return res.status(200).json({ success: true, url: '/admin/coupon/listCoupon' });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
+
+
 //for delete coupon 
-const deleteCoupon = async (req, res) => {
+const deleteCoupon = async (req, res, next) => {
     try {
         const { couponId } = req.params;
+
         const result = await Coupon.deleteOne({ _id: couponId });
         if (result.deletedCount === 1) {
             return res.status(200).json({ success: true });
         } else {
             return res.status(404).json({ success: false, message: 'Coupon not found.' });
         }
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
 //for editing the coupon 
-const editcoupon = async (req, res) => {
+const editcoupon = async (req, res, next) => {
     try {
         const { couponId } = req.params;
         const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
@@ -101,8 +103,6 @@ const editcoupon = async (req, res) => {
                 { _id: { $ne: couponId } }
             ]
         });
-
-
         if (existingCoupon) {
             return res.status(400).json({ success: false, message: 'coupon with the same name or same coupon code already exists ' });
         }
@@ -111,6 +111,7 @@ const editcoupon = async (req, res) => {
         if (!coupon) {
             return res.status(404).json({ success: false, message: 'Coupon not found' });
         }
+
         // ending date to midnight (23:59:59)
         var dateMidnight = new Date(expiryDate);
         dateMidnight.setUTCHours(23, 59, 59);
@@ -123,11 +124,12 @@ const editcoupon = async (req, res) => {
         await coupon.save();
 
         return res.status(200).json({ success: true });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
+
 
 
 module.exports = {

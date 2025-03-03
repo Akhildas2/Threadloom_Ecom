@@ -8,7 +8,6 @@ const sharp = require('sharp');
 
 
 
-
 // Multer configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,32 +16,28 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname));
     }
-});
 
+});
 
 const upload = multer({ storage: storage });
 
 
 
-
 // Load Product
-const loadAddProduct = async (req, res) => {
+const loadAddProduct = async (req, res, next) => {
     try {
         const categories = await Category.find({ isUnlisted: false })
         res.render('addProduct', { categories });
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
 //for adding the product
-const addProduct = async (req, res) => {
+const addProduct = async (req, res, next) => {
     try {
         const { name, description, price, brand, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
 
@@ -55,7 +50,6 @@ const addProduct = async (req, res) => {
         if (existingProduct) {
             return res.status(400).json({ success: false, message: 'Product with the same category, size, and gender already exists.' });
         }
-
         if (!req.files || req.files.length < 3) {
             return res.status(400).json({ success: false, message: 'At least 3 photos are required.' });
         }
@@ -106,7 +100,6 @@ const addProduct = async (req, res) => {
             isBestSeller,
             productImage: productImages // Assign the array of resized image filenames to productImage field
         });
-
         // Save the new product to the database
         await newProduct.save();
 
@@ -114,29 +107,22 @@ const addProduct = async (req, res) => {
             status: true,
             url: '/admin/product/listProduct'
         });
+
     } catch (error) {
-        console.error(error.message);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
 
-
-
-
-
 //for listing the products 
-const productListPage = async (req, res) => {
+const productListPage = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit;
-
         let query = {};
-
         let selectedCategory = req.query.category || '';
-
         if (req.query.category) {
             query.category = req.query.category;
         }
@@ -145,72 +131,58 @@ const productListPage = async (req, res) => {
             .populate('category')
             .skip(skip)
             .limit(limit);
+
         const offers = await Offer.find({});
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
+
         res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
-
-
-
-
 //for load edit page
-const loadEditProduct = async (req, res) => {
+const loadEditProduct = async (req, res, next) => {
     try {
         const productId = req.params.productId;
-
         const product = await Product.findById(productId).populate('category')
-
         const categories = await Category.find({ isUnlisted: false })
-
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
         }
+
         res.render('editProduct', { product, categories });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
 
-
-
-
 //for editing product
-const editProduct = async (req, res) => {
-    const productId = req.params.productId;
-    const { name, description, brand, price, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
-
-    const updateFields = {};
+const editProduct = async (req, res, next) => {
     try {
+        const productId = req.params.productId;
+        const { name, description, brand, price, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
+        const updateFields = {};
         const existingProduct = await Product.findById(productId);
         if (!existingProduct) {
-            console.error('Product not found');
             return res.status(404).json({ error: 'Product not found' });
         }
 
-
-
         const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-
         for (const file of req.files) {
             const extension = path.extname(file.originalname).toLowerCase();
             if (!allowedExtensions.includes(extension)) {
-
                 return res.status(400).json({ success: false, message: 'Invalid file type. Please upload only JPG, JPEG, or PNG files.' });
             }
         }
-
 
         if (name) updateFields.name = name;
         if (description) updateFields.description = description;
@@ -246,21 +218,13 @@ const editProduct = async (req, res) => {
                 const resizedImageFilename = path.basename(resizedImagePath);
                 productImages.push(resizedImageFilename);
             }
-
-
             updateFields.productImage = [...existingProduct.productImage, ...productImages];
-
         } else {
-
             updateFields.productImage = existingProduct.productImage;
         }
 
-
         const updatedProduct = await Product.findByIdAndUpdate(productId, updateFields, { new: true });
-
-
         if (!updatedProduct) {
-            console.error('Product not found');
             return res.status(404).json({ error: 'Product not found' });
         }
 
@@ -270,21 +234,16 @@ const editProduct = async (req, res) => {
         });
 
     } catch (err) {
-        console.error('Error updating product:', err);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
 
-
-
-
 //for delete 
-const deletePhoto = async (req, res) => {
-    const { productId, photoName } = req.params;
-
+const deletePhoto = async (req, res, next) => {
     try {
+        const { productId, photoName } = req.params;
         // Find the product by ID
         const product = await Product.findById(productId);
         if (!product) {
@@ -304,26 +263,23 @@ const deletePhoto = async (req, res) => {
                 }
                 res.json({ success: true, message: 'Photo deleted successfully' });
             });
+
         } else {
             return res.status(404).json({ success: false, message: 'Photo not found in product' });
         }
+
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Internal server error' });
+        next(error);
     }
 };
-
-
-
 
 
 
 // for updating unlist the product
-const unlistProduct = async (req, res) => {
+const unlistProduct = async (req, res, next) => {
     try {
         const productId = req.params.productId;
-
         const product = await Product.findByIdAndUpdate(productId, { isUnlisted: true }, { new: true });
-
         if (!product) {
             return res.status(404).render('error', { message: 'Product not found' });
         }
@@ -334,21 +290,17 @@ const unlistProduct = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(500).json('Internal Server Error');
+        next(error);
     }
 };
-
-
-
 
 
 
 // for updating listing the category
-const listProduct = async (req, res) => {
+const listProduct = async (req, res, next) => {
     try {
         const productId = req.params.productId;
         const product = await Product.findByIdAndUpdate(productId, { isUnlisted: false }, { new: true });
-
         if (!product) {
             return res.status(404).render('error', { message: 'Product not found' });
         }
@@ -358,33 +310,25 @@ const listProduct = async (req, res) => {
             url: '/admin/product/listProduct'
         });
 
-
     } catch (error) {
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
 
 
-
-
 //for adding the offer
-const addOffer = async (req, res) => {
+const addOffer = async (req, res, next) => {
     try {
         const productId = req.params.productId;
         const offerId = req.body.offerId;
-
-
         // Find the product by productId
         const product = await Product.findById(productId);
-
         // Check if the product exists
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
-
         product.offer = offerId;
-
         // Save the updated product
         await product.save();
 
@@ -394,41 +338,32 @@ const addOffer = async (req, res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        next(error);
     }
 }
-
-
-
-
 
 
 
 //for offer remove
-const removeOffer = async (req, res) => {
+const removeOffer = async (req, res, next) => {
     try {
         const productId = req.params.productId;
-
         const product = await Product.findById(productId)
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
-
         product.offer = undefined;
         await product.save();
+
         return res.status(200).json({
             status: true,
             url: '/admin/product/listProduct'
         });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Internal server error' });
 
+    } catch (error) {
+        next(error);
     }
 }
-
-
-
-
 
 
 
@@ -444,5 +379,4 @@ module.exports = {
     deletePhoto,
     addOffer,
     removeOffer
-
 };

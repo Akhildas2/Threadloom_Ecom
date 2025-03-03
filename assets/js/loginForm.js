@@ -84,8 +84,14 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
 // Toggle password visibility
 document.querySelectorAll('.toggle-password').forEach(function (toggle) {
     toggle.addEventListener('click', function () {
-        const passwordInput = this.previousElementSibling; // Assuming the input is always the previous element sibling
-        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-        this.classList.toggle('fa-eye-slash');
+        const passwordInput = this.previousElementSibling;
+        const isPassword = passwordInput.type === 'password';
+
+        // Toggle input type
+        passwordInput.type = isPassword ? 'text' : 'password';
+
+        // Toggle eye icons
+        this.classList.toggle('fa-eye-slash', !isPassword);
+        this.classList.toggle('fa-eye', isPassword);
     });
 });

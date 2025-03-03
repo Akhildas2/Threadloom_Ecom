@@ -6,8 +6,6 @@ const Offer = require('../models/offerModel')
 
 
 
-
-
 // Multer configuration
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -17,18 +15,17 @@ const storage = multer.diskStorage({
         cb(null, Date.now() + path.extname(file.originalname));
     },
 });
-
 const upload = multer({ storage: storage });
 
 
-// Load Category
-const loadAddCategory = async (req, res) => {
-    try {
 
+// Load Category
+const loadAddCategory = async (req, res, next) => {
+    try {
         res.render('addCategory');
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
@@ -36,16 +33,15 @@ const loadAddCategory = async (req, res) => {
 
 
 // To Add Category
-const addCategory = async (req, res) => {
+const addCategory = async (req, res, next) => {
     try {
         const categoryName = req.body.categoryName.trim();
+
         const existingCategory = await Category.findOne({
             categoryName: {
                 $regex: new RegExp('^' + categoryName + '$', 'i')
             }
         });
-
-
         if (existingCategory) {
             return res.status(400).json({ success: false, message: "Category already exists" });
         }
@@ -67,26 +63,22 @@ const addCategory = async (req, res) => {
             categoryName,
             categoryPhoto: resizedImageFileName,
         });
+        await category.save();
 
-        const addedCategory = await category.save();
-        console.log("Category added successfully");
         res.status(200).json({
             status: true,
             url: '/admin/category/listCategories'
         });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: "Error adding category" });
+        next(error);
     }
 };
 
 
 
-
-
 // Load List Category
-const loadListCategory = async (req, res) => {
+const loadListCategory = async (req, res, next) => {
     try {
         const page = (req.query.page || 1)
         const limit = 6
@@ -95,10 +87,11 @@ const loadListCategory = async (req, res) => {
 
         const categories = await Category.find({}).skip((page - 1) * limit).limit(limit);
         const offers = await Offer.find({})
-        res.render('listCategories', { categories, offers, currentPage: page ,totalPages});
+
+        res.render('listCategories', { categories, offers, currentPage: page, totalPages });
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
@@ -107,18 +100,18 @@ const loadListCategory = async (req, res) => {
 
 
 // Load Edit Category
-const loadEditCategory = async (req, res) => {
+const loadEditCategory = async (req, res, next) => {
     try {
         const categoryId = req.params.categoryId;
         const category = await Category.findById(categoryId);
-
         if (!category) {
             return res.status(404).render('error', { message: 'Category not found' });
         }
+
         res.render('editCategories', { category });
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
@@ -129,13 +122,12 @@ const loadEditCategory = async (req, res) => {
 
 
 //for Editing Category
-const editCategory = async (req, res) => {
+const editCategory = async (req, res, next) => {
     try {
         const categoryId = req.params.categoryId;
         const updateFields = {};
 
         if (req.body.categoryName) {
-
             const trimmedCategoryName = req.body.categoryName.trim();
             updateFields.categoryName = trimmedCategoryName;
 
@@ -144,7 +136,6 @@ const editCategory = async (req, res) => {
                 categoryName: { $regex: new RegExp('^' + trimmedCategoryName + '$', 'i') },
                 _id: { $ne: categoryId }
             });
-
             if (existingCategory) {
                 return res.status(400).json({ success: false, message: "Category already exists" });
             }
@@ -162,7 +153,6 @@ const editCategory = async (req, res) => {
 
         // Update the category
         const category = await Category.findByIdAndUpdate(categoryId, updateFields, { new: true });
-
         if (!category) {
             return res.status(404).render('error', { message: 'Category not found' });
         }
@@ -173,78 +163,63 @@ const editCategory = async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
-
-
-
 
 
 
 // for updating unlist the category
-const unlistCategory = async (req, res) => {
+const unlistCategory = async (req, res, next) => {
     try {
         const categoryId = req.params.categoryId;
         //for update 
         const category = await Category.findByIdAndUpdate(categoryId, { isUnlisted: true }, { new: true });
-
         if (!category) {
             return res.status(404).render('error', { message: 'Category not found' });
         }
 
-        console.log("Unlisted successful");
         res.status(200).json({
             status: true,
             url: '/admin/category/listCategories'
         });
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).json('Internal Server Error');
+        next(error);
     }
 };
 
 
 
-
-
-
 // for  listing the category
-const listCategory = async (req, res) => {
+const listCategory = async (req, res, next) => {
     try {
         const categoryId = req.params.categoryId;
         // Find the category by ID and update 
         const category = await Category.findByIdAndUpdate(categoryId, { isUnlisted: false }, { new: true });
-
         if (!category) {
             return res.status(404).render('error', { message: 'Category not found' });
         }
 
-        console.log("Listed successful");
         res.status(200).json({
             status: true,
             url: '/admin/category/listCategories'
         });
 
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
 
 
 //for add offer 
-const addOffer = async (req, res) => {
+const addOffer = async (req, res, next) => {
     try {
-
         const categoryId = req.params.categoryId;
-
         const offerId = req.body.offerId;
 
         const category = await Category.findById(categoryId)
-
         // Check if the category exists
         if (!category) {
             return res.status(404).json({ success: false, message: 'Category not found' });
@@ -252,13 +227,14 @@ const addOffer = async (req, res) => {
 
         category.offer = offerId;
         await category.save()
+
         res.status(200).json({
             status: true,
             url: '/admin/category/listCategories'
         });
+
     } catch (error) {
-        console.error('Error adding offer:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        next(error);
     }
 }
 
@@ -266,7 +242,7 @@ const addOffer = async (req, res) => {
 
 
 //for remove offer 
-const removeOffer = async (req, res) => {
+const removeOffer = async (req, res, next) => {
     try {
         const categoryId = req.params.categoryId;
 
@@ -278,13 +254,14 @@ const removeOffer = async (req, res) => {
 
         category.offer = undefined;
         await category.save()
+
         res.status(200).json({
             status: true,
             url: '/admin/category/listCategories'
         });
+
     } catch (error) {
-        console.error('Error adding offer:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error' });
+        next(error);
     }
 }
 

@@ -3,18 +3,19 @@ const Offer = require('../models/offerModel')
 
 
 //for add offer page loading
-const addOffer = async (req, res) => {
+const addOffer = async (req, res, next) => {
     try {
         res.render('addOffer')
+
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 }
 
 
+
 // for insert offer
-const insertOffer = async (req, res) => {
+const insertOffer = async (req, res, next) => {
     try {
         const { offerName, startingDate, endingDate, discount } = req.body;
         // Check if starting date is greater than or equal to today
@@ -23,20 +24,18 @@ const insertOffer = async (req, res) => {
         if (new Date(startingDate) < today) {
             return res.status(400).json({ success: false, message: 'Starting date must be greater than or equal to today' });
         }
-
         // Check if ending date is greater than or equal to today
         if (new Date(endingDate) < today) {
             return res.status(400).json({ success: false, message: 'Ending date must be greater than or equal to today' });
         }
-
         // Check if starting date is less than or equal to ending date
         if (new Date(startingDate) > new Date(endingDate)) {
             return res.status(400).json({ success: false, message: 'Starting date must be less than or equal to ending date' });
         }
+
         // ending date to midnight (23:59:59)
         var dateMidnight = new Date(endingDate);
         dateMidnight.setUTCHours(23, 59, 59);
-
         // Check if offer name already exists
         const existingOffer = await Offer.findOne({ offerName: { $regex: new RegExp(offerName, 'i') } });
         if (existingOffer) {
@@ -50,35 +49,39 @@ const insertOffer = async (req, res) => {
             endingDate: dateMidnight,
             discount
         });
-
         // Save the offer
         await newOffer.save();
+
         return res.status(200).json({ success: true, url: '/admin/offer/listOffer' });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
 
 
+
 //for listing offers
-const listOffer = async (req, res) => {
+const listOffer = async (req, res, next) => {
     try {
         const page = (req.query.page || 1);
         const limit = 5;
         const offersCount = await Offer.find().countDocuments();
-        const totalPages = Math.ceil(offersCount / limit)
+        const totalPages = Math.ceil(offersCount / limit);
+
         const offers = await Offer.find().skip((page - 1) * limit).limit(limit);
+
         res.render("listOffer", { offers, currentPage: page, totalPages })
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
+
+
 //for delete offer 
-const deleteOffer = async (req, res) => {
+const deleteOffer = async (req, res, next) => {
     try {
         const { offerId } = req.params;
         const result = await Offer.deleteOne({ _id: offerId })
@@ -87,16 +90,16 @@ const deleteOffer = async (req, res) => {
         } else {
             return res.status(404).json({ success: false, message: 'Offer not found.' });
         }
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 }
 
 
 
 //for edit offer
-const editOffer = async (req, res) => {
+const editOffer = async (req, res, next) => {
     try {
         const { offerId } = req.params;
         const { offerName, startingDate, endingDate, discount } = req.body;
@@ -108,7 +111,6 @@ const editOffer = async (req, res) => {
                 { offerName: { $regex: new RegExp('^' + offerName + '$', 'i') } }
             ]
         });
-
         if (existingOffer) {
             return res.status(400).json({ success: false, message: 'An offer with the same name already exists.' });
         }
@@ -119,11 +121,11 @@ const editOffer = async (req, res) => {
         if (new Date(startingDate) < today) {
             return res.status(400).json({ success: false, message: 'Starting date must be greater than or equal to today.' });
         }
-
         // Check if ending date is greater than or equal to starting date
         if (new Date(endingDate) < new Date(startingDate)) {
             return res.status(400).json({ success: false, message: 'Ending date must be greater than or equal to starting date.' });
         }
+
         // ending date to midnight (23:59:59)
         var dateMidnight = new Date(endingDate);
         dateMidnight.setUTCHours(23, 59, 59);
@@ -139,14 +141,14 @@ const editOffer = async (req, res) => {
         offer.discount = discount;
 
         // Save updated offer
-        const result = await offer.save();
+        await offer.save();
         return res.status(200).json({ success: true, message: 'Offer updated successfully.' });
 
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ success: false, message: 'Internal Server Error. Please try again later.' });
+        next(error);
     }
 };
+
 
 
 module.exports = {

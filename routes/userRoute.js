@@ -1,6 +1,7 @@
 const express = require('express');
 const userRoute = express();
 const userController = require('../controllers/userController');
+const pageController = require('../controllers/pageController');
 const auth = require('../middleware/userAuth');
 const passport = require('passport')
 require('../config/passport')
@@ -10,23 +11,25 @@ userRoute.set('views', './views/user');
 
 
 
-userRoute.get('/', userController.loadHome);
-userRoute.get('/contact', userController.loadContact);
-userRoute.get('/about', userController.loadAbout);
-userRoute.get('/shop', userController.shop);
-userRoute.get('/register', auth.isLogout, userController.loadRegister);
+userRoute.get('/', pageController.loadHome);
+userRoute.get('/contact', pageController.loadContact);
+userRoute.get('/about', pageController.loadAbout);
+userRoute.get('/shop', pageController.shop);
+userRoute.get('/register', auth.isLogout, pageController.loadRegister);
+userRoute.get('/login', auth.isLogout, pageController.loadLogin);
+userRoute.get('/productdetails/:productId', pageController.productDetails);
+userRoute.get('/forgotPassword', auth.isLogout, pageController.forgotPasswordLoad);
+userRoute.get('/resetPassword', auth.isLogout, pageController.loadResetPassword);
+userRoute.get('/verifyOtp', pageController.loadVerifyOtp);
+
+
 userRoute.post('/register', userController.insertUser);
-userRoute.get('/verifyOtp', userController.loadVerifyOtp);
 userRoute.post('/verifyOtp', userController.verifyOtp);
 userRoute.post('/resendOtp', userController.resendOtp)
-userRoute.get('/login', auth.isLogout, userController.loadLogin);
 userRoute.post('/login', userController.verifyLogin)
 userRoute.post('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/logout', auth.isLogin, userController.userLogout);
-userRoute.get('/productdetails/:productId', userController.productDetails);
-userRoute.get('/forgotPassword', auth.isLogout, userController.forgotPasswordLoad);
 userRoute.post('/forgotPassword', auth.isLogout, userController.forgotPassword);
-userRoute.get('/resetPassword', auth.isLogout, userController.loadResetPassword);
 userRoute.post('/resetPassword', auth.isLogout, userController.verifyResetPassword);
 
 // Route for initiating Google authentication

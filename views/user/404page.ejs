@@ -1,15 +1,9 @@
 <style>
-    /*======================
-    404 page
-=======================*/
-
-
     .page_404 {
-        padding: 20px 0;
+        padding: 20px;
         background: #fff;
         font-family: 'Arvo', serif;
         text-align: center;
-        height: 100vh;
     }
 
     .page_404 img {
@@ -17,9 +11,8 @@
     }
 
     .four_zero_four_bg {
-
         background-image: url(https://cdn.dribbble.com/users/285475/screenshots/2083086/dribbble_1.gif);
-        height: calc(100vh - 100px);
+        height: 100%;
         background-position: center;
         background-size: cover;
     }
@@ -31,16 +24,30 @@
         color: #000;
     }
 
-    .four_zero_four_bg h3 {
-        font-size: 8vw; 
+    h3 {
+        font-size: 4vw;
+    }
+
+    p {
+        font-size: 2vw;
     }
 
     .link_404 {
         color: #fff !important;
         padding: 1.5vw 3vw;
-        background: #39ac31;
-        margin: 4vw 0;
+        border-radius: 30px;
+        background: #088178;
         display: inline-block;
+        text-decoration: none;
+    }
+
+    .link_404:hover {
+        background: #046963 !important;
+    }
+
+
+    .contant_box_404 {
+        margin-top: -150;
     }
 </style>
 
@@ -52,12 +59,12 @@
                     <div class="four_zero_four_bg">
                         <h1 class="text-center">404</h1>
                     </div>
+                </div>
 
-                    <div class="contant_box_404">
-                        <h3 class="h2">Look like you're lost</h3>
-                        <p>The page you are looking for is not available!</p>
-                        <a href="/" class="link_404">Go to Home</a>
-                    </div>
+                <div class="contant_box_404">
+                    <h3>Look like you're lost</h3>
+                    <p>The page you are looking for is not available!</p>
+                    <a href="/" class="link_404">Go to Home</a>
                 </div>
             </div>
         </div>
