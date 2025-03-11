@@ -109,7 +109,7 @@ const shop = async (req, res, next) => {
         }
 
         if (gender) {
-            const genderArray = typeof gender === 'string' ? [gender] : gender;
+            const genderArray = typeof gender === 'string' ? gender.split(',') : gender;
             query.gender = { $in: genderArray };
         }
 

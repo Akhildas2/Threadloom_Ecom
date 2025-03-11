@@ -19,6 +19,13 @@ const checkout = async (req, res, next) => {
         const userId = req.session.user_id;
         const cartItems = await CartItems.find({ user: userId }).populate('products.productId').populate('coupondiscount');
 
+        // Check if there are products in the cart
+        const hasProducts = cartItems.some(item => item.products.length > 0);
+        if (!hasProducts) {
+            return res.redirect('/'); // Redirect to home if no products exist
+        }
+
+
         let appliedCouponId = null;
         let totalCouponDiscount = 0;
         for (const cartItem of cartItems) {

@@ -9,17 +9,15 @@ const sendResetPasswordEmail = require("../services/forgotEmailService")
 
 
 
-//for secure password
-const securePassword = async (password, next) => {
+// Secure password hashing
+const securePassword = async (password) => {
     try {
-        //for harsh the password
-        const passwordHarsh = await bcrypt.hash(password, 10)
-        return passwordHarsh
+        return await bcrypt.hash(password, 10);
 
     } catch (error) {
-        next(error);
+        throw new Error('Error hashing password');
     }
-}
+};
 
 
 
@@ -63,30 +61,32 @@ const handleReferral = async (referralCode, newUserId) => {
 
             await referral.save();
             return referral; // Return the newly created referral
-
-        } else {
-            // Referral code provided, find the user who referred the new user
-            const referredByUser = await Referral.findOne({ referralCode }).populate('user');
-
-            if (!referredByUser) {
-                throw new Error('The referral code you provided is invalid.'); // Invalid referral code
-            } else if (referredByUser.user._id.toString() === newUserId.toString()) {
-                throw new Error('Cannot refer yourself.'); // User cannot refer themselves
-            } else {
-                // Create a new referral entry with the "referredBy" user
-                const referral = new Referral({
-                    user: newUserId,
-                    referralCode: newReferralCode,
-                    referredBy: referredByUser.user._id
-                });
-
-                // Update wallet balance for both the new user and the referrer
-                await updateWalletBalance(newUserId, referredByUser.user._id);
-                await referral.save();
-                return referral; // Return the newly created referral
-
-            }
         }
+
+        // Referral code provided, find the user who referred the new user
+        const referredByUser = await Referral.findOne({ referralCode }).populate('user');
+        if (!referredByUser) {
+            // If the referral code is invalid, just save the new user's referral code without a referrer
+            const referral = new Referral({
+                user: newUserId,
+                referralCode: newReferralCode
+            });
+            await referral.save();
+            return referral;
+        }
+
+        // Create a new referral entry with the "referredBy" user
+        const referral = new Referral({
+            user: newUserId,
+            referralCode: newReferralCode,
+            referredBy: referredByUser.user._id
+        });
+
+        await referral.save();
+        // Update wallet balance for both the new user and the referrer
+        await updateWalletBalance(newUserId, referredByUser.user._id);
+        return referral; // Return the newly created referral
+
     } catch (error) {
         throw new Error(error.message || 'Internal server error.'); // Throw error to be handled outside
     }
@@ -139,11 +139,10 @@ const insertUser = async (req, res, next) => {
         const { name, email, mobile, password, referralCode } = req.body;
         // Check if the user already exists by mobile
         const existingUserByMobile = await User.findOne({ mobile });
-        // Check if the user already exists by email
-        const existingUserByEmail = await User.findOne({ email });
         // If user already exists by mobile and is not verified
         if (existingUserByMobile) {
             if (!existingUserByMobile.isVerified) {
+                await handleReferral(referralCode || null, existingUserByMobile._id);
                 const otp = generateOTP();
                 res.cookie('email', email); // Store email in cookie for verification
                 await sendVerifyOtp(name, email, otp); // Send OTP to user's email
@@ -155,9 +154,12 @@ const insertUser = async (req, res, next) => {
             return res.status(400).json({ success: false, message: 'Phone Number Already Exists. Please Use a Different Phone Number.' });
         }
 
+        // Check if the user already exists by email
+        const existingUserByEmail = await User.findOne({ email });
         // If user already exists by email and is not verified
         if (existingUserByEmail) {
             if (!existingUserByEmail.isVerified) {
+                await handleReferral(referralCode || null, existingUserByEmail._id);
                 const otp = generateOTP();
                 res.cookie('email', email); // Store email in cookie for verification
                 await sendVerifyOtp(name, email, otp); // Send OTP to user's email
@@ -170,21 +172,18 @@ const insertUser = async (req, res, next) => {
         }
 
         // Create a new user if neither mobile nor email exists
-        const spassword = await securePassword(password);
+        const hashedPassword = await securePassword(password);
         const user = new User({
             name,
             email,
             mobile,
-            password: spassword,
+            password: hashedPassword,
         });
 
         const userData = await user.save();
 
-        // Handle referral code if provided
-        if (referralCode) {
-            await handleReferral(referralCode, userData._id);
-        }
-
+        // Handle referral if provided, else create a new referral for the user
+        await handleReferral(referralCode || null, userData._id);
         // Generate OTP and send it to the user's email for verification
         const otp = generateOTP();
         res.cookie('email', email); // Store email in cookie for verification

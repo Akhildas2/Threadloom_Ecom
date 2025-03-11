@@ -27,10 +27,14 @@ const loadDashboard = async (req, res, next) => {
         const userId = req.session.user_id;
         const orderPage = parseInt(req.query.orderPage) || 1;
         const walletPage = parseInt(req.query.walletPage) || 1;
-        const pageSize = 5;
+        const addressPage = parseInt(req.query.addressPage) || 1;
+        const pageSize = 1;
 
         const userData = await User.findById(userId);
-        const address = await Address.find({ userId });
+        const address = await Address.find({ userId }).skip((addressPage - 1) * pageSize).limit(pageSize);
+        const addressCount = await Address.countDocuments({ userId });
+        const addressTotalPages = Math.ceil(addressCount / pageSize);
+
         const ordersCount = await Order.countDocuments({ userId });
         const referral = await Referral.findOne({ user: userId });
         const orders = await Order.find({ userId })
@@ -40,11 +44,12 @@ const loadDashboard = async (req, res, next) => {
             .skip((orderPage - 1) * pageSize)
             .limit(pageSize);
 
+        const lastOrders = await Order.find({ userId }).limit(5);
         const orderTotalPages = Math.ceil(ordersCount / pageSize);
         const wallet = await Wallet.findOne({ userId });
         if (!wallet) {
             // wallet is not found
-            return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null, orderTotalPages, orderCurrentPage: orderPage, walletCurrentPage: 0, walletTotalPages: 0, referral });
+            return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null, orderTotalPages, orderCurrentPage: orderPage, walletCurrentPage: 0, walletTotalPages: 0, referral, ordersCount, balance: 0, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders });
         }
 
         // Sorting new transactions
@@ -55,7 +60,7 @@ const loadDashboard = async (req, res, next) => {
         const transactions = wallet.transactions.slice((walletPage - 1) * pageSize, walletPage * pageSize);
         const balance = wallet.balance
 
-        res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage, walletTotalPages, walletCurrentPage: walletPage, balance, referral });
+        res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage, walletTotalPages, walletCurrentPage: walletPage, balance, referral, ordersCount, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders });
 
     } catch (error) {
         next(error);
@@ -89,7 +94,8 @@ const updateUser = async (req, res, next) => {
 
         return res.status(200).json({
             status: true,
-            url: '/dashboard'
+            url: '/dashboard',
+            tab: "profile"
         });
 
     } catch (error) {
@@ -130,7 +136,8 @@ const changePassword = async (req, res, next) => {
 
         return res.status(200).json({
             status: true,
-            url: "/dashboard"
+            url: "/dashboard",
+            tab: "profile"
         });
 
     } catch (error) {

@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const session = require("express-session");
 const passport = require('passport');
 const { configurePayPal } = require('./config/paypalConfig');
-
+const loadCategories = require('./middleware/categories');
 
 // Connect to MongoDB
 const connectDB = async () => {
@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', './views/user');
 
-
+app.use(loadCategories);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -111,7 +111,7 @@ app.use('/admin/offer', offerRoute)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).render('500page'); 
+  res.status(500).render('500page');
 });
 
 app.get("*", function (req, res) {

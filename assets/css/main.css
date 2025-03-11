@@ -3762,7 +3762,7 @@ table .product-thumbnail img {
     position: absolute;
     left: 20px;
     top: 19px;
-    z-index: 9;
+    z-index: 8;
 }
 
 .product-cart-wrap .product-badges span {
@@ -4410,7 +4410,7 @@ table .product-thumbnail img {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    padding-left: 10px ;
+    padding-left: 10px;
 }
 
 .slider-nav-thumbnails .slick-slide {

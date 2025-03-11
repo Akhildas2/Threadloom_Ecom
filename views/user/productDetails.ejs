@@ -607,6 +607,9 @@
                                     title: 'Success!',
                                     text: data.message,
                                 });
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 3000);
                             } else {
                                 // Handle errors
                                 Swal.fire({

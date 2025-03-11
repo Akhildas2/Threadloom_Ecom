@@ -1,13 +1,9 @@
-
-
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelector('#profileForm').addEventListener('submit', function (event) {
         event.preventDefault();
 
-
         // Get form data
         let formData = new FormData(this);
-
 
         // Perform client-side validation
         const name = formData.get('name');
@@ -33,8 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('mobile-error').innerText = '';
         }
 
-        if (!isValid) { 
-            console.log('Form validation failed');
+        if (!isValid) {
             return false;
         }
         const userId = this.getAttribute('data-user-id');
@@ -50,30 +45,25 @@ document.addEventListener('DOMContentLoaded', function () {
                         showConfirmButton: false,
                         timer: 2000
                     });
-                    setTimeout(() => {
-                        location.href = response.data.url;
-                    }, 2000);
-                } else {
-                    console.error(response.data);
+
+                    localStorage.setItem('activeTab', '#profile');
+                    location.hash = '#profile';
+                    location.reload();
                 }
             })
             .catch(err => {
-                console.error('Error:', err);
-                if (!err.response.data.success) {
+                if (err.response && !err.response.data.success) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: err.response.data.message,
                     });
-                } else {
-                    console.error(err);
                 }
             });
     });
-});
 
 
-document.addEventListener('DOMContentLoaded', function () {
+
     document.querySelector("#changePasswordBtn").addEventListener('click', function (event) {
         event.preventDefault();
         let formData = new FormData(document.getElementById("changePasswordForm"));
@@ -112,7 +102,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         axios.put(`/dashboard/changePassword/${userId}`, Object.fromEntries(formData))
             .then(response => {
-                console.log("response",response);
                 if (response.data.status) {
                     Swal.fire({
                         icon: "success",
@@ -120,26 +109,24 @@ document.addEventListener('DOMContentLoaded', function () {
                         showConfirmButton: false,
                         timer: 2000
                     });
-                    setTimeout(() => {
-                        location.href = response.data.url;
-                    }, 2000);
-                } else {
-                    console.error(response.data);
+
+                    localStorage.setItem('activeTab', '#profile');
+                    location.hash = '#profile';
+                    location.reload();
                 }
             })
             .catch(err => {
-                console.error('Error:', err);
-                if (!err.response.data.success) {
+                if (err.response && !err.response.data.success) {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
                         text: err.response.data.message,
                     });
-                } else {
-                    console.error(err);
                 }
             });
     });
+
+
 
     $(document).ready(function () {
         $('#addAddressForm').submit(function (event) {
@@ -199,37 +186,31 @@ document.addEventListener('DOMContentLoaded', function () {
                             showConfirmButton: false,
                             timer: 2000
                         });
-                        setTimeout(() => {
-                            location.href = response.data.url;
-                        }, 2000);
-                    } else {
-                        console.error(response.data);
+
+                        localStorage.setItem('activeTab', '#address');
+                        location.hash = '#address';
+                        location.reload();
                     }
                 })
                 .catch(err => {
-                    console.error('Error:', err);
-                    if (!err.response.data.success) {
+                    if (err.response && !err.response.data.success) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: err.response.data.message,
                         });
-                    } else {
-                        console.error(err);
                     }
                 });
         });
-    });
 
-    $(document).ready(function () {
-        // Attach the click event handler to the edit button
-    
+
 
         $('.edit-address-btn').click(function (event) {
             event.preventDefault();
             var addressId = $(this).data('address-id');
             $('.edit-address-modal[data-address-id="' + addressId + '"]').modal('show');
         });
+
 
 
         $('form[id^="editAddressForm-"]').submit(function (event) {
@@ -292,33 +273,29 @@ document.addEventListener('DOMContentLoaded', function () {
                             showConfirmButton: false,
                             timer: 2000
                         });
-                        setTimeout(() => {
-                            location.href = response.data.url;
-                        }, 2000);
-                    } else {
-                        console.error(response.data);
+
+                        localStorage.setItem('activeTab', '#address');
+                        location.hash = '#address';
+                        location.reload();
                     }
                 })
                 .catch(err => {
-                    console.error('Error:', err);
-                    if (!err.response.data.success) {
+                    if (err.response && !err.response.data.success) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: err.response.data.message,
                         });
-                    } else {
-                        console.error(err);
                     }
                 });
-
-
         });
+
+
+
         $('.delete-address-btn').click(function (event) {
             event.preventDefault();
             event.stopPropagation();
             var addressId = $(this).data('address-id');
-         
 
             // Use SweetAlert for confirmation
             Swal.fire({
@@ -331,39 +308,40 @@ document.addEventListener('DOMContentLoaded', function () {
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // If confirmed, proceed with the deletion
-                    $.ajax({
-                        url: '/dashboard/deleteAddress/' + addressId,
-                        type: 'DELETE',
-                        success: function (response) {
-                            Swal.fire(
-                                'Deleted!',
-                                'Your address has been deleted.',
-                                'success'
-                            );
+                    // If confirmed, proceed with the deletion using Axios
+                    axios.delete(`/dashboard/deleteAddress/${addressId}`)
+                        .then(response => {
+                            // Show success message
+                            Swal.fire({
+                                icon: "success",
+                                title: "Your address has been deleted.",
+                                showConfirmButton: false,
+                                timer: 2000,
+                            });
+
+                            // Immediately remove the address from the DOM without waiting for page reload
                             $('#address-' + addressId).remove();
-                            setTimeout(() => {
-                                window.location.href = response.url;
-                            }, 2000);
-                            
-                        },
-                        error: function (error) {
-                            console.error('Error:', error);
+
+                            localStorage.setItem('activeTab', '#address');
+                            location.hash = '#address';
+                            location.reload();
+                        })
+                        .catch(error => {
                             Swal.fire(
                                 'Error!',
                                 'An error occurred while deleting the address.',
                                 'error'
                             );
-                        }
-                    });
+                        });
                 }
             });
         });
 
 
 
-
     });
+
+
 
     // Toggle password visibility
     document.querySelectorAll('.toggle-password').forEach(function (toggle) {
@@ -373,6 +351,18 @@ document.addEventListener('DOMContentLoaded', function () {
             this.classList.toggle('fa-eye-slash');
         });
     });
+
+
+
+    // Open the tab after successful operation
+    if (window.location.hash) {
+        var tabName = window.location.hash.substring(1); // Get the hash without #
+        var tabElement = document.getElementById(tabName + "-tab");
+        if (tabElement) {
+            // Trigger the Bootstrap tab to open
+            var tab = new bootstrap.Tab(tabElement);
+            tab.show();
+        }
+    }
+
 });
-
-
