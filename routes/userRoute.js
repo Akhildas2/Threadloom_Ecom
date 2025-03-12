@@ -21,6 +21,7 @@ userRoute.get('/productdetails/:productId', pageController.productDetails);
 userRoute.get('/forgotPassword', auth.isLogout, pageController.forgotPasswordLoad);
 userRoute.get('/resetPassword', auth.isLogout, pageController.loadResetPassword);
 userRoute.get('/verifyOtp', pageController.loadVerifyOtp);
+userRoute.get('/search-suggestions', pageController.searchSuggestions);
 
 
 userRoute.post('/register', userController.insertUser);

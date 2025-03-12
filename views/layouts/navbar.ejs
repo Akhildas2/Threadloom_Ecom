@@ -64,15 +64,113 @@
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
-                        <form action="#">
-                            <select class="select-active">
-                                <option>All Categories</option>
-                                <option>Women's</option>
-                                <option>Men's</option>
-                                <option>Kid's</option>
+                        <form action="/shop" method="GET">
+                            <select class="select-active" name="category">
+                                <option value="">All Categories</option>
+                                <% categories.forEach(category=> { %>
+                                    <option value="<%= category.categoryName %>">
+                                        <%= category.categoryName %>
+                                    </option>
+                                    <% }); %>
                             </select>
-                            <input type="text" placeholder="Search for items...">
+                            <input type="text" id="searchBox" name="query" placeholder="Search for items..."
+                                autocomplete="off">
+                            <ul id="suggestions" class="suggestions-list"></ul>
+
+                            <style>
+                                .suggestions-list {
+                                    list-style: none;
+                                    padding: 0;
+                                    margin: 0;
+                                    position: absolute;
+                                    background: white;
+                                    width: 100%;
+                                    border: 1px solid #ddd;
+                                    display: none;
+                                    max-height: 200px;
+                                    overflow-y: auto;
+                                    z-index: 1;
+                                }
+
+                                .suggestions-list li {
+                                    padding: 8px;
+                                    cursor: pointer;
+                                    border-bottom: 1px solid #eee;
+                                }
+
+                                .suggestions-list li:hover {
+                                    background: #f0f0f0;
+                                }
+                            </style>
+
                         </form>
+                        <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                                const searchBox = document.getElementById("searchBox");
+                                const suggestionsList = document.getElementById("suggestions");
+                                const categorySelect = document.querySelector('select[name="category"]');
+
+                                searchBox.addEventListener("input", function () {
+                                    const query = searchBox.value.trim();
+                                    const selectedCategory = categorySelect.value; // Get current category
+
+                                    if (query.length < 2) {
+                                        suggestionsList.innerHTML = "";
+                                        suggestionsList.style.display = "none";
+                                        return;
+                                    }
+
+                                    fetch(`/search-suggestions?q=${query}&category=${categorySelect.value}`)
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            suggestionsList.innerHTML = "";
+                                            if (data.length > 0) {
+                                                data.forEach(item => {
+                                                    const li = document.createElement("li");
+                                                    li.textContent = item.value;
+                                                    li.dataset.type = item.type; // Store type in data attribute
+
+                                                    // Add icon/indicator based on type
+                                                    const typeSpan = document.createElement("span");
+                                                    typeSpan.textContent = item.type === 'category' ? '📁 ' : '🛍️ ';
+                                                    li.prepend(typeSpan);
+
+                                                    li.onclick = function () {
+                                                        const form = document.querySelector('form'); // Get the form element
+                                                        const action = new URL(form.action);
+                                                        const params = new URLSearchParams(window.location.search); // Preserve existing URL parameters
+
+                                                        if (item.type === 'category') {
+                                                            categorySelect.value = item.value;
+                                                            params.set('category', item.value); // Update category in URL
+                                                        } else {
+                                                            searchBox.value = item.value;
+                                                            params.set('query', item.value); // Update query in URL
+                                                        }
+
+                                                        // Redirect to the updated URL with both category & query
+                                                        window.location.href = `${action}?${params.toString()}`;
+                                                    };
+
+
+                                                    suggestionsList.appendChild(li);
+                                                });
+                                                suggestionsList.style.display = "block";
+                                            } else {
+                                                suggestionsList.style.display = "none";
+                                            }
+                                        });
+                                });
+
+                                // Close suggestions when clicking outside
+                                document.addEventListener("click", function (event) {
+                                    if (!searchBox.contains(event.target) && !suggestionsList.contains(event.target)) {
+                                        suggestionsList.style.display = "none";
+                                    }
+                                });
+                            });
+                        </script>
+
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -541,7 +639,8 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/about">About Us</a>
+                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/about">About
+                                Us</a>
                         </li>
                         <li class="menu-item-has-children"><span class="menu-expand"></span><a
                                 href="/contact">Contact</a></li>

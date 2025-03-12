@@ -28,7 +28,7 @@ const loadDashboard = async (req, res, next) => {
         const orderPage = parseInt(req.query.orderPage) || 1;
         const walletPage = parseInt(req.query.walletPage) || 1;
         const addressPage = parseInt(req.query.addressPage) || 1;
-        const pageSize = 1;
+        const pageSize = 5;
 
         const userData = await User.findById(userId);
         const address = await Address.find({ userId }).skip((addressPage - 1) * pageSize).limit(pageSize);

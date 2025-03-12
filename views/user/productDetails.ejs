@@ -59,12 +59,25 @@
                                                 </div>
 
                                                 <div class="product-rate-cover text-end">
-                                                    <div class="product-rate d-inline-block">
-                                                        <div class="product-rating" style="width:90%">
-                                                        </div>
-                                                    </div>
-                                                    <span class="font-small ml-5 text-muted"> (25 reviews)</span>
+                                                    <strong>
+                                                        <span class="font-small m-2" <% if (averageRating>= 3) { %>
+                                                            style="background-color: #4CAF50; color: white; padding:
+                                                            3px 6px; border-radius: 4px;"
+                                                            <% } else { %>
+                                                                style="background-color: #F44336; color: white;
+                                                                padding: 3px 6px; border-radius: 4px;"
+                                                                <% } %>>
+                                                                    <%= averageRating.toFixed(1) %> ★
+                                                        </span>
+                                                    </strong>|
+                                                    <span class="font-small m-2 text-muted">
+                                                        <%= totalRating %> Ratings
+                                                    </span> |
+                                                    <span class="font-small m-2 text-muted">
+                                                        <%= totalReviews %> Reviews
+                                                    </span>
                                                 </div>
+
                                             </div>
                                             <div class="product-detail-rating">
                                                 <span><i class="fa-solid fa-tags" style="margin-right: 5px;"></i>
@@ -265,94 +278,175 @@
 
                             <div class="row">
                                 <div class="col-lg-10 m-auto entry-main-content ">
-                                    <h2 class="section-title style-1 mb-30 "
-                                        onmouseover="toggleSection('descriptions')">
-                                        Descriptions</h2>
 
-                                    <div class="section-content descriptions active">
-                                        <!-- Description content goes here -->
-                                        <div class="bt-1 border-color-1 mt-15 mb-15">
-                                            <div class="short-desc mb-30">
-                                                <p>
-                                                    <%= product.description %>
-                                                </p>
+                                    <div onmouseover="toggleSection('descriptions')">
+                                        <h2 class="section-title style-1 mb-30 ">Descriptions</h2>
+
+                                        <div class="section-content descriptions active">
+                                            <div class="bt-1 border-color-1 mt-15 mb-15">
+                                                <div class="short-desc mb-30">
+                                                    <p>
+                                                        <%= product.description %>
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <h3 class="section-title style-1 mb-30 mt-30"
-                                        onmouseover="toggleSection('additional-info')">Additional info</h3>
-                                    <div class="section-content additional-info">
-                                        <table class="table">
-                                            <tbody>
-                                                <tr>
-                                                    <th>Name</th>
-                                                    <td>
-                                                        <%= product.name %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Brand</th>
-                                                    <td>
-                                                        <%= product.brand %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Fit</th>
-                                                    <td>
-                                                        <%= product.fit %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Fabric</th>
-                                                    <td>
-                                                        <%= product.fabric %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Sleeve</th>
-                                                    <td>
-                                                        <%= product.sleeve %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Pattern</th>
-                                                    <td>
-                                                        <%= product.pattern %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Color</th>
-                                                    <td>
-                                                        <%= product.color %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>Fabric Care</th>
-                                                    <td>
-                                                        <%= product.fabricCare %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <th>origin</th>
-                                                    <td>
-                                                        <%= product.origin %>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <h3 class="section-title style-1 mb-30 mt-30"
-                                        onmouseover="toggleSection('reviews')">
-                                        Reviews (3)</h3>
-                                    <div class="section-content reviews ">
-                                        <!-- Reviews content goes here -->
-                                        <p>coming soon ...</p>
 
                                     </div>
-                                </div>
-                            </div>
 
+                                    <div onmouseover="toggleSection('additional-info')">
+                                        <h3 class="section-title style-1 mb-30 mt-30">Additional info</h3>
 
+                                        <div class="section-content additional-info">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Name</th>
+                                                        <td>
+                                                            <%= product.name %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Brand</th>
+                                                        <td>
+                                                            <%= product.brand %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Fit</th>
+                                                        <td>
+                                                            <%= product.fit %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Fabric</th>
+                                                        <td>
+                                                            <%= product.fabric %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Sleeve</th>
+                                                        <td>
+                                                            <%= product.sleeve %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Pattern</th>
+                                                        <td>
+                                                            <%= product.pattern %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Color</th>
+                                                        <td>
+                                                            <%= product.color %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Fabric Care</th>
+                                                        <td>
+                                                            <%= product.fabricCare %>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>origin</th>
+                                                        <td>
+                                                            <%= product.origin %>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+
+                                    <div onmouseover="toggleSection('reviews')">
+                                        <h3 class="section-title style-1 mb-30 mt-30">Ratings (<%= totalRating %>) &
+                                                Reviews (<%= totalReviews %>)</h3>
+
+                                        <div class="section-content reviews">
+                                            <div class="text-end">
+                                                <% if (hasPurchased && !hasReviewed) { %>
+                                                    <button class="btn btn-fill-out btn-sm hover-up rounded-pill"
+                                                        onclick="toggleReviewForm()">
+                                                        Add Review <i class="fas fa-plus-circle"></i>
+                                                    </button>
+                                                    <% } else if (hasReviewed) { %>
+                                                        <p>You have already reviewed this product.</p>
+                                                        <% } %>
+                                            </div>
+
+                                            <% if (hasPurchased && !hasReviewed) { %>
+                                                <div id="reviewForm" class="card mt-20 mb-20 p-4 shadow-sm rounded-lg"
+                                                    style="border: 1px solid #e0e0e0;">
+                                                    <h4 class="mb-3">Write a Review</h4>
+                                                    <form id="reviewFormSubmit" onsubmit="submitReview(event)">
+                                                        <input type="hidden" name="productId"
+                                                            value="<%= product._id %>">
+
+                                                        <div class="form-group mb-3">
+                                                            <label class="form-label">Rating:</label>
+                                                            <div class="rating-stars">
+                                                                <i class="fas fa-star" data-value="1"></i>
+                                                                <i class="fas fa-star" data-value="2"></i>
+                                                                <i class="fas fa-star" data-value="3"></i>
+                                                                <i class="fas fa-star" data-value="4"></i>
+                                                                <i class="fas fa-star" data-value="5"></i>
+                                                            </div>
+                                                            <input type="hidden" name="rating" id="ratingValue"
+                                                                value="0">
+                                                            <span id="ratingError"
+                                                                style="color: red; font-size: 14px;"></span>
+                                                        </div>
+
+                                                        <div class="form-group mb-3">
+                                                            <label class="form-label">Comment:</label>
+                                                            <textarea name="comment" rows="3" class="form-control"
+                                                                placeholder="Write your experience..."></textarea>
+                                                            <span id="commentError"
+                                                                style="color: red; font-size: 14px;"></span>
+                                                        </div>
+                                                        <div class="text-center">
+                                                            <button type="submit"
+                                                                class="btn btn-sm btn-primary w-50 rounded-pill">Submit
+                                                                Review</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <% } %>
+
+                                                    <div class="p-4" id="reviewList">
+
+                                                        <% if (reviews.length> 0) { %>
+                                                            <% reviews.forEach(review=> { %>
+                                                                <div class="review-item border-bottom pb-3 mb-3">
+                                                                    <div class="d-flex align-items-center mb-2">
+                                                                        <div class="avatar bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
+                                                                            style="width: 40px; height: 40px;">
+                                                                            <%= review.userId.name.charAt(0).toUpperCase()
+                                                                                %>
+                                                                        </div>
+                                                                        <div>
+                                                                            <strong class="d-block">
+                                                                                <%= review.userId.name %>
+                                                                            </strong>
+                                                                            <small class="text-muted">Rating: <%=
+                                                                                    review.rating %>/5</small>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p class="mb-0"
+                                                                        style="font-size: 0.9rem; color: #555;">
+                                                                        <%= review.comment %>
+                                                                    </p>
+                                                                </div>
+                                                                <% }) %>
+                                                                    <% } else { %>
+                                                                        <p class="text-muted">No reviews yet. Be the
+                                                                            first to review!</p>
+                                                                        <% } %>
+                                                    </div>
+                                        </div>
+                                    </div>
                         </section>
 
 
@@ -362,7 +456,7 @@
                                     <h3 class="section-title style-1 mb-30">Related products</h3>
                                 </div>
                                 <div class="col-12">
-                                    <div class="row product-grid-4">
+                                    <div class="row product-grid-4 m-2">
                                         <% relatedProducts.forEach(product=> { %>
                                             <div class="col-lg-3 col-md-4 col-12 col-sm-6">
                                                 <div class="product-cart-wrap mb-30">
@@ -417,6 +511,17 @@
 
 
                                                     <div class="product-content-wrap">
+                                                        <div class="product-category">
+                                                            <a href="/productdetails/<%= product._id %>">
+                                                                <% if (product.category) { %>
+                                                                    <p>
+                                                                        <%= product.category.categoryName %>
+                                                                    </p>
+                                                                    <% } else { %>
+                                                                        <p>Category: Not specified</p>
+                                                                        <% } %>
+                                                            </a>
+                                                        </div>
                                                         <h2>
                                                             <a href="/productDetails/<%= product._id %>" tabindex="0">
                                                                 <%= product.name.length> 15 ?
@@ -424,11 +529,13 @@
                                                                     '...' : product.name %>
                                                             </a>
                                                         </h2>
-                                                        <div class="rating-result" title="90%">
-                                                            <span>
-                                                                <span>90%</span>
-                                                            </span>
+
+                                                        <div class="rating-result"
+                                                            data-rating="<%= product.averageRating %>">
+                                                            <span class="stars"></span>
+                                                            <span class="percentage"></span>
                                                         </div>
+
                                                         <div class="money price">
                                                             <span>₹<%= product.price.toFixed(2) %></span>
                                                         </div>
@@ -467,18 +574,24 @@
                 </div>
             </section>
             <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
             <script>
+
                 function toggleSection(section) {
                     // Hide all sections
                     const sections = document.querySelectorAll('.section-content');
                     sections.forEach(function (sec) {
                         sec.classList.remove('active');
                     });
-
                     // Show the clicked section
                     document.querySelector('.' + section).classList.add('active');
                 }
+
+                function toggleReviewForm() {
+                    const form = document.getElementById('reviewForm');
+                    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                }
+
                 document.getElementById('addToCartForm').addEventListener('submit', function (event) {
                     event.preventDefault(); // Prevent the default form submission
 
@@ -770,6 +883,26 @@
                                 ? `<span class="badge bg-success">In Stock</span>`
                                 : `<span class="badge bg-danger">Out of Stock</span>`;
 
+                            // Handle Ratings and Reviews
+                            let ratingDiv = document.getElementById("quickViewRating");
+                            let averageRating = product.averageRating || 0;
+                            let totalRating = product.totalRating || 0;
+                            let totalReviews = product.totalReviews || 0;
+
+                            let ratingColor = averageRating >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
+
+                            ratingDiv.innerHTML = `
+                            <div class="product-rate-cover text-end">
+                                <strong>
+                                    <span class="font-small m-2" style="background-color: ${ratingColor}; color: white; padding: 3px 6px; border-radius: 4px;">
+                                        ${averageRating.toFixed(1)} ★
+                                    </span>
+                                </strong> |
+                                <span class="font-small m-2 text-muted">${totalRating} Ratings</span> |
+                                <span class="font-small m-2 text-muted">${totalReviews} Reviews</span>
+                            </div>
+                         `;
+
                             // Get Image Containers
                             let imageContainer = document.getElementById("quickViewImages");
                             let thumbnailContainer = document.getElementById("quickViewThumbnails");
@@ -828,6 +961,97 @@
                 });
 
 
+
+                document.querySelectorAll('.rating-stars i').forEach(star => {
+                    star.addEventListener('click', function () {
+                        const rating = this.getAttribute('data-value');
+                        document.getElementById('ratingValue').value = rating;
+
+                        // Clear rating error when clicked
+                        document.getElementById('ratingError').textContent = '';
+
+                        // Handle star color change
+                        document.querySelectorAll('.rating-stars i').forEach(s => {
+                            s.classList.remove('text-warning');
+                        });
+
+                        for (let i = 0; i < rating; i++) {
+                            document.querySelectorAll('.rating-stars i')[i].classList.add('text-warning');
+                        }
+                    });
+                });
+
+                function submitReview(event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(event.target);
+                    const rating = formData.get('rating');  // Can be empty
+                    const comment = formData.get('comment');
+
+                    // Clear previous error messages
+                    document.getElementById('commentError').textContent = '';
+
+                    let isValid = true;
+
+                    if (comment.trim() === '') {
+                        document.getElementById('commentError').textContent = 'Please enter a comment.';
+                        isValid = false;
+                    }
+
+                    if (!isValid) {
+                        return;
+                    }
+
+                    axios.post('/review/add-review', {
+                        productId: formData.get('productId'),
+                        rating: rating || 0,
+                        comment: comment
+                    })
+                        .then(response => {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Thank you!',
+                                text: 'Your review has been submitted successfully.'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to submit your review. Please try again later.'
+                            });
+                        });
+                }
+
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    document.querySelectorAll(".rating-result").forEach(ratingDiv => {
+                        let averageRating = parseFloat(ratingDiv.getAttribute("data-rating")) || 0;
+
+                        let starPercentage = (averageRating / 5) * 100; // Convert rating to percentage
+
+                        // Generate Star Icons
+                        let starIcons = "";
+                        for (let i = 1; i <= 5; i++) {
+                            if (i <= averageRating) {
+                                starIcons += `<i class="fas fa-star" style="color: gold;"></i>`; // Full star
+                            } else if (i - 0.5 <= averageRating) {
+                                starIcons += `<i class="fas fa-star-half-alt" style="color: gold;"></i>`; // Half star
+                            } else {
+                                starIcons += `<i class="far fa-star" style="color: gold;"></i>`; // Empty star
+                            }
+                        }
+
+                        // Inject into the Div
+                        ratingDiv.innerHTML = `
+                        <span class="stars">${starIcons}</span>
+                        <span class="percentage">${Math.round(starPercentage)}%</span>
+                    `;
+                    });
+                });
 
 
             </script>

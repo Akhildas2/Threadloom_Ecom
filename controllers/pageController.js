@@ -1,18 +1,22 @@
-const Product = require('../models/productModel')
-const Category = require("../models/categoryModel")
+const Product = require('../models/productModel');
+const Category = require("../models/categoryModel");
 const Wishlist = require("../models/wishListModel");
-const User = require('../models/userModel')
-const Otp = require('../models/otpModel')
-
+const User = require('../models/userModel');
+const Otp = require('../models/otpModel');
+const Review = require('../models/reviewModel');
+const Orders = require('../models/orderModel');
+const { getProductsWithReviews } = require("../helpers/productHelper");
 
 
 //for loading the home page
 const loadHome = async (req, res, next) => {
     try {
 
-        const featuredProducts = await Product.find({ isUnlisted: false, isHot: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        const newProducts = await Product.find({ isUnlisted: false, isNewArrival: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
-        const bestSellerProducts = await Product.find({ isUnlisted: false, isBestSeller: true }).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+        const [featuredProducts, newProducts, bestSellerProducts] = await Promise.all([
+            getProductsWithReviews({ isUnlisted: false, isHot: true }),
+            getProductsWithReviews({ isUnlisted: false, isNewArrival: true }),
+            getProductsWithReviews({ isUnlisted: false, isBestSeller: true })
+        ]);
 
         //for getting the categories
         const categories = await Category.find({ isUnlisted: false }).limit(8);
@@ -85,7 +89,7 @@ const loadAbout = async (req, res, next) => {
 //for shop showing product
 const shop = async (req, res, next) => {
     try {
-        const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '' } = req.query;
+        const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '', query: searchQuery } = req.query;
 
         const currentPage = parseInt(page);
         const userId = req.session.user_id;
@@ -97,6 +101,12 @@ const shop = async (req, res, next) => {
         }
 
         let query = { isUnlisted: false };
+        if (searchQuery) {
+            query.$or = [
+                { name: { $regex: searchQuery, $options: 'i' } },
+                { description: { $regex: searchQuery, $options: 'i' } }
+            ];
+        }
         if (category) {
             const categoryId = await Category.findOne({ categoryName: category }).select('_id');
             if (categoryId) {
@@ -122,11 +132,12 @@ const shop = async (req, res, next) => {
 
         let sortQuery = {};
         switch (sort) {
-            case 'popularity': sortQuery = { popularity: -1 }; break;
+            case 'popularity': sortQuery = { isHot: -1 }; break;
+            case 'featured': sortQuery = { isHot: 1 }; break;
+            case 'newArrivals': sortQuery = { isNewArrival: -1 }; break;
+            case 'bestSeller': sortQuery = { isBestSeller: -1 }; break;
             case 'priceInc': sortQuery = { price: 1 }; break;
             case 'priceDesc': sortQuery = { price: -1 }; break;
-            case 'featured': sortQuery = { isFeatured: -1 }; break;
-            case 'newArrivals': sortQuery = { createdAt: -1 }; break;
             case 'az': sortQuery = { name: 1 }; break;
             case 'za': sortQuery = { name: -1 }; break;
             default: sortQuery = { createdAt: -1 };
@@ -139,13 +150,31 @@ const shop = async (req, res, next) => {
             .skip((currentPage - 1) * limit)
             .limit(parseInt(limit));
 
+        const productsWithReviews = await Promise.all(
+            products.map(async (product) => {
+                const reviews = await Review.find({ productId: product._id });
+                const totalReviews = reviews.length;
+                const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+                const averageRating = totalReviews > 0
+                    ? Math.round((totalRating / totalReviews) * 10) / 10
+                    : 0;
+
+                return {
+                    ...product.toObject(),
+                    totalReviews,
+                    totalRating,
+                    averageRating
+                };
+            })
+        );
+
         const categories = await Category.find({ isUnlisted: false });
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
 
         res.render('shop', {
             req,
-            products,
+            products: productsWithReviews,
             totalPages,
             currentPage,
             limit,
@@ -172,20 +201,56 @@ const shop = async (req, res, next) => {
 const productDetails = async (req, res, next) => {
     try {
         const productId = req.params.productId;
+        const userId = req.session.user_id;
+
         // Fetch product from the  products
         const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
         // Fetch related products from the same category
         const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } });
+        const relatedProductsWithReviews = await Promise.all(
+            relatedProducts.map(async (product) => {
+                const reviews = await Review.find({ productId: product._id });
+                const totalReviews = reviews.length;
+                const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+                const averageRating = totalReviews > 0
+                    ? Math.round((totalRating / totalReviews) * 10) / 10
+                    : 0;
+
+                return {
+                    ...product.toObject(),
+                    totalReviews,
+                    totalRating,
+                    averageRating
+                };
+            })
+        );
+
+        // Fetch reviews for main product
+        const reviews = await Review.find({ productId }).populate('userId', 'name');
+        const totalReviews = reviews.length;
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        const averageRating = totalReviews > 0 ? Math.round((totalRating / totalReviews) * 10) / 10 : 0;
 
         let userWishlist = [];
-        const userId = req.session.user_id;
         // If the user is logged in
         if (userId) {
             const wishlistItems = await Wishlist.find({ user: userId });
             userWishlist = wishlistItems.map(item => item.productId.toString());
         }
 
-        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist });
+        // Check if the user has purchased this product and it is delivered
+        let hasPurchased = false;
+        let hasReviewed = false;
+        if (userId) {
+            const orders = await Orders.find({ userId: userId, 'items.productId': productId });
+            if (orders.length > 0) hasPurchased = true;
+
+            // Check if user already reviewed the product
+            const existingReview = await Review.findOne({ userId, productId });
+            if (existingReview) hasReviewed = true;
+        }
+
+        res.render('productDetails', { product: productData, relatedProducts: relatedProductsWithReviews, req, userWishlist, totalReviews, reviews, hasPurchased, hasReviewed, averageRating, totalRating });
 
     } catch (error) {
         next(error);
@@ -249,6 +314,43 @@ const loadVerifyOtp = async (req, res, next) => {
 
 
 
+const searchSuggestions = async (req, res, next) => {
+    try {
+        const { q: query, category } = req.query;
+        if (!query) return res.json([]);
+
+        // 1. Find matching categories (if no category filter applied)
+        const categoryResults = !category ? await Category.find({
+            categoryName: { $regex: query, $options: "i" },
+            isUnlisted: false
+        }).limit(3).select('categoryName -_id') : [];
+
+        // 2. Find matching products (with optional category filter)
+        const categoryFilter = category ?
+            { category: (await Category.findOne({ categoryName: category }))?._id }
+            : {};
+
+        const productResults = await Product.find({
+            name: { $regex: query, $options: "i" },
+            isUnlisted: false,
+            ...categoryFilter
+        }).limit(5).select('name -_id');
+
+        // 3. Combine results with type indicators
+        const results = [
+            ...categoryResults.map(c => ({ type: 'category', value: c.categoryName })),
+            ...productResults.map(p => ({ type: 'product', value: p.name }))
+        ];
+
+        res.json(results);
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 module.exports = {
     loadHome,
     loadRegister,
@@ -260,4 +362,5 @@ module.exports = {
     forgotPasswordLoad,
     loadResetPassword,
     loadVerifyOtp,
+    searchSuggestions
 }

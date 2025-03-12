@@ -86,7 +86,8 @@ const couponRoute = require('./routes/couponRoute')
 //for coupon route
 const offerRoute = require('./routes/offerRoute')
 
-
+//for Review route
+const reviewRoute = require('./routes/reviewRoute')
 
 
 app.use('/admin', express.static('adminAssets'));
@@ -108,6 +109,7 @@ app.use('/wishList', wishListRoute)
 app.use('/dashboard', dashboardRoute)
 app.use('/admin/coupon', couponRoute)
 app.use('/admin/offer', offerRoute)
+app.use('/review', reviewRoute)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

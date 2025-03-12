@@ -101,7 +101,8 @@
                                                     <%= sort==='priceinc' ? 'Price: Low to High' : sort==='priceDesc'
                                                         ? 'Price: High to Low' : sort==='newArrivals' ? 'New Arrivals' :
                                                         sort==='az' ? 'A-Z' : sort==='za' ? 'Z-A' : sort==='popularity'
-                                                        ? 'Popularity' : 'Featured' %>
+                                                        ? 'Popularity' : sort==='bestSeller' ? 'Best Seller'
+                                                        : 'Featured' %>
                                                         <i class="fi-rs-angle-small-down"></i>
                                                 </span>
                                             </div>
@@ -109,7 +110,7 @@
                                         <div class="sort-by-dropdown">
                                             <ul>
                                                 <% ['featured', 'priceInc' , 'priceDesc' , 'newArrivals' , 'az' , 'za'
-                                                    , 'popularity' ].forEach(s=> { %>
+                                                    , 'popularity' ,, 'bestSeller' ].forEach(s=> { %>
                                                     <li>
                                                         <a href="/shop?<%= new URLSearchParams({
                                                         sort: s, 
@@ -123,7 +124,8 @@
                                                             <%= s==='priceInc' ? 'Price: Low to High' : s==='priceDesc'
                                                                 ? 'Price: High to Low' : s==='newArrivals'
                                                                 ? 'New Arrivals' : s==='az' ? 'A-Z' : s==='za' ? 'Z-A' :
-                                                                s==='popularity' ? 'Popularity' : 'Featured' %>
+                                                                s==='popularity' ? 'Popularity' : s==='bestSeller'
+                                                                ? 'Best Seller' : 'Featured' %>
                                                         </a>
                                                     </li>
                                                     <% }) %>
@@ -243,7 +245,7 @@
                                         <div class="tab-pane fade show active" id="tab-one" role="tabpanel"
                                             aria-labelledby="tab-one">
                                             <% if (products.length> 0) { %>
-                                                <div class="row product-grid-4">
+                                                <div class="row product-grid-4 m-2">
                                                     <% for(let i=0; i<products.length; i++) { %>
                                                         <div class="col-lg-4 col-md-6 col-sm-6 col-12">
                                                             <div class="product-cart-wrap mb-30">
@@ -322,8 +324,11 @@
                                                                                 '...' :
                                                                                 products[i].name %>
                                                                         </a></h2>
-                                                                    <div class="rating-result" title="90%">
-                                                                        <span><span>90%</span></span>
+
+                                                                    <div class="rating-result"
+                                                                        data-rating="<%= products[i].averageRating %>">
+                                                                        <span class="stars"></span>
+                                                                        <span class="percentage"></span>
                                                                     </div>
 
                                                                     <div class="product-card__price d-flex">
@@ -779,6 +784,25 @@
                                             ? `<span class="badge bg-success">In Stock</span>`
                                             : `<span class="badge bg-danger">Out of Stock</span>`;
 
+                                        // Handle Ratings and Reviews
+                                        let ratingDiv = document.getElementById("quickViewRating");
+                                        let averageRating = product.averageRating || 0;
+                                        let totalRating = product.totalRating || 0;
+                                        let totalReviews = product.totalReviews || 0;
+
+                                        let ratingColor = averageRating >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
+
+                                        ratingDiv.innerHTML = `
+                            <div class="product-rate-cover text-end">
+                                <strong>
+                                    <span class="font-small m-2" style="background-color: ${ratingColor}; color: white; padding: 3px 6px; border-radius: 4px;">
+                                        ${averageRating.toFixed(1)} ★
+                                    </span>
+                                </strong> |
+                                <span class="font-small m-2 text-muted">${totalRating} Ratings</span> |
+                                <span class="font-small m-2 text-muted">${totalReviews} Reviews</span>
+                            </div>
+                         `;
                                         // Get Image Containers
                                         let imageContainer = document.getElementById("quickViewImages");
                                         let thumbnailContainer = document.getElementById("quickViewThumbnails");
@@ -837,5 +861,30 @@
                             });
 
 
+                            document.addEventListener("DOMContentLoaded", function () {
+                                document.querySelectorAll(".rating-result").forEach(ratingDiv => {
+                                    let averageRating = parseFloat(ratingDiv.getAttribute("data-rating")) || 0;
+
+                                    let starPercentage = (averageRating / 5) * 100; // Convert rating to percentage
+
+                                    // Generate Star Icons
+                                    let starIcons = "";
+                                    for (let i = 1; i <= 5; i++) {
+                                        if (i <= averageRating) {
+                                            starIcons += `<i class="fas fa-star" style="color: gold;"></i>`; // Full star
+                                        } else if (i - 0.5 <= averageRating) {
+                                            starIcons += `<i class="fas fa-star-half-alt" style="color: gold;"></i>`; // Half star
+                                        } else {
+                                            starIcons += `<i class="far fa-star" style="color: gold;"></i>`; // Empty star
+                                        }
+                                    }
+
+                                    // Inject into the Div
+                                    ratingDiv.innerHTML = `
+                        <span class="stars">${starIcons}</span>
+                        <span class="percentage">${Math.round(starPercentage)}%</span>
+                    `;
+                                });
+                            });
 
                         </script>
