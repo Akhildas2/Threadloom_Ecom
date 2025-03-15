@@ -8,6 +8,7 @@ const Orders = require('../models/orderModel');
 const { getProductsWithReviews } = require("../helpers/productHelper");
 
 
+
 //for loading the home page
 const loadHome = async (req, res, next) => {
     try {
@@ -87,7 +88,7 @@ const loadAbout = async (req, res, next) => {
 
 
 //for shop showing product
-const shop = async (req, res, next) => {
+const loadShop = async (req, res, next) => {
     try {
         const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '', query: searchQuery } = req.query;
 
@@ -150,31 +151,13 @@ const shop = async (req, res, next) => {
             .skip((currentPage - 1) * limit)
             .limit(parseInt(limit));
 
-        const productsWithReviews = await Promise.all(
-            products.map(async (product) => {
-                const reviews = await Review.find({ productId: product._id });
-                const totalReviews = reviews.length;
-                const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-                const averageRating = totalReviews > 0
-                    ? Math.round((totalRating / totalReviews) * 10) / 10
-                    : 0;
-
-                return {
-                    ...product.toObject(),
-                    totalReviews,
-                    totalRating,
-                    averageRating
-                };
-            })
-        );
-
         const categories = await Category.find({ isUnlisted: false });
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
 
         res.render('shop', {
             req,
-            products: productsWithReviews,
+            products,
             totalPages,
             currentPage,
             limit,
@@ -207,29 +190,9 @@ const productDetails = async (req, res, next) => {
         const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
         // Fetch related products from the same category
         const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } });
-        const relatedProductsWithReviews = await Promise.all(
-            relatedProducts.map(async (product) => {
-                const reviews = await Review.find({ productId: product._id });
-                const totalReviews = reviews.length;
-                const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-                const averageRating = totalReviews > 0
-                    ? Math.round((totalRating / totalReviews) * 10) / 10
-                    : 0;
-
-                return {
-                    ...product.toObject(),
-                    totalReviews,
-                    totalRating,
-                    averageRating
-                };
-            })
-        );
 
         // Fetch reviews for main product
         const reviews = await Review.find({ productId }).populate('userId', 'name');
-        const totalReviews = reviews.length;
-        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
-        const averageRating = totalReviews > 0 ? Math.round((totalRating / totalReviews) * 10) / 10 : 0;
 
         let userWishlist = [];
         // If the user is logged in
@@ -247,10 +210,12 @@ const productDetails = async (req, res, next) => {
 
             // Check if user already reviewed the product
             const existingReview = await Review.findOne({ userId, productId });
-            if (existingReview) hasReviewed = true;
+            if (existingReview) {
+                hasReviewed = existingReview.comment ? true : false;
+            }
         }
 
-        res.render('productDetails', { product: productData, relatedProducts: relatedProductsWithReviews, req, userWishlist, totalReviews, reviews, hasPurchased, hasReviewed, averageRating, totalRating });
+        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist, reviews, hasPurchased, hasReviewed });
 
     } catch (error) {
         next(error);
@@ -313,7 +278,7 @@ const loadVerifyOtp = async (req, res, next) => {
 }
 
 
-
+//for search suggestion 
 const searchSuggestions = async (req, res, next) => {
     try {
         const { q: query, category } = req.query;
@@ -351,16 +316,29 @@ const searchSuggestions = async (req, res, next) => {
 
 
 
+//for help page load
+const loadHelp = async (req, res, next) => {
+    try {
+        res.render("help", { req });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
 module.exports = {
     loadHome,
     loadRegister,
     loadLogin,
     loadContact,
     loadAbout,
-    shop,
+    loadShop,
     productDetails,
     forgotPasswordLoad,
     loadResetPassword,
     loadVerifyOtp,
-    searchSuggestions
+    searchSuggestions,
+    loadHelp
 }

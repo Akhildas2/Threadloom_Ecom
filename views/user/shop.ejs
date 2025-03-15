@@ -326,7 +326,7 @@
                                                                         </a></h2>
 
                                                                     <div class="rating-result"
-                                                                        data-rating="<%= products[i].averageRating %>">
+                                                                        data-rating="<%= products[i].avgRating %>">
                                                                         <span class="stars"></span>
                                                                         <span class="percentage"></span>
                                                                     </div>
@@ -786,8 +786,8 @@
 
                                         // Handle Ratings and Reviews
                                         let ratingDiv = document.getElementById("quickViewRating");
-                                        let averageRating = product.averageRating || 0;
-                                        let totalRating = product.totalRating || 0;
+                                        let averageRating = product.avgRating || 0;
+                                        let totalRatings = product.totalRatings || 0;
                                         let totalReviews = product.totalReviews || 0;
 
                                         let ratingColor = averageRating >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
@@ -799,7 +799,7 @@
                                         ${averageRating.toFixed(1)} ★
                                     </span>
                                 </strong> |
-                                <span class="font-small m-2 text-muted">${totalRating} Ratings</span> |
+                                <span class="font-small m-2 text-muted">${totalRatings} Ratings</span> |
                                 <span class="font-small m-2 text-muted">${totalReviews} Reviews</span>
                             </div>
                          `;

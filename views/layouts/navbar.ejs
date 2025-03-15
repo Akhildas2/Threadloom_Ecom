@@ -1,3 +1,29 @@
+<style>
+    .suggestions-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        background: white;
+        width: 100%;
+        border: 1px solid #ddd;
+        display: none;
+        max-height: 200px;
+        overflow-y: auto;
+        z-index: 1;
+    }
+
+    .suggestions-list li {
+        padding: 8px;
+        cursor: pointer;
+        border-bottom: 1px solid #eee;
+    }
+
+    .suggestions-list li:hover {
+        background: #f0f0f0;
+    }
+</style>
+
 <header class="header-area header-style-3 header-height-2">
 
     <div class="header-top header-top-ptb-1 d-none d-lg-block">
@@ -7,7 +33,7 @@
                     <div class="header-info">
                         <ul>
                             <li><i class="fi-rs-smartphone"></i> <a href="#">+91 9633351499</a></li>
-                            <li><i class="fi-rs-marker"></i><a href="">Our location</a></li>
+                            <li><i class="fi-rs-marker"></i><a href="/contact#mapSection">Our location</a></li>
                         </ul>
                     </div>
                 </div>
@@ -73,104 +99,10 @@
                                     </option>
                                     <% }); %>
                             </select>
-                            <input type="text" id="searchBox" name="query" placeholder="Search for items..."
+                            <input type="text" class="search-box" name="query" placeholder="Search for items..."
                                 autocomplete="off">
-                            <ul id="suggestions" class="suggestions-list"></ul>
-
-                            <style>
-                                .suggestions-list {
-                                    list-style: none;
-                                    padding: 0;
-                                    margin: 0;
-                                    position: absolute;
-                                    background: white;
-                                    width: 100%;
-                                    border: 1px solid #ddd;
-                                    display: none;
-                                    max-height: 200px;
-                                    overflow-y: auto;
-                                    z-index: 1;
-                                }
-
-                                .suggestions-list li {
-                                    padding: 8px;
-                                    cursor: pointer;
-                                    border-bottom: 1px solid #eee;
-                                }
-
-                                .suggestions-list li:hover {
-                                    background: #f0f0f0;
-                                }
-                            </style>
-
+                            <ul class="suggestions-list"></ul>
                         </form>
-                        <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                                const searchBox = document.getElementById("searchBox");
-                                const suggestionsList = document.getElementById("suggestions");
-                                const categorySelect = document.querySelector('select[name="category"]');
-
-                                searchBox.addEventListener("input", function () {
-                                    const query = searchBox.value.trim();
-                                    const selectedCategory = categorySelect.value; // Get current category
-
-                                    if (query.length < 2) {
-                                        suggestionsList.innerHTML = "";
-                                        suggestionsList.style.display = "none";
-                                        return;
-                                    }
-
-                                    fetch(`/search-suggestions?q=${query}&category=${categorySelect.value}`)
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            suggestionsList.innerHTML = "";
-                                            if (data.length > 0) {
-                                                data.forEach(item => {
-                                                    const li = document.createElement("li");
-                                                    li.textContent = item.value;
-                                                    li.dataset.type = item.type; // Store type in data attribute
-
-                                                    // Add icon/indicator based on type
-                                                    const typeSpan = document.createElement("span");
-                                                    typeSpan.textContent = item.type === 'category' ? '📁 ' : '🛍️ ';
-                                                    li.prepend(typeSpan);
-
-                                                    li.onclick = function () {
-                                                        const form = document.querySelector('form'); // Get the form element
-                                                        const action = new URL(form.action);
-                                                        const params = new URLSearchParams(window.location.search); // Preserve existing URL parameters
-
-                                                        if (item.type === 'category') {
-                                                            categorySelect.value = item.value;
-                                                            params.set('category', item.value); // Update category in URL
-                                                        } else {
-                                                            searchBox.value = item.value;
-                                                            params.set('query', item.value); // Update query in URL
-                                                        }
-
-                                                        // Redirect to the updated URL with both category & query
-                                                        window.location.href = `${action}?${params.toString()}`;
-                                                    };
-
-
-                                                    suggestionsList.appendChild(li);
-                                                });
-                                                suggestionsList.style.display = "block";
-                                            } else {
-                                                suggestionsList.style.display = "none";
-                                            }
-                                        });
-                                });
-
-                                // Close suggestions when clicking outside
-                                document.addEventListener("click", function (event) {
-                                    if (!searchBox.contains(event.target) && !suggestionsList.contains(event.target)) {
-                                        suggestionsList.style.display = "none";
-                                    }
-                                });
-                            });
-                        </script>
-
                     </div>
                     <div class="header-action-right">
                         <div class="header-action-2">
@@ -258,7 +190,8 @@
                                                             <% let categoryChunks=chunkArray(categories, 5); %>
 
                                                                 <li class="has-children">
-                                                                    <a href="#"><i class="evara-font-dress"></i>Women's
+                                                                    <a href="/shop?gender=Women"><i
+                                                                            class="fas fa-female fa-fw fa-lg"></i>Women's
                                                                         Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
@@ -291,7 +224,8 @@
                                                                 </li>
 
                                                                 <li class="has-children">
-                                                                    <a href="#"><i class="evara-font-tshirt"></i>Men's
+                                                                    <a href="/shop?gender=Men"><i
+                                                                            class="fas fa-tshirt fa-fw fa-lg"></i>Men's
                                                                         Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
@@ -335,7 +269,8 @@
                                                                     </div>
                                                                 </li>
                                                                 <li class="has-children">
-                                                                    <a href="#"><i class="evara-font-smartphone"></i>
+                                                                    <a href="/shop?gender=Kids"><i
+                                                                            class="fas fa-child fa-fw fa-lg"></i>
                                                                         Kid's Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
@@ -390,20 +325,20 @@
                                                                     </div>
                                                                 </li>
 
-                                                                <li><a href=""> Comming Soon...</a></li>
-                                                                <li><a href="#"><i
-                                                                            class="evara-font-diamond"></i>Jewelry &
+                                                                <li><a href="#"> Comming Soon...</a></li>
+                                                                <li><a href="/shop"><i
+                                                                            class="fas fa-gem fa-fw fa-lg"></i>Jewelry &
                                                                         Accessories</a></li>
-                                                                <li><a href="#"><i
-                                                                            class="evara-font-high-heels"></i>Shoes</a>
+                                                                <li><a href="/shop"><i
+                                                                            class="fas fa-shoe-prints fa-fw fa-lg"></i>Shoes</a>
                                                                 </li>
                                                                 <li>
                                                                     <ul class="more_slide_open" style="display: none;">
-                                                                        <li><a href="#"><i
-                                                                                    class="evara-font-desktop"></i>Beauty,
+                                                                        <li><a href="/shop"><i
+                                                                                    class="fas fa-heart fa-fw fa-lg"></i>Beauty,
                                                                                 Health</a></li>
-                                                                        <li><a href="#"><i
-                                                                                    class="evara-font-cpu"></i>Bags</a>
+                                                                        <li><a href="/shop"><i
+                                                                                    class="fas fa-shopping-bag fa-fw fa-lg"></i>Bags</a>
                                                                         </li>
                                                                     </ul>
                                                                 </li>
@@ -487,7 +422,7 @@
                                 </li>
                                 <li><a href="/about">About Us</a></li>
                                 <li><a href="/contact">Contact </a> </li>
-
+                                <li><a href="/help">Help </a> </li>
                             </ul>
                         </nav>
                     </div>
@@ -501,13 +436,17 @@
                         <div class="header-action-icon-2">
                             <a href="/wishList">
                                 <img alt="Evara" src="/imgs/theme/icons/icon-heart.svg">
-                                <!-- <span class="pro-count white">4</span> -->
+                                <span class="pro-count blue">
+                                    <%= wishListTotalItem %>
+                                </span>
                             </a>
                         </div>
                         <div class="header-action-icon-2">
                             <a class="mini-cart-icon" href="/cart">
                                 <img alt="Evara" src="/imgs/theme/icons/icon-cart.svg">
-                                <!-- <span class="pro-count white">2</span> -->
+                                <span class="pro-count blue">
+                                    <%= cartTotalItem %>
+                                </span>
                             </a>
                             <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
                                 <ul>
@@ -576,10 +515,12 @@
             </div>
         </div>
         <div class="mobile-header-content-area">
+            <!-- Mobile Search -->
             <div class="mobile-search search-style-3 mobile-header-border">
-                <form action="#">
-                    <input type="text" placeholder="Search for items…">
-                    <button type="submit"><i class="fi-rs-search"></i></button>
+                <form action="/shop" method="GET">
+                    <input type="text" class="search-box" name="query" placeholder="Search for items..."
+                        autocomplete="off">
+                    <ul class="suggestions-list"></ul>
                 </form>
             </div>
             <div class="mobile-menu-wrap mobile-header-border">
@@ -589,14 +530,18 @@
                     </a>
                     <div class="categori-dropdown-wrap categori-dropdown-active-small">
                         <ul>
-                            <li><a href="#"><i class="evara-font-dress"></i>Women's Clothing</a></li>
-                            <li><a href="#"><i class="evara-font-tshirt"></i>Men's Clothing</a></li>
-                            <li> <a href="#"><i class="evara-font-smartphone"></i> Kid's Clothing</a></li>
+                            <li><a href="/shop?gender=Women"><i class="fas fa-female fa-fw fa-lg"></i>Women's
+                                    Clothing</a></li>
+                            <li><a href="/shop?gender=Men"><i class="fas fa-tshirt fa-fw fa-lg"></i>Men's Clothing</a>
+                            </li>
+                            <li> <a href="/shop?gender=Kids"> <i class="fas fa-child fa-fw fa-lg"></i> Kid's
+                                    Clothing</a>
+                            </li>
                             <li><a href="#">Comming soon...</a></li>
-                            <li><a href="#"><i class="evara-font-diamond"></i>Jewelry & Accessories</a></li>
-                            <li><a href="#"><i class="evara-font-high-heels"></i>Shoes</a></li>
-                            <li><a href="#"><i class="evara-font-desktop"></i>Beauty, Health</a></li>
-                            <li><a href="#"><i class="evara-font-cpu"></i>Bags</a></li>
+                            <li><a href="/shop"><i class="fas fa-gem fa-fw fa-lg"></i>Jewelry & Accessories</a></li>
+                            <li><a href="/shop"><i class="fas fa-shoe-prints fa-fw fa-lg"></i>Shoes</a></li>
+                            <li><a href="/shop"><i class="fas fa-heart fa-fw fa-lg"></i>Beauty, Health</a></li>
+                            <li><a href="/shop"><i class="fas fa-shopping-bag fa-fw fa-lg"></i>Bags</a></li>
                         </ul>
                     </div>
                 </div>
@@ -610,31 +555,43 @@
                                 <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Women's
                                         Fashion</a>
                                     <ul class="dropdown">
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">T-Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Formal Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Jackets</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Printed Shirt</a></li>
+                                        <% categories.forEach(category=>
+                                            { %>
+                                            <li>
+                                                <a class="nav-link nav_item"
+                                                    href="/shop?category=<%= category.categoryName %>&gender=Women">
+                                                    <%= category.categoryName %>
+                                                </a>
+                                            </li>
+                                            <% }); %>
                                     </ul>
                                 </li>
                                 <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Men's
                                         Fashion</a>
                                     <ul class="dropdown">
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">T-Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Formal Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Jackets</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Printed Shirt</a></li>
+                                        <% categories.forEach(category=>
+                                            { %>
+                                            <li>
+                                                <a class="nav-link nav_item"
+                                                    href="/shop?category=<%= category.categoryName %>&gender=Men">
+                                                    <%= category.categoryName %>
+                                                </a>
+                                            </li>
+                                            <% }); %>
                                     </ul>
                                 </li>
                                 <li class="menu-item-has-children"><span class="menu-expand"></span><a href="#">Kid's
                                         Fashion</a>
                                     <ul class="dropdown">
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">T-Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Formal Shirt</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Jackets</a></li>
-                                        <li><a class="dropdown-item nav-link nav_item" href="#">Printed Shirt</a></li>
+                                        <% categories.forEach(category=>
+                                            { %>
+                                            <li>
+                                                <a class="nav-link nav_item"
+                                                    href="/shop?category=<%= category.categoryName %>&gender=Kids">
+                                                    <%= category.categoryName %>
+                                                </a>
+                                            </li>
+                                            <% }); %>
                                     </ul>
                                 </li>
                             </ul>
@@ -644,6 +601,10 @@
                         </li>
                         <li class="menu-item-has-children"><span class="menu-expand"></span><a
                                 href="/contact">Contact</a></li>
+                        <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/help">Help </a>
+                        </li>
+
+
                         <!-- <li class="menu-item-has-children"><span class="menu-expand"></span><a href="blog-category-fullwidth.html">Blog</a>
                             <ul class="dropdown">
                                 <li><a href="blog-category-grid.html">Blog Category Grid</a></li>
@@ -682,7 +643,7 @@
             </div>
             <div class="mobile-header-info-wrap mobile-header-border">
                 <div class="single-mobile-header-info mt-30">
-                    <a href=""> Our location </a>
+                    <a href="/contact#mapSection"> Our location </a>
                 </div>
                 <div class="single-mobile-header-info">
 
@@ -710,12 +671,84 @@
             </div>
             <div class="mobile-social-icon">
                 <h5 class="mb-15 text-grey-4">Follow Us</h5>
-                <a href="#"><img src="/imgs/theme/icons/icon-facebook.svg" alt=""></a>
-                <a href="#"><img src="/imgs/theme/icons/icon-twitter.svg" alt=""></a>
-                <a href="#"><img src="/imgs/theme/icons/icon-instagram.svg" alt=""></a>
-                <a href="#"><img src="/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
-                <a href="#"><img src="/imgs/theme/icons/icon-youtube.svg" alt=""></a>
+                <a href="https://www.facebook.com/Akhildasaki"><img src="/imgs/theme/icons/icon-facebook.svg"
+                        alt="fb"></a>
+                <a href="https://x.com/Akhildas2Aki?t=jzUwZ2o_sazydId68AYn4g&s=09"><img
+                        src="/imgs/theme/icons/icon-twitter.svg" alt="twr"></a>
+                <a href="https://www.instagram.com/akhildas___2___aki/"><img src="/imgs/theme/icons/icon-instagram.svg"
+                        alt="insta"></a>
             </div>
         </div>
     </div>
 </div>
+
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchBoxes = document.querySelectorAll('.search-box');
+
+        searchBoxes.forEach(searchBox => {
+            const form = searchBox.closest('form');
+            const suggestionsList = form.querySelector('.suggestions-list');
+            const categorySelect = form.querySelector('select[name="category"]');
+
+            searchBox.addEventListener('input', function () {
+                const query = this.value.trim();
+                const selectedCategory = categorySelect ? categorySelect.value : '';
+
+                if (query.length < 2) {
+                    suggestionsList.innerHTML = '';
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                fetch(`/search-suggestions?q=${encodeURIComponent(query)}&category=${encodeURIComponent(selectedCategory)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsList.innerHTML = '';
+                        if (data.length > 0) {
+                            data.forEach(item => {
+                                const li = document.createElement('li');
+                                li.textContent = item.value;
+                                li.dataset.type = item.type;
+
+                                const typeSpan = document.createElement('span');
+                                typeSpan.textContent = item.type === 'category' ? '📁 ' : '🛍️ ';
+                                li.prepend(typeSpan);
+
+                                li.onclick = function () {
+                                    const params = new URLSearchParams();
+
+                                    if (item.type === 'category') {
+                                        params.set('category', item.value);
+                                        const currentQuery = searchBox.value.trim();
+                                        if (currentQuery) params.set('query', currentQuery);
+                                        if (categorySelect) categorySelect.value = item.value;
+                                    } else {
+                                        params.set('query', item.value);
+                                        if (categorySelect?.value) params.set('category', categorySelect.value);
+                                        searchBox.value = item.value;
+                                    }
+
+                                    window.location.href = `${form.action}?${params.toString()}`;
+                                };
+
+                                suggestionsList.appendChild(li);
+                            });
+                            suggestionsList.style.display = 'block';
+                        } else {
+                            suggestionsList.style.display = 'none';
+                        }
+                    });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!searchBox.contains(e.target) && !suggestionsList.contains(e.target)) {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>

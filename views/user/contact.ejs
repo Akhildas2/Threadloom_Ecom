@@ -1,37 +1,161 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
 
-        <section class="pt-100 pb-100">
-            <div class="container">
+        <section class="section-padding">
+            <div class="container pt-150 pb-50">
                 <div class="row">
                     <!-- Image Column -->
                     <div class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
                         <img src="/imgs/pages/Contact Us Page.png" alt="contact us" class="img-fluid">
                     </div>
 
-                    <!-- Contact Form Column -->
+                    <!-- Contact Details & Form Column -->
                     <div class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center ">
-                        <div class="container">
-                            <h5 class="text-center"> <strong>Contact Us</strong></h5>
-                            <br>
-                            <p><strong>Address:</strong> Near Kondotty, Malappuram (Dt),Kerala (St), India</p>
+                        <div class="container p-3">
+                            <h3 class="text-center"><strong>Contact Us</strong></h3>
+                            <p><strong>Address:</strong> Near Kondotty, Malappuram (Dt), Kerala, India</p>
                             <p><strong>Phone:</strong> +91 9633351499</p>
                             <p><strong>Hours:</strong> 8:00 - 20:00, Mon - Sat</p>
 
-                            <h5 class="mb-10 mt-30 fw-600 text-grey-4 wow fadeIn animated">Follow Us</h5>
-                            <div class="mobile-social-icon wow fadeIn animated mb-sm-5 mb-md-0">
+                            <!-- Social Media Links -->
+                            <h5 class="mt-4 fw-600 text-grey-4">Follow Us</h5>
+                            <div class="mobile-social-icon mt-2">
                                 <a href="https://www.facebook.com/Akhildasaki"><img
                                         src="/imgs/theme/icons/icon-facebook.svg" alt="fb"></a>
                                 <a href="https://www.instagram.com/akhildas___2___aki/"><img
                                         src="/imgs/theme/icons/icon-instagram.svg" alt="insta"></a>
+                                <a href="https://x.com/Akhildas2Aki?t=jzUwZ2o_sazydId68AYn4g&s=09"><img
+                                        src="/imgs/theme/icons/icon-twitter.svg" alt="twr"></a>
                             </div>
+
+                            <!-- Contact Form -->
+                            <h5 class="mt-4"><strong>Send Us a Message</strong></h5>
+                            <form id="contactForm" action="/contact" method="POST" novalidate>
+                                <div class="mb-3 mt-3">
+                                    <input type="text" class="form-control" id="name" name="name"
+                                        placeholder="Your Name" required>
+                                    <div class="text-danger small mt-1" id="nameError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" class="form-control" id="email" name="email"
+                                        placeholder="Your Email" required>
+                                    <div class="text-danger small mt-1" id="emailError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <textarea class="form-control" id="message" name="message" rows="4"
+                                        placeholder="Your Message" required></textarea>
+                                    <div class="text-danger small mt-1" id="messageError"></div>
+                                </div>
+                                <button type="submit" class="btn btn-lg">Send</button>
+                                <div id="successMessage" class="text-success mt-2"></div>
+                            </form>
+
+
+
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
+        <section class="section-padding">
+               <!-- Google Maps Section -->
+               <div class="container pb-100" id="mapSection">
+                <div class="col-12">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.303716674149!2d76.02225747448892!3d11.157189187498215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba6445f3b3cb7d1%3A0x2c4b5f5c0dc3f439!2sKondotty%2C%20Kerala!5e0!3m2!1sen!2sin!4v1707748843456!5m2!1sen!2sin"
+                        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy">
+                    </iframe>
+                </div>
+            </div>
+        </section>
+        <!-- SweetAlert2 CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+        <script>
+            document.querySelector('a[href="#mapSection"]').addEventListener("click", function (e) {
+                e.preventDefault();
+                document.querySelector("#mapSection").scrollIntoView({ behavior: "smooth" });
+            });
+
+            document.getElementById("contactForm").addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent normal form submission
+                let isValid = true;
+
+                // Clear previous errors
+                document.getElementById("nameError").innerText = "";
+                document.getElementById("emailError").innerText = "";
+                document.getElementById("messageError").innerText = "";
+                document.getElementById("successMessage").innerText = "";
+
+                // Get form values
+                let name = document.getElementById("name").value.trim();
+                let email = document.getElementById("email").value.trim();
+                let message = document.getElementById("message").value.trim();
+
+                // Validate Name
+                if (name === "") {
+                    document.getElementById("nameError").innerText = "Name is required.";
+                    isValid = false;
+                }
+
+                // Validate Email
+                let emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                if (email === "") {
+                    document.getElementById("emailError").innerText = "Email is required.";
+                    isValid = false;
+                } else if (!emailPattern.test(email)) {
+                    document.getElementById("emailError").innerText = "Enter a valid email.";
+                    isValid = false;
+                }
+
+                // Validate Message
+                if (message === "") {
+                    document.getElementById("messageError").innerText = "Message cannot be empty.";
+                    isValid = false;
+                }
+
+                // If validation fails, return early
+                if (!isValid) return;
+
+                // Send data to the server
+                try {
+                    let response = await fetch("/contact", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ name, email, message })
+                    });
+
+                    let result = await response.json();
+
+                    if (result.success) {
+                        // Show success alert using SweetAlert
+                        Swal.fire({
+                            icon: "success",
+                            title: "Message Sent!",
+                            text: "Your message has been sent successfully.",
+                            confirmButtonColor: "#088178"
+                        });
+
+                        document.getElementById("contactForm").reset(); // Clear form after success
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Failed!",
+                            text: "Failed to send message. Try again.",
+                            confirmButtonColor: "#d33"
+                        });
+                    }
+                } catch (error) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Server Error!",
+                        text: "Please try again later.",
+                        confirmButtonColor: "#d33"
+                    });
+                }
+            });
+        </script>
 
         <%- include('../layouts/footer.ejs') %>
             <%- include('../layouts/preloader.ejs') %>

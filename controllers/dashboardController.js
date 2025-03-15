@@ -4,6 +4,8 @@ const Order = require("../models/orderModel")
 const bcrypt = require('bcrypt')
 const Wallet = require('../models/walletModel')
 const Referral = require("../models/referralModel")
+const Review = require("../models/reviewModel")
+
 
 
 
@@ -46,10 +48,11 @@ const loadDashboard = async (req, res, next) => {
 
         const lastOrders = await Order.find({ userId }).limit(5);
         const orderTotalPages = Math.ceil(ordersCount / pageSize);
+        const reviews = await Review.find({ userId }).populate("productId");
         const wallet = await Wallet.findOne({ userId });
         if (!wallet) {
             // wallet is not found
-            return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null, orderTotalPages, orderCurrentPage: orderPage, walletCurrentPage: 0, walletTotalPages: 0, referral, ordersCount, balance: 0, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders });
+            return res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: null, orderTotalPages, orderCurrentPage: orderPage, walletCurrentPage: 0, walletTotalPages: 0, referral, ordersCount, balance: 0, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders, reviews });
         }
 
         // Sorting new transactions
@@ -60,7 +63,8 @@ const loadDashboard = async (req, res, next) => {
         const transactions = wallet.transactions.slice((walletPage - 1) * pageSize, walletPage * pageSize);
         const balance = wallet.balance
 
-        res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage, walletTotalPages, walletCurrentPage: walletPage, balance, referral, ordersCount, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders });
+
+        res.render('dashboard', { req, pageTitle, userData, address, orders, wallet: { ...wallet, transactions }, orderTotalPages, orderCurrentPage: orderPage, walletTotalPages, walletCurrentPage: walletPage, balance, referral, ordersCount, addressPage, addressTotalPages, addressCurrentPage: addressPage, lastOrders, reviews });
 
     } catch (error) {
         next(error);

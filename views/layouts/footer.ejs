@@ -2,25 +2,17 @@
     <section class="newsletter p-30 text-white wow fadeIn animated">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-7 mb-md-3 mb-lg-0">
-                    <div class="row align-items-center">
-                        <div class="col flex-horizontal-center">
+                <div class="mb-md-3 mb-lg-0">
+                    <div class="row align-items-center text-center">
+                        <div class="col-lg-6  flex-horizontal-center">
                             <img class="icon-email" src="/imgs/theme/icons/icon-email.svg" alt="">
                             <h4 class="font-size-20 mb-0 ml-3">Sign up to Earn Referral Rewards</h4>
                         </div>
-                        <div class="col my-4 my-md-0 des">
+                        <div class="col-lg-6 my-4 my-md-0 des text-center">
                             <h5 class="font-size-15 ml-4 mb-0">...and receive <strong>₹100 for every referral.</strong>
                             </h5>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-5">
-                    <!-- Subscribe Form -->
-                    <form class="form-subcriber d-flex wow fadeIn animated">
-                        <input type="email" class="form-control bg-white font-small" placeholder="Enter your email">
-                        <button class="btn bg-dark text-white" type="submit">Subscribe</button>
-                    </form>
-                    <!-- End Subscribe Form -->
                 </div>
             </div>
         </div>
@@ -39,8 +31,6 @@
                             Malappuram (Dt),
                             <br> Kerala(St),
                             India </br>
-
-
                         </p>
                         <p class="wow fadeIn animated">
                             <strong>Phone: </strong>+91 9633351499
@@ -50,46 +40,55 @@
                         </p>
                         <h5 class="mb-10 mt-30 fw-600 text-grey-4 wow fadeIn animated">Follow Us</h5>
                         <div class="mobile-social-icon wow fadeIn animated mb-sm-5 mb-md-0">
-                            <a href="#"><img src="/imgs/theme/icons/icon-facebook.svg" alt=""></a>
-                            <a href="#"><img src="/imgs/theme/icons/icon-twitter.svg" alt=""></a>
-                            <a href="#"><img src="/imgs/theme/icons/icon-instagram.svg" alt=""></a>
-                            <a href="#"><img src="/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
-                            <a href="#"><img src="/imgs/theme/icons/icon-youtube.svg" alt=""></a>
+                            <a href="https://www.facebook.com/Akhildasaki"><img
+                                    src="/imgs/theme/icons/icon-facebook.svg" alt="fb"></a>
+                            <a href="https://x.com/Akhildas2Aki?t=jzUwZ2o_sazydId68AYn4g&s=09"><img
+                                    src="/imgs/theme/icons/icon-twitter.svg" alt="twr"></a>
+                            <a href="https://www.instagram.com/akhildas___2___aki/"><img
+                                    src="/imgs/theme/icons/icon-instagram.svg" alt="insta"></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-2 col-md-3">
                     <h5 class="widget-title wow fadeIn animated">About</h5>
                     <ul class="footer-list wow fadeIn animated mb-sm-5 mb-md-0">
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Delivery Information</a></li>
+                        <li><a href="/about">About Us</a></li>
                         <li><a href="#">Privacy Policy</a></li>
                         <li><a href="#">Terms &amp; Conditions</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="/contact">Contact Us</a></li>
                         <li><a href="#">Support Center</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-2  col-md-3">
-                    <h5 class="widget-title wow fadeIn animated">My Account</h5>
-                    <ul class="footer-list wow fadeIn animated">
-                        <li><a href="/register">Sign In</a></li>
-                        <li><a href="/cart">View Cart</a></li>
-                        <li><a href="/wishList">My Wishlist</a></li>
-                        <li><a href="/dashboard">Dashboard</a></li>
-                        <li><a href="#">Help</a></li>
 
-                    </ul>
-                </div>
-                <div class="col-lg-4">
-                    <h5 class="widget-title wow fadeIn animated">Install App</h5>
-
-                    <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
-                        <p class="mb-20 wow fadeIn animated">Secured Payment Gateways:</p>
-                        <p class="mb-20 wow fadeIn animated">Paypall</p>
-                        <p class="mb-20 wow fadeIn animated">Wallet</p>
-                        <img class="wow fadeIn animated" src="/imgs/theme/payment-method.png" alt="">
+                <% if (req.session.user_id) { %>
+                    <div class="col-lg-2 col-md-3">
+                        <h5 class="widget-title wow fadeIn animated">My Account</h5>
+                        <ul class="footer-list wow fadeIn animated">
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/cart">View Cart</a></li>
+                            <li><a href="/wishList">My Wishlist</a></li>
+                            <li><a href="/help">Help</a></li>
+                        </ul>
                     </div>
-                </div>
+                    <% } else { %>
+                        <div class="col-lg-2 col-md-3">
+                            <h5 class="widget-title wow fadeIn animated">My Account</h5>
+                            <ul class="footer-list wow fadeIn animated">
+                                <li><a href="/register">Sign Up</a></li>
+                                <li><a href="/login">Sign In</a></li>
+                                <li><a href="/help">Help</a></li>
+                            </ul>
+                        </div>
+                        <% } %>
+
+                            <div class="col-lg-4">
+                                <div class="col-md-4 col-lg-12 mt-md-3 mt-lg-0">
+                                    <p class="mb-20 wow fadeIn animated">Secured Payment Gateways:</p>
+                                    <p class="mb-20 wow fadeIn animated">Paypall</p>
+                                    <p class="mb-20 wow fadeIn animated">Wallet</p>
+                                    <img class="wow fadeIn animated" src="/imgs/theme/payment-method.png" alt="">
+                                </div>
+                            </div>
             </div>
         </div>
     </section>

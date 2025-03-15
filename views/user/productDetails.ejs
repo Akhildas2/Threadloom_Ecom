@@ -1,6 +1,81 @@
 <%- include('../layouts/header.ejs') %>
     <%- include('../layouts/navbar.ejs') %>
         <%- include('../layouts/quickView.ejs') %>
+            <style>
+                /* Enhanced Interactive Styles */
+                .card-hover {
+                    transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    cursor: default;
+                    border: 1px solid rgba(0, 0, 0, 0.05);
+                }
+
+                .card-hover:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+                }
+
+                .avatar-hover {
+                    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                    will-change: transform;
+                }
+
+                .avatar-hover:hover {
+                    transform: scale(1.15) rotate(8deg);
+                    box-shadow: 0 6px 12px rgba(8, 129, 120, 0.2);
+                }
+
+                .online-indicator {
+                    position: absolute;
+                    bottom: 2px;
+                    right: 2px;
+                    width: 12px;
+                    height: 12px;
+                    border: 2px solid white;
+                }
+
+                .rating-badge {
+                    background: rgba(255, 193, 7, 0.15);
+                    border: 1px solid rgba(255, 193, 7, 0.2);
+                }
+
+                .btn-like,
+                .btn-edit {
+                    padding: 8px 16px;
+                    border-radius: 8px;
+                    border: none;
+                    background: rgba(8, 129, 120, 0.05);
+                    transition: all 0.2s ease;
+                }
+
+                .btn-like:hover,
+                .btn-edit:hover {
+                    background: rgba(8, 129, 120, 0.1);
+                    transform: translateY(-1px);
+                }
+
+                .btn-like.active {
+                    background: #088178;
+                    color: white;
+                }
+
+                .btn-like.active i {
+                    color: white !important;
+                }
+
+                .transition-all {
+                    transition: all 0.2s ease;
+                }
+
+                .verified-badge {
+                    font-size: 0.8em;
+                    vertical-align: middle;
+                }
+
+                .btn-share:hover {
+                    color: #088178 !important;
+                    transform: rotate(15deg);
+                }
+            </style>
 
             <section class="mt-50 mb-50">
                 <div class="container">
@@ -60,21 +135,21 @@
 
                                                 <div class="product-rate-cover text-end">
                                                     <strong>
-                                                        <span class="font-small m-2" <% if (averageRating>= 3) { %>
+                                                        <span class="font-small m-2" <% if (product.avgRating>= 3) { %>
                                                             style="background-color: #4CAF50; color: white; padding:
                                                             3px 6px; border-radius: 4px;"
                                                             <% } else { %>
                                                                 style="background-color: #F44336; color: white;
                                                                 padding: 3px 6px; border-radius: 4px;"
                                                                 <% } %>>
-                                                                    <%= averageRating.toFixed(1) %> ★
+                                                                    <%= product.avgRating.toFixed(1) %> ★
                                                         </span>
                                                     </strong>|
                                                     <span class="font-small m-2 text-muted">
-                                                        <%= totalRating %> Ratings
+                                                        <%= product.totalRatings %> Ratings
                                                     </span> |
                                                     <span class="font-small m-2 text-muted">
-                                                        <%= totalReviews %> Reviews
+                                                        <%=product.totalReviews %> Reviews
                                                     </span>
                                                 </div>
 
@@ -361,8 +436,9 @@
                                     </div>
 
                                     <div onmouseover="toggleSection('reviews')">
-                                        <h3 class="section-title style-1 mb-30 mt-30">Ratings (<%= totalRating %>) &
-                                                Reviews (<%= totalReviews %>)</h3>
+                                        <h3 class="section-title style-1 mb-30 mt-30">Ratings (<%= product.totalRatings
+                                                %>) &
+                                                Reviews (<%= product.totalReviews %>)</h3>
 
                                         <div class="section-content reviews">
                                             <div class="text-end">
@@ -383,22 +459,6 @@
                                                     <form id="reviewFormSubmit" onsubmit="submitReview(event)">
                                                         <input type="hidden" name="productId"
                                                             value="<%= product._id %>">
-
-                                                        <div class="form-group mb-3">
-                                                            <label class="form-label">Rating:</label>
-                                                            <div class="rating-stars">
-                                                                <i class="fas fa-star" data-value="1"></i>
-                                                                <i class="fas fa-star" data-value="2"></i>
-                                                                <i class="fas fa-star" data-value="3"></i>
-                                                                <i class="fas fa-star" data-value="4"></i>
-                                                                <i class="fas fa-star" data-value="5"></i>
-                                                            </div>
-                                                            <input type="hidden" name="rating" id="ratingValue"
-                                                                value="0">
-                                                            <span id="ratingError"
-                                                                style="color: red; font-size: 14px;"></span>
-                                                        </div>
-
                                                         <div class="form-group mb-3">
                                                             <label class="form-label">Comment:</label>
                                                             <textarea name="comment" rows="3" class="form-control"
@@ -408,7 +468,7 @@
                                                         </div>
                                                         <div class="text-center">
                                                             <button type="submit"
-                                                                class="btn btn-sm btn-primary w-50 rounded-pill">Submit
+                                                                class="btn btn-sm w-50 rounded-pill">Submit
                                                                 Review</button>
                                                         </div>
                                                     </form>
@@ -419,26 +479,133 @@
 
                                                         <% if (reviews.length> 0) { %>
                                                             <% reviews.forEach(review=> { %>
-                                                                <div class="review-item border-bottom pb-3 mb-3">
-                                                                    <div class="d-flex align-items-center mb-2">
-                                                                        <div class="avatar bg-primary text-white rounded-circle d-flex justify-content-center align-items-center me-2"
-                                                                            style="width: 40px; height: 40px;">
-                                                                            <%= review.userId.name.charAt(0).toUpperCase()
-                                                                                %>
+                                                                <div
+                                                                    class="review-item card-hover bg-white rounded-4 p-4 mb-3 border-0 shadow-sm">
+                                                                    <div class="d-flex align-items-center mb-3">
+                                                                        <!-- Enhanced Avatar with Status Indicator -->
+                                                                        <div class="avatar-hover position-relative text-white rounded-circle d-flex justify-content-center align-items-center me-3"
+                                                                            style="width: 48px; height: 48px; background: linear-gradient(135deg, #088178, #0caa9f); transition: all 0.3s ease;">
+                                                                            <span class="avatar-initial fs-5 fw-bold">
+                                                                                <%= review.userId.name.charAt(0).toUpperCase()
+                                                                                    %>
+                                                                            </span>
+                                                                            <div
+                                                                                class="online-indicator bg-success rounded-circle">
+                                                                            </div>
                                                                         </div>
-                                                                        <div>
-                                                                            <strong class="d-block">
-                                                                                <%= review.userId.name %>
-                                                                            </strong>
-                                                                            <small class="text-muted">Rating: <%=
-                                                                                    review.rating %>/5</small>
+
+                                                                        <!-- User Info with Enhanced Rating -->
+                                                                        <div class="flex-grow-1">
+                                                                            <div
+                                                                                class="d-flex align-items-center justify-content-between mb-1">
+                                                                                <div>
+                                                                                    <h5
+                                                                                        class="d-block text-dark mb-0 fw-semibold">
+                                                                                        <%= review.userId.name %>
+                                                                                            <span
+                                                                                                class="verified-badge ms-1"><i
+                                                                                                    class="fas fa-check-circle text-primary"></i></span>
+                                                                                    </h5>
+                                                                                </div>
+                                                                                <% if (review.avgRating> 0 ) { %>
+                                                                                    <div
+                                                                                        class="rating-badge small px-3 py-2 rounded-pill bg-light">
+                                                                                        <% for(let i=0; i < 5; i++) { %>
+                                                                                            <i
+                                                                                                class="fas fa-star <%= i < review.avgRating ? 'text-warning' : 'text-muted opacity-50' %> fs-6"></i>
+                                                                                            <% } %>
+                                                                                    </div>
+                                                                                    <% } %>
+                                                                            </div>
+                                                                            <small class="text-muted"
+                                                                                data-timestamp="<%= review.createdAt %>"></small>
                                                                         </div>
                                                                     </div>
-                                                                    <p class="mb-0"
-                                                                        style="font-size: 0.9rem; color: #555;">
-                                                                        <%= review.comment %>
-                                                                    </p>
+
+                                                                    <!-- Review Content with Enhanced Interaction -->
+                                                                    <% if (review.comment && review.comment.trim() !==""
+                                                                        ) { %>
+                                                                        <div class="review-content ms-2">
+                                                                            <p class="mb-3 text-dark fs-5"
+                                                                                style="line-height: 1.6;">
+                                                                                “<%= review.comment %>”
+                                                                            </p>
+                                                                            <!-- Interactive Actions with Improved Layout -->
+                                                                            <div
+                                                                                class="d-flex align-items-center justify-content-between">
+                                                                                <div
+                                                                                    class="d-flex align-items-center gap-3">
+                                                                                    <button
+                                                                                        class="btn-like d-flex align-items-center gap-2"
+                                                                                        data-review-id="<%= review._id %>"
+                                                                                        aria-label="Like this review">
+                                                                                        <i
+                                                                                            class="far fa-thumbs-up fs-5 transition-all"></i>
+                                                                                        <span class="count fw-semibold">
+                                                                                            <%= review.likes.length || 0
+                                                                                                %>
+                                                                                        </span>
+                                                                                    </button>
+
+                                                                                    <% if
+                                                                                        (req.session.user_id===review.userId._id.toString())
+                                                                                        { %>
+                                                                                        <button
+                                                                                            class="btn-edit d-flex align-items-center gap-2"
+                                                                                            aria-label="Edit this review"
+                                                                                            onclick="editReview('<%= review._id %>',`<%= review.comment %>`)">
+                                                                                            <span class="fw-semibold">
+                                                                                                <i
+                                                                                                    class="fas fa-edit me-2"></i>
+                                                                                                Edit
+                                                                                            </span>
+                                                                                        </button>
+                                                                                        <% } %>
+                                                                                </div>
+
+                                                                            </div>
+
+                                                                            <!-- Hidden Edit Review Form -->
+                                                                            <div id="editReviewForm_<%= review._id %>"
+                                                                                class="mt-3 p-2 d-none">
+                                                                                <div
+                                                                                    class="card p-3 shadow-sm border rounded">
+                                                                                    <h6
+                                                                                        class="fw-bold text-secondary mb-2">
+                                                                                        Edit Your Review</h6>
+                                                                                    <textarea
+                                                                                        id="editComment_<%= review._id %>"
+                                                                                        class="form-control mb-2"
+                                                                                        rows="5"><%= review.comment %></textarea>
+                                                                                    <span
+                                                                                        id="editCommentError_<%= review._id %>"
+                                                                                        class="text-danger small"></span>
+
+                                                                                    <div
+                                                                                        class="d-flex justify-content-end mt-2 gap-2">
+                                                                                        <button
+                                                                                            class="btn btn-sm btn-success px-3"
+                                                                                            onclick="submitEditReview('<%= review._id %>')">
+                                                                                            <i
+                                                                                                class="fas fa-check me-1"></i>
+                                                                                            Save
+                                                                                        </button>
+                                                                                        <button
+                                                                                            class="btn btn-sm btn-outline-secondary px-3"
+                                                                                            onclick="cancelEditReview('<%= review._id %>')">
+                                                                                            <i
+                                                                                                class="fas fa-times me-1"></i>
+                                                                                            Cancel
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                        <% } %>
+
                                                                 </div>
+
                                                                 <% }) %>
                                                                     <% } else { %>
                                                                         <p class="text-muted">No reviews yet. Be the
@@ -447,6 +614,7 @@
                                                     </div>
                                         </div>
                                     </div>
+
                         </section>
 
 
@@ -531,7 +699,7 @@
                                                         </h2>
 
                                                         <div class="rating-result"
-                                                            data-rating="<%= product.averageRating %>">
+                                                            data-rating="<%= product.avgRating %>">
                                                             <span class="stars"></span>
                                                             <span class="percentage"></span>
                                                         </div>
@@ -885,20 +1053,20 @@
 
                             // Handle Ratings and Reviews
                             let ratingDiv = document.getElementById("quickViewRating");
-                            let averageRating = product.averageRating || 0;
-                            let totalRating = product.totalRating || 0;
+                            let averageRatings = product.avgRating || 0;
+                            let totalRatings = product.totalRatings || 0;
                             let totalReviews = product.totalReviews || 0;
 
-                            let ratingColor = averageRating >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
+                            let ratingColor = averageRatings >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
 
                             ratingDiv.innerHTML = `
                             <div class="product-rate-cover text-end">
                                 <strong>
                                     <span class="font-small m-2" style="background-color: ${ratingColor}; color: white; padding: 3px 6px; border-radius: 4px;">
-                                        ${averageRating.toFixed(1)} ★
+                                        ${averageRatings.toFixed(1)} ★
                                     </span>
                                 </strong> |
-                                <span class="font-small m-2 text-muted">${totalRating} Ratings</span> |
+                                <span class="font-small m-2 text-muted">${totalRatings} Ratings</span> |
                                 <span class="font-small m-2 text-muted">${totalReviews} Reviews</span>
                             </div>
                          `;
@@ -962,30 +1130,30 @@
 
 
 
-                document.querySelectorAll('.rating-stars i').forEach(star => {
-                    star.addEventListener('click', function () {
-                        const rating = this.getAttribute('data-value');
-                        document.getElementById('ratingValue').value = rating;
+                // document.querySelectorAll('.rating-stars i').forEach(star => {
+                //     star.addEventListener('click', function () {
+                //         const rating = this.getAttribute('data-value');
+                //         document.getElementById('ratingValue').value = rating;
 
-                        // Clear rating error when clicked
-                        document.getElementById('ratingError').textContent = '';
+                //         // Clear rating error when clicked
+                //         document.getElementById('ratingError').textContent = '';
 
-                        // Handle star color change
-                        document.querySelectorAll('.rating-stars i').forEach(s => {
-                            s.classList.remove('text-warning');
-                        });
+                //         // Handle star color change
+                //         document.querySelectorAll('.rating-stars i').forEach(s => {
+                //             s.classList.remove('text-warning');
+                //         });
 
-                        for (let i = 0; i < rating; i++) {
-                            document.querySelectorAll('.rating-stars i')[i].classList.add('text-warning');
-                        }
-                    });
-                });
+                //         for (let i = 0; i < rating; i++) {
+                //             document.querySelectorAll('.rating-stars i')[i].classList.add('text-warning');
+                //         }
+                //     });
+                // });
+
 
                 function submitReview(event) {
                     event.preventDefault();
 
                     const formData = new FormData(event.target);
-                    const rating = formData.get('rating');  // Can be empty
                     const comment = formData.get('comment');
 
                     // Clear previous error messages
@@ -997,6 +1165,10 @@
                         document.getElementById('commentError').textContent = 'Please enter a comment.';
                         isValid = false;
                     }
+                    if (comment.length > 200) {
+                        document.getElementById('commentError').textContent = 'Comment should not exceed 200 characters';
+                        isValid = false;
+                    }
 
                     if (!isValid) {
                         return;
@@ -1004,7 +1176,6 @@
 
                     axios.post('/review/add-review', {
                         productId: formData.get('productId'),
-                        rating: rating || 0,
                         comment: comment
                     })
                         .then(response => {
@@ -1017,7 +1188,6 @@
                             });
                         })
                         .catch(error => {
-                            console.error(error);
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -1054,6 +1224,128 @@
                 });
 
 
+
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Enhanced Time Formatting with Date-fns
+                    const formatTimeAgo = (date) => {
+                        const formatter = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+                        const diff = (new Date() - date) / 1000;
+
+                        const intervals = {
+                            year: 31536000,
+                            month: 2592000,
+                            week: 604800,
+                            day: 86400,
+                            hour: 3600,
+                            minute: 60
+                        };
+
+                        for (let [unit, seconds] of Object.entries(intervals)) {
+                            if (diff > seconds) {
+                                const value = -Math.floor(diff / seconds);
+                                return formatter.format(value, unit);
+                            }
+                        }
+                        return 'Just now';
+                    };
+
+                    // Format all timestamps
+                    document.querySelectorAll("[data-timestamp]").forEach(element => {
+                        const timestamp = new Date(element.getAttribute("data-timestamp"));
+                        element.textContent = formatTimeAgo(timestamp);
+                        element.title = timestamp.toLocaleString();  // Tooltip with exact time
+                    });
+
+                    // Enhanced Like Interaction
+                    document.querySelectorAll('.btn-like').forEach(button => {
+                        button.addEventListener("click", function () {
+                            const reviewId = this.dataset.reviewId;
+                            const icon = this.querySelector('i');
+                            const countElement = this.querySelector('.count');
+
+                            // Visual feedback
+                            this.classList.add('active');
+                            icon.classList.replace('far', 'fas');
+
+                            // AJAX call
+                            fetch('/review/like', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ reviewId })
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    countElement.textContent = data.likes;
+                                    this.classList.toggle('active', data.liked);
+                                    icon.classList.toggle('fa-solid', data.liked);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                    // Show error feedback
+                                    this.style.backgroundColor = '#ffe6e6';
+                                    setTimeout(() => this.style.backgroundColor = '', 1000);
+                                })
+                                .finally(() => {
+                                    setTimeout(() => this.classList.remove('active'), 200);
+                                });
+                        });
+                    });
+
+                    // Hover effects
+                    document.querySelectorAll('.btn-like, .btn-edit, .btn-share').forEach(btn => {
+                        btn.addEventListener('mouseenter', () => {
+                            btn.style.transform = 'scale(1.05)';
+                        });
+                        btn.addEventListener('mouseleave', () => {
+                            btn.style.transform = '';
+                        });
+                    });
+                });
+
+
+                function editReview(reviewId, comment) {
+                    document.getElementById(`editReviewForm_${reviewId}`).classList.remove("d-none");
+                    document.getElementById(`editComment_${reviewId}`).value = comment;
+                }
+
+                async function submitEditReview(reviewId) {
+                    const updatedComment = document.getElementById(`editComment_${reviewId}`).value.trim();
+                    const errorElement = document.getElementById(`editCommentError_${reviewId}`);
+
+                    // Clear previous error messages
+                    errorElement.textContent = '';
+
+                    if (updatedComment === '') {
+                        errorElement.textContent = 'Please enter a comment.';
+                        return;
+                    }
+                    if (updatedComment.length > 200) {
+                        errorElement.textContent = 'Comment should not exceed 200 characters.';
+                        return;
+                    }
+
+                    try {
+                        const response = await fetch(`/review/edit-review/${reviewId}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ comment: updatedComment })
+                        });
+
+                        const data = await response.json();
+                        if (data.success) {
+                            location.reload(); // Reload to reflect the updated comment
+                        } else {
+                            errorElement.textContent = data.message || "Failed to update review.";
+                        }
+                    } catch (error) {
+                        console.error("Error updating review:", error);
+                        errorElement.textContent = "An error occurred while updating the review.";
+                    }
+                }
+
+                function cancelEditReview(reviewId) {
+                    document.getElementById(`editReviewForm_${reviewId}`).classList.add("d-none");
+                }
             </script>
             <%- include('../layouts/footer.ejs') %>
                 <%- include('../layouts/script.ejs') %>

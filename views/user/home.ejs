@@ -216,7 +216,7 @@
                                                             </a></h2>
 
                                                         <div class="rating-result"
-                                                            data-rating="<%= featuredProducts[i].averageRating %>">
+                                                            data-rating="<%= featuredProducts[i].avgRating %>">
                                                             <span class="stars"></span>
                                                             <span class="percentage"></span>
                                                         </div>
@@ -380,7 +380,7 @@
                                                             </a></h2>
 
                                                         <div class="rating-result"
-                                                            data-rating="<%= bestSellerProducts[i].averageRating %>">
+                                                            data-rating="<%= bestSellerProducts[i].avgRating %>">
                                                             <span class="stars"></span>
                                                             <span class="percentage"></span>
                                                         </div>
@@ -543,7 +543,7 @@
                                                             </a></h2>
 
                                                         <div class="rating-result"
-                                                            data-rating="<%= newProducts[i].averageRating %>">
+                                                            data-rating="<%= newProducts[i].avgRating %>">
                                                             <span class="stars"></span>
                                                             <span class="percentage"></span>
                                                         </div>
@@ -653,7 +653,7 @@
         </section> -->
 
 
-                    <section class="popular-categories section-padding mt-15">
+                    <section class="popular-categories section-padding mt-15 mb-100">
                         <div class="container wow fadeIn animated">
                             <h3 class="section-title mb-20"><span>Popular</span> Categories</h3>
                             <div class="carausel-6-columns-cover position-relative">
@@ -967,8 +967,8 @@
 
                                             // Handle Ratings and Reviews
                                             let ratingDiv = document.getElementById("quickViewRating");
-                                            let averageRating = product.averageRating || 0;
-                                            let totalRating = product.totalRating || 0;
+                                            let averageRating = product.avgRating || 0;
+                                            let totalRatings = product.totalRatings || 0;
                                             let totalReviews = product.totalReviews || 0;
 
                                             let ratingColor = averageRating >= 3 ? "#4CAF50" : "#F44336"; // Green if rating >= 3, Red otherwise
@@ -980,7 +980,7 @@
                                         ${averageRating.toFixed(1)} ★
                                     </span>
                                 </strong> |
-                                <span class="font-small m-2 text-muted">${totalRating} Ratings</span> |
+                                <span class="font-small m-2 text-muted">${totalRatings} Ratings</span> |
                                 <span class="font-small m-2 text-muted">${totalReviews} Reviews</span>
                             </div>
                          `;

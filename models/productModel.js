@@ -87,6 +87,18 @@ const productSchema = new mongoose.Schema({
     isBestSeller: {
         type: Boolean,
         default: false
+    },
+    avgRating: {
+        type: Number,
+        default: 0
+    },
+    totalRatings: {
+        type: Number,
+        default: 0
+    },
+    totalReviews: {
+        type: Number,
+        default: 0
     }
 });
 

@@ -1,0 +1,227 @@
+<%- include('../layouts/header.ejs') %>
+    <%- include('../layouts/navbar.ejs') %>
+
+        <style>
+            .accordion-button {
+                background-color: white !important;
+                color: #088178 !important;
+                border: 1px solid #088178 !important;
+                box-shadow: none !important;
+            }
+
+            .accordion-button:not(.collapsed) {
+                background-color: white !important;
+                color: #088178 !important;
+                border: 1px solid #088178 !important;
+                box-shadow: none !important;
+            }
+
+            .accordion-button:focus {
+                box-shadow: none !important;
+                outline: none !important;
+            }
+        </style>
+
+        <main class="main single-page">
+            <div class="page-header breadcrumb-wrap">
+                <div class="container">
+                    <div class="breadcrumb">
+                        <a href="/" rel="nofollow">Home</a>
+                        <span> Help </span>
+                    </div>
+                </div>
+            </div>
+
+            <section class="section-padding">
+                <div class="container pt-100 pb-100">
+                    <h1 class="text-center">Help</h1>
+
+                    <!-- Expansion Panel (Accordion) -->
+                    <div class="accordion mt-4" id="faqAccordion">
+
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq1">
+                                    How do I track my order?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can track your order in the "Dashboard" under the "My Orders" section after
+                                    logging in.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq2">
+                                    What is the return policy?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer a 14-day return policy for eligible items. Check our <a
+                                        href="/return-policy">Return Policy</a> page for more details.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq3">
+                                    How do I contact customer support?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can reach us via email at <a
+                                        href="mailto:support@threadloom.com">support@threadloom.com</a>, call us at +91
+                                    9633351499, or visit our <a href="/contact">Contact</a> page to send a message.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq4">
+                                    How do I change my password?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Go to "Dashboard," navigate to the "Profile" tab, and click "Change Password." Enter
+                                    your new password and save the changes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 5 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq5">
+                                    How do I edit my profile information?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can edit your profile by navigating to the "Profile" tab inside the "Dashboard."
+                                    Update your details and save the changes.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 6 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq6">
+                                    How do I manage my addresses?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    In the "Dashboard," go to "My Addresses." Here, you can add, edit, or delete your
+                                    saved addresses.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 7 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq7">
+                                    How do I check my wallet balance?
+                                </button>
+                            </h2>
+                            <div id="faq7" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Your wallet balance can be checked in the "Dashboard" under the "Wallet" section.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 8 -->
+                        <!-- <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq8">
+                                    How do I add money to my wallet?
+                                </button>
+                            </h2>
+                            <div id="faq8" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Go to the "Dashboard," open the "Wallet" section, and select the "Add Money" option.
+                                    Follow the payment instructions to top up your wallet.
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- FAQ 9 -->
+                        <!-- <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq9">
+                                    How do I use my wallet balance for purchases?
+                                </button>
+                            </h2>
+                            <div id="faq9" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    At checkout, you can choose "Wallet Balance" as a payment method. If the wallet
+                                    balance is insufficient, you can pay the remaining amount using other payment
+                                    methods.
+                                </div>
+                            </div>
+                        </div> -->
+
+                        <!-- FAQ 10 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq10">
+                                    How does the referral system work?
+                                </button>
+                            </h2>
+                            <div id="faq10" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    You can find your referral code in the "Dashboard" under the "Wallet" section. Share
+                                    this code with friends, and when they sign up, you earn rewards
+                                    in your wallet.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 11 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq11">
+                                    How do I check my referral rewards?
+                                </button>
+                            </h2>
+                            <div id="faq11" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Your earned referral rewards will be displayed in the "Wallet" section of your
+                                    "Dashboard."
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </section>
+
+            <%- include('../layouts/footer.ejs') %>
+                <%- include('../layouts/preloader.ejs') %>
+                    <%- include('../layouts/script.ejs') %>

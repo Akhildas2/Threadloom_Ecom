@@ -366,3 +366,72 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 });
+
+
+
+document.addEventListener("DOMContentLoaded", async function () {
+    document.querySelectorAll(".stars").forEach(async (starsContainer) => {
+        const productId = starsContainer.dataset.productId;
+        const orderId = starsContainer.dataset.orderId;
+
+        try {
+            const response = await fetch(`/review/get-rating/${productId}/${orderId}`);
+            const data = await response.json();
+
+            if (response.ok && data.rating) {
+                updateStars(starsContainer, data.rating);
+            }
+        } catch (error) {
+            console.error("Error fetching rating:", error);
+        }
+    });
+});
+
+
+
+document.addEventListener("click", async function (event) {
+    if (event.target.matches(".stars i")) {
+        const star = event.target;
+        const starsContainer = star.closest(".stars");
+        const rating = star.dataset.rating;
+        const productId = starsContainer.dataset.productId;
+        const orderId = starsContainer.dataset.orderId;
+
+        starsContainer.classList.add("disabled");
+
+        try {
+            const response = await fetch("/review/add-rating", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId, orderId, rating })
+            });
+
+            if (response.ok) {
+                updateStars(starsContainer, rating);
+            }
+        } catch (error) {
+            console.error("Error submitting rating:", error);
+        } finally {
+            setTimeout(() => {
+                starsContainer.classList.remove("disabled"); // Re-enable after request
+            }, 1000);
+        }
+    }
+});
+
+
+
+function updateStars(starsContainer, rating) {
+    starsContainer.querySelectorAll("i").forEach((s, index) => {
+        s.classList.remove("fas", "text-warning", "far", "text-muted");
+
+        if (index < rating) {
+            s.classList.add("fas", "text-warning");
+        } else {
+            s.classList.add("far", "text-muted");
+        }
+    });
+
+    const ratingValueElement = starsContainer.nextElementSibling.querySelector(".rating-value");
+    ratingValueElement.textContent = rating;
+}

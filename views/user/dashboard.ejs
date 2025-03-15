@@ -3,21 +3,6 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
         <style>
-            .modal-content .btn-primary {
-                background-color: #007bff;
-                /* Bootstrap's primary color */
-                border-color: #007bff;
-                /* Match the background color */
-            }
-
-            /* Change the color of the secondary button */
-            .modal-content .btn-secondary {
-                background-color: #6c757d;
-                /* Bootstrap's secondary color */
-                border-color: #6c757d;
-                /* Match the background color */
-            }
-
             .share-button {
                 display: inline-block;
                 margin: 10px;
@@ -46,6 +31,55 @@
                 font-size: 18px;
                 font-weight: bold;
             }
+
+            .hover-effect {
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                cursor: pointer;
+            }
+
+            .hover-effect:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 1rem 3rem rgba(0, 0, 0, .1) !important;
+            }
+
+            .order-img {
+                transition: transform 0.3s ease;
+                background-color: #f8f9fa;
+            }
+
+            .order-img:hover {
+                transform: scale(1.05);
+            }
+
+            .rating-container {
+                display: flex;
+                align-items: center;
+            }
+
+            .stars {
+                color: #ffd700;
+                font-size: 1rem;
+            }
+
+            .btn-outline-primary:hover .transition-transform {
+                transform: translateX(3px);
+                transition: transform 0.3s ease;
+            }
+
+            .image-container {
+                overflow: hidden;
+                border-radius: 0.375rem 0.375rem 0 0;
+            }
+
+            .card-title {
+                font-weight: 600;
+                color: #2d3436;
+            }
+
+            .badge {
+                font-weight: 500;
+                padding: 0.5em 0.75em;
+            }
         </style>
 
 
@@ -62,7 +96,7 @@
                 </div>
             </div>
 
-            <section class="pt-100 pb-150">
+            <section class="pt-150 pb-150">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12 m-auto">
@@ -122,7 +156,7 @@
                                         <!-- User Dashboard -->
                                         <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                             aria-labelledby="dashboard-tab">
-                                            <div class="card shadow-sm" style="margin-top: 30px; border-radius: 10px;">
+                                            <div class="card shadow-sm" style="margin-top: 30px;">
                                                 <div class="card-header text-white">
                                                     <h5 class="mb-0">Hello, <%= userData.name %> 👋</h5>
                                                 </div>
@@ -133,7 +167,7 @@
                                                     <div class="row mt-3">
                                                         <!-- Total Orders -->
                                                         <div class="col-md-6">
-                                                            <div class="card text-white bg-success mb-3 shadow-sm"
+                                                            <div class="card mb-3 shadow-sm"
                                                                 style="border-radius: 10px;">
                                                                 <div class="card-body text-center">
                                                                     <h6><i class="fas fa-shopping-cart mr-5"></i> Total
@@ -147,7 +181,7 @@
 
                                                         <!-- Total Balance -->
                                                         <div class="col-md-6">
-                                                            <div class="card text-white bg-warning mb-3 shadow-sm"
+                                                            <div class="card mb-3 shadow-sm"
                                                                 style="border-radius: 10px;">
                                                                 <div class="card-body text-center">
                                                                     <h6><i class="fas fa-wallet mr-5"></i> Total Balance
@@ -211,79 +245,98 @@
                                                     <% if (orders.length===0) { %>
                                                         <div class="text-center">
                                                             <img src="/imgs/pages/No Orders.png" alt="No products found"
-                                                                style="width: 350px; height: auto;">
+                                                                class="img-fluid" style="max-width: 300px;">
                                                             <div class="alert alert-info" role="alert">
                                                                 No order items found. Please place an order.
                                                             </div>
                                                         </div>
                                                         <% } else { %>
-                                                            <div class="table-responsive">
-                                                                <table class="table">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th>Product Image</th>
-                                                                            <th>product Name</th>
-                                                                            <th>Price </th>
-                                                                            <th>Quantity</th>
-                                                                            <th>Order Status</th>
-                                                                            <th>Order Date</th>
-                                                                            <th>Actions</th>
-
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <% orders.forEach(order=> { %>
-                                                                        <tbody>
-
-                                                                            <% order.items.forEach(item=> { %>
-                                                                                <tr>
-
-                                                                                    <td>
-                                                                                        <a
-                                                                                            href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
-                                                                                            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                                                                                style="width: 150px;height: 100px;"
-                                                                                                alt="<%= item.productId.name %>">
-                                                                                            <p>
-                                                                                                <%= order.ordersId %>
-                                                                                            </p>
-
-                                                                                        </a>
-
-                                                                                    </td>
-
-                                                                                    <td>
-                                                                                        <a
-                                                                                            href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
-
-                                                                                            <p>
-                                                                                                <%= item.productId.name
+                                                            <div class="row">
+                                                                <% orders.forEach(order=> { %>
+                                                                    <% order.items.forEach(item=> { %>
+                                                                        <div class="col-md-6 col-lg-4 mb-4">
+                                                                            <div
+                                                                                class="card order-card shadow-sm h-100 hover-effect">
+                                                                                <div
+                                                                                    class="image-container position-relative">
+                                                                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                                                        class="card-img-top order-img img-fluid p-3"
+                                                                                        alt="<%= item.productId.name %>"
+                                                                                        style="height: 250px; object-fit: contain;">
+                                                                                    <div
+                                                                                        class="position-absolute top-0 end-0 m-3">
+                                                                                        <span
+                                                                                            class="badge rounded-pill p-2"
+                                                                                            style="background-color: #088178;">
+                                                                                            <%= item.quantity %> × ₹<%=
+                                                                                                    item.price.toFixed(2)
                                                                                                     %>
-                                                                                            </p>
-                                                                                        </a>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
 
-                                                                                    </td>
+                                                                                <div class="card-body pt-0">
+                                                                                    <div
+                                                                                        class="d-flex justify-content-center align-items-center mb-2">
+                                                                                        <h5
+                                                                                            class="card-title mb-0 text-truncate">
+                                                                                            <%= item.productId.name %>
+                                                                                        </h5>
+                                                                                    </div>
+                                                                                    <span
+                                                                                        class="d-flex justify-content-center align-items-center mb-2">#
+                                                                                        <%= order.ordersId %>
+                                                                                    </span>
 
-                                                                                    <td>₹<%= item.price.toFixed(2)%>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <%= item.quantity %>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <%= item.orderStatus %>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <%= order.date.toDateString() %>
-                                                                                    </td>
+                                                                                    <div
+                                                                                        class="d-flex justify-content-between align-items-center mb-3">
+                                                                                        <span class="badge rounded-pill 
+                                                                                        <%= item.orderStatus.toLowerCase() === 'delivered' ? 'bg-success' : 
+                                                                                            item.orderStatus.toLowerCase() === 'shipped' ? 'bg-info' : 
+                                                                                            item.orderStatus.toLowerCase() === 'returned' ? 'bg-danger' :
+                                                                                            'bg-warning text-dark' %>">
+                                                                                            <%= item.orderStatus %>
+                                                                                        </span>
 
 
-                                                                                    <td><a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
-                                                                                            class="btn-small d-block">View</a>
-                                                                                    </td>
-                                                                                </tr>
-                                                                                <% }); %>
-                                                                                    <% }); %>
-                                                                        </tbody>
-                                                                </table>
+                                                                                        <span class="text-muted small">
+                                                                                            <i
+                                                                                                class="fas fa-truck-clock me-1"></i>
+                                                                                            <%= order.expectedDelivery.toDateString()
+                                                                                                %>
+                                                                                        </span>
+                                                                                    </div>
+
+                                                                                    <div
+                                                                                        class="rating-container mb-3 justify-content-center">
+                                                                                        <div class="stars"
+                                                                                            data-product-id="<%= item.productId._id %>"
+                                                                                            data-order-id="<%= order._id %>">
+                                                                                            <% for (let i=1; i <=5; i++)
+                                                                                                { %>
+                                                                                                <i class="fa-star <%= i <= reviews.rating ? 'fas text-warning' : 'far text-muted' %>"
+                                                                                                    data-rating="<%= i %>"></i>
+                                                                                                <% } %>
+                                                                                        </div>
+
+                                                                                        <small class="text-muted ms-2">
+                                                                                            (<span class="rating-value">
+                                                                                                <%= reviews.rating %>
+                                                                                            </span>/5)
+                                                                                        </small>
+                                                                                    </div>
+
+                                                                                    <a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
+                                                                                        class="btn btn-lg w-100 d-flex align-items-center justify-content-between">
+                                                                                        <span>View Details</span>
+                                                                                        <i
+                                                                                            class="fas fa-chevron-right ms-2 transition-transform"></i>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <% }); %>
+                                                                            <% }); %>
                                                             </div>
                                                             <% } %>
                                                 </div>
@@ -364,71 +417,151 @@
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
 
-                                            <div class="card" style="margin-top: 30px;">
+                                            <div class="card " style="margin-top: 30px;">
                                                 <div
                                                     class="card-header d-flex align-items-center justify-content-between">
                                                     <h5 class="mb-0">Manage Address</h5>
-                                                    <a href="#" class="btn-lg btn-primary" data-toggle="modal"
-                                                        data-target="#addAddressModal">Add Address</a>
+                                                    <a href="#" class="btn btn-sm" data-toggle="modal"
+                                                        data-target="#addAddressModal"><i
+                                                            class="fas fa-plus me-2"></i>Add Address</a>
                                                 </div>
-
-                                                <% if (address.length===0) { %>
-                                                    <div class="text-center">
-                                                        <img src="/imgs/pages/No Address.png" alt="No products found"
-                                                            style="width: 350px; height: auto;">
-                                                        <div class="alert alert-info m-5" role="alert">
-                                                            No addresses found.Please add address.
+                                                <div class="card-body">
+                                                    <% if (address.length===0) { %>
+                                                        <div class="text-center">
+                                                            <img src="/imgs/pages/No Address.png" alt="No address found"
+                                                                class="img-fluid" style="max-width: 300px;">
+                                                            <div class="alert alert-info" role="alert">
+                                                                No saved addresses found. Start by adding your first
+                                                                address!
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <% } else { %>
-                                                        <div class="card-body">
+                                                        <% } else { %>
                                                             <div class="row">
                                                                 <% address.forEach(address=> { %>
-                                                                    <div class="col-lg-6" style="margin-top: 30px;">
-                                                                        <div class="card mb-3">
-                                                                            <div class="card-header">
-                                                                                <h5 class="mb-0">Address</h5>
-                                                                            </div>
-                                                                            <div class="card-body">
+                                                                    <div class="col-lg-6">
+                                                                        <div
+                                                                            class="card shadow-lg border-0 mb-4 rounded-3 hover-effect">
+                                                                            <div
+                                                                                class="card-body p-4 position-relative">
+                                                                                <h4
+                                                                                    class="fw-bold text-primary d-flex align-items-center">
+                                                                                    <i
+                                                                                        class="fas fa-map-marker-alt me-2"></i>
+                                                                                    Address
+                                                                                </h4>
+                                                                                <div class="address-details">
+                                                                                    <div
+                                                                                        class="detail-item d-flex align-items-center mb-2  mt-2">
+                                                                                        <i
+                                                                                            class="fas fa-user text-muted me-2 fa-sm"></i>
+                                                                                        <span class="text-dark">
+                                                                                            <%= address.fullName %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="detail-item d-flex align-items-center mb-2">
+                                                                                        <i
+                                                                                            class="fas fa-mobile-alt text-muted me-2 fa-sm"></i>
+                                                                                        <span class="text-dark">
+                                                                                            <%= address.mobileNumber %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="detail-item d-flex align-items-center mb-2">
+                                                                                        <i
+                                                                                            class="fas fa-home text-muted me-2 fa-sm"></i>
+                                                                                        <span class="text-dark">
+                                                                                            <%= address.houseNo %>, <%=
+                                                                                                    address.area %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                    <div
+                                                                                        class="detail-item d-flex align-items-center">
+                                                                                        <i
+                                                                                            class="fas fa-city text-muted me-2 fa-sm"></i>
+                                                                                        <span class="text-dark">
+                                                                                            <%= address.city %>, <%=
+                                                                                                    address.state %> -
+                                                                                                    <%= address.pincode
+                                                                                                        %>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
 
-                                                                                <p>
-                                                                                    <%= address.fullName %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%=address.mobileNumber %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%= address.houseNo %>, <%=
-                                                                                            address.area %>
-                                                                                </p>
-                                                                                <p>
-                                                                                    <%= address.city %>, <%=
-                                                                                            address.state %> - <%=
-                                                                                                address.pincode %>
-                                                                                </p>
-                                                                                <a href="#"
-                                                                                    class="btn-small edit-address-btn"
-                                                                                    data-toggle="modal"
-                                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                                    data-address-id="<%= address._id %>">Edit</a>
-                                                                                <br>
-                                                                                <a href="#"
-                                                                                    class="btn-small delete-address-btn"
-                                                                                    data-toggle="modal"
-                                                                                    data-target="#editAddressModal-<%= address._id %>"
-                                                                                    data-address-id="<%= address._id %>">Delete</a>
+                                                                                <div
+                                                                                    class="d-flex gap-3 mt-3 align-items-center">
+                                                                                    <a href="#"
+                                                                                        class="btn btn-sm edit-address-btn"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#editAddressModal-<%= address._id %>"
+                                                                                        data-address-id="<%= address._id %>">
+                                                                                        <i class="fas fa-edit me-2"></i>
+                                                                                        Edit</a>
 
+                                                                                    <a href="#"
+                                                                                        class="btn btn-sm delete-address-btn bg-danger"
+                                                                                        data-toggle="modal"
+                                                                                        data-target="#editAddressModal-<%= address._id %>"
+                                                                                        data-address-id="<%= address._id %>"><i
+                                                                                            class="fas fa-trash-alt me-2"></i>
+                                                                                        Delete</a>
 
+                                                                                </div>
                                                                             </div>
                                                                         </div>
                                                                     </div>
+
+
                                                                     <% }); %>
                                                             </div>
 
-                                                        </div>
-                                                        <% } %>
+                                                </div>
+                                                <% } %>
 
-
+                                                    <!-- Pagination -->
+                                                    <div class="pagination-area mt-30 mb-50">
+                                                        <nav aria-label="Page navigation example">
+                                                            <ul class="pagination justify-content-center">
+                                                                <% if (addressCurrentPage> 1) { %>
+                                                                    <li class="page-item">
+                                                                        <a class="page-link"
+                                                                            href="?addressPage=<%= addressCurrentPage - 1 %>#address">
+                                                                            <span aria-hidden="true">&lt;</span>
+                                                                            <!-- Previous Page Symbol -->
+                                                                        </a>
+                                                                    </li>
+                                                                    <% } %>
+                                                                        <% for (let i=1; i <=addressTotalPages; i++) {
+                                                                            %>
+                                                                            <% if (i===addressCurrentPage) { %>
+                                                                                <li class="page-item active">
+                                                                                    <a class="page-link"
+                                                                                        href="?addressPage=<%= 1 %>#address">
+                                                                                        <%= i %>
+                                                                                    </a>
+                                                                                </li>
+                                                                                <% } else { %>
+                                                                                    <li class="page-item">
+                                                                                        <a class="page-link"
+                                                                                            href="?addressPage=<%= i %>#address">
+                                                                                            <%= i %>
+                                                                                        </a>
+                                                                                    </li>
+                                                                                    <% } %>
+                                                                                        <% } %>
+                                                                                            <% if (addressCurrentPage <
+                                                                                                addressTotalPages) { %>
+                                                                                                <li class="page-item">
+                                                                                                    <a class="page-link"
+                                                                                                        href="?addressPage=<%= addressCurrentPage + 1 %>#address">
+                                                                                                        <span
+                                                                                                            aria-hidden="true">&gt;</span>
+                                                                                                    </a>
+                                                                                                </li>
+                                                                                                <% } %>
+                                                            </ul>
+                                                        </nav>
+                                                    </div>
 
                                             </div>
                                             <!-- for add address modal -->
@@ -572,51 +705,6 @@
                                                     </div>
                                                 </div>
                                                 <% }) %>
-
-                                                    <!-- Pagination -->
-                                                    <div class="pagination-area mt-30 mb-50">
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination justify-content-end">
-                                                                <% if (addressCurrentPage> 1) { %>
-                                                                    <li class="page-item">
-                                                                        <a class="page-link"
-                                                                            href="?addressPage=<%= addressCurrentPage - 1 %>#address">
-                                                                            <span aria-hidden="true">&lt;</span>
-                                                                            <!-- Previous Page Symbol -->
-                                                                        </a>
-                                                                    </li>
-                                                                    <% } %>
-                                                                        <% for (let i=1; i <=addressTotalPages; i++) {
-                                                                            %>
-                                                                            <% if (i===addressCurrentPage) { %>
-                                                                                <li class="page-item active">
-                                                                                    <a class="page-link"
-                                                                                        href="?addressPage=<%= 1 %>#address">
-                                                                                        <%= i %>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <% } else { %>
-                                                                                    <li class="page-item">
-                                                                                        <a class="page-link"
-                                                                                            href="?addressPage=<%= i %>#address">
-                                                                                            <%= i %>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                    <% } %>
-                                                                                        <% } %>
-                                                                                            <% if (addressCurrentPage <
-                                                                                                addressTotalPages) { %>
-                                                                                                <li class="page-item">
-                                                                                                    <a class="page-link"
-                                                                                                        href="?addressPage=<%= addressCurrentPage + 1 %>#address">
-                                                                                                        <span
-                                                                                                            aria-hidden="true">&gt;</span>
-                                                                                                    </a>
-                                                                                                </li>
-                                                                                                <% } %>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
                                         </div>
 
                                         <!-- edit profile -->
@@ -654,16 +742,17 @@
 
                                                             </div>
 
-                                                            <div class="col-md-12 text-center">
+                                                            <div
+                                                                class="col-md-12 d-flex justify-content-center text-center gap-3">
                                                                 <button type="button"
-                                                                    class="btn btn-fill-out btn-secondary mr-5 mt-5"
+                                                                    class="btn btn-md btn-fill-out bg-secondary "
                                                                     data-toggle="modal"
                                                                     data-target="#changePasswordModal">
-                                                                    <i class="fas fa-key mr-5"></i>Change
+                                                                    <i class="fas fa-key me-2"></i>Change
                                                                     Password</button>
-                                                                <button type="submit" class="btn btn-fill-out mt-5"
+                                                                <button type="submit" class="btn btn-md btn-fill-out"
                                                                     name="submit" value="Submit"><i
-                                                                        class="fas fa-save mr-5"></i>Save</button>
+                                                                        class="fas fa-save me-2"></i>Save</button>
                                                             </div>
 
                                                         </div>
@@ -821,7 +910,8 @@
                                                             <% wallet.transactions.forEach(transaction=> {
                                                                 %>
                                                                 <div class="col-md-6">
-                                                                    <div class="card mb-3 shadow-lg border-1">
+                                                                    <div
+                                                                        class="card mb-3 shadow-lg border-1 hover-effect">
                                                                         <div class="card-body">
                                                                             <h5 class="card-title">
                                                                                 <% if (transaction.type==='credit' ) {

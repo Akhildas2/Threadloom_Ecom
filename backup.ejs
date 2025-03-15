@@ -1,0 +1,152 @@
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Image</th>
+                <th>product Name</th>
+                <th>Price </th>
+                <th>Quantity</th>
+                <th>Order Status</th>
+                <th>Order Date</th>
+                <th>Actions</th>
+
+            </tr>
+        </thead>
+        <% orders.forEach(order=> { %>
+            <tbody>
+
+                <% order.items.forEach(item=> { %>
+                    <tr>
+
+                        <td>
+                            <a
+                                href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                                <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                    style="width: 150px;height: 100px;"
+                                    alt="<%= item.productId.name %>">
+                                <p>
+                                    <%= order.ordersId %>
+                                </p>
+
+                            </a>
+
+                        </td>
+
+                        <td>
+                            <a
+                                href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+
+                                <p>
+                                    <%= item.productId.name
+                                        %>
+                                </p>
+                            </a>
+
+                        </td>
+
+                        <td>₹<%= item.price.toFixed(2)%>
+                        </td>
+                        <td>
+                            <%= item.quantity %>
+                        </td>
+                        <td>
+                            <%= item.orderStatus %>
+                        </td>
+                        <td>
+                            <%= order.date.toDateString() %>
+                        </td>
+
+
+                        <td><a href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>"
+                                class="btn-small d-block">View</a>
+                        </td>
+                    </tr>
+                    <% }); %>
+                        <% }); %>
+            </tbody>
+    </table>
+</div>  
+
+
+
+
+
+
+
+  <!-- <div class="rating-container mb-3">
+                                                                                        <div class="stars" data-product-id="<%= item._id %>">
+                                                                                            <% for (let i = 1; i <= 5; i++) { %>
+                                                                                                <i class="fa-star <%= i <= item.rating ? 'fas text-warning' : 'far text-muted' %>" 
+                                                                                                   data-rating="<%= i %>"></i>
+                                                                                            <% } %>
+                                                                                        </div>
+                                                                                        <small class="text-muted ms-2">(<span class="rating-value"><%= item.rating %></span>/5)</small>
+                                                                                    </div>
+                                                                                    
+                                                                                    
+
+                                                                                    <script
+                                                                                        src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                                                                    <script>
+                                                                                      $(document).ready(function () {
+    $(".stars i").click(function () {
+        let rating = $(this).data("rating");
+        let productId = $(this).closest(".stars").data("product-id");
+        let $clickedProductStars = $(this).closest(".rating-container").find(".stars i"); 
+        let $ratingValue = $(this).closest(".rating-container").find(".rating-value"); 
+
+        console.log("Sending rating:", rating, "for product:", productId);
+
+        $.ajax({
+            url: "/review/rate-product",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ productId, rating }),
+            success: function (response) {
+                console.log("Server response:", response);
+
+                // Store rated product ID & rating in local storage for persistence
+                localStorage.setItem(`ratedProduct_${productId}`, response.newRating);
+
+                // Update stars for the rated product
+                updateStars($clickedProductStars, response.newRating);
+
+                // Update rating display
+                $ratingValue.text(response.newRating);
+            },
+            error: function (xhr) {
+                console.error("AJAX error:", xhr.responseText);
+                alert("Error submitting rating. Check console.");
+            }
+        });
+    });
+
+    // On page load, restore ratings from local storage
+    $(".stars").each(function () {
+        let productId = $(this).data("product-id");
+        let storedRating = localStorage.getItem(`ratedProduct_${productId}`);
+
+        if (storedRating) {
+            let $productStars = $(this).closest(".rating-container").find(".stars i");
+            let $ratingValue = $(this).closest(".rating-container").find(".rating-value");
+            
+            // Update UI to reflect stored rating
+            updateStars($productStars, storedRating);
+            $ratingValue.text(storedRating);
+        }
+    });
+
+    // Function to update star visuals based on rating
+    function updateStars(stars, rating) {
+        stars.each(function () {
+            let starRating = $(this).data("rating");
+            $(this).removeClass("fas text-warning").addClass("far text-muted");
+            if (starRating <= rating) {
+                $(this).addClass("fas text-warning").removeClass("far text-muted");
+            }
+        });
+    }
+});
+
+
+                                                                                    </script> -->

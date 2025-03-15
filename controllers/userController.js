@@ -6,6 +6,7 @@ const Referral = require("../models/referralModel")
 const Wallet = require("../models/walletModel")
 const crypto = require('crypto');
 const sendResetPasswordEmail = require("../services/forgotEmailService")
+const Contact = require("../models/contactModel")
 
 
 
@@ -449,6 +450,22 @@ const verifyResetPassword = async (req, res, next) => {
 };
 
 
+//for contact us
+const contactUs = async (req, res, next) => {
+    try {
+        const { name, email, message } = req.body;
+
+        const newContact = new Contact({ name, email, message });
+        await newContact.save();
+
+        return res.status(200).json({ success: true, message: "Message sent successfully!" });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 
 module.exports = {
     securePassword,
@@ -461,4 +478,5 @@ module.exports = {
     findOrCreateGoogleUser,
     forgotPassword,
     verifyResetPassword,
+    contactUs
 }

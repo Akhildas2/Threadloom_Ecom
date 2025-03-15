@@ -14,7 +14,7 @@ userRoute.set('views', './views/user');
 userRoute.get('/', pageController.loadHome);
 userRoute.get('/contact', pageController.loadContact);
 userRoute.get('/about', pageController.loadAbout);
-userRoute.get('/shop', pageController.shop);
+userRoute.get('/shop', pageController.loadShop);
 userRoute.get('/register', auth.isLogout, pageController.loadRegister);
 userRoute.get('/login', auth.isLogout, pageController.loadLogin);
 userRoute.get('/productdetails/:productId', pageController.productDetails);
@@ -22,6 +22,7 @@ userRoute.get('/forgotPassword', auth.isLogout, pageController.forgotPasswordLoa
 userRoute.get('/resetPassword', auth.isLogout, pageController.loadResetPassword);
 userRoute.get('/verifyOtp', pageController.loadVerifyOtp);
 userRoute.get('/search-suggestions', pageController.searchSuggestions);
+userRoute.get('/help', pageController.loadHelp);
 
 
 userRoute.post('/register', userController.insertUser);
@@ -32,6 +33,7 @@ userRoute.post('/logout', auth.isLogin, userController.userLogout);
 userRoute.get('/logout', auth.isLogin, userController.userLogout);
 userRoute.post('/forgotPassword', auth.isLogout, userController.forgotPassword);
 userRoute.post('/resetPassword', auth.isLogout, userController.verifyResetPassword);
+userRoute.post('/contact', userController.contactUs);
 
 // Route for initiating Google authentication
 userRoute.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
