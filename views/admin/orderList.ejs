@@ -17,7 +17,7 @@
                         <button class="btn btn-primary" type="submit">Search</button>
                     </div>
                 </form>
-                
+
             </div>
             <div class="card mb-4">
                 <!-- <header class="card-header">
@@ -70,7 +70,9 @@
                                                     <%= index + 1 %>
                                                 </td>
                                                 <td class="text-center">
-                                                    <%= order.ordersId%>
+                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>">
+                                                        <%= order.ordersId%>
+                                                    </a>
                                                 </td>
                                                 <td class="image-cell">
                                                     <a href="/admin/orderList/orderDetails/<%= order._id %>">
@@ -132,35 +134,34 @@
                             <% }; %>
                 </div>
             </div>
-             <!-- Pagination -->
-        <div class="pagination-area mt-30 mb-50">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end">
-                    <% if (currentPage> 1) { %>
-                        <li class="page-item"><a class="page-link" href="?page=1"><i
-                                    class="material-icons md-chevron_left"></i></a></li>
-                        <% } %>
-                            <% for (let i=1; i <=totalPages; i++) { %>
-                                <% if (i===currentPage) { %>
-                                    <li class="page-item active"><a class="page-link" href="#">
-                                            <%= i %>
-                                        </a></li>
-                                    <% } else { %>
-                                        <li class="page-item"><a class="page-link"
-                                                href="?page=<%= i %>">
+            <!-- Pagination -->
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item"><a class="page-link" href="?page=1"><i
+                                        class="material-icons md-chevron_left"></i></a></li>
+                            <% } %>
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <% if (i===currentPage) { %>
+                                        <li class="page-item active"><a class="page-link" href="#">
                                                 <%= i %>
                                             </a></li>
-                                        <% } %>
+                                        <% } else { %>
+                                            <li class="page-item"><a class="page-link" href="?page=<%= i %>">
+                                                    <%= i %>
+                                                </a></li>
                                             <% } %>
-                                                <% if (currentPage < totalPages) { %>
-                                                    <li class="page-item"><a class="page-link"
-                                                            href="?page=<%= totalPages %>"><i
-                                                                class="material-icons md-chevron_right"></i></a>
-                                                    </li>
-                                                    <% } %>
-                </ul>
-            </nav>
-        </div>
+                                                <% } %>
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item"><a class="page-link"
+                                                                href="?page=<%= totalPages %>"><i
+                                                                    class="material-icons md-chevron_right"></i></a>
+                                                        </li>
+                                                        <% } %>
+                    </ul>
+                </nav>
+            </div>
         </section>
-       
+
         <%- include('../adminLayouts/footer.ejs') %>

@@ -259,10 +259,13 @@
                                                                                 class="card order-card shadow-sm h-100 hover-effect">
                                                                                 <div
                                                                                     class="image-container position-relative">
-                                                                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                                                                        class="card-img-top order-img img-fluid p-3"
-                                                                                        alt="<%= item.productId.name %>"
-                                                                                        style="height: 250px; object-fit: contain;">
+                                                                                    <a
+                                                                                        href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                                                                                        <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                                                            class="card-img-top order-img img-fluid p-3"
+                                                                                            alt="<%= item.productId.name %>"
+                                                                                            style="height: 250px; object-fit: contain;">
+                                                                                    </a>
                                                                                     <div
                                                                                         class="position-absolute top-0 end-0 m-3">
                                                                                         <span
@@ -278,22 +281,30 @@
                                                                                 <div class="card-body pt-0">
                                                                                     <div
                                                                                         class="d-flex justify-content-center align-items-center mb-2">
-                                                                                        <h5
-                                                                                            class="card-title mb-0 text-truncate">
-                                                                                            <%= item.productId.name %>
-                                                                                        </h5>
+                                                                                        <a
+                                                                                            href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                                                                                            <h5
+                                                                                                class="card-title mb-0 text-truncate">
+                                                                                                <%= item.productId.name
+                                                                                                    %>
+                                                                                            </h5>
+                                                                                        </a>
                                                                                     </div>
-                                                                                    <span
-                                                                                        class="d-flex justify-content-center align-items-center mb-2">#
-                                                                                        <%= order.ordersId %>
-                                                                                    </span>
-
+                                                                                    <a
+                                                                                        href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
+                                                                                        <span
+                                                                                            class="d-flex justify-content-center align-items-center mb-2">#
+                                                                                            <%= order.ordersId %>
+                                                                                        </span>
+                                                                                    </a>
                                                                                     <div
                                                                                         class="d-flex justify-content-between align-items-center mb-3">
                                                                                         <span class="badge rounded-pill 
-                                                                                        <%= item.orderStatus.toLowerCase() === 'delivered' ? 'bg-success' : 
-                                                                                            item.orderStatus.toLowerCase() === 'shipped' ? 'bg-info' : 
-                                                                                            item.orderStatus.toLowerCase() === 'returned' ? 'bg-danger' :
+                                                                                        <%= item.orderStatus === 'delivered' || item.orderStatus === 'refunded' ? 'bg-success' : 
+                                                                                            item.orderStatus === 'shipped' || item.orderStatus === 'out for delivery' || item.orderStatus === 'refund initiated' ? 'bg-primary' : 
+                                                                                            item.orderStatus === 'processing' || item.orderStatus === 'confirmed' || item.orderStatus === 'awaiting cancellation approval' ? 'bg-warning text-dark' :
+                                                                                            item.orderStatus === 'pending' || item.orderStatus === 'returned' || item.orderStatus === 'rejected' ? 'bg-secondary' :
+                                                                                            item.orderStatus === 'cancelled' || item.orderStatus === 'failed' ? 'bg-danger' : 
                                                                                             'bg-warning text-dark' %>">
                                                                                             <%= item.orderStatus %>
                                                                                         </span>

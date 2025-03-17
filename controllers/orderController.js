@@ -293,21 +293,27 @@ const orderDetails = async (req, res, next) => {
     try {
         const orderId = req.params.id;
         const productId = req.query.productId
+        if (!mongoose.Types.ObjectId.isValid(orderId) || !mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).send('Invalid Order ID or Product ID');
+        }
+
         const productIdObject = new mongoose.Types.ObjectId(productId);
         const order = await Order.findById(orderId).populate('items.productId');
+        if (!order) {
+            return res.status(404).send('Order not found');
+        }
+
         let OtherOrders = []
         let selectedItem = null;
 
         for (const item of order.items) {
-            if (productIdObject.toString() == item.productId._id.toString()) {
+            if (item.productId && productIdObject.toString() === item.productId._id.toString()) {
                 selectedItem = item;
             } else {
-                OtherOrders.push(item)
+                OtherOrders.push(item);
             }
         }
-        if (!order) {
-            return res.status(404).send('Order not found');
-        }
+
 
         res.render('orderDeatil', { req, order, OtherOrders, selectedItem });
 
@@ -426,10 +432,10 @@ const returnOrder = async (req, res, next) => {
         }
 
         item.cancellationReason = cancellationReason;
-        item.orderStatus = 'awaiting approval';
+        item.orderStatus = 'awaiting cancellation approval';
         await order.save();
 
-        res.json({ success: true, message: 'Product return is awaiting approval.' });
+        res.json({ success: true, message: 'Product return is awaiting cancellation approval.' });
 
     } catch (error) {
         next(error);
@@ -441,7 +447,6 @@ const returnOrder = async (req, res, next) => {
 const downloadInvoice = async (req, res, next) => {
     try {
         const orderId = req.params.orderId;
-        const userId = req.session.user_id;
 
         // Fetch order details from the database using the orderId
         const order = await Order.findById(orderId).populate('userId').populate('items.productId');

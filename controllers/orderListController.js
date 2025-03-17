@@ -65,26 +65,33 @@ const updateStatus = async (req, res, next) => {
         if (!item) return res.status(404).json({ message: 'Item not found' });
 
         item.orderStatus = newStatus;
-        const ordersave = await order.save();
-
-        //for updating the product quantity
-        const items = order.items;
-        if (item.orderStatus == 'returned' || item.orderStatus == 'cancelled') {
-            for (const item of items) {
-                const product = await Product.findById(item.productId)
-
-                if (!product) {
-                    return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
-                }
-                product.stockCount += item.quantity;
-                await product.save()
-            }
+        if (newStatus === 'delivered') {
+            item.paid = true;
         }
 
-        const userId = order.userId;
-        if (item.orderStatus == 'returned') {
+        // Check overall order payment status
+        const allDeliveredPaid = order.items.every(item => item.orderStatus === 'delivered' && item.paid);
+        const someDeliveredPaid = order.items.some(item => item.orderStatus === 'delivered' && item.paid);
+        if (allDeliveredPaid) {
+            order.status = 'paid';
+        } else if (someDeliveredPaid) {
+            order.status = 'partially paid';
+        }
 
-            const wallet = await Wallet.findOne({ userId })
+
+        // Update product stock for returned or canceled items
+        if (newStatus === 'returned' || newStatus === 'cancelled') {
+            const product = await Product.findById(item.productId);
+            if (!product) return res.status(404).json({ message: `Product with ID ${item.productId} not found.` });
+
+            product.stockCount += item.quantity;
+            await product.save();
+        }
+
+        if (newStatus === 'refunded' && item.paid) {
+            const userId = order.userId;
+            const wallet = await Wallet.findOne({ userId });
+
             if (!wallet) {
                 // If the wallet doesn't exist, create a new one
                 const newWallet = new Wallet({
@@ -116,6 +123,7 @@ const updateStatus = async (req, res, next) => {
             }
         }
 
+        await order.save();
 
         res.status(200).json({ message: 'success', order });
 

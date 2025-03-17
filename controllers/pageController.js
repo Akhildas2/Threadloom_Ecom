@@ -205,7 +205,7 @@ const productDetails = async (req, res, next) => {
         let hasPurchased = false;
         let hasReviewed = false;
         if (userId) {
-            const orders = await Orders.find({ userId: userId, 'items.productId': productId });
+            const orders = await Orders.find({ userId: userId, 'items.productId': productId, 'items.orderStatus': 'delivered' });
             if (orders.length > 0) hasPurchased = true;
 
             // Check if user already reviewed the product
@@ -284,13 +284,13 @@ const searchSuggestions = async (req, res, next) => {
         const { q: query, category } = req.query;
         if (!query) return res.json([]);
 
-        // 1. Find matching categories (if no category filter applied)
+        // Find matching categories 
         const categoryResults = !category ? await Category.find({
             categoryName: { $regex: query, $options: "i" },
             isUnlisted: false
         }).limit(3).select('categoryName -_id') : [];
 
-        // 2. Find matching products (with optional category filter)
+        // Find matching products
         const categoryFilter = category ?
             { category: (await Category.findOne({ categoryName: category }))?._id }
             : {};
@@ -301,7 +301,7 @@ const searchSuggestions = async (req, res, next) => {
             ...categoryFilter
         }).limit(5).select('name -_id');
 
-        // 3. Combine results with type indicators
+        // Combine results 
         const results = [
             ...categoryResults.map(c => ({ type: 'category', value: c.categoryName })),
             ...productResults.map(p => ({ type: 'product', value: p.name }))

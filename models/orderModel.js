@@ -1,6 +1,8 @@
 
 const mongoose = require('mongoose');
 
+
+
 const orderSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -58,8 +60,26 @@ const orderSchema = mongoose.Schema({
         },
         orderStatus: {
             type: String,
-            enum: ['pending', 'placed', 'shipped', 'delivered', 'cancelled','returned','awaiting approval'],
+            enum: [
+                'pending',
+                'confirmed',
+                'processing',
+                'shipped',
+                'out for delivery',
+                'delivered',
+                'awaiting cancellation approval',
+                'cancelled',
+                'rejected',
+                'returned',
+                'refund initiated',
+                'refunded',
+                'failed'
+            ],
             default: 'pending'
+        },
+        paid: {
+            type: Boolean,
+            default: false
         },
         cancellationReason: {
             type: String
@@ -67,21 +87,23 @@ const orderSchema = mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['pending', 'paid', 'retry'],
+        enum: ['pending', 'paid', 'retry', 'partially paid'],
         default: 'pending'
     },
     shippingCharge: {
         type: Number,
-        default:0
+        default: 0
     },
     offerDiscount: {
         type: Number,
-        default:0
+        default: 0
     },
     couponDiscount: {
         type: Number,
-        default:0
+        default: 0
     }
 }, { timestamps: true })
+
+
 
 module.exports = mongoose.model('Order', orderSchema);

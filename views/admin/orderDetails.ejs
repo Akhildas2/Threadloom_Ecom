@@ -1,28 +1,31 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
         <section class="content-main">
             <div class="content-header">
                 <div>
-                    <h2 class="content-title card-title">Order detail</h2>
-                    <p>Details for Order ID: <%= order.ordersId %>
-                    </p>
+                    <h2 class="content-title card-title">Order Details - <%= order.ordersId %>
+                    </h2>
                 </div>
             </div>
             <div class="card">
                 <header class="card-header">
                     <div class="row align-items-center">
-                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+
+                        <div class="col-lg-6 col-md-6 mb-lg-0 mb-15 d-flex justify-content-between align-items-center">
                             <span>
-                                <i class="material-icons md-calendar_today"></i>
+                                <i class="fa-solid fa-hashtag me-2"></i> Order ID: <%= order.ordersId %>
+                            </span>
+
+                            <span class="text-end">
+                                <i class="fa-solid fa-calendar-days me-2"></i>
                                 <b>
-                                    <%= order.date %>
+                                    <%= order.date.toDateString() %>
                                 </b>
                             </span>
-                            <br />
-                            <br>
-                            <small>Order ID: <%= order.ordersId %></small>
                         </div>
+
 
                         <!-- <div class="col-lg-6 col-md-6 ms-auto text-md-end">
                             <select class="form-select d-inline-block mb-lg-0 mb-15 mw-200">
@@ -51,17 +54,18 @@
                                 <div class="text">
                                     <h6 class="mb-1">Customer</h6>
                                     <p class="mb-1">
+                                        <i class="fa-solid fa-user me-2"></i>
                                         <%= order.userId.name %> <br />
+                                            <i class="fa-solid fa-envelope me-2"></i>
                                             <%= order.userId.email %> <br />
+                                                <i class="fa-solid fa-phone me-2"></i>
                                                 <%= order.userId.mobile %> <br />
-
-                                                    <br />
-
                                     </p>
-                                    <!-- <a href="#">View profile</a> -->
                                 </div>
                             </article>
                         </div>
+
+                        <!-- Order Info -->
                         <div class="col-md-4">
                             <article class="icontext align-items-start">
                                 <span class="icon icon-sm rounded-circle bg-primary-light">
@@ -70,14 +74,16 @@
                                 <div class="text">
                                     <h6 class="mb-1">Order info</h6>
                                     <p class="mb-1">
-                                        Shipping: Fargo express <br />
-                                        Pay method:<%= order.paymentMethod %> <br />
-                                        Payment Status: <%= order.status %>
+                                        <i class="fa-solid fa-truck me-2"></i> Shipping: Fargo Express <br />
+                                        <i class="fa-solid fa-credit-card me-2"></i> Pay Method: <%= order.paymentMethod
+                                            %> <br />
+                                            <i class="fa-solid fa-receipt me-2"></i> Payment Status: <%= order.status %>
                                     </p>
-                                    <!-- <a href="#">Download info</a> -->
                                 </div>
                             </article>
                         </div>
+
+                        <!-- Delivery Info -->
                         <div class="col-md-4">
                             <article class="icontext align-items-start">
                                 <span class="icon icon-sm rounded-circle bg-primary-light">
@@ -86,15 +92,18 @@
                                 <div class="text">
                                     <h6 class="mb-1">Deliver to</h6>
                                     <p class="mb-1">
-                                        <%= order.deliveryAddress.fullName %> <br />
-                                            <%= order.deliveryAddress.mobileNumber %> <br />
-                                                House: <%= order.deliveryAddress.houseNo %>, <%=
-                                                        order.deliveryAddress.area %> <br />
-                                                        City: <%= order.deliveryAddress.city %>, <%=
-                                                                order.deliveryAddress.state %>
-                                                                <br />
-                                                                <br />
-                                                                Pin <%= order.deliveryAddress.pincode%>
+                                        <i class="fa-solid fa-user me-2"></i>
+                                        <%= order.deliveryAddress.fullName %><br />
+                                            <i class="fa-solid fa-phone me-2"></i>
+                                            <%= order.deliveryAddress.mobileNumber %><br />
+                                                <i class="fa-solid fa-house me-2"></i> House: <%=
+                                                    order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>
+                                                        <br />
+                                                        <i class="fa-solid fa-city me-2"></i> City: <%=
+                                                            order.deliveryAddress.city %>, <%=
+                                                                order.deliveryAddress.state %><br />
+                                                                <i class="fa-solid fa-map-pin me-2"></i> Pin: <%=
+                                                                    order.deliveryAddress.pincode %>
                                     </p>
                                     <!-- <a href="#">View profile</a> -->
                                 </div>
@@ -110,12 +119,13 @@
                                             <th width="20%">Product</th>
                                             <th width="20%">Product Name & Size</th>
                                             <th width="10%">Price</th>
-                                            <% if (order.items.some(item => item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled')) { %>
+                                            <% if (order.items.some(item=> item.orderStatus === 'awaiting approval' ||
+                                                item.orderStatus === 'cancelled')) { %>
                                                 <th width="20%">Cancellation Reason</th>
-                                            <% } %>
-                                            <th width="10%">Order Status</th> 
-                                            <th width="10%">Sub Total</th>
-                                            <th width="10%">Action</th>
+                                                <% } %>
+                                                    <th width="10%">Order Status</th>
+                                                    <th width="10%">Sub Total</th>
+                                                    <th width="10%">Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -133,103 +143,146 @@
 
                                                 <td class="align-middle">₹<%= item.price.toFixed(2) %>
                                                 </td>
-                                                <% if (order.items.some(item => item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled')) { %>
+                                                <% if (order.items.some(item=> item.orderStatus === 'awaiting approval'
+                                                    || item.orderStatus === 'cancelled')) { %>
                                                     <td class="align-middle">
-                                                        <% if (item.orderStatus === 'awaiting approval' || item.orderStatus === 'cancelled') { %>
+                                                        <% if (item.orderStatus==='awaiting approval' ||
+                                                            item.orderStatus==='cancelled' ) { %>
                                                             <%= item.cancellationReason %>
-                                                        <% } %>
-                                                    </td>
-                                                <% } %>
-                                                <td class="align-middle">
-                                                    <span class="badge rounded-pill 
-                                                <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
-                                                <% } else if (item.orderStatus === 'placed') { %> alert-success text-primary
-                                                <% } else if (item.orderStatus === 'shipped') { %> alert-success text-info
-                                                <% } else if (item.orderStatus === 'delivered') { %> alert-success text-success 
-                                                <% } else if (item.orderStatus === 'cancelled') { %> alert-danger text-danger 
-                                                <% } else if (item.orderStatus === 'returned') { %> alert-danger text-danger 
-                                                <% } else if (item.orderStatus === 'awaiting approval') { %> alert-success text-info
-                                                <% } else { %> alert-secondary text-secondary <% } %>">
-                                                        <%= item.orderStatus %>
-                                                    </span>
-                                                </td>
-                                                <td class="align-middle">₹<%= item.total.toFixed(2) %>
-                                                </td>
-                                                <td class="align-middle">
-                                                    <% if (item.orderStatus ==='awaiting approval' ) { %>
-                                                        <form class="update-status-form">
-                                                            <input type="hidden" name="productId"
-                                                                value="<%= item.productId._id %>">
-                                                            <select name="newStatus" class="form-select">
-                                                                <option value="returned">Return Approved</option>
-                                                              
-                                                            </select>
-                                                        <% } else { %>
-                                                         
-                                                    <form class="update-status-form">
-                                                        <input type="hidden" name="productId"
-                                                            value="<%= item.productId._id %>">
-                                                        <select name="newStatus" class="form-select">
-                                                            <option value="pending">Pending</option>
-                                                            <option value="placed">Placed</option>
-                                                            <option value="shipped">Shipped</option>
-                                                            <option value="delivered">Delivered</option>
-                                                            <option value="cancelled">Cancelled</option>
-                                                        </select>
-                                                        <% } %>
-                                                        <% if (item.orderStatus==='cancelled' || item.orderStatus==='returned' ) { %>
-                                                            <button type="submit" class="btn btn-primary btn-sm"
-                                                                disabled>Update</button>
-                                                                <% } else if (item.orderStatus==='delivered' ) { %>
-                                                                    <button type="submit" class="btn btn-primary btn-sm"
-                                                                    disabled>Update</button>
-                                                            <% } else { %>
-                                                                <button type="submit"
-                                                                    class="btn btn-primary btn-sm">Update</button>
                                                                 <% } %>
-                                                    </form>
-                                                    
-                                                </td>
+                                                    </td>
+                                                    <% } %>
+                                                        <td class="align-middle">
+                                                            <span class="badge rounded-pill 
+                                                            <% if (item.orderStatus === 'pending') { %> alert-warning text-warning 
+                                                            <% } else if (item.orderStatus === 'confirmed') { %> alert-primary text-primary 
+                                                            <% } else if (item.orderStatus === 'processing') { %> alert-info text-info 
+                                                            <% } else if (item.orderStatus === 'shipped') { %> alert-success text-info 
+                                                            <% } else if (item.orderStatus === 'out for delivery') { %> alert-success text-warning 
+                                                            <% } else if (item.orderStatus === 'delivered') { %> alert-success text-success 
+                                                            <% } else if (item.orderStatus === 'awaiting cancellation approval') { %> alert-warning text-warning
+                                                            <% } else if (item.orderStatus === 'cancelled') { %> alert-danger text-danger 
+                                                            <% } else if (item.orderStatus === 'returned') { %> alert-danger text-danger 
+                                                            <% } else if (item.orderStatus === 'refund initiated') { %> alert-info text-info 
+                                                            <% } else if (item.orderStatus === 'refunded') { %> alert-success text-success 
+                                                            <% } else if (item.orderStatus === 'failed') { %> alert-danger text-dark 
+                                                            <% } else { %> alert-secondary text-secondary <% } %>">
+                                                                <%= item.orderStatus %>
+                                                            </span>
+                                                        </td>
+
+                                                        <td class="align-middle">₹<%= item.total.toFixed(2) %>
+                                                        </td>
+
+                                                        <td class="align-middle">
+                                                            <% if (item.orderStatus==='awaiting cancellation approval' )
+                                                                { %>
+                                                                <form class="update-status-form">
+                                                                    <input type="hidden" name="productId"
+                                                                        value="<%= item.productId._id %>">
+                                                                    <select name="newStatus" class="form-select">
+                                                                        <option value="returned">Return Approved
+                                                                        </option>
+                                                                        <option value="rejected">Return Rejected
+                                                                        </option>
+                                                                    </select>
+                                                                    <button type="submit"
+                                                                        class="btn btn-primary btn-sm mt-2">Update</button>
+                                                                </form>
+                                                                <% } else if (item.orderStatus==='returned' ||
+                                                                    item.orderStatus==='refund initiated' ) { %>
+                                                                    <form class="update-status-form">
+                                                                        <input type="hidden" name="productId"
+                                                                            value="<%= item.productId._id %>">
+                                                                        <select name="newStatus" class="form-select">
+                                                                            <option value="refund initiated">Refund
+                                                                                Initiated</option>
+                                                                            <option value="refunded">Refunded</option>
+                                                                        </select>
+                                                                        <button type="submit"
+                                                                            class="btn btn-primary btn-sm mt-2">Update</button>
+                                                                    </form>
+                                                                    <% } else { %>
+
+                                                                        <form class="update-status-form">
+                                                                            <input type="hidden" name="productId"
+                                                                                value="<%= item.productId._id %>">
+                                                                            <select name="newStatus"
+                                                                                class="form-select">
+                                                                                <option value="pending">Pending</option>
+                                                                                <option value="confirmed">Confirmed
+                                                                                </option>
+                                                                                <option value="processing">Processing
+                                                                                </option>
+                                                                                <option value="shipped">Shipped</option>
+                                                                                <option value="out for delivery">Out for
+                                                                                    Delivery</option>
+                                                                                <option value="delivered">Delivered
+                                                                                </option>
+                                                                                <option value="cancelled">Cancelled
+                                                                                </option>
+                                                                            </select>
+                                                                            <% if (['cancelled', 'rejected' , 'returned'
+                                                                                , 'refunded' , 'delivered'
+                                                                                ].includes(item.orderStatus)) { %>
+                                                                                <button type="submit"
+                                                                                    class="btn btn-primary btn-sm mt-2"
+                                                                                    disabled>Update</button>
+                                                                                <% } else { %>
+                                                                                    <button type="submit"
+                                                                                        class="btn btn-primary btn-sm mt-2">Update</button>
+                                                                                    <% } %>
+                                                                        </form>
+                                                                        <% } %>
+
+
+                                                        </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="7" style="border-top: 1px solid #000;"></td> <!-- Add a horizontal line within the table row -->
+                                                <td colspan="7" style="border-top: 1px solid #000;"></td>
+                                                <!-- Add a horizontal line within the table row -->
                                             </tr>
-                                           
-                                           
+
+
                                             <% }); %>
                                                 <tr>
-                                                   
+
                                                     <td colspan="6" style="padding-top: 30px;">
                                                         <article class="float-end">
-                                                            <% if (order.shippingCharge > 0) { %>
+                                                            <% if (order.shippingCharge> 0) { %>
                                                                 <dl class="dlist">
-                                                                <dt>Subtotal:</dt>
-                                                                <dd>₹<%= (order.totalAmount - order.shippingCharge ).toFixed(2) %>
-                                                                </dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Shipping cost:</dt>
-                                                                <dd>₹<%= order.shippingCharge.toFixed(2) %></dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Grand total:</dt>
-                                                                <dd><b class="h5">₹<%= order.totalAmount.toFixed(2) %></b></dd>
-                                                            </dl>
-                                                            <% } else { %>
+                                                                    <dt>Subtotal:</dt>
+                                                                    <dd>₹<%= (order.totalAmount - order.shippingCharge
+                                                                            ).toFixed(2) %>
+                                                                    </dd>
+                                                                </dl>
                                                                 <dl class="dlist">
-                                                                <dt>Subtotal:</dt>
-                                                                <dd>₹<%= order.totalAmount.toFixed(2) %>
-                                                                </dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Shipping cost:</dt>
-                                                                <dd>Free Shipping</dd>
-                                                            </dl>
-                                                            <dl class="dlist">
-                                                                <dt>Grand total:</dt>
-                                                                <dd><b class="h5">₹<%= order.totalAmount.toFixed(2) %></b></dd>
-                                                            </dl>
-                                                            <% } %>
+                                                                    <dt>Shipping cost:</dt>
+                                                                    <dd>₹<%= order.shippingCharge.toFixed(2) %>
+                                                                    </dd>
+                                                                </dl>
+                                                                <dl class="dlist">
+                                                                    <dt>Grand total:</dt>
+                                                                    <dd><b class="h5">₹<%= order.totalAmount.toFixed(2)
+                                                                                %></b></dd>
+                                                                </dl>
+                                                                <% } else { %>
+                                                                    <dl class="dlist">
+                                                                        <dt>Subtotal:</dt>
+                                                                        <dd>₹<%= order.totalAmount.toFixed(2) %>
+                                                                        </dd>
+                                                                    </dl>
+                                                                    <dl class="dlist">
+                                                                        <dt>Shipping cost:</dt>
+                                                                        <dd>Free Shipping</dd>
+                                                                    </dl>
+                                                                    <dl class="dlist">
+                                                                        <dt>Grand total:</dt>
+                                                                        <dd><b class="h5">₹<%=
+                                                                                    order.totalAmount.toFixed(2) %></b>
+                                                                        </dd>
+                                                                    </dl>
+                                                                    <% } %>
                                                         </article>
                                                     </td>
                                                 </tr>

@@ -2,14 +2,12 @@
     <%- include('../layouts/navbar.ejs') %>
         <style>
             .containers {
-                background-color: #f0f8ff;
                 padding: 20px;
+                margin: 20px 0;
                 border-radius: 25px;
-
             }
 
             .order-confirmation {
-                background-color: #d4edda;
                 border-radius: 10px;
                 padding: 20px;
                 margin-bottom: 20px;
@@ -22,7 +20,7 @@
             .order-info,
             .order-charges,
             .billing-address {
-                background-color: #f9f9f9;
+                background: #F8F9FA;
                 padding: 20px;
                 margin-bottom: 20px;
                 border-radius: 10px;
@@ -50,177 +48,208 @@
             .billing-address strong {
                 font-weight: bold;
             }
-
-            .btn-gap {
-                margin-right: 20px;
-            }
         </style>
-        <br>
-        <br>
-        <div class="container">
-            <div class="order-confirmation text-center">
-                <h2 class="my-4"><i class="fas fa-check-circle" style="color: green;"></i> Order Confirmation</h2>
-                <div class="row">
-                    <div class="col-md-12">
-                        <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
-                            alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
+
+        <section class="mt-100 mb-100">
+            <div class="container shadow-lg">
+                <div class="order-confirmation">
+                    <h2 class="my-4 text-center"><i class="fas fa-check-circle" style="color: green;"></i> Order
+                        Confirmation</h2>
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
+                                alt="<%= order.items[0].productId.name %>" style="height: 200px;width: 200px;">
+                        </div>
                     </div>
-                </div>
-                <br>
-                <div class="row">
-                    <% if (order.shippingCharge> 0 || order.offerDiscount > 0 || order.couponDiscount > 0) { %>
-                        <div class="col-md-4">
-                            <div class="order-info">
-                                <h3>Order Information</h3>
-                                <hr>
-                                <p><strong>Order ID:</strong>
-                                    <%= order.ordersId %>
-                                </p>
-                                <p><strong>Order Date:</strong>
-                                    <%= order.date.toDateString() %>
-                                </p>
-                                <p><strong>Expected Delivery Date:</strong>
-                                    <%= new Date(order.expectedDelivery).toDateString() %>
-                                </p>
-
-                                <p><strong>Order Status:</strong>
-                                    <%= order.items[0].orderStatus %>
-                                </p>
-                                <p><strong>Total:</strong> ₹<%= order.totalAmount.toFixed(2) %>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="order-charges">
-                                <h3>Payment Deatils</h3>
-                                <hr>
-                                <p><strong>Payment Method:</strong>
-                                    <%= order.paymentMethod %>
-                                </p>
-                                <p><strong>Payment Status:</strong>
-                                    <% if (order.status==='retry' ) { %>
-                                        <button id="retryButton" class="btn-sm btn-primary">Retry
-                                            Payment</button>
-                                        <% } else { %>
-                                            <%= order.status %>
-                                                <% } %>
-                                </p>
-                                <br>
-                                <h3> Charges & Discount</h3>
-                                <hr>
-                                <% if (order.shippingCharge> 0) { %>
-                                    <p><strong>Shipping Charges:</strong>
-                                        <%= order.shippingCharge %>
-                                    </p>
-                                    <% } %>
-                                        <% if (order.offerDiscount> 0) { %>
-                                            <p><strong>Offer Discount:</strong>
-                                                <%= order.offerDiscount.toFixed(2) %>
-                                            </p>
-                                            <% } %>
-                                                <% if (order.couponDiscount> 0) { %>
-                                                    <p><strong>Coupon Discount:</strong>
-                                                        <%= order.couponDiscount.toFixed(2) %>
-                                                    </p>
-                                                    <% } %>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="billing-address">
-                                <h3>Billing Address</h3>
-                                <hr>
-                                <p><strong>Name:</strong>
-                                    <%= order.deliveryAddress.fullName %>
-                                </p>
-                                <p><strong>Email:</strong>
-
-                                    <%= order.userId.email %>
-                                </p>
-                                <p><strong>Phone Number:</strong>
-                                    <%= order.deliveryAddress.mobileNumber %>
-                                </p>
-                                <p><strong>Address:</strong>
-                                    <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%=
-                                                order.deliveryAddress.city %>
-                                </p>
-                                <p><strong>State:</strong>
-                                    <%= order.deliveryAddress.state %>
-                                </p>
-                                <p><strong>Pincode:</strong>
-                                    <%= order.deliveryAddress.pincode %>
-                                </p>
-                            </div>
-                        </div>
-                        <% } else { %>
-                            <div class="col-md-6">
-                                <div class="order-info">
-                                    <h3>Order Information</h3>
+                    <div class="row p-20">
+                        <% if (order.shippingCharge> 0 || order.offerDiscount > 0 || order.couponDiscount > 0) { %>
+                            <div class="col-md-4">
+                                <div class="order-info shadow-md">
+                                    <h3><i class="fas fa-box"></i> Order Information</h3>
                                     <hr>
-                                    <p><strong>Order ID:</strong>
+                                    <p><strong><i class="fas fa-receipt me-2"></i> Order ID:</strong>
                                         <%= order.ordersId %>
                                     </p>
-                                    <p><strong>Order Date:</strong>
+                                    <p><strong><i class="far fa-calendar-alt me-2"></i> Order Date:</strong>
                                         <%= order.date.toDateString() %>
                                     </p>
-                                    <p><strong>Expected Delivery Date:</strong>
+                                    <p><strong><i class="fas fa-truck  me-2"></i> Expected Delivery Date:</strong>
                                         <%= new Date(order.expectedDelivery).toDateString() %>
                                     </p>
-                                    <p><strong>Payment Method:</strong>
-                                        <%= order.paymentMethod %>
+                                    <p><strong><i class="fas fa-info-circle me-2"></i> Order Status:</strong>
+                                        <span class="badge rounded-pill 
+                                      <% if (order.items[0].orderStatus === 'delivered' || order.items[0].orderStatus === 'refunded') { %> bg-success 
+                                      <% } else if (order.items[0].orderStatus === 'shipped' || order.items[0].orderStatus === 'out for delivery' || order.items[0].orderStatus === 'refund initiated') { %> bg-primary 
+                                      <% } else if (order.items[0].orderStatus === 'processing' || order.items[0].orderStatus === 'confirmed' || order.items[0].orderStatus === 'awaiting cancellation approval') { %> bg-warning 
+                                      <% } else if (order.items[0].orderStatus === 'pending' || order.items[0].orderStatus === 'returned' || order.items[0].orderStatus === 'rejected') { %> bg-secondary 
+                                      <% } else if (order.items[0].orderStatus === 'cancelled' || order.items[0].orderStatus === 'failed') { %> bg-danger 
+                                      <% } %>">
+                                            <%= order.items[0].orderStatus %>
+                                        </span>
                                     </p>
-                                    <p><strong>Payment Status:</strong>
-                                        <% if (order.status==='retry' ) { %>
-                                            <button id="retryButton" class="btn-sm btn-primary">Retry
-                                                Payment</button>
-                                            <% } else { %>
-                                                <%= order.status %>
-                                                    <% } %>
-                                    </p>
-                                    <p><strong>Order Status:</strong>
-                                        <%= order.items[0].orderStatus %>
-                                    </p>
-                                    <p><strong>Total:</strong> ₹<%= order.totalAmount.toFixed(2)%>
+
+                                    <p><strong>Total: ₹</strong>
+                                        <%= order.totalAmount.toFixed(2) %>
                                     </p>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="billing-address">
-                                    <h3>Billing Address</h3>
+
+                            <div class="col-md-4 ">
+                                <div class="order-charges shadow-md">
+                                    <h3><i class="fas fa-credit-card"></i> Payment Details</h3>
                                     <hr>
-                                    <p><strong>Name:</strong>
+                                    <p><strong><i class="fas fa-wallet  me-2"></i> Payment Method:</strong>
+                                        <%= order.paymentMethod %>
+                                    </p>
+                                    <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
+                                        <% if (order.status==='retry' && order.items[0].orderStatus !=='cancelled' ) {
+                                            %>
+                                            <button id="retryButton" class="btn-sm btn-primary">
+                                                <i class="fas fa-redo"></i> Retry Payment
+                                            </button>
+                                            <% } else { %>
+                                                <span class="badge rounded-pill 
+                                        <% if (order.items[0].paid) { %> bg-success 
+                                        <% } else { %> bg-danger <% } %>">
+                                                    <% if (order.items[0].paid) { %> Paid <% } else { %> Not Paid <% }
+                                                                %>
+                                                </span>
+                                                <% } %>
+                                    </p>
+
+
+                                    <h3><i class="fas fa-tags me-2 mt-10"></i> Charges & Discount</h3>
+                                    <hr>
+                                    <% if (order.shippingCharge> 0) { %>
+                                        <p><strong><i class="fas fa-shipping-fast  me-2"></i> Shipping Charges:</strong>
+                                            ₹<%= order.shippingCharge %>
+                                        </p>
+                                        <% } %>
+                                            <% if (order.offerDiscount> 0) { %>
+                                                <p><strong><i class="fas fa-percentage  me-2"></i> Offer
+                                                        Discount:</strong> ₹<%= order.offerDiscount.toFixed(2) %>
+                                                </p>
+                                                <% } %>
+                                                    <% if (order.couponDiscount> 0) { %>
+                                                        <p><strong><i class="fas fa-ticket-alt  me-2"></i> Coupon
+                                                                Discount:</strong> ₹<%= order.couponDiscount.toFixed(2)
+                                                                %>
+                                                        </p>
+                                                        <% } %>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="billing-address shadow-md">
+                                    <h3><i class="fas fa-map-marker-alt"></i> Billing Address</h3>
+                                    <hr>
+                                    <p><strong><i class="fas fa-user  me-2"></i> Name:</strong>
                                         <%= order.deliveryAddress.fullName %>
                                     </p>
-                                    <p><strong>Email:</strong>
-                                        <%= order.userId.email %>
-                                    </p>
-                                    <p><strong>Phone Number:</strong>
+                                    <p><strong><i class="fas fa-phone  me-2"></i> Phone Number:</strong>
                                         <%= order.deliveryAddress.mobileNumber %>
                                     </p>
-                                    <p><strong>Address:</strong>
+                                    <p><strong><i class="fas fa-home  me-2"></i> Address:</strong>
                                         <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%=
-                                                    order.deliveryAddress.city %>, <%= order.deliveryAddress.state %>
+                                                    order.deliveryAddress.city %>
                                     </p>
-                                    <p><strong>Pincode:</strong>
+                                    <p><strong><i class="fas fa-map me-2"></i> State:</strong>
+                                        <%= order.deliveryAddress.state %>
+                                    </p>
+                                    <p><strong><i class="fas fa-envelope me-2"></i> Pincode:</strong>
                                         <%= order.deliveryAddress.pincode %>
                                     </p>
                                 </div>
                             </div>
-                            <% } %>
-                </div>
-                <br>
-                <div class="row">
-                    <div class="col-12">
-                        <a href="/shop" class="btn btn-default btn-gap">Continue Shopping</a>
-                        <a href="/dashboard" class="btn btn-default">Go To Dashboard</a>
+                            <% } else { %>
+                                <div class="col-md-6">
+                                    <div class="order-info shadow-md">
+                                        <h3><i class="fas fa-box"></i> Order Information</h3>
+                                        <hr>
+                                        <p><strong><i class="fas fa-receipt me-2"></i> Order ID:</strong>
+                                            <%= order.ordersId %>
+                                        </p>
+                                        <p><strong><i class="far fa-calendar-alt me-2"></i> Order Date:</strong>
+                                            <%= order.date.toDateString() %>
+                                        </p>
+                                        <p><strong><i class="fas fa-truck me-2"></i> Expected Delivery Date:</strong>
+                                            <%= new Date(order.expectedDelivery).toDateString() %>
+                                        </p>
+                                        <p><strong><i class="fas fa-wallet me-2"></i> Payment Method:</strong>
+                                            <%= order.paymentMethod %>
+                                        </p>
+                                        <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
+                                            <% if (order.status==='retry' ) { %>
+                                                <button id="retryButton" class="btn-sm btn-primary">
+                                                    <i class="fas fa-redo"></i> Retry Payment
+                                                </button>
+                                                <% } else { %>
+                                                    <span class="badge rounded-pill 
+                                            <% if (order.items[0].paid) { %> bg-success 
+                                            <% } else { %> bg-danger <% } %>">
+                                                        <% if (order.items[0].paid) { %> Paid <% } else { %> Not Paid <%
+                                                                    } %>
+                                                    </span>
+                                                    <% } %>
+                                        </p>
 
+                                        <p><strong><i class="fas fa-info-circle me-2"></i> Order Status:</strong>
+                                            <span class="badge rounded-pill 
+                                          <% if (order.items[0].orderStatus === 'delivered' || order.items[0].orderStatus === 'refunded') { %> bg-success 
+                                          <% } else if (order.items[0].orderStatus === 'shipped' || order.items[0].orderStatus === 'out for delivery' || order.items[0].orderStatus === 'refund initiated') { %> bg-primary 
+                                          <% } else if (order.items[0].orderStatus === 'processing' || order.items[0].orderStatus === 'confirmed' || order.items[0].orderStatus === 'awaiting cancellation approval') { %> bg-warning 
+                                          <% } else if (order.items[0].orderStatus === 'pending' || order.items[0].orderStatus === 'returned' || order.items[0].orderStatus === 'rejected') { %> bg-secondary 
+                                          <% } else if (order.items[0].orderStatus === 'cancelled' || order.items[0].orderStatus === 'failed') { %> bg-danger 
+                                          <% } %>">
+                                                <%= order.items[0].orderStatus %>
+                                            </span>
+                                        </p>
+
+
+
+                                        <p><strong>Total: ₹</strong>
+                                            ₹<%= order.totalAmount.toFixed(2)%>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="billing-address shadow-md">
+                                        <h3><i class="fas fa-map-marker-alt"></i> Billing Address</h3>
+                                        <hr>
+                                        <p><strong><i class="fas fa-user me-2"></i> Name:</strong>
+                                            <%= order.deliveryAddress.fullName %>
+                                        </p>
+                                        <p><strong><i class="fas fa-phone me-2"></i> Phone Number:</strong>
+                                            <%= order.deliveryAddress.mobileNumber %>
+                                        </p>
+                                        <p><strong><i class="fas fa-home me-2"></i> Address:</strong>
+                                            <%= order.deliveryAddress.houseNo %>, <%= order.deliveryAddress.area %>, <%=
+                                                        order.deliveryAddress.city %>, <%= order.deliveryAddress.state
+                                                            %>
+                                        </p>
+                                        <p><strong><i class="fas fa-envelope me-2"></i> Pincode:</strong>
+                                            <%= order.deliveryAddress.pincode %>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <% } %>
+                    </div>
+                    <div class="row text-center p-10">
+                        <div class="col-12">
+                            <a href="/shop" class="btn btn-lg mx-2">
+                                <i class="fas fa-shopping-cart me-2"></i>Shopping
+                            </a>
+                            <a href="/dashboard" class="btn btn-lg mx-2">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-
-        <br>
-        <br>
 
         <%- include('../layouts/footer.ejs') %>
             <%- include('../layouts/script.ejs') %>
