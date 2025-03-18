@@ -6,6 +6,8 @@ const auth = require('../middleware/userAuth');
 const passport = require('passport')
 require('../config/passport')
 
+
+
 userRoute.set('view engine', 'ejs');
 userRoute.set('views', './views/user');
 
@@ -25,6 +27,7 @@ userRoute.get('/search-suggestions', pageController.searchSuggestions);
 userRoute.get('/help', pageController.loadHelp);
 
 
+
 userRoute.post('/register', userController.insertUser);
 userRoute.post('/verifyOtp', userController.verifyOtp);
 userRoute.post('/resendOtp', userController.resendOtp)
@@ -35,15 +38,22 @@ userRoute.post('/forgotPassword', auth.isLogout, userController.forgotPassword);
 userRoute.post('/resetPassword', auth.isLogout, userController.verifyResetPassword);
 userRoute.post('/contact', userController.contactUs);
 
+
+
 // Route for initiating Google authentication
 userRoute.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
 // Callback route after Google authentication
 userRoute.get('/register/google/callback',
-	passport.authenticate('google', {
-		successRedirect: '/',
-		failureRedirect: '/register'
-	})
+	passport.authenticate('google', { failureRedirect: '/register' }),
+	async (req, res) => {
+		if (req.user) {
+			req.session.user_id = req.user._id;
+			await req.session.save();
+			res.redirect('/')
+		} else {
+			res.redirect('/register')
+		}
+	}
 );
 
 

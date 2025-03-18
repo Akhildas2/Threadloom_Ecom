@@ -2,135 +2,12 @@ const User = require('../models/userModel')
 const Otp = require('../models/otpModel')
 const bcrypt = require('bcrypt')
 const nodemailer = require('nodemailer')
-const Referral = require("../models/referralModel")
-const Wallet = require("../models/walletModel")
-const crypto = require('crypto');
+const crypto = require('crypto')
 const sendResetPasswordEmail = require("../services/forgotEmailService")
 const Contact = require("../models/contactModel")
-
-
-
-// Secure password hashing
-const securePassword = async (password) => {
-    try {
-        return await bcrypt.hash(password, 10);
-
-    } catch (error) {
-        throw new Error('Error hashing password');
-    }
-};
-
-
-
-//for generate refferal code
-function generateReferralCode() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let referralCode = '';
-    for (let i = 0; i < 8; i++) {
-        referralCode += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return referralCode;
-
-}
-
-
-
-//for checking and generate unique referral code
-const generateUniqueReferralCode = async () => {
-    let newReferralCode;
-    do {
-        newReferralCode = generateReferralCode();
-    } while (await Referral.findOne({ referralCode: newReferralCode }));
-    return newReferralCode;
-
-};
-
-
-
-//for checking  and creating referral
-const handleReferral = async (referralCode, newUserId) => {
-    try {
-        // Generate a unique referral code
-        const newReferralCode = await generateUniqueReferralCode();
-        // Check if a referral code was provided
-        if (!referralCode) {
-            // No referral code provided, creating a new referral without "referredBy"
-            const referral = new Referral({
-                user: newUserId,
-                referralCode: newReferralCode
-            });
-
-            await referral.save();
-            return referral; // Return the newly created referral
-        }
-
-        // Referral code provided, find the user who referred the new user
-        const referredByUser = await Referral.findOne({ referralCode }).populate('user');
-        if (!referredByUser) {
-            // If the referral code is invalid, just save the new user's referral code without a referrer
-            const referral = new Referral({
-                user: newUserId,
-                referralCode: newReferralCode
-            });
-            await referral.save();
-            return referral;
-        }
-
-        // Create a new referral entry with the "referredBy" user
-        const referral = new Referral({
-            user: newUserId,
-            referralCode: newReferralCode,
-            referredBy: referredByUser.user._id
-        });
-
-        await referral.save();
-        // Update wallet balance for both the new user and the referrer
-        await updateWalletBalance(newUserId, referredByUser.user._id);
-        return referral; // Return the newly created referral
-
-    } catch (error) {
-        throw new Error(error.message || 'Internal server error.'); // Throw error to be handled outside
-    }
-};
-
-
-
-//update or create the wallet
-const updateWalletBalance = async (newUserId, referredByUserId) => {
-    const newUserBonus = 50;
-    const referredUserBonus = 100;
-
-    const updateWallet = async (userId, bonus) => {
-        let userWallet = await Wallet.findOne({ userId });
-        if (!userWallet) {
-            userWallet = new Wallet({
-                userId,
-                balance: bonus,
-                transactions: [{
-                    type: 'credit',
-                    amount: bonus,
-                    date: new Date(),
-                    description: 'Referral bonus'
-                }]
-            });
-        } else {
-            userWallet.balance += bonus;
-            userWallet.transactions.push({
-                type: 'credit',
-                amount: bonus,
-                date: new Date(),
-                description: 'Referral bonus'
-            });
-        }
-        await userWallet.save();
-    };
-
-    await Promise.all([
-        updateWallet(newUserId, newUserBonus),
-        updateWallet(referredByUserId, referredUserBonus)
-    ]);
-
-};
+const { securePassword } = require('../utils/securePassword')
+const { handleReferral } = require('../utils/referralHelper')
+const { generateSecureOTP } = require('../utils/generateOtpHelper')
 
 
 
@@ -144,7 +21,7 @@ const insertUser = async (req, res, next) => {
         if (existingUserByMobile) {
             if (!existingUserByMobile.isVerified) {
                 await handleReferral(referralCode || null, existingUserByMobile._id);
-                const otp = generateOTP();
+                const otp = generateSecureOTP();
                 res.cookie('email', email); // Store email in cookie for verification
                 await sendVerifyOtp(name, email, otp); // Send OTP to user's email
                 return res.status(200).json({
@@ -161,7 +38,7 @@ const insertUser = async (req, res, next) => {
         if (existingUserByEmail) {
             if (!existingUserByEmail.isVerified) {
                 await handleReferral(referralCode || null, existingUserByEmail._id);
-                const otp = generateOTP();
+                const otp = generateSecureOTP();
                 res.cookie('email', email); // Store email in cookie for verification
                 await sendVerifyOtp(name, email, otp); // Send OTP to user's email
                 return res.status(200).json({
@@ -186,7 +63,7 @@ const insertUser = async (req, res, next) => {
         // Handle referral if provided, else create a new referral for the user
         await handleReferral(referralCode || null, userData._id);
         // Generate OTP and send it to the user's email for verification
-        const otp = generateOTP();
+        const otp = generateSecureOTP();
         res.cookie('email', email); // Store email in cookie for verification
         await sendVerifyOtp(name, email, otp); // Send OTP to user's email
 
@@ -294,7 +171,7 @@ const resendOtp = async (req, res, next) => {
         await Otp.deleteMany({ email })
 
         // Generate a new OTP
-        const otp = generateOTP();
+        const otp = generateSecureOTP();
         // Send the OTP to the user's email
         await sendVerifyOtp(existingUser.name, email, otp);
 
@@ -303,13 +180,6 @@ const resendOtp = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
-
-
-
-// Generate a random 6-digit OTP
-function generateOTP() {
-    return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 
@@ -367,37 +237,6 @@ const userLogout = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
-//for add google user
-const findOrCreateGoogleUser = async (id, displayName, email, req) => {
-    try {
-        let user = await User.findOne({ email });
-        if (user) {
-            req.session.user_id = user._id;
-            return user;
-        } else {
-            const newUser = new User({
-                name: displayName,
-                email,
-                mobile: 0,
-                password: await securePassword(id),
-                google: true,
-                isVerified: true
-            });
-
-            const savedUser = await newUser.save();
-            if (savedUser) {
-                req.session.user_id = savedUser._id;
-            }
-            return savedUser;
-        }
-
-    } catch (error) {
-        next(error);
-    }
-}
 
 
 
@@ -475,7 +314,6 @@ module.exports = {
     verifyLogin,
     resendOtp,
     userLogout,
-    findOrCreateGoogleUser,
     forgotPassword,
     verifyResetPassword,
     contactUs

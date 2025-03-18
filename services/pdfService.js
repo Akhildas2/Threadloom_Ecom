@@ -1,5 +1,7 @@
 const PDFDocument = require('pdfkit');
 
+
+
 const generateSalesReportPDF = (fullOrders, currentPage, limit, res) => {
     const doc = new PDFDocument({
         margin: 40 // Set margin for all sides
@@ -188,5 +190,7 @@ const generateSalesReportPDF = (fullOrders, currentPage, limit, res) => {
     // Finalize the PDF document
     doc.end();
 };
+
+
 
 module.exports = { generateSalesReportPDF };

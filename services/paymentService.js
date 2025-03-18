@@ -2,6 +2,8 @@ const paypal = require('paypal-rest-sdk');
 const { truncateDescription } = require('../utils/orderHelper');
 require("dotenv").config();
 
+
+
 const createPayPalPayment = async (orderId, items, exchangeRate) => {
     // Prepare item list for PayPal
     const itemList = items.flatMap(item => {
@@ -43,7 +45,8 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
             "brand_name": "threadloom"
         }
     };
-    
+
+
     return new Promise((resolve, reject) => {
         paypal.payment.create(create_payment_json, (error, payment) => {
             if (error) {
@@ -55,6 +58,8 @@ const createPayPalPayment = async (orderId, items, exchangeRate) => {
         });
     });
 };
+
+
 
 module.exports = {
     createPayPalPayment

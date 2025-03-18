@@ -96,13 +96,13 @@
                 </div>
             </div>
 
-            <section class="pt-150 pb-150">
+            <section class="mt-100 mb-100">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12 m-auto">
                             <div class="row">
-                                <div class="col-md-3" style="margin-top: 30px;">
-                                    <div class="dashboard-menu">
+                                <div class="col-md-3">
+                                    <div class="dashboard-menu mb-80">
                                         <ul class="nav flex-column" role="tablist">
                                             <li class="nav-item">
                                                 <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab"
@@ -156,7 +156,7 @@
                                         <!-- User Dashboard -->
                                         <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
                                             aria-labelledby="dashboard-tab">
-                                            <div class="card shadow-sm" style="margin-top: 30px;">
+                                            <div class="card shadow-sm">
                                                 <div class="card-header text-white">
                                                     <h5 class="mb-0">Hello, <%= userData.name %> 👋</h5>
                                                 </div>
@@ -237,7 +237,7 @@
                                         <!-- for order -->
                                         <div class="tab-pane fade" id="orders" role="tabpanel"
                                             aria-labelledby="orders-tab">
-                                            <div class="card" style="margin-top: 30px;">
+                                            <div class="card">
                                                 <div class="card-header">
                                                     <h5 class="mb-0">Your Orders</h5>
                                                 </div>
@@ -428,7 +428,7 @@
                                         <div class="tab-pane fade" id="address" role="tabpanel"
                                             aria-labelledby="address-tab">
 
-                                            <div class="card " style="margin-top: 30px;">
+                                            <div class="card">
                                                 <div
                                                     class="card-header d-flex align-items-center justify-content-between">
                                                     <h5 class="mb-0">Manage Address</h5>
@@ -446,143 +446,204 @@
                                                                 address!
                                                             </div>
                                                         </div>
-                                                        <% } else { %>
-                                                            <div class="row">
-                                                                <% address.forEach(address=> { %>
-                                                                    <div class="col-lg-6">
-                                                                        <div
-                                                                            class="card shadow-lg border-0 mb-4 rounded-3 hover-effect">
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="row">
+                                                        <% address.forEach(address=> { %>
+                                                            <div class="col-lg-6">
+                                                                <div
+                                                                    class="card shadow-lg border-0 mb-4 rounded-3 hover-effect">
+                                                                    <div class="card-body p-4 position-relative">
+                                                                        <h4
+                                                                            class="fw-bold text-primary d-flex align-items-center">
+                                                                            <i class="fas fa-map-marker-alt me-2"></i>
+                                                                            Address
+                                                                        </h4>
+                                                                        <div class="address-details">
                                                                             <div
-                                                                                class="card-body p-4 position-relative">
-                                                                                <h4
-                                                                                    class="fw-bold text-primary d-flex align-items-center">
-                                                                                    <i
-                                                                                        class="fas fa-map-marker-alt me-2"></i>
-                                                                                    Address
-                                                                                </h4>
-                                                                                <div class="address-details">
-                                                                                    <div
-                                                                                        class="detail-item d-flex align-items-center mb-2  mt-2">
-                                                                                        <i
-                                                                                            class="fas fa-user text-muted me-2 fa-sm"></i>
-                                                                                        <span class="text-dark">
-                                                                                            <%= address.fullName %>
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="detail-item d-flex align-items-center mb-2">
-                                                                                        <i
-                                                                                            class="fas fa-mobile-alt text-muted me-2 fa-sm"></i>
-                                                                                        <span class="text-dark">
-                                                                                            <%= address.mobileNumber %>
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="detail-item d-flex align-items-center mb-2">
-                                                                                        <i
-                                                                                            class="fas fa-home text-muted me-2 fa-sm"></i>
-                                                                                        <span class="text-dark">
-                                                                                            <%= address.houseNo %>, <%=
-                                                                                                    address.area %>
-                                                                                        </span>
-                                                                                    </div>
-                                                                                    <div
-                                                                                        class="detail-item d-flex align-items-center">
-                                                                                        <i
-                                                                                            class="fas fa-city text-muted me-2 fa-sm"></i>
-                                                                                        <span class="text-dark">
-                                                                                            <%= address.city %>, <%=
-                                                                                                    address.state %> -
-                                                                                                    <%= address.pincode
-                                                                                                        %>
-                                                                                        </span>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div
-                                                                                    class="d-flex gap-3 mt-3 align-items-center">
-                                                                                    <a href="#"
-                                                                                        class="btn btn-sm edit-address-btn"
-                                                                                        data-toggle="modal"
-                                                                                        data-target="#editAddressModal-<%= address._id %>"
-                                                                                        data-address-id="<%= address._id %>">
-                                                                                        <i class="fas fa-edit me-2"></i>
-                                                                                        Edit</a>
-
-                                                                                    <a href="#"
-                                                                                        class="btn btn-sm delete-address-btn bg-danger"
-                                                                                        data-toggle="modal"
-                                                                                        data-target="#editAddressModal-<%= address._id %>"
-                                                                                        data-address-id="<%= address._id %>"><i
-                                                                                            class="fas fa-trash-alt me-2"></i>
-                                                                                        Delete</a>
-
-                                                                                </div>
+                                                                                class="detail-item d-flex align-items-center mb-2  mt-2">
+                                                                                <i
+                                                                                    class="fas fa-user text-muted me-2 fa-sm"></i>
+                                                                                <span class="text-dark">
+                                                                                    <%= address.fullName %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div
+                                                                                class="detail-item d-flex align-items-center mb-2">
+                                                                                <i
+                                                                                    class="fas fa-mobile-alt text-muted me-2 fa-sm"></i>
+                                                                                <span class="text-dark">
+                                                                                    <%= address.mobileNumber %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div
+                                                                                class="detail-item d-flex align-items-center mb-2">
+                                                                                <i
+                                                                                    class="fas fa-home text-muted me-2 fa-sm"></i>
+                                                                                <span class="text-dark">
+                                                                                    <%= address.houseNo %>, <%=
+                                                                                            address.area %>
+                                                                                </span>
+                                                                            </div>
+                                                                            <div
+                                                                                class="detail-item d-flex align-items-center">
+                                                                                <i
+                                                                                    class="fas fa-city text-muted me-2 fa-sm"></i>
+                                                                                <span class="text-dark">
+                                                                                    <%= address.city %>, <%=
+                                                                                            address.state %> -
+                                                                                            <%= address.pincode %>
+                                                                                </span>
                                                                             </div>
                                                                         </div>
+
+                                                                        <div
+                                                                            class="d-flex gap-3 mt-3 align-items-center">
+                                                                            <a href="#"
+                                                                                class="btn btn-sm edit-address-btn"
+                                                                                data-toggle="modal"
+                                                                                data-target="#editAddressModal-<%= address._id %>"
+                                                                                data-address-id="<%= address._id %>">
+                                                                                <i class="fas fa-edit me-2"></i>
+                                                                                Edit</a>
+
+                                                                            <a href="#"
+                                                                                class="btn btn-sm delete-address-btn bg-danger"
+                                                                                data-toggle="modal"
+                                                                                data-target="#editAddressModal-<%= address._id %>"
+                                                                                data-address-id="<%= address._id %>"><i
+                                                                                    class="fas fa-trash-alt me-2"></i>
+                                                                                Delete</a>
+
+                                                                        </div>
                                                                     </div>
-
-
-                                                                    <% }); %>
+                                                                </div>
                                                             </div>
 
-                                                </div>
-                                                <% } %>
 
-                                                    <!-- Pagination -->
-                                                    <div class="pagination-area mt-30 mb-50">
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination justify-content-center">
-                                                                <% if (addressCurrentPage> 1) { %>
-                                                                    <li class="page-item">
-                                                                        <a class="page-link"
-                                                                            href="?addressPage=<%= addressCurrentPage - 1 %>#address">
-                                                                            <span aria-hidden="true">&lt;</span>
-                                                                            <!-- Previous Page Symbol -->
-                                                                        </a>
-                                                                    </li>
-                                                                    <% } %>
-                                                                        <% for (let i=1; i <=addressTotalPages; i++) {
-                                                                            %>
-                                                                            <% if (i===addressCurrentPage) { %>
-                                                                                <li class="page-item active">
-                                                                                    <a class="page-link"
-                                                                                        href="?addressPage=<%= 1 %>#address">
-                                                                                        <%= i %>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <% } else { %>
-                                                                                    <li class="page-item">
-                                                                                        <a class="page-link"
-                                                                                            href="?addressPage=<%= i %>#address">
-                                                                                            <%= i %>
-                                                                                        </a>
-                                                                                    </li>
-                                                                                    <% } %>
-                                                                                        <% } %>
-                                                                                            <% if (addressCurrentPage <
-                                                                                                addressTotalPages) { %>
-                                                                                                <li class="page-item">
-                                                                                                    <a class="page-link"
-                                                                                                        href="?addressPage=<%= addressCurrentPage + 1 %>#address">
-                                                                                                        <span
-                                                                                                            aria-hidden="true">&gt;</span>
-                                                                                                    </a>
-                                                                                                </li>
-                                                                                                <% } %>
-                                                            </ul>
-                                                        </nav>
+                                                            <% }); %>
                                                     </div>
 
                                             </div>
-                                            <!-- for add address modal -->
-                                            <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
-                                                aria-labelledby="addAddressModalLabel " aria-hidden="true">
+                                            <% } %>
+
+                                                <!-- Pagination -->
+                                                <div class="pagination-area mt-30 mb-50">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-center">
+                                                            <% if (addressCurrentPage> 1) { %>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                        href="?addressPage=<%= addressCurrentPage - 1 %>#address">
+                                                                        <span aria-hidden="true">&lt;</span>
+                                                                        <!-- Previous Page Symbol -->
+                                                                    </a>
+                                                                </li>
+                                                                <% } %>
+                                                                    <% for (let i=1; i <=addressTotalPages; i++) { %>
+                                                                        <% if (i===addressCurrentPage) { %>
+                                                                            <li class="page-item active">
+                                                                                <a class="page-link"
+                                                                                    href="?addressPage=<%= 1 %>#address">
+                                                                                    <%= i %>
+                                                                                </a>
+                                                                            </li>
+                                                                            <% } else { %>
+                                                                                <li class="page-item">
+                                                                                    <a class="page-link"
+                                                                                        href="?addressPage=<%= i %>#address">
+                                                                                        <%= i %>
+                                                                                    </a>
+                                                                                </li>
+                                                                                <% } %>
+                                                                                    <% } %>
+                                                                                        <% if (addressCurrentPage <
+                                                                                            addressTotalPages) { %>
+                                                                                            <li class="page-item">
+                                                                                                <a class="page-link"
+                                                                                                    href="?addressPage=<%= addressCurrentPage + 1 %>#address">
+                                                                                                    <span
+                                                                                                        aria-hidden="true">&gt;</span>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                            <% } %>
+                                                        </ul>
+                                                    </nav>
+                                                </div>
+
+                                        </div>
+                                        <!-- for add address modal -->
+                                        <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
+                                            aria-labelledby="addAddressModalLabel " aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="addAddressModalLabel">
+                                                            Add Address
+                                                        </h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="addAddressForm">
+                                                            <div class="form-group">
+                                                                <label for="fullName">Full Name:</label>
+                                                                <input type="text" id="fullName" name="fullName">
+                                                                <span class="error" id="fullNameError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="mobileNumber">Mobile
+                                                                    Number:</label>
+                                                                <input type="text" id="mobileNumber"
+                                                                    name="mobileNumber">
+                                                                <span class="error" id="mobileNumberError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="pincode">Pincode:</label>
+                                                                <input type="text" id="pincode" name="pincode">
+                                                                <span class="error" id="pincodeError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="houseNo">House No,Name:</label>
+                                                                <input type="text" id="houseNo" name="houseNo">
+                                                                <span class="error" id="houseNoError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="area">Area,Street,Village</label>
+                                                                <input type="text" id="area" name="area">
+                                                                <span class="error" id="areaError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="city">City:</label>
+                                                                <input type="text" id="city" name="city">
+                                                                <span class="error" id="cityError"></span>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="state">State:</label>
+                                                                <input type="text" id="state" name="state">
+                                                                <span class="error" id="stateError"></span>
+                                                            </div>
+                                                            <button type="submit" class="btn-lg btn-primary"
+                                                                id="addAddress">Add Address</button>
+
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <% address.forEach(address=> { %>
+                                            <div class="modal fade edit-address-modal"
+                                                id="editAddressModal-<%= address._id %>" tabindex="-1" role="dialog"
+                                                aria-labelledby="editAddressModalLabel" aria-hidden="true">
+
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="addAddressModalLabel">
-                                                                Add Address
+                                                            <h5 class="modal-title" id="editAddressModalLabel">Edit
+                                                                Address
                                                             </h5>
                                                             <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close">
@@ -590,424 +651,354 @@
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form id="addAddressForm">
+                                                            <form id="editAddressForm-<%= address._id %>">
                                                                 <div class="form-group">
                                                                     <label for="fullName">Full Name:</label>
-                                                                    <input type="text" id="fullName" name="fullName">
-                                                                    <span class="error" id="fullNameError"></span>
+                                                                    <input type="text" id="editFullName" name="fullName"
+                                                                        value="<%=  address.fullName %>">
+                                                                    <span class="error" id="editFullNameError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="mobileNumber">Mobile
                                                                         Number:</label>
-                                                                    <input type="text" id="mobileNumber"
-                                                                        name="mobileNumber">
-                                                                    <span class="error" id="mobileNumberError"></span>
+                                                                    <input type="text" id="editMobileNumber"
+                                                                        name="mobileNumber"
+                                                                        value="<%=address.mobileNumber %>">
+                                                                    <span class="error"
+                                                                        id="editMobileNumberError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="pincode">Pincode:</label>
-                                                                    <input type="text" id="pincode" name="pincode">
-                                                                    <span class="error" id="pincodeError"></span>
+                                                                    <input type="text" id="editPincode" name="pincode"
+                                                                        value="<%= address.pincode %>">
+                                                                    <span class="error" id="editPincodeError"></span>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label for="houseNo">House No,Name:</label>
-                                                                    <input type="text" id="houseNo" name="houseNo">
-                                                                    <span class="error" id="houseNoError"></span>
+                                                                    <label for="houseNo">House
+                                                                        No,Name:</label>
+                                                                    <input type="text" id="editHouseNo" name="houseNo"
+                                                                        value="<%= address.houseNo %>">
+                                                                    <span class="error" id="editHouseNoError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="area">Area,Street,Village</label>
-                                                                    <input type="text" id="area" name="area">
-                                                                    <span class="error" id="areaError"></span>
+                                                                    <input type="text" id="editArea" name="area"
+                                                                        value="<%= address.area %>">
+                                                                    <span class="error" id="editAreaError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="city">City:</label>
-                                                                    <input type="text" id="city" name="city">
-                                                                    <span class="error" id="cityError"></span>
+                                                                    <input type="text" id="editCity" name="city"
+                                                                        value="<%= address.city %>">
+                                                                    <span class="error" id="editCityError"></span>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label for="state">State:</label>
-                                                                    <input type="text" id="state" name="state">
-                                                                    <span class="error" id="stateError"></span>
+                                                                    <input type="text" id="editState" name="state"
+                                                                        value="<%= address.state %>">
+                                                                    <span class="error" id="editStateError"></span>
                                                                 </div>
-                                                                <button type="submit" class="btn-lg btn-primary"
-                                                                    id="addAddress">Add Address</button>
 
+                                                                <button type="submit" class="btn btn-primary"
+                                                                    id="updateAddress">save</button>
                                                             </form>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>
-                                            <% address.forEach(address=> { %>
-                                                <div class="modal fade edit-address-modal"
-                                                    id="editAddressModal-<%= address._id %>" tabindex="-1" role="dialog"
-                                                    aria-labelledby="editAddressModalLabel" aria-hidden="true">
+                                            <% }) %>
+                                    </div>
 
-                                                    <div class="modal-dialog" role="document">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title" id="editAddressModalLabel">Edit
-                                                                    Address
-                                                                </h5>
-                                                                <button type="button" class="close" data-dismiss="modal"
-                                                                    aria-label="Close">
-                                                                    <span aria-hidden="true">&times;</span>
-                                                                </button>
+                                    <!-- edit profile -->
+                                    <div class="tab-pane fade" id="profile" role="tabpanel"
+                                        aria-labelledby="profile-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5>Profile Details</h5>
+                                            </div>
+                                            <div class="card-body">
+
+                                                <form id="profileForm" data-user-id="<%= userData._id %>">
+                                                    <div class="row">
+                                                        <div class="form-group col-md-6">
+                                                            <label>Name <span>*</span></label>
+                                                            <input type="text" class="form-control square" id="name"
+                                                                name="name" value="<%= userData.name %>">
+                                                            <div class="error-message" id="name-error">
                                                             </div>
-                                                            <div class="modal-body">
-                                                                <form id="editAddressForm-<%= address._id %>">
-                                                                    <div class="form-group">
-                                                                        <label for="fullName">Full Name:</label>
-                                                                        <input type="text" id="editFullName"
-                                                                            name="fullName"
-                                                                            value="<%=  address.fullName %>">
-                                                                        <span class="error"
-                                                                            id="editFullNameError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="mobileNumber">Mobile
-                                                                            Number:</label>
-                                                                        <input type="text" id="editMobileNumber"
-                                                                            name="mobileNumber"
-                                                                            value="<%=address.mobileNumber %>">
-                                                                        <span class="error"
-                                                                            id="editMobileNumberError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="pincode">Pincode:</label>
-                                                                        <input type="text" id="editPincode"
-                                                                            name="pincode"
-                                                                            value="<%= address.pincode %>">
-                                                                        <span class="error"
-                                                                            id="editPincodeError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="houseNo">House
-                                                                            No,Name:</label>
-                                                                        <input type="text" id="editHouseNo"
-                                                                            name="houseNo"
-                                                                            value="<%= address.houseNo %>">
-                                                                        <span class="error"
-                                                                            id="editHouseNoError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="area">Area,Street,Village</label>
-                                                                        <input type="text" id="editArea" name="area"
-                                                                            value="<%= address.area %>">
-                                                                        <span class="error" id="editAreaError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="city">City:</label>
-                                                                        <input type="text" id="editCity" name="city"
-                                                                            value="<%= address.city %>">
-                                                                        <span class="error" id="editCityError"></span>
-                                                                    </div>
-                                                                    <div class="form-group">
-                                                                        <label for="state">State:</label>
-                                                                        <input type="text" id="editState" name="state"
-                                                                            value="<%= address.state %>">
-                                                                        <span class="error" id="editStateError"></span>
-                                                                    </div>
-
-                                                                    <button type="submit" class="btn btn-primary"
-                                                                        id="updateAddress">save</button>
-                                                                </form>
+                                                        </div>
+                                                        <div class="form-group col-md-6">
+                                                            <label>Email</label>
+                                                            <input type="email" id="email" name="email"
+                                                                value="<%= userData.email %>"
+                                                                class="form-control square" disabled>
+                                                        </div>
+                                                        <div class="form-group col-md-12">
+                                                            <label>Mobile
+                                                                Number<span>*</span></label>
+                                                            <input type="text" id="mobile" name="mobile"
+                                                                value="<%= userData.mobile %>"
+                                                                class="form-control square">
+                                                            <div class="error-message" id="mobile-error">
                                                             </div>
 
                                                         </div>
+
+                                                        <div
+                                                            class="col-md-12 d-flex justify-content-center text-center gap-3">
+                                                            <button type="button"
+                                                                class="btn btn-md btn-fill-out bg-secondary "
+                                                                data-toggle="modal" data-target="#changePasswordModal">
+                                                                <i class="fas fa-key me-2"></i>Change
+                                                                Password</button>
+                                                            <button type="submit" class="btn btn-md btn-fill-out"
+                                                                name="submit" value="Submit"><i
+                                                                    class="fas fa-save me-2"></i>Save</button>
+                                                        </div>
+
                                                     </div>
-                                                </div>
-                                                <% }) %>
+                                                </form>
+                                            </div>
                                         </div>
+                                    </div>
 
-                                        <!-- edit profile -->
-                                        <div class="tab-pane fade" id="profile" role="tabpanel"
-                                            aria-labelledby="profile-tab">
-                                            <div class="card" style="margin-top: 30px;">
-                                                <div class="card-header">
-                                                    <h5>Profile Details</h5>
+                                    <!-- for password change modal -->
+                                    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"
+                                        aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="changePasswordModalLabel">
+                                                        Change
+                                                        Password</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
                                                 </div>
-                                                <div class="card-body">
+                                                <div class="modal-body">
+                                                    <form id="changePasswordForm">
+                                                        <div class="form-group">
+                                                            <input type="password" class="form-control" id="oldPassword"
+                                                                name="oldPassword" placeholder="Enter Old Password">
+                                                            <i class="fas fa-eye toggle-password"></i>
+                                                        </div>
+                                                        <div class="error-message" id="oldPassword-error">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <input type="password" class="form-control" id="newPassword"
+                                                                name="newPassword" placeholder="Enter New Password">
+                                                            <i class="fas fa-eye toggle-password"></i>
+                                                        </div>
+                                                        <div class="error-message" id="newPassword-error">
+                                                        </div>
 
-                                                    <form id="profileForm" data-user-id="<%= userData._id %>">
-                                                        <div class="row">
-                                                            <div class="form-group col-md-6">
-                                                                <label>Name <span>*</span></label>
-                                                                <input type="text" class="form-control square" id="name"
-                                                                    name="name" value="<%= userData.name %>">
-                                                                <div class="error-message" id="name-error">
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group col-md-6">
-                                                                <label>Email</label>
-                                                                <input type="email" id="email" name="email"
-                                                                    value="<%= userData.email %>"
-                                                                    class="form-control square" disabled>
-                                                            </div>
-                                                            <div class="form-group col-md-12">
-                                                                <label>Mobile
-                                                                    Number<span>*</span></label>
-                                                                <input type="text" id="mobile" name="mobile"
-                                                                    value="<%= userData.mobile %>"
-                                                                    class="form-control square">
-                                                                <div class="error-message" id="mobile-error">
-                                                                </div>
-
-                                                            </div>
-
-                                                            <div
-                                                                class="col-md-12 d-flex justify-content-center text-center gap-3">
-                                                                <button type="button"
-                                                                    class="btn btn-md btn-fill-out bg-secondary "
-                                                                    data-toggle="modal"
-                                                                    data-target="#changePasswordModal">
-                                                                    <i class="fas fa-key me-2"></i>Change
-                                                                    Password</button>
-                                                                <button type="submit" class="btn btn-md btn-fill-out"
-                                                                    name="submit" value="Submit"><i
-                                                                        class="fas fa-save me-2"></i>Save</button>
-                                                            </div>
+                                                        <div class="form-group">
+                                                            <input type="password" class="form-control"
+                                                                id="confirmPassword" name="confirmPassword"
+                                                                placeholder="Confirm Password">
+                                                            <i class="fas fa-eye toggle-password"></i>
+                                                        </div>
+                                                        <div class="error-message" id="confirmPassword-error">
 
                                                         </div>
                                                     </form>
                                                 </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- for password change modal -->
-                                        <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog"
-                                            aria-labelledby="changePasswordModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="changePasswordModalLabel">
-                                                            Change
-                                                            Password</h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <form id="changePasswordForm">
-                                                            <div class="form-group">
-                                                                <input type="password" class="form-control"
-                                                                    id="oldPassword" name="oldPassword"
-                                                                    placeholder="Enter Old Password">
-                                                                <i class="fas fa-eye toggle-password"></i>
-                                                            </div>
-                                                            <div class="error-message" id="oldPassword-error">
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <input type="password" class="form-control"
-                                                                    id="newPassword" name="newPassword"
-                                                                    placeholder="Enter New Password">
-                                                                <i class="fas fa-eye toggle-password"></i>
-                                                            </div>
-                                                            <div class="error-message" id="newPassword-error">
-                                                            </div>
-
-                                                            <div class="form-group">
-                                                                <input type="password" class="form-control"
-                                                                    id="confirmPassword" name="confirmPassword"
-                                                                    placeholder="Confirm Password">
-                                                                <i class="fas fa-eye toggle-password"></i>
-                                                            </div>
-                                                            <div class="error-message" id="confirmPassword-error">
-
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                            data-dismiss="modal">Close</button>
-                                                        <button type="button" class="btn btn-primary"
-                                                            id="changePasswordBtn">Change
-                                                            Password</button>
-                                                    </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary"
+                                                        id="changePasswordBtn">Change
+                                                        Password</button>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!--for referral -->
-                                        <div class="tab-pane fade" id="referral" role="tabpanel"
-                                            aria-labelledby="referral-tab">
-                                            <div class="card" style="margin: 30px; padding: 30px;">
-                                                <div class="card-body">
-                                                    <h5 style="text-align: center;">
-                                                        Earn ₹150 for every referral
-                                                        <a href="#" data-toggle="modal" data-target="#shareModal">
-                                                            <i class="fas fa-share-alt"></i>
-                                                        </a>
-                                                    </h5>
-                                                    <br>
-                                                    <p>Introduce your friends to shopping on Threadloom and get ₹150 in
-                                                        rewards every time they join. Your friend also gets ₹50!</p>
-                                                    <div class="referral-code-container">
-                                                        <div class="referral-code-box">
-                                                            <%= referral.referralCode %>
-                                                        </div>
+                                    <!--for referral -->
+                                    <div class="tab-pane fade" id="referral" role="tabpanel"
+                                        aria-labelledby="referral-tab">
+                                        <div class="card" style="padding: 30px;">
+                                            <div class="card-body">
+                                                <h5 style="text-align: center;">
+                                                    Earn ₹150 for every referral
+                                                    <a href="#" data-toggle="modal" data-target="#shareModal">
+                                                        <i class="fas fa-share-alt"></i>
+                                                    </a>
+                                                </h5>
+                                                <br>
+                                                <p>Introduce your friends to shopping on Threadloom and get ₹150 in
+                                                    rewards every time they join. Your friend also gets ₹50!</p>
+                                                <div class="referral-code-container">
+                                                    <div class="referral-code-box">
+                                                        <%= referral.referralCode %>
                                                     </div>
-                                                    <div style="text-align: center; margin-top: 20px;">
-                                                        <a class="share-button"
-                                                            href="https://wa.me/?text=Use%20my%20referral%20code%20<%= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20" "encodeURIComponent(http://localhost:3434/register/refer?code=<%= referral.referralCode %>)"
-                                                            style="background-color: #25D366;">
-                                                            <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                                                </div>
+                                                <div style="text-align: center; margin-top: 20px;">
+                                                    <a class="share-button"
+                                                        href="https://wa.me/?text=Use%20my%20referral%20code%20<%= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20" "encodeURIComponent(http://localhost:3434/register/refer?code=<%= referral.referralCode %>)"
+                                                        style="background-color: #25D366;">
+                                                        <i class="fab fa-whatsapp"></i> Share on WhatsApp
+                                                    </a>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Share Modal -->
+                                    <div class="modal fade" id="shareModal" tabindex="-1"
+                                        aria-labelledby="shareModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="shareModalLabel">Share via</h5>
+                                                    <button type="button" class="close" data-dismiss="modal"
+                                                        aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <div class="list-group">
+                                                        <a href="https://wa.me/?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
+                                                            class="list-group-item list-group-item-action">
+                                                            <i class="fab fa-whatsapp"></i> WhatsApp
+                                                        </a>
+                                                        <a href="sms:?body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
+                                                            class="list-group-item list-group-item-action">
+                                                            <i class="fas fa-sms"></i> SMS
+                                                        </a>
+                                                        <a href="mailto:?subject=Join%20Threadloom&body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
+                                                            class="list-group-item list-group-item-action">
+                                                            <i class="fas fa-envelope"></i> Email
+                                                        </a>
+                                                        <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:3434/register/refer?code:<%#= referral.referralCode %>&quote=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!"
+                                                            class="list-group-item list-group-item-action">
+                                                            <i class="fab fa-facebook"></i> Facebook
+                                                        </a>
+                                                        <a href="https://twitter.com/intent/tweet?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
+                                                            class="list-group-item list-group-item-action">
+                                                            <i class="fab fa-twitter"></i> Twitter
                                                         </a>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        <!-- Share Modal -->
-                                        <div class="modal fade" id="shareModal" tabindex="-1"
-                                            aria-labelledby="shareModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title" id="shareModalLabel">Share via</h5>
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="list-group">
-                                                            <a href="https://wa.me/?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
-                                                                class="list-group-item list-group-item-action">
-                                                                <i class="fab fa-whatsapp"></i> WhatsApp
-                                                            </a>
-                                                            <a href="sms:?body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
-                                                                class="list-group-item list-group-item-action">
-                                                                <i class="fas fa-sms"></i> SMS
-                                                            </a>
-                                                            <a href="mailto:?subject=Join%20Threadloom&body=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
-                                                                class="list-group-item list-group-item-action">
-                                                                <i class="fas fa-envelope"></i> Email
-                                                            </a>
-                                                            <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:3434/register/refer?code:<%#= referral.referralCode %>&quote=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!"
-                                                                class="list-group-item list-group-item-action">
-                                                                <i class="fab fa-facebook"></i> Facebook
-                                                            </a>
-                                                            <a href="https://twitter.com/intent/tweet?text=Use%20my%20referral%20code%20<%#= referral.referralCode %>%20to%20sign%20up%20on%20Threadloom%20and%20get%20₹50%20in%20your%20wallet!%20Sign%20up%20here:%20http://localhost:3434/register/refer?code:<%#= referral.referralCode %>"
-                                                                class="list-group-item list-group-item-action">
-                                                                <i class="fab fa-twitter"></i> Twitter
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                    <!-- for wallet -->
+                                    <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h5 class="mb-0">Hello ,<%= userData.name %>
+                                                </h5>
                                             </div>
-                                        </div>
 
-                                        <!-- for wallet -->
-                                        <div class="tab-pane fade" id="wallet" role="tabpanel"
-                                            aria-labelledby="wallet-tab">
-                                            <div class="card" style="margin-top: 30px;">
-                                                <div class="card-header">
-                                                    <h5 class="mb-0">Hello ,<%= userData.name %>
-                                                    </h5>
-                                                </div>
-
-                                                <div class="card-body text-center">
-                                                    <h3 class="card-title  mt-5">Wallet Balance:
-                                                        <span class="text-success fw-bold">&#x20B9; <%= balance || '000'
-                                                                %></span>
-                                                    </h3>
-                                                    <hr class="my-4">
-                                                    <h4 class="text-danger">Transaction History</h4>
-                                                    <br>
-                                                    <div class="row ">
-                                                        <% if (wallet && wallet.transactions &&
-                                                            wallet.transactions.length> 0) { %>
-                                                            <% wallet.transactions.forEach(transaction=> {
-                                                                %>
-                                                                <div class="col-md-6">
-                                                                    <div
-                                                                        class="card mb-3 shadow-lg border-1 hover-effect">
-                                                                        <div class="card-body">
-                                                                            <h5 class="card-title">
-                                                                                <% if (transaction.type==='credit' ) {
-                                                                                    %>
-                                                                                    <span class="text-success fw-bold">
+                                            <div class="card-body text-center">
+                                                <h3 class="card-title  mt-5">Wallet Balance:
+                                                    <span class="text-success fw-bold">&#x20B9; <%= balance || '000' %>
+                                                    </span>
+                                                </h3>
+                                                <hr class="my-4">
+                                                <h4 class="text-danger">Transaction History</h4>
+                                                <br>
+                                                <div class="row ">
+                                                    <% if (wallet && wallet.transactions && wallet.transactions.length>
+                                                        0) { %>
+                                                        <% wallet.transactions.forEach(transaction=> {
+                                                            %>
+                                                            <div class="col-md-6">
+                                                                <div class="card mb-3 shadow-lg border-1 hover-effect">
+                                                                    <div class="card-body">
+                                                                        <h5 class="card-title">
+                                                                            <% if (transaction.type==='credit' ) { %>
+                                                                                <span class="text-success fw-bold">
+                                                                                    <i
+                                                                                        class="fas fa-arrow-down mr-5"></i>
+                                                                                    Credit
+                                                                                </span>
+                                                                                <% } else { %>
+                                                                                    <span class="text-danger fw-bold">
                                                                                         <i
-                                                                                            class="fas fa-arrow-down mr-5"></i>
-                                                                                        Credit
+                                                                                            class="fas fa-arrow-up mr-5"></i>
+                                                                                        Debit
                                                                                     </span>
-                                                                                    <% } else { %>
-                                                                                        <span
-                                                                                            class="text-danger fw-bold">
-                                                                                            <i
-                                                                                                class="fas fa-arrow-up mr-5"></i>
-                                                                                            Debit
-                                                                                        </span>
-                                                                                        <% } %>
+                                                                                    <% } %>
 
-                                                                            </h5>
-                                                                            <p class="card-text fw-bold">&#x20B9; <%=
-                                                                                    transaction.amount %>
+                                                                        </h5>
+                                                                        <p class="card-text fw-bold">&#x20B9; <%=
+                                                                                transaction.amount %>
+                                                                        </p>
+                                                                        <div
+                                                                            class="d-flex justify-content-between text-muted">
+                                                                            <p class="mb-0">
+                                                                                <%= transaction.description || 'N/A' %>
                                                                             </p>
-                                                                            <div
-                                                                                class="d-flex justify-content-between text-muted">
-                                                                                <p class="mb-0">
-                                                                                    <%= transaction.description || 'N/A'
-                                                                                        %>
-                                                                                </p>
-                                                                                <p class="mb-0">
-                                                                                    <%= transaction.date ?
-                                                                                        transaction.date.toDateString()
-                                                                                        : 'N/A' %>
-                                                                                </p>
-                                                                            </div>
-
+                                                                            <p class="mb-0">
+                                                                                <%= transaction.date ?
+                                                                                    transaction.date.toDateString()
+                                                                                    : 'N/A' %>
+                                                                            </p>
                                                                         </div>
+
                                                                     </div>
                                                                 </div>
-                                                                <% }); %>
-                                                                    <% } else { %>
-                                                                        <p class="text-muted">No transactions found.</p>
-                                                                        <% } %>
-                                                    </div>
-
-                                                    <!-- Pagination -->
-                                                    <div class="pagination-area mt-30 mb-50">
-                                                        <nav aria-label="Page navigation example">
-                                                            <ul class="pagination justify-content-center mt-3">
-                                                                <% if (walletCurrentPage> 1) { %>
-                                                                    <li class="page-item">
-                                                                        <a class="page-link"
-                                                                            href="?walletPage=<%= walletCurrentPage  - 1 %>#wallet">
-                                                                            <span aria-hidden="true">&laquo;</span>
-                                                                        </a>
-                                                                    </li>
+                                                            </div>
+                                                            <% }); %>
+                                                                <% } else { %>
+                                                                    <div class="text-center justify-content-center">
+                                                                        <img src="/imgs/pages/Transactions.png"
+                                                                            alt="No address found" class="img-fluid"
+                                                                            style="max-width: 300px;">
+                                                                        <div class="alert alert-info" role="alert">
+                                                                            No transactions found.
+                                                                        </div>
+                                                                    </div>
                                                                     <% } %>
-                                                                        <% for (let i=1; i <=walletTotalPages; i++) { %>
-                                                                            <li
-                                                                                class="page-item <%= i === walletCurrentPage ? 'active' : '' %>">
-                                                                                <a class="page-link"
-                                                                                    href="?walletPage=<%= i %>#wallet">
-                                                                                    <%= i %>
-                                                                                </a>
-                                                                            </li>
-                                                                            <% } %>
+                                                </div>
 
-                                                                                <% if (walletCurrentPage <
-                                                                                    walletTotalPages) { %>
-                                                                                    <li class="page-item">
-                                                                                        <a class="page-link"
-                                                                                            href="?walletPage=<%= walletCurrentPage + 1 %>#wallet">&raquo;</a>
-                                                                                    </li>
-                                                                                    <% } %>
-                                                            </ul>
-                                                        </nav>
-                                                    </div>
+                                                <!-- Pagination -->
+                                                <div class="pagination-area mt-30 mb-50">
+                                                    <nav aria-label="Page navigation example">
+                                                        <ul class="pagination justify-content-center mt-3">
+                                                            <% if (walletCurrentPage> 1) { %>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                        href="?walletPage=<%= walletCurrentPage  - 1 %>#wallet">
+                                                                        <span aria-hidden="true">&laquo;</span>
+                                                                    </a>
+                                                                </li>
+                                                                <% } %>
+                                                                    <% for (let i=1; i <=walletTotalPages; i++) { %>
+                                                                        <li
+                                                                            class="page-item <%= i === walletCurrentPage ? 'active' : '' %>">
+                                                                            <a class="page-link"
+                                                                                href="?walletPage=<%= i %>#wallet">
+                                                                                <%= i %>
+                                                                            </a>
+                                                                        </li>
+                                                                        <% } %>
+
+                                                                            <% if (walletCurrentPage < walletTotalPages)
+                                                                                { %>
+                                                                                <li class="page-item">
+                                                                                    <a class="page-link"
+                                                                                        href="?walletPage=<%= walletCurrentPage + 1 %>#wallet">&raquo;</a>
+                                                                                </li>
+                                                                                <% } %>
+                                                        </ul>
+                                                    </nav>
                                                 </div>
                                             </div>
                                         </div>
-
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
             </section>
         </main>
 

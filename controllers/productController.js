@@ -1,25 +1,9 @@
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const Offer = require('../models/offerModel')
-const multer = require('multer');
 const fs = require('fs')
 const path = require('path');
 const sharp = require('sharp');
-
-
-
-// Multer configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/product/original')
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
-
-});
-
-const upload = multer({ storage: storage });
 
 
 
@@ -369,7 +353,6 @@ const removeOffer = async (req, res, next) => {
 
 module.exports = {
     loadAddProduct,
-    upload,
     addProduct,
     productListPage,
     loadEditProduct,

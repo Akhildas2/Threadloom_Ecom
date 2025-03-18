@@ -5,20 +5,7 @@ const bcrypt = require('bcrypt')
 const Wallet = require('../models/walletModel')
 const Referral = require("../models/referralModel")
 const Review = require("../models/reviewModel")
-
-
-
-
-//for secure password
-const securePassword = async (password, next) => {
-    try {
-        const passwordHarsh = await bcrypt.hash(password, 10)
-        return passwordHarsh
-
-    } catch (error) {
-        next(error);
-    }
-}
+const { securePassword } = require('../utils/securePassword');
 
 
 

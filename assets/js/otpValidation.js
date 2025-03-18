@@ -6,6 +6,7 @@ const form = document.getElementById('otpForm');
 const timerDuration = 60;
 let timerValue = parseInt(sessionStorage.getItem('timerValue')) || timerDuration;
 let timerInterval;
+let timerCompleted = sessionStorage.getItem('timerCompleted') === 'true';
 
 // Function to display timer
 function updateTimerDisplay() {
@@ -24,22 +25,39 @@ function startTimer() {
     if (timerValue === 0) {
       clearInterval(timerInterval);
       sessionStorage.removeItem('isTimerStarted');
+      sessionStorage.setItem('timerCompleted', 'true');
       resendLinkContainer.style.display = 'block';
       timerDisplay.innerText = '';
     }
   }, 1000);
 }
 
-// Check if the timer should start on the initial page load
-if (!sessionStorage.getItem('isTimerStarted')) {
-  sessionStorage.setItem('isTimerStarted', 'true');
-  startTimer();
-  updateTimerDisplay();
-} else if (timerValue > 0) {
-  // Restore the timer if it's running
-  startTimer();
-  updateTimerDisplay();
+// Initialize the page based on timer state
+function initializeTimerState() {
+  // Check if timer was previously completed
+  if (timerCompleted) {
+    resendLinkContainer.style.display = 'block';
+    timerDisplay.innerText = '';
+    return;
+  }
+  
+  // If timer was started but not completed, resume it
+  if (sessionStorage.getItem('isTimerStarted') === 'true' && timerValue > 0) {
+    startTimer();
+    updateTimerDisplay();
+  } 
+  // Start a new timer only if it was never started before
+  else if (!sessionStorage.getItem('isTimerStarted')) {
+    sessionStorage.setItem('isTimerStarted', 'true');
+    timerValue = timerDuration;
+    sessionStorage.setItem('timerValue', timerValue.toString());
+    startTimer();
+    updateTimerDisplay();
+  }
 }
+
+// Initialize timer state on page load
+initializeTimerState();
 
 // Function to resend OTP
 function resendOtp() {
@@ -47,6 +65,8 @@ function resendOtp() {
   timerValue = timerDuration;
   sessionStorage.setItem('timerValue', timerValue.toString());
   sessionStorage.setItem('isTimerStarted', 'true');
+  sessionStorage.removeItem('timerCompleted');
+  timerCompleted = false;
   startTimer();
 
   // Send the resend request to the server using Axios
@@ -81,7 +101,6 @@ function resendOtp() {
       }
     });
 }
-
 
 // OTP Input Navigation and Backspace Handling
 inputs.forEach((input, index) => {
@@ -146,6 +165,11 @@ form.addEventListener('submit', function (event) {
   axios.post('/verifyOtp', data)
     .then(res => {
       if (res.data.status) {
+        // Clear timer state on successful verification
+        sessionStorage.removeItem('timerValue');
+        sessionStorage.removeItem('isTimerStarted');
+        sessionStorage.removeItem('timerCompleted');
+        
         Swal.fire({
           icon: "success",
           title: "Register Successful. Please login",

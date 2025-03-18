@@ -5,7 +5,7 @@ const User = require('../models/userModel');
 const Otp = require('../models/otpModel');
 const Review = require('../models/reviewModel');
 const Orders = require('../models/orderModel');
-const { getProductsWithReviews } = require("../helpers/productHelper");
+const { getProductsWithReviews } = require("../utils/productHelper");
 
 
 
@@ -276,6 +276,7 @@ const loadVerifyOtp = async (req, res, next) => {
         next(error);
     }
 }
+
 
 
 //for search suggestion 

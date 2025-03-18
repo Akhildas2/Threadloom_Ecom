@@ -4,19 +4,7 @@ const Order = require('../models/orderModel')
 const Product = require('../models/productModel')
 const Category = require('../models/categoryModel')
 const bcrypt = require('bcrypt');
-
-
-
-//for secure password
-const securePassword = async (password, next) => {
-    try {
-        const passwordHarsh = await bcrypt.hash(password, 10)
-        return passwordHarsh
-
-    } catch (error) {
-        next(error);
-    }
-}
+const { securePassword } = require('../utils/securePassword');
 
 
 
@@ -336,6 +324,7 @@ const blockUser = async (req, res, next) => {
         next(error);
     }
 }
+
 
 
 //for unblock user 

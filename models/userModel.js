@@ -10,19 +10,16 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
         lowercase: true,
-
     },
     mobile: {
         type: String,
         unique: true,
-        required: true,
-
     },
     password: {
         type: String,
         required: true,
     },
-    google:{
+    google: {
         type: Boolean,
         default: false
     },
@@ -33,7 +30,7 @@ const userSchema = new mongoose.Schema({
     isBlocked: {
         type: Boolean,
         default: false
-    }, 
+    },
     token: {
         type: String,
         default: ''

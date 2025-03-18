@@ -1,21 +1,7 @@
 const Category = require('../models/categoryModel');
-const multer = require('multer');
 const path = require('path');
 const sharp = require('sharp');
 const Offer = require('../models/offerModel')
-
-
-
-// Multer configuration
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/category/original');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
-    },
-});
-const upload = multer({ storage: storage });
 
 
 
@@ -28,7 +14,6 @@ const loadAddCategory = async (req, res, next) => {
         next(error);
     }
 };
-
 
 
 
@@ -97,8 +82,6 @@ const loadListCategory = async (req, res, next) => {
 
 
 
-
-
 // Load Edit Category
 const loadEditCategory = async (req, res, next) => {
     try {
@@ -114,10 +97,6 @@ const loadEditCategory = async (req, res, next) => {
         next(error);
     }
 };
-
-
-
-
 
 
 
@@ -240,7 +219,6 @@ const addOffer = async (req, res, next) => {
 
 
 
-
 //for remove offer 
 const removeOffer = async (req, res, next) => {
     try {
@@ -270,7 +248,6 @@ const removeOffer = async (req, res, next) => {
 module.exports = {
     loadAddCategory,
     addCategory,
-    upload,
     loadListCategory,
     loadEditCategory,
     editCategory,

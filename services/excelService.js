@@ -1,6 +1,7 @@
 const ExcelJS = require('exceljs');
 
 
+
 const generateSalesReportExcel = (fullOrders, res) => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sales Report');
@@ -18,7 +19,7 @@ const generateSalesReportExcel = (fullOrders, res) => {
         { header: 'Payment Method', key: 'paymentMethod', width: 25 },
         { header: 'Total', key: 'total', width: 15 },
     ];
-    
+
 
     fullOrders.forEach((order, orderIndex) => {
         order.items.forEach((item, itemIndex) => {
@@ -41,10 +42,12 @@ const generateSalesReportExcel = (fullOrders, res) => {
     // Configure the response to download the Excel file
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=sales_report.xlsx');
-    
+
     // Write the Excel file to the response
     workbook.xlsx.write(res).then(() => res.end());
-    
+
 }
+
+
 
 module.exports = { generateSalesReportExcel };

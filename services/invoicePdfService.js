@@ -2,6 +2,8 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
+
+
 const generateInvoicePDF = (order) => {
     return new Promise((resolve, reject) => {
         const doc = new PDFDocument({ margin: 50 });
@@ -48,6 +50,9 @@ const generateInvoicePDF = (order) => {
         });
     });
 };
+
+
+
 //for drawing line 
 const drawLine = (doc) => {
     doc.moveDown()
@@ -56,7 +61,6 @@ const drawLine = (doc) => {
         .stroke()
         .moveDown();
 };
-
 
 
 
@@ -70,6 +74,7 @@ const generateHeader = (doc, order) => {
         .text(`Order ID: ${order.ordersId}`, { align: 'right' })
         .moveDown();
 };
+
 
 
 //for customer info 
@@ -92,6 +97,8 @@ const generateCustomerInformation = (doc, order) => {
         .text(`Address: ${order.deliveryAddress.houseNo}, ${order.deliveryAddress.area}, ${order.deliveryAddress.city}, ${order.deliveryAddress.state}, ${order.deliveryAddress.pincode}`).moveDown(0.3)
 };
 
+
+
 //for charges and discount 
 const generateChargesAndDiscounts = (doc, order) => {
     doc
@@ -111,6 +118,8 @@ const generateChargesAndDiscounts = (doc, order) => {
     }
 };
 
+
+
 //for order info
 const generateOrderInformation = (doc, order) => {
     doc
@@ -122,6 +131,8 @@ const generateOrderInformation = (doc, order) => {
         .text(`Payment Method: ${order.paymentMethod}`).moveDown(0.3)
         .text(`Payment Status: ${order.status}`).moveDown(0.3)
 };
+
+
 
 //for item showing like table
 const generateInvoiceTable = (doc, order) => {
@@ -167,6 +178,9 @@ const generateInvoiceTable = (doc, order) => {
     doc.moveDown();
 
 };
+
+
+
 //for the footer 
 const generateFooter = (doc) => {
     doc
@@ -177,6 +191,8 @@ const generateFooter = (doc) => {
             bold: true
         });
 };
+
+
 
 module.exports = {
     generateInvoicePDF,
