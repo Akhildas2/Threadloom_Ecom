@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+
 const offerSchema = new mongoose.Schema({
     offerName: {
         type: String,
@@ -17,9 +19,10 @@ const offerSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-   
+
 });
 
-const Offer = mongoose.model('Offer', offerSchema);
 
+
+const Offer = mongoose.model('Offer', offerSchema);
 module.exports = Offer;

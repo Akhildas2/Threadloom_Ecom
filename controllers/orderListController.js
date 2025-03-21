@@ -137,7 +137,7 @@ const updateStatus = async (req, res, next) => {
 //for loading sales report
 const loadSalesReport = async (req, res, next) => {
     try {
-        let { startDate, endDate, period, page = 1, limit = 2, format } = req.query;
+        let { startDate, endDate, period, page = 1, limit = 5, format } = req.query;
 
         page = parseInt(page);
         limit = parseInt(limit);

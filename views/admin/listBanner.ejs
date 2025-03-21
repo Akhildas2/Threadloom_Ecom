@@ -1,0 +1,448 @@
+<%- include('../adminLayouts/header.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <style>
+            .banner-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .banner-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 25px;
+                margin-top: 30px;
+            }
+
+            .banner-card {
+                position: relative;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                transition: transform 0.3s ease;
+            }
+
+            .banner-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .banner-image {
+                width: 100%;
+                height: 200px;
+                object-fit: cover;
+            }
+
+            .banner-details {
+                padding: 15px;
+            }
+
+            .banner-actions {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                display: flex;
+                gap: 8px;
+                z-index: 2;
+            }
+
+            .action-btn {
+                background: rgba(255, 255, 255, 0.9);
+                border: none;
+                width: 35px;
+                height: 35px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .action-btn:hover {
+                background: #fff;
+                transform: scale(1.1);
+            }
+
+            .status-badge {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                padding: 4px 12px;
+                border-radius: 15px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .active-status {
+                background: #d1fae5;
+                color: #065f46;
+            }
+
+            .inactive-status {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .archived-status {
+                background: #e5e7eb;
+                color: #4b5563;
+            }
+        </style>
+        <section class="content-main">
+            <div class="container">
+                <div class="banner-header ">
+                    <h2 class="mb-0">Manage Banners</h2>
+                    <a href="/admin/banner/addBanner" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i> Add New Banner
+                    </a>
+                </div>
+
+                <% if (banners.length> 0) { %>
+                    <div class="banner-container">
+                        <% banners.forEach(banner=> { %>
+                            <div class="banner-card">
+                                <div class="banner-actions">
+                                    <button class="action-btn text-primary"
+                                        onclick="openEditModal('<%= banner._id %>')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn text-danger" onclick="confirmDelete('<%= banner._id %>')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <span
+                                    class="status-badge <%= banner.status === 'active' ? 'active-status' : banner.status === 'inactive' ? 'inactive-status' : 'archived-status' %>">
+                                    <%= banner.status %>
+                                </span>
+
+                                <img src="/uploads/banner/<%= banner.bannerImage %>" alt="<%= banner.title %>"
+                                    class="banner-image">
+
+                                <div class="banner-details">
+                                    <h5 class="mb-2 fs-5">
+                                        <%= banner.title %>
+                                    </h5>
+                                    <p class="text-muted small mb-2">
+                                        <%= banner.description %>
+                                    </p>
+
+                                    <div class="d-flex justify-content-between small">
+                                        <span class="badge bg-secondary mt-2">
+                                            <%= banner.bannerType %>
+                                        </span>
+                                        <span class="mt-2">
+                                            <%= new Date(banner.createdAt).toLocaleDateString() %>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                    </div>
+                    <% } else { %>
+                        <div class="text-center py-5">
+                            <i class="fas fa-image fa-3x text-muted mb-3"></i>
+                            <h4 class="text-muted">No banners found</h4>
+                            <p class="text-muted">Click the "Add New Banner" button to create one</p>
+                        </div>
+                        <% } %>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-end">
+                        <% if (currentPage> 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                                    <i class="material-icons md-chevron_left"></i>
+                                </a>
+                            </li>
+                            <% } %>
+
+                                <% for (let i=1; i <=totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="?page=<%= i %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>
+                                    <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                                    <i class="material-icons md-chevron_right"></i>
+                                                </a>
+                                            </li>
+                                            <% } %>
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Edit Banner Modal -->
+            <div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="editBannerModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary" id="editBannerModalLabel">Edit Banner</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="editBannerForm" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <input type="hidden" id="editBannerId" name="bannerId">
+
+                                <div class="mb-3">
+                                    <label class="form-label">Title</label>
+                                    <input type="text" class="form-control" id="editTitle" name="title" required>
+                                    <small class="text-danger" id="titleError"></small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="editDescription" name="description" rows="3"
+                                        required></textarea>
+                                    <small class="text-danger" id="descriptionError"></small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Banner Image</label>
+                                    <input type="file" class="form-control" id="editBannerImage" name="bannerImage">
+                                    <small class="text-danger" id="imageError"></small>
+                                    <div class="mt-2">
+                                        <img id="bannerImagePreview" src="" alt="Banner Image" class="img-thumbnail">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Banner Type</label>
+                                    <select class="form-control" id="editBannerType" name="bannerType" required>
+                                        <option value="homepage">Home page</option>
+                                        <option value="category">Category</option>
+                                        <option value="offer">Offer</option>
+                                        <option value="shop">Shop</option>
+                                        <option value="promotion">Promotion</option>
+                                        <option value="adds">Adds</option>
+                                    </select>
+                                    <small class="text-danger" id="bannerTypeError"></small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Status</label>
+                                    <select class="form-control" id="editStatus" name="status" required>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                        <option value="archived">Archived</option>
+                                    </select>
+                                    <small class="text-danger" id="statusError"></small>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Update Banner</button>
+                                </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+
+
+
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script>
+            function openEditModal(id) {
+
+                fetch(`/admin/banner/${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        let banner = data.banner;
+
+                        document.getElementById("editBannerId").value = banner._id;
+                        document.getElementById("editTitle").value = banner.title;
+                        document.getElementById("editDescription").value = banner.description;
+
+                        let imagePath = `/uploads/banner/${banner.bannerImage}`;
+
+                        document.getElementById("bannerImagePreview").src = imagePath;
+                        document.getElementById("editBannerType").value = banner.bannerType;
+                        document.getElementById("editStatus").value = banner.status;
+
+                        new bootstrap.Modal(document.getElementById("editBannerModal")).show();
+                    })
+                    .catch(error => console.error("Error fetching banner:", error));
+            }
+
+            document.getElementById("editBannerForm").addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                // Reset previous errors
+                document.querySelectorAll(".text-danger").forEach(el => el.innerText = "");
+
+                let id = document.getElementById("editBannerId").value;
+                let title = document.getElementById("editTitle").value.trim();
+                let description = document.getElementById("editDescription").value.trim();
+                let bannerType = document.getElementById("editBannerType").value;
+                let status = document.getElementById("editStatus").value;
+                let bannerImage = document.getElementById("editBannerImage").files[0];
+
+                let hasError = false;
+
+                // Validate Title
+                if (title.length < 3) {
+                    document.getElementById("titleError").innerText = "Title must be at least 3 characters long.";
+                    hasError = true;
+                }
+
+                // Validate Description
+                if (description.length < 10) {
+                    document.getElementById("descriptionError").innerText = "Description must be at least 10 characters long.";
+                    hasError = true;
+                }
+
+                if (description.length > 100) {
+                    document.getElementById("descriptionError").innerText = "Description should not be more than 100 words.";
+                    hasError = true;
+                }
+
+                // Validate Banner Type
+                if (!bannerType) {
+                    document.getElementById("bannerTypeError").innerText = "Please select a banner type.";
+                    hasError = true;
+                }
+
+
+                // Validate Status
+                if (!status) {
+                    document.getElementById("statusError").innerText = "Please select a status.";
+                    hasError = true;
+                }
+
+                // Validate Image (if selected)
+                if (bannerImage) {
+                    const allowedExtensions = ["jpg", "jpeg", "png"];
+                    const fileSizeLimit = 2 * 1024 * 1024; // 2MB
+                    let fileExtension = bannerImage.name.split(".").pop().toLowerCase();
+                    let imageErrorEl = document.getElementById("imageError");
+
+                    // Clear previous error messages
+                    if (imageErrorEl) {
+                        imageErrorEl.innerText = "";
+                    }
+
+                    // Check file extension
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        if (imageErrorEl) {
+                            imageErrorEl.innerText = "Only JPG, JPEG, or PNG files are allowed.";
+                        }
+                        hasError = true;
+                    }
+
+                    // Check file size
+                    if (bannerImage.size > fileSizeLimit) {
+                        if (imageErrorEl) {
+                            imageErrorEl.innerText = "Image size must be less than 2MB.";
+                        }
+                        hasError = true;
+                    }
+                }
+
+                // Stop form submission if validation fails
+                if (hasError) return;
+
+                // Prepare form data
+                let formData = new FormData();
+                formData.append("title", title);
+                formData.append("description", description);
+                formData.append("bannerType", bannerType);
+                formData.append("status", status);
+                if (bannerImage) {
+                    formData.append("bannerImage", bannerImage);
+                }
+
+                try {
+                    const response = await axios.put(`/admin/banner/updateBanner/${id}`, formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    });
+
+                    if (response.data.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success!",
+                            text: "Banner updated successfully!",
+                            timer: 2000,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload(); // Refresh the page to reflect changes
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error!",
+                            text: "Failed to update banner."
+                        });
+                    }
+                } catch (error) {
+                    let errorMessage = error.response?.data?.message || "An error occurred.";
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops!",
+                        text: errorMessage
+                    });
+                }
+            });
+
+            function confirmDelete(bannerId) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        axios.delete(`/admin/banner/delete/${bannerId}`)
+                            .then(response => {
+                                Swal.fire("Deleted!", "The banner has been deleted.", "success").then(() => {
+                                    location.reload(); // Refresh page after successful delete
+                                });
+                            })
+                            .catch(error => {
+                                Swal.fire("Error!", "Something went wrong.", "error");
+                            });
+                    }
+                });
+            }
+            // Update Image Preview on File Change
+            document.getElementById("editBannerImage").addEventListener("change", function (event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const previewImage = document.getElementById("bannerImagePreview");
+                        if (previewImage) {
+                            previewImage.src = e.target.result;
+                        } else {
+                            console.error("bannerImagePreview element not found in the DOM.");
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+
+        </script>
+
+
+        <%- include('../adminLayouts/footer.ejs') %>

@@ -1,122 +1,176 @@
 <%- include('../adminLayouts/header.ejs') %>
-<%- include('../adminLayouts/navbar.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
 
-<section class="content-main">
-    <div class="container">
-        <div class="content-header">
-            <h2 class="content-title card-title">Add Category</h2>
-        </div>
-        <div class="row justify-content-center">
-        <div class="card col-md-9 mb-9 ">
-            <div class="card-body ">
-                <form enctype="multipart/form-data" action="/admin/category/addcategory" method="post" id="addCategoryForm">
-                 <h4 class="content-title card-title">Add a new category</h4>
-                   
-                    <div class="form-group">
-                        <label for="categoryName">Name</label>
-                        <input type="text" class="form-control" id="categoryName" name="categoryName">
-                        <span class="error-message" id="categoryNameError"></span>
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header">
+                    <h2 class="content-title card-title">Add Category</h2>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="card col-md-9 mb-9">
+                        <div class="card-body">
+                            <form enctype="multipart/form-data" action="/admin/category/addcategory" method="post"
+                                id="addCategoryForm">
+                                <h4 class="content-title card-title">Add a new category</h4>
+
+                                <div class="form-group">
+                                    <label for="categoryName">Name</label>
+                                    <input type="text" class="form-control" id="categoryName" name="categoryName">
+                                    <span class="error-message text-danger" id="categoryNameError"></span>
+                                </div>
+
+                                <div class="form-group d-flex justify-content-center mt-4">
+                                    <div class="text-center">
+                                        <label class="picture" for="categoryPhoto" tabIndex="0">
+                                            <img id="previewImage" class="picture__img d-none" alt="Preview">
+                                            <span class="picture__image">Choose an image</span>
+                                        </label>
+                                        <input type="file" name="categoryPhoto" id="categoryPhoto" accept="image/*">
+                                    </div>
+                                </div>
+                                <span class="error-message text-danger" id="categoryPhotoError"></span>
+
+                                <style>
+                                    #categoryPhoto {
+                                        display: none;
+                                    }
+
+                                    .picture {
+                                        width: 300px;
+                                        height: 300px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        border: 2px dashed #088178;
+                                        cursor: pointer;
+                                        transition: color 300ms ease-in-out, background 300ms ease-in-out;
+                                        overflow: hidden;
+                                        margin-top: 20px;
+                                        position: relative;
+                                    }
+
+                                    .picture img {
+                                        width: 100%;
+                                        height: 100%;
+                                        object-fit: cover;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                    }
+
+                                    .picture:active {
+                                        border-color: turquoise;
+                                        color: turquoise;
+                                        background: #eee;
+                                    }
+                                </style>
+
+                                <br>
+                                <button type="submit" class="btn btn-primary"
+                                    style="display: block; margin: 0 auto;">Add Category</button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="form-group" >
-                        <label for="categoryPhoto">Photo</label>
-                        <input type="file" class="form-control-file" id="categoryPhoto" name="categoryPhoto" onchange="previewImage()">
-                        <span class="error-message" id="categoryPhotoError"></span>
-                    </div>
-                    <div class="form-group">
-                        <label>Preview:</label>
-                        <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 200px; height: 200px; display: none;">
-                    </div>
-                    <br>
-                    <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto;">Add Category</button>
-                </form>
+                </div>
             </div>
-            </div>
-        </div>
-    </div>
-</section>
-<script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js" integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<!-- Include SweetAlert -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    const allowedExtensions = ['jpg', 'jpeg', 'png'];
+        </section>
 
-    function previewImage() {
-        const fileInput = document.getElementById('categoryPhoto');
-        const imagePreview = document.getElementById('imagePreview');
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+            integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.6.7/axios.min.js"
+            integrity="sha512-NQfB/bDaB8kaSXF8E77JjhHG5PM6XVRxvHzkZiwl3ddWCEPBa23T76MuWSwAJdMGJnmQqM0VeY9kFszsrBEFrQ=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-        if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
+        <script>
+            const inputFile = document.querySelector("#categoryPhoto");
+            const previewImage = document.querySelector("#previewImage");
+            const allowedExtensions = ["jpg", "jpeg", "png"];
 
-            reader.onload = function(e) {
-                imagePreview.src = e.target.result;
-                imagePreview.style.display = 'block';
-            };
+            inputFile.addEventListener("change", function (e) {
+                const file = e.target.files[0];
 
-            reader.readAsDataURL(fileInput.files[0]);
-        }
-    }
+                if (file) {
+                    const reader = new FileReader();
 
-    document.getElementById('addCategoryForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const data = new FormData(document.getElementById('addCategoryForm'));
-        const errors = [];
-        
-        const categoryName = data.get('categoryName');
-        const categoryPhoto = document.getElementById('categoryPhoto').files[0];
+                    reader.onload = function (e) {
+                        previewImage.src = e.target.result;
+                        previewImage.classList.remove("d-none");
+                    };
 
-        // Clear previous error messages
-        document.getElementById('categoryNameError').textContent = '';
-        document.getElementById('categoryPhotoError').textContent = '';
+                    reader.readAsDataURL(file);
+                } else {
+                    previewImage.src = "";
+                    previewImage.classList.add("d-none");
+                }
+            });
 
-        if (!categoryName) {
-            errors.push("Please enter a category name.");
-            document.getElementById('categoryNameError').textContent = "Please enter a category name.";
-        }
-      
-        if (!categoryPhoto) {
-            errors.push("Please select a category photo.");
-            document.getElementById('categoryPhotoError').textContent = "Please select a category photo.";
-        } else {
-            const fileExtension = categoryPhoto.name.split('.').pop().toLowerCase();
-            if (!allowedExtensions.includes(fileExtension)) {
-                errors.push("Only JPG, JPEG, and PNG files are allowed.");
-                document.getElementById('categoryPhotoError').textContent = "Only JPG, JPEG, and PNG files are allowed.";
-            }
-        }
+            document.getElementById('addCategoryForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const formData = new FormData(this);
+                const errors = [];
 
-        if (errors.length > 0) {
-            return false;
-        }
+                const categoryName = formData.get('categoryName').trim();
+                const categoryPhoto = document.getElementById('categoryPhoto').files[0];
 
-        axios.post("/admin/category/addcategory", data)
-        .then(res => {
-            if (res.data.status) {
-                Swal.fire({
-                    icon: "success",
-                    title: "Category Added Successfully",
-                    showConfirmButton: false,
-                    timer: 3000
-                });
-                setTimeout(() => {
-                         location.href = res.data.url;
-                    }, 3000);
-            } else {
-                console.error(res.data);
-            }
-        })
-        .catch(err => {
-            if (!err.response.data.success) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: err.response.data.message,
-                });
-            } else {
-                console.error(err);
-            }
-        });
-    });
-</script>
+                // Clear previous errors
+                document.getElementById('categoryNameError').textContent = '';
+                document.getElementById('categoryPhotoError').textContent = '';
 
-<%- include('../adminLayouts/footer.ejs') %>
+                if (!categoryName) {
+                    errors.push("Please enter a category name.");
+                    document.getElementById('categoryNameError').textContent = "Please enter a category name.";
+                }
+
+                if (!categoryPhoto) {
+                    errors.push("Please select a category photo.");
+                    document.getElementById('categoryPhotoError').textContent = "Please select a category photo.";
+                } else {
+                    const fileExtension = categoryPhoto.name.split('.').pop().toLowerCase();
+                    if (!allowedExtensions.includes(fileExtension)) {
+                        errors.push("Only JPG, JPEG, and PNG files are allowed.");
+                        document.getElementById('categoryPhotoError').textContent = "Only JPG, JPEG, and PNG files are allowed.";
+                    }
+                }
+
+                if (errors.length > 0) {
+                    return;
+                }
+
+                axios.post("/admin/category/addcategory", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+                    .then(res => {
+                        if (res.data.status) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "Category Added Successfully",
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+
+                            setTimeout(() => {
+                                location.href = res.data.url;
+                            }, 3000);
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: res.data.message || "Something went wrong.",
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: err.response?.data?.message || "Something went wrong.",
+                        });
+                        console.error(err);
+                    });
+            });
+        </script>
+
+        <%- include('../adminLayouts/footer.ejs') %>

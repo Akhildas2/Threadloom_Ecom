@@ -10,274 +10,260 @@
             .modal-header {
                 background-color: #088178;
             }
+
+            .status-badge {
+                position: absolute;
+                top: 5px;
+                right: 5px;
+                padding: 4px 12px;
+                border-radius: 15px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .active-status {
+                background: #d1fae5;
+                color: #065f46;
+            }
+
+            .inactive-status {
+                background: #fee2e2;
+                color: #991b1b;
+            }
+
+            .card {
+                transition: transform 0.2s;
+                border-radius: 15px;
+            }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
+            .card-footer {
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                background: #f8f9fa;
+            }
+
+            .badge {
+                font-size: 0.8rem;
+                padding: 0.4em 0.6em;
+            }
         </style>
 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
 
         <section class="content-main">
             <div class="container">
-                <div class="content-header">
-                    <h2 class="content-title card-title">
-                        <h2 class="content-title card-title">Manage Products</h2>
-
-                        <!-- Search Form -->
-                        <div class="col-search">
-                            <form class="searchform" action="/admin/product/listproduct" method="get">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="searchInput" placeholder="Search name">
-
-                                    <select name="category" class="input-filter">
-                                        <option value="">All Categories</option>
-                                        <% categories.forEach(category=> { %>
-                                            <option value="<%= category._id.toString() %>"
-                                                <%=selectedCategory.toString()===category._id.toString() ? 'selected'
-                                                : '' %>>
-                                                <%= category.categoryName %>
-                                            </option>
-                                            <% }); %>
-                                    </select>
-                                    <button class="btn btn-light bg" type="submit"><i
-                                            class="material-icons md-search"></i></button>
-                                </div>
-                            </form>
-                        </div>
-                </div>
-                <br>
-                <div class="row">
-                    <!-- Action Buttons -->
-                    <div class="col-12 text-end">
-
-                        <a href="/admin/product/addproduct" class="btn btn-primary btn-sm add-category">Add product</a>
-                    </div>
+                <div class="content-header ">
+                    <h2 class="mb-0">Manage Products</h2>
+                    <a href="/admin/product/addproduct" class="btn btn-primary">
+                        <i class="fas fa-plus mr-2"></i> Add product
+                    </a>
                 </div>
             </div>
-
-            <!-- List Products -->
-            <div class="row mt-4">
-                <div class="col-md-12 mb-4">
-                    <div class="card product-heading">
-                        <div class="card-body text-center">
-                            <h3 class="card-title">Products List:</h3>
-                        </div>
-                    </div>
-                </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <!-- Search Form -->
+                <form class="searchform d-flex align-items-center gap-1 mt-0" action="/admin/product/listproduct"
+                    method="get">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search name"
+                        style="width: 200px;">
+                    <select name="category" class="form-select" style="width: 150px;">
+                        <option value="">All Categories</option>
+                        <% categories.forEach(category=> { %>
+                            <option value="<%= category._id.toString() %>"
+                                <%=selectedCategory.toString()===category._id.toString() ? 'selected' : '' %>>
+                                <%= category.categoryName %>
+                            </option>
+                            <% }); %>
+                    </select>
+                    <button class="btn btn-light bg" type="submit">
+                        <i class="material-icons md-search"></i>
+                    </button>
+                </form>
             </div>
 
 
-            <div class="card-body">
+            <div class="card-body m-1 p-2 mt-4">
                 <% if (products.length===0) { %>
                     <div class="alert alert-info" role="alert">
                         No products found. Please add products.
                     </div>
                     <% } else { %>
-                        <div class="row align-items-center">
-                            <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
-                                <strong>#</strong>
-                            </div>
-                            <div class="col-lg-2 col-md-3 col-sm-4 col-6 col-name text-center">
-                                <strong>Product Image & Name</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
-                                <strong>Category</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-brand text-center">
-                                <strong>Brand</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
-                                <strong>Gender</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
-                                <strong>Price</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
-                                <strong>Size</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-2 col-sm-3 col-3  col-price text-center">
-                                <strong>Stock Count</strong>
-                            </div>
+                        <div class="row">
+                            <% for (let i=0; i < products.length; i++) { %>
+                                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-header d-flex justify-content-between align-items-center">
+                                            <h5 class="card-title mb-0">
+                                                #<%= i+1 %>
+                                                    <%= products[i].name.slice(0,20) + (products[i].name.length> 20 ?
+                                                        '...'
+                                                        : '') %>
+                                            </h5>
+                                            <span class="badge bg-primary">
+                                                <%= products[i].gender %>
+                                            </span>
+                                        </div>
 
-                            <div class="col-lg-2 col-md-3 col-sm-6 col-4 col-offer text-center">
-                                <strong>Offer</strong>
-                            </div>
-                            <div class="col-lg-1 col-md-3 col-sm-6 col-4 col-action text-center">
-                                <strong>Action</strong>
-                            </div>
-                        </div>
-                        <% for (let i=0; i < products.length; i++) { %>
-                            <article class="itemlist">
-                                <div class="row align-items-center">
+                                        <div class="card-body">
+                                            <div class="row g-4">
+                                                <div class="col-6">
+                                                    <div class="position-relative">
+                                                        <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
+                                                            alt="<%= products[i].name %>"
+                                                            class="img-fluid rounded-3 shadow-sm hover-zoom">
 
-                                    <div class="col-lg-1 col-md-1 col-sm-1 col-1 text-center">
-                                        <%= i + 1 %>
-                                    </div>
-                                    <div class="col-lg-2 col-md-3 col-sm-4 col-6 col-name">
-                                        <a class="itemside" href="/admin/product/editproduct/<%= products[i]._id %>">
-                                            <div class="left">
-                                                <img src="/uploads/product/resized/<%= products[i].productImage[0] %>"
-                                                    alt="<%= products[i].name %> Image" style="width: 50px;">
-                                            </div>
-                                            <div class="info">
-                                                <h6 class="mb-0">
-                                                    <%= products[i].name.slice(0,13) %>
-                                                </h6>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-lg-1 col-md-4 col-sm-4 col-4 col-category text-center">
-                                        <span>
-                                            <% if (products[i].category) { %>
-                                                <p>
-                                                    <%= products[i].category.categoryName %>
-                                                </p>
-                                                <% } else { %>
-                                                    <p>No category assigned</p>
-                                                    <% } %>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-brand text-center">
-                                        <span>
-                                            <%= products[i].brand %>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
-                                        <span>
-                                            <%= products[i].gender %>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
-                                        <span>
-                                            ₹ <%= products[i].price %>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
-                                        <span>
-                                            <%= products[i].size %>
-                                        </span>
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-3 col-3 col-price text-center">
-                                        <span>
-                                            <%= products[i].stockCount %>
-                                        </span>
-                                    </div>
-
-                                    <div class="col-lg-2 col-md-3 col-sm-4 col-4 col-offer text-center">
-                                        <% if (!products[i].isUnlisted ) { %>
-                                            <% if (!products[i].offer ) { %>
-                                                <button class="btn btn-success btn-sm rounded btn-add-offer" data-toggle="modal" data-target="#addOfferModal" data-product-id="<%= products[i]._id %>">Add offer</button>
-
-                                                <% } else { %>
-                                                    <button class="btn btn-danger btn-sm remove-offer"
-                                                        data-product-id="<%= products[i]._id %>">Remove offer</button>
-
-                                                    <% } %>
-                                                        <% } %>
-                                    </div>
-                                    <div class="col-lg-1 col-md-3 col-sm-4 col-4 col-action text-center">
-                                        <a href="/admin/product/editproduct/<%= products[i]._id %>"
-                                            class="btn btn-sm font-sm rounded btn-brand edit-product"
-                                            data-product-id="<%= products[i]._id %>">
-                                            <i class="material-icons md-edit"></i> Edit
-                                        </a>
-                                        <% if (!products[i].isUnlisted) { %>
-                                            <button class="btn btn-warning btn-sm rounded unlist-product"
-                                                data-product-id="<%= products[i]._id %>">Unlist</button>
-                                            <% } else { %>
-                                                <button class="btn btn-danger btn-sm btn-list"
-                                                    data-product-id="<%= products[i]._id %>">List</button>
-                                                <% } %>
-                                    </div>
-                                </div>
-                                <!-- row .// -->
-                            </article>
-                            <% } %>
-                                <% } %>
-                                    <!-- listOfferModal -->
-                                    <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title">Select an Offer</h5>
-                                                    <button type="button" class="close" data-dismiss="modal"
-                                                        aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="row">
-                                                        <% offers.forEach(offer=> { %>
-                                                            <div class="col-md-6">
-                                                                <div class="card mb-4">
-                                                                    <div class="card-body">
-                                                                        <% const today=new Date(); %>
-                                                                            <% const offerDate=new
-                                                                                Date(offer.endingDate); %>
-                                                                                <% if (offerDate>= today) { %>
-                                                                                    <div class="form-check">
-                                                                                        <input class="form-check-input"
-                                                                                            type="radio"
-                                                                                            name="selectedOffer"
-                                                                                            id="offer-<%= offer._id %>"
-                                                                                            value="<%= offer._id %>">
-                                                                                        <label class="form-check-label"
-                                                                                            for="offer-<%= offer._id %>">
-                                                                                            <h5 class="card-title">
-                                                                                                <%= offer.offerName %>
-                                                                                            </h5>
-                                                                                        </label>
-                                                                                    </div>
-                                                                                    <% } else { %>
-                                                                                        <h5 class="card-title">
-                                                                                            <%= offer.offerName %>
-                                                                                        </h5>
-                                                                                        <% } %>
-                                                                                            <p class="card-text">
-                                                                                                Starting Date: <%=
-                                                                                                    offer.startingDate.toLocaleDateString()
-                                                                                                    %> <br>
-                                                                                                    Ending Date: <%=
-                                                                                                        offer.endingDate.toLocaleDateString()
-                                                                                                        %>
-                                                                                                        <br>
-                                                                                                        Discount: <%=
-                                                                                                            offer.discount
-                                                                                                            %>%
-                                                                                            </p>
-                                                                    </div>
-                                                                </div>
+                                                        <!-- Sold Out Badge (Top-Left) -->
+                                                        <% if(products[i].stockCount <=0) { %>
+                                                            <div
+                                                                class="position-absolute top-0 start-0 bg-danger text-white px-3 py-1 rounded-end">
+                                                                Sold Out
                                                             </div>
-                                                            <% }) %>
+                                                            <% } %>
+
+                                                                <!-- Status Badge (Top-Right) -->
+                                                                <span
+                                                                    class="status-badge <%= products[i].isUnlisted ? 'inactive-status' : 'active-status' %>">
+                                                                    <%= products[i].isUnlisted ? 'Unlisted' : 'Listed'
+                                                                        %>
+                                                                </span>
+
+
+                                                    </div>
+
+
+                                                    <div class="text-center">
+                                                        <span class="text-success fw-bold">₹ <%= products[i].price %>
+                                                        </span>
                                                     </div>
                                                 </div>
-                                                <div id="offerError" class="text-danger"
-                                                    style="display: none; text-align: center;"></div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-primary" id="addOfferBtn">Add
-                                                        Offer</button>
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-dismiss="modal">Cancel</button>
+                                                <div class="col-6">
+                                                    <ul class="list-unstyled mb-0">
+                                                        <li><strong>Category:</strong>
+                                                            <span>
+                                                                <%= products[i].category ?
+                                                                    products[i].category.categoryName : 'N/A' %>
+                                                            </span>
+                                                        </li>
+                                                        <li><strong>Brand:</strong>
+                                                            <span>
+                                                                <%= products[i].brand %>
+                                                            </span>
+                                                        </li>
+                                                        <li><strong>Color:</strong>
+                                                            <span>
+                                                                <%= products[i].color %>
+                                                            </span>
+                                                        </li>
+                                                        <li><strong>Size:</strong>
+                                                            <span>
+                                                                <%= products[i].size %>
+                                                            </span>
+                                                        </li>
+                                                        <li><strong>Stock:</strong>
+                                                            <span>
+                                                                <%= products[i].stockCount %>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div
+                                            class="card-footer bg-light d-flex flex-wrap justify-content-center align-items-center gap-3">
+                                            <div class="offer-section text-center">
+                                                <% if (!products[i].isUnlisted) { %>
+                                                    <% if (!products[i].offer) { %>
+                                                        <button class="btn btn-sm btn-primary bg-success btn-add-offer"
+                                                            data-toggle="modal" data-target="#addOfferModal"
+                                                            data-product-id="<%= products[i]._id %>">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-center">
+                                                                <i class="fas fa-tag me-2"></i>
+                                                                <span class="d-none d-md-inline">Add Offer</span>
+                                                            </div>
+                                                        </button>
+                                                        <% } else { %>
+                                                            <button
+                                                                class="btn btn-sm btn-primary bg-danger remove-offer"
+                                                                data-product-id="<%= products[i]._id %>">
+                                                                <div
+                                                                    class="d-flex align-items-center justify-content-center">
+                                                                    <i class="fas fa-times-circle me-2"></i>
+                                                                    <span class="d-none d-md-inline">Remove Offer</span>
+                                                                </div>
+                                                            </button>
+                                                            <% } %>
+                                                                <% } %>
+                                            </div>
+
+                                            <div
+                                                class="actions d-flex flex-column flex-md-row gap-3 justify-content-center w-100 w-md-auto">
+                                                <a href="/admin/product/editproduct/<%= products[i]._id %>"
+                                                    class="btn btn-sm btn-primary btn-edit"
+                                                    data-product-id="<%= products[i]._id %>">
+                                                    <div class="d-flex align-items-center justify-content-center">
+                                                        <i class="fas fa-edit me-2"></i>
+                                                        <span class="d-none d-md-inline">Edit</span>
+                                                    </div>
+                                                </a>
+
+                                                <% if (!products[i].isUnlisted) { %>
+                                                    <button class="btn btn-sm btn-primary bg-warning unlist-product"
+                                                        data-product-id="<%= products[i]._id %>">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <i class="fas fa-eye-slash me-2"></i>
+                                                            <span class="d-none d-md-inline">Unlist</span>
+                                                        </div>
+                                                    </button>
+                                                    <% } else { %>
+                                                        <button class="btn btn-sm btn-primary bg-success btn-list"
+                                                            data-product-id="<%= products[i]._id %>">
+                                                            <div
+                                                                class="d-flex align-items-center justify-content-center">
+                                                                <i class="fas fa-eye me-2"></i>
+                                                                <span class="d-none d-md-inline">List</span>
+                                                            </div>
+                                                        </button>
+                                                        <% } %>
+                                            </div>
+                                        </div>
+
                                     </div>
+                                </div>
+                                <% } %>
+                        </div>
+                        <% } %>
+
             </div>
 
 
-
-
-
-
-
-
-
-
-
+            <div class="justify-content-center align-items-center">
+                <select id="userLimit" class="form-select w-auto" onchange="location = this.value;">
+                    <% const limits=[6, 10, 20, 50, 100]; %>
+                        <% limits.forEach(lim=> { %>
+                            <option value="?page=1&limit=<%= lim %>&category=<%= selectedCategory %>"
+                                <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
+                            </option>
+                            <% }) %>
+                </select>
+            </div>
             <!-- Pagination -->
             <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
                         <% if (currentPage> 1) { %>
                             <li class="page-item"><a class="page-link"
-                                    href="?page=1&category=<%= selectedCategory %>"><i
+                                    href="?page=1&&limit=<%= selectedLimit %>category=<%= selectedCategory %>"><i
                                         class="material-icons md-chevron_left"></i></a></li>
                             <% } %>
                                 <% for (let i=1; i <=totalPages; i++) { %>
@@ -287,14 +273,14 @@
                                             </a></li>
                                         <% } else { %>
                                             <li class="page-item"><a class="page-link"
-                                                    href="?page=<%= i %>&category=<%= selectedCategory %>">
+                                                    href="?page=<%= i %>&limit=<%= selectedLimit %>&category=<%= selectedCategory %>">
                                                     <%= i %>
                                                 </a></li>
                                             <% } %>
                                                 <% } %>
                                                     <% if (currentPage < totalPages) { %>
                                                         <li class="page-item"><a class="page-link"
-                                                                href="?page=<%= totalPages %>&category=<%= selectedCategory %>"><i
+                                                                href="?page=<%= totalPages %>&limit=<%= selectedLimit %>&category=<%= selectedCategory %>"><i
                                                                     class="material-icons md-chevron_right"></i></a>
                                                         </li>
                                                         <% } %>
@@ -304,6 +290,66 @@
 
 
         </section>
+
+        <!-- listOfferModal -->
+        <div class="modal" id="addOfferModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select an Offer</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <% offers.forEach(offer=> { %>
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <% const today=new Date(); %>
+                                                <% const offerDate=new Date(offer.endingDate); %>
+                                                    <% if (offerDate>= today) { %>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="selectedOffer" id="offer-<%= offer._id %>"
+                                                                value="<%= offer._id %>">
+                                                            <label class="form-check-label"
+                                                                for="offer-<%= offer._id %>">
+                                                                <h5 class="card-title">
+                                                                    <%= offer.offerName %>
+                                                                </h5>
+                                                            </label>
+                                                        </div>
+                                                        <% } else { %>
+                                                            <h5 class="card-title">
+                                                                <%= offer.offerName %>
+                                                            </h5>
+                                                            <% } %>
+                                                                <p class="card-text">
+                                                                    Starting Date: <%=
+                                                                        offer.startingDate.toLocaleDateString() %>
+                                                                        <br>
+                                                                        Ending Date: <%=
+                                                                            offer.endingDate.toLocaleDateString() %>
+                                                                            <br>
+                                                                            Discount: <%= offer.discount %>%
+                                                                </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                    </div>
+                    <div id="offerError" class="text-danger" style="display: none; text-align: center;"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="addOfferBtn">Add
+                            Offer</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <%- include('../adminLayouts/footer.ejs') %>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>

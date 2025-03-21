@@ -5,11 +5,10 @@ const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
 const Coupon = require("../models/couponModel")
+const fs = require('fs');
+const invoicePdfService = require('../services/invoicePdfService');
 const { fetchExchangeRate, generateRandomString } = require('../utils/orderHelper');
 const { createPayPalPayment } = require('../services/paymentService');
-const fs = require('fs');
-const path = require('path');
-const invoicePdfService = require('../services/invoicePdfService');
 
 
 
@@ -488,5 +487,3 @@ module.exports = {
     retryPayment,
     downloadInvoice
 }
-
-

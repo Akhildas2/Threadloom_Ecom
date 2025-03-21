@@ -11,13 +11,15 @@
                 <div>
                     <h2 class="content-title card-title">Order List</h2>
                 </div>
-                <form action="/admin/orderList/" method="GET">
-                    <div class="image-cell">
-                        <input type="text" name="orderId" placeholder="Search orderId" class="form-control" />
-                        <button class="btn btn-primary" type="submit">Search</button>
-                    </div>
-                </form>
-
+                <div class="col-search">
+                    <form class="searchform" action="/admin/orderList/" method="GET">
+                        <div class="input-group">
+                            <input type="text" name="orderId" placeholder="Search orderId" class="form-control" />
+                            <button class="btn btn-light bg" type="submit"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                    </form>
+                </div>
             </div>
             <div class="card mb-4">
                 <!-- <header class="card-header">

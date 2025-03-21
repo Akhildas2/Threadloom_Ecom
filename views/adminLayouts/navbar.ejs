@@ -6,7 +6,8 @@
                 <img src="/admin/imgs/theme/logo.png" class="logo" alt="Threadloom Dashboard">
             </a>
             <div>
-                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
+                <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
+                </button>
             </div>
         </div>
         <nav>
@@ -17,22 +18,23 @@
                     </a>
                 </li>
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-shopping_bag"></i>
+                    <a class="menu-link" href="/admin/product/listproduct"> <i
+                            class="icon material-icons md-shopping_bag"></i>
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/product/listproduct">Products</a>
+                        <a href="/admin/product/listproduct">List Products</a>
                         <a href="/admin/product/addproduct">Add Product</a>
-                     
                     </div>
                 </li>
-               
+
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
-                    <a class="menu-link" href=""> <i class="icon material-icons md-category"></i>
+                    <a class="menu-link" href="/admin/category/listcategories"> <i
+                            class="icon material-icons md-category"></i>
                         <span class="text">Category</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/category/listcategories">Categories List</a>
+                        <a href="/admin/category/listcategories">List Categories</a>
                         <a href="/admin/category/addcategory">Add Category</a>
                     </div>
                 </li>
@@ -41,8 +43,8 @@
                         <span class="text">Users</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/userlist">Users List</a>
-                       
+                        <a href="/admin/userlist">List Users</a>
+
                     </div>
                 </li>
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
@@ -50,8 +52,8 @@
                         <span class="text">Orders</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/orderList">Order list</a>
-                        
+                        <a href="/admin/orderList">list Orders</a>
+
                     </div>
                 </li>
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
@@ -63,39 +65,42 @@
                         <a href="/admin/orderList/salesReport">Sales Report</a>
                     </div>
                 </li>
-                
+
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
-                    <a class="menu-link" href="">
+                    <a class="menu-link" href="/admin/coupon/listCoupon">
                         <i class="icon material-icons md-local_offer"></i>
                         <span class="text">Coupons</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/coupon/listCoupon">List Coupon</a>
+                        <a href="/admin/coupon/listCoupon">List Coupons</a>
                         <a href="/admin/coupon/addCoupon">Add Coupon</a>
 
                     </div>
                 </li>
-                
+
                 <li class="menu-item has-submenu" id="dashboardMenuItem">
-                    <a class="menu-link" href="">
+                    <a class="menu-link" href="/admin/offer/listOffer">
                         <i class="icon material-icons md-attach_money"></i>
                         <span class="text">Offers</span>
                     </a>
                     <div class="submenu">
-                        <a href="/admin/offer/listOffer">List Offer</a>
+                        <a href="/admin/offer/listOffer">List Offers</a>
                         <a href="/admin/offer/addOffer">Add Offer</a>
                     </div>
                 </li>
-                
-                <!-- <li class="menu-item" id="dashboardMenuItem">
-                    <a class="menu-link" disabled href="#">
+
+                <li class="menu-item has-submenu" id="dashboardMenuItem">
+                    <a class="menu-link" disabled href="/admin/banner/listBanner">
                         <i class="icon material-icons md-image"></i>
                         <span class="text">Banners</span>
                     </a>
+                    <div class="submenu">
+                        <a href="/admin/banner/listBanner">List Banners</a>
+                        <a href="/admin/banner/addBanner">Add Banner</a>
+                    </div>
                 </li>
-                
-                </li>
-                <li class="menu-item" id="dashboardMenuItem">
+
+                <!--<li class="menu-item" id="dashboardMenuItem">
                     <a class="menu-link" href="#"> <i class="icon material-icons md-person"></i>
                         <span class="text">Account</span>
                     </a>
@@ -117,9 +122,10 @@
     </aside>
     <main class="main-wrap">
         <header class="main-header navbar">
-            
+
             <div class="col-nav">
-                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i class="material-icons md-apps"></i> </button>
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
+                        class="material-icons md-apps"></i> </button>
                 <ul class="nav">
                     <!-- <li class="nav-item">
                         <a class="nav-link btn-icon" href="#">
@@ -128,24 +134,31 @@
                         </a>
                     </li> -->
                     <li class="nav-item">
-                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                class="material-icons md-cast"></i></a>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                            aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="/admin/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="/admin/imgs/theme/flag-us.png"
+                                    alt="English">English</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/admin/imgs/people/avatar3.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                            aria-expanded="false"> <img class="img-xs rounded-circle"
+                                src="/admin/imgs/people/avatar3.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <!-- <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
                             <div class="dropdown-divider"></div> -->
-                            <a class="dropdown-item text-danger" href="/admin/logout"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                            <a class="dropdown-item text-danger" href="/admin/logout"><i
+                                    class="material-icons md-exit_to_app"></i>Logout</a>
                         </div>
                     </li>
                 </ul>

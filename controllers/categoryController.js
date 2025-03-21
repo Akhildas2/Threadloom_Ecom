@@ -65,15 +65,26 @@ const addCategory = async (req, res, next) => {
 // Load List Category
 const loadListCategory = async (req, res, next) => {
     try {
-        const page = (req.query.page || 1)
-        const limit = 6
-        const categoriesCount = await Category.find({}).countDocuments()
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
+        let query = {};
+        const categoryStatus = req.query.categoryStatus || "all";
+
+        if (categoryStatus === "list") {
+            query.isUnlisted = false;
+        } else if (categoryStatus === "unlist") {
+            query.isUnlisted = true;
+        }
+
+        const categories = await Category.find(query).skip(skip).limit(limit);
+        const categoriesCount = await Category.countDocuments(query)
         const totalPages = Math.ceil(categoriesCount / limit)
+        const offers = await Offer.find();
 
-        const categories = await Category.find({}).skip((page - 1) * limit).limit(limit);
-        const offers = await Offer.find({})
 
-        res.render('listCategories', { categories, offers, currentPage: page, totalPages });
+        res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit });
 
     } catch (error) {
         next(error);

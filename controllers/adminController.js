@@ -258,30 +258,35 @@ const logout = async (req, res, next) => {
 const userList = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 10;
+        const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        let query = { isVerified: true };
 
+        const searchQuery = req.query.search ? req.query.search.trim() : '';
+        let query = { isVerified: true };
         if (req.query.category) {
-            if (req.query.category === 'active') {
-                query.isBlocked = false;
-            } else if (req.query.category === 'blocked') {
-                query.isBlocked = true;
-            }
+            query.isBlocked = req.query.category === 'blocked';
+        }
+        if (searchQuery) {
+            query.name = { $regex: searchQuery, $options: 'i' };
         }
 
-        const users = await User.find(query)
-            .skip(skip)
-            .limit(limit);
-
+        const users = await User.find(query).skip(skip).limit(limit);
         const totalCount = await User.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
-        res.render('userList', { users, currentPage: page, totalPages, selectedStatus: req.query.category || '' });
+
+        res.render('userList', {
+            users,
+            currentPage: page,
+            totalPages,
+            selectedStatus: req.query.category || '',
+            selectedLimit: limit,
+            searchQuery
+        });
 
     } catch (error) {
         next(error);
     }
-}
+};
 
 
 

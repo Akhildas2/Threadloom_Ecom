@@ -103,8 +103,9 @@ const addProduct = async (req, res, next) => {
 const productListPage = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 5;
+        const limit = parseInt(req.query.limit) || 6;
         const skip = (page - 1) * limit;
+
         let query = {};
         let selectedCategory = req.query.category || '';
         if (req.query.category) {
@@ -121,7 +122,7 @@ const productListPage = async (req, res, next) => {
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
 
-        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers });
+        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers, selectedLimit: limit });
 
     } catch (error) {
         next(error);

@@ -89,6 +89,8 @@ const offerRoute = require('./routes/offerRoute')
 //for Review route
 const reviewRoute = require('./routes/reviewRoute')
 
+//for Review route
+const bannerRoute = require('./routes/bannerRoute')
 
 app.use('/admin', express.static('adminAssets'));
 app.use('/uploads', express.static('uploads'));
@@ -110,6 +112,8 @@ app.use('/dashboard', dashboardRoute)
 app.use('/admin/coupon', couponRoute)
 app.use('/admin/offer', offerRoute)
 app.use('/review', reviewRoute)
+app.use('/admin/banner', bannerRoute)
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

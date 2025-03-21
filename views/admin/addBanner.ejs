@@ -1,0 +1,241 @@
+<%- include('../adminLayouts/header.ejs') %>
+    <%- include('../adminLayouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header" style="display: block;text-align: center;">
+                    <h2 class="content-title card-title">Add Banner</h2>
+                </div>
+                <h4 class="content-title card-title">Add a new banner</h4>
+
+                <div class="card">
+                    <div class="card-body">
+                        <form enctype="multipart/form-data" action="/admin/banner/addBanner" id="addBanner"
+                            method="post" class="banner-form" novalidate>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" name="title">
+                                <div class="error-message" id="title-error"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                                <div class="error-message" id="description-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="bannerType">Banner Type:</label>
+                                <select class="form-control" id="bannerType" name="bannerType">
+                                    <option value="">-----Choose Banner Type-----</option>
+                                    <option value="homepage">Home page</option>
+                                    <option value="category">Category</option>
+                                    <option value="offer">Offer</option>
+                                    <option value="shop">Shop</option>
+                                    <option value="promotion">Promotion</option>
+                                    <option value="adds">Adds</option>
+                                </select>
+                                <div class="error-message" id="bannerType-error"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select class="form-control" id="status" name="status">
+                                    <option value="">-----Choose Status-----</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                                <div class="error-message" id="status-error"></div>
+                            </div>
+                            <label for="bannerImage" style="display: block; text-align: center;">Banner
+                                Images</label>
+                            <br>
+                            <div class='wrapper'>
+                                <div class="upload">
+                                    <div class="upload-wrapper">
+                                        <div class="upload-img">
+                                            <!-- image here -->
+                                        </div>
+                                        <div class="upload-info">
+                                            <p>
+                                                <span class="upload-info-value">0</span> file(s) uploaded.
+                                            </p>
+                                        </div>
+                                        <div class="upload-area">
+                                            <div class="upload-area-img">
+
+                                            </div>
+                                            <p class="upload-area-text">Select images or <span>browse</span>.</p>
+                                        </div>
+                                        <input type="file" class="visually-hidden" id="bannerImage" name="bannerImage"
+                                            accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="error-message" id="bannerImage-error"></div>
+
+
+                            <br>
+                            <button type="submit" class="btn btn-primary" style="display: block; margin: 0 auto;">Add
+                                Banner</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Add SweetAlert -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+        <!-- Add Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.3.js"
+            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+        <script>
+            const allowedExtensions = ['jpg', 'jpeg', 'png'];
+
+            const errorMessages = {
+                title: "Title is required",
+                description: "Description is required and should not be more than 200 words",
+                status: "Status is required",
+                bannerType: "Please select a banner type",
+                bannerImage: "Please upload an image",
+            };
+
+            let addedFiles = [];
+
+            function toggleError(field, message) {
+                const errorMessage = document.getElementById(`${field}-error`);
+                errorMessage.textContent = message;
+                if (message) {
+                    errorMessage.classList.add('error');
+                } else {
+                    errorMessage.classList.remove('error');
+                }
+            }
+
+            $(document).ready(function () {
+                $(".upload-area").click(function () {
+                    $('#bannerImage').trigger('click');
+                });
+
+                $('#bannerImage').change(function (event) {
+                    if (event.target.files.length > 0) {
+                        const file = event.target.files[0];
+                        const extension = file.name.split('.').pop().toLowerCase();
+
+                        if (!allowedExtensions.includes(extension)) {
+                            toggleError('bannerImage', 'Please upload only image files (jpg, jpeg, png)');
+                            return;
+                        }
+
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const html = `
+                                    <div class="uploaded-img">
+                                        <img src="${e.target.result}">
+                                        <button type="button" class="remove-btn">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                `;
+                            $(".upload-img").html(html); // Replace existing image
+                            toggleError('bannerImage', ''); // Remove error message if image is valid
+                        };
+
+                        reader.readAsDataURL(file);
+                        addedFiles = [file]; // Store only the latest file
+                        $('.upload-info-value').text("1");
+                    }
+                });
+
+                $(document).on('click', '.remove-btn', function () {
+                    addedFiles = []; // Clear stored file
+                    $('.upload-img').html(""); // Remove preview
+                    $('.upload-info-value').text("0");
+                    $('#bannerImage').val(''); // Reset file input to allow re-selection
+                    toggleError('bannerImage', errorMessages.bannerImage); // Show error message again
+                });
+
+                $('#addBanner input, #addBanner textarea, #addBanner select').on('input change', function () {
+                    toggleError(this.name, '');
+                });
+
+                document.getElementById('addBanner').addEventListener('submit', function (event) {
+                    event.preventDefault(); // Prevent default form submission
+
+                    const formData = new FormData(this);
+                    formData.delete('bannerImage');
+
+                    addedFiles.forEach(file => {
+                        formData.append('bannerImage', file);
+                    });
+
+                    Object.keys(errorMessages).forEach(field => toggleError(field, ''));
+
+                    let errors = false;
+
+                    if (!formData.get('title')?.trim()) {
+                        toggleError('title', errorMessages.title);
+                        errors = true;
+                    } else if (formData.get('title').length < 3) {
+                        toggleError('title', "Title must be at least 3 characters long.");
+                        errors = true;
+                    }
+
+                    const description = formData.get('description')?.trim() || "";
+                    if (!description) {
+                        toggleError('description', "Description is required.");
+                        errors = true;
+                    } else if (description.length > 100) {
+                        toggleError('description', "Description should not be more than 100 words.");
+                        errors = true;
+                    } else if (description.length < 10) {
+                        toggleError('description', "Description must be at least 10 characters long.");
+                        errors = true;
+                    }
+
+                    if (!formData.get('status')) {
+                        toggleError('status', errorMessages.status);
+                        errors = true;
+                    }
+
+                    if (!formData.get('bannerType')) {
+                        toggleError('bannerType', errorMessages.bannerType);
+                        errors = true;
+                    }
+
+                    if (addedFiles.length < 1) {
+                        toggleError('bannerImage', errorMessages.bannerImage);
+                        errors = true;
+                    }
+
+                    if (errors) return false; // Prevent form submission if errors exist
+
+                    axios.post('/admin/banner/addBanner', formData)
+                        .then(res => {
+                            if (res.data.status) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Banner Added Successfully",
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                setTimeout(() => {
+                                    location.href = res.data.url;
+                                }, 2000);
+                            }
+                        })
+                        .catch(err => {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: err.response?.data?.message || 'An error occurred',
+                            });
+                        });
+                });
+            });
+        </script>
+
+
+        <%- include('../adminLayouts/footer.ejs') %>

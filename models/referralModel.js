@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+
 const referralSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -21,4 +23,7 @@ const referralSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Referral', referralSchema);
+
+
+const Referral = mongoose.model('Referral', referralSchema);
+module.exports = Referral;
