@@ -6,35 +6,71 @@ const { generateSalesReportExcel } = require('../services/excelService')
 
 
 
-//for loading order list 
 const loadOrderList = async (req, res, next) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+        let { sort = 'date', order = 'desc' } = req.query;
+        const sortOrder = order === 'asc' ? 1 : -1;
 
-        const page = (req.query.page || 1);
-        const orderId = req.query.orderId;
-        let query = {}
-        if (orderId) {
-            query = { $or: [{ ordersId: { $regex: orderId, $options: 'i' } }] }
+        let query = {};
+        const orderStatus = req.query.status || '';
+        const search = req.query.search ? req.query.search.trim() : "";
+
+        // Filter by order status 
+        if (orderStatus) {
+            query.items = { $elemMatch: { orderStatus } };
         }
 
-        const limit = 5;
-        const ordersCount = await Order.find(query).countDocuments();
-        const totalPages = Math.ceil(ordersCount / limit)
+        // search across multiple fields
+        if (search) {
+            const products = await Product.find(
+                { name: { $regex: search, $options: "i" } },
+                { _id: 1 }
+            );
+            const productIds = products.map(p => p._id);
+            query.$or = [
+                { ordersId: { $regex: search, $options: "i" } },
+                { paymentMethod: { $regex: search, $options: "i" } },
+                { status: { $regex: search, $options: "i" } },
+                { 'items.productId': { $in: productIds } }
+            ];
+        }
+
+        const sortOptions = {
+            'ordersId': { ordersId: sortOrder },
+            'date': { date: sortOrder },
+            'paymentMethod': { paymentMethod: sortOrder },
+            'totalAmount': { totalAmount: sortOrder }
+        };
 
         const orders = await Order.find(query)
             .populate('items.productId')
             .populate('userId')
-            .sort({ createdAt: -1 })
-            .skip((page - 1) * limit)
+            .sort(sortOptions[sort] || { date: -1 })
+            .skip(skip)
             .limit(limit);
 
-        res.render('orderList', { orders, totalPages, currentPage: page })
+        const ordersCount = await Order.countDocuments(query);
+        const totalPages = Math.ceil(ordersCount / limit);
 
-    }
-    catch (error) {
+        res.render('orderList', {
+            orders,
+            totalPages,
+            currentPage: page,
+            selectedLimit: limit,
+            search,
+            orderStatus,
+            sortField: sort,
+            sortOrder: order,
+        });
+
+    } catch (error) {
         next(error);
     }
-}
+};
+
 
 
 
@@ -137,10 +173,33 @@ const updateStatus = async (req, res, next) => {
 //for loading sales report
 const loadSalesReport = async (req, res, next) => {
     try {
-        let { startDate, endDate, period, page = 1, limit = 5, format } = req.query;
+        let { startDate, endDate, period, format, sort = 'expectedDelivery', order = 'desc' } = req.query;
+        const sortOrder = order === 'asc' ? 1 : -1;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const orderStatus = req.query.status || '';
+        const search = req.query.search ? req.query.search.trim() : "";
+        let query = {};
 
-        page = parseInt(page);
-        limit = parseInt(limit);
+        // Filter by order status 
+        if (orderStatus) {
+            query.paymentMethod = orderStatus;
+        }
+
+        // search across multiple fields
+        if (search) {
+            const products = await Product.find(
+                { name: { $regex: search, $options: "i" } },
+                { _id: 1 }
+            );
+            const productIds = products.map(p => p._id);
+            query.$or = [
+                { ordersId: { $regex: search, $options: "i" } },
+                { paymentMethod: { $regex: search, $options: "i" } },
+                { status: { $regex: search, $options: "i" } },
+                { 'items.productId': { $in: productIds } }
+            ];
+        }
 
         if (endDate && startDate) {
             startDate = new Date(startDate);
@@ -149,7 +208,6 @@ const loadSalesReport = async (req, res, next) => {
             endDate.setHours(23, 59, 59, 999);
         }
 
-        let query = {};
         if (period != undefined) {
             query['items.orderStatus'] = 'delivered';
             if (startDate && endDate) {
@@ -161,14 +219,26 @@ const loadSalesReport = async (req, res, next) => {
         } else {
             query['items.orderStatus'] = 'delivered';
         }
-        const totalOrders = await Order.countDocuments(query);
-        const totalPages = Math.ceil(totalOrders / limit);
+
+        const sortOptions = {
+            'ordersId': { ordersId: sortOrder },
+            'expectedDelivery': { expectedDelivery: sortOrder },
+            'customer': { 'deliveryAddress.fullName': sortOrder },
+            'paymentMethod': { paymentMethod: sortOrder },
+            'totalAmount': { totalAmount: sortOrder }
+        };
 
         const orders = await Order.find(query)
+            .sort(sortOptions[sort] || { expectedDelivery: -1 })
             .skip((page - 1) * limit)
             .limit(limit)
             .populate('items.productId')
             .populate('userId');
+
+        const totalOrders = await Order.countDocuments(query);
+        const totalPages = Math.ceil(totalOrders / limit);
+
+
 
         let totalSalesCount = 0;
         let totalSalesAmount = 0;
@@ -213,7 +283,11 @@ const loadSalesReport = async (req, res, next) => {
             limit: limit,
             startDate: req.query.startDate,
             endDate: req.query.endDate,
-            period: req.query.period
+            period: req.query.period,
+            sortField: sort,
+            sortOrder: order,
+            search,
+            orderStatus,
         });
 
     } catch (error) {

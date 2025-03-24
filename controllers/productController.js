@@ -107,9 +107,21 @@ const productListPage = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         let query = {};
-        let selectedCategory = req.query.category || '';
-        if (req.query.category) {
-            query.category = req.query.category;
+        const selectedCategory = req.query.category || '';
+        const search = req.query.search ? req.query.search.trim() : "";
+
+        if (selectedCategory) {
+            query.category = selectedCategory;
+        }
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+                { brand: { $regex: search, $options: "i" } },
+                { gender: { $regex: search, $options: "i" } },
+                { color: { $regex: search, $options: "i" } }
+            ];
         }
 
         const products = await Product.find(query)
@@ -122,7 +134,7 @@ const productListPage = async (req, res, next) => {
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
 
-        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers, selectedLimit: limit });
+        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers, selectedLimit: limit, search });
 
     } catch (error) {
         next(error);

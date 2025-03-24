@@ -185,9 +185,9 @@
             <div class="modal fade" id="editBannerModal" tabindex="-1" aria-labelledby="editBannerModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-md">
-                    <div class="modal-content">
+                    <div class="modal-content bg-light">
                         <div class="modal-header">
-                            <h5 class="modal-title text-primary" id="editBannerModalLabel">Edit Banner</h5>
+                            <h5 class="modal-title" id="editBannerModalLabel">Edit Banner</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <form id="editBannerForm" enctype="multipart/form-data">
@@ -237,12 +237,15 @@
                                     </select>
                                     <small class="text-danger" id="statusError"></small>
                                 </div>
+                            </div>
 
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Update Banner</button>
-                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    aria-label="Close">
+                                    close
+                                </button>
+                                <button type="submit" class="btn btn-primary">Update Banner</button>
+                            </div>
                         </form>
                     </div>
                 </div>

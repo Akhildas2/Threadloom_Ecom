@@ -1,32 +1,7 @@
 
-
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchInput');
-    const items = document.querySelectorAll('tbody tr'); // Target table rows
-
-    searchInput.addEventListener('input', function () {
-        const searchTerm = searchInput.value.toLowerCase().trim();
-
-        items.forEach(item => {
-            const itemContent = item.textContent.toLowerCase();
-
-            // Use regular expression to perform a search on all content
-            const regex = new RegExp(searchTerm, 'i');
-            if (regex.test(itemContent)) {
-                item.style.display = 'table-row'; // Show the row
-            } else {
-                item.style.display = 'none'; // Hide the row
-            }
-        });
-    });
-});
-
-
-
-
 // Function to handle blocking user
 const blockUser = (userId) => {
-   
+
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to block this user?',
@@ -51,7 +26,7 @@ const blockUser = (userId) => {
                             location.href = res.data.url;
                         });
                     } else {
-                       
+
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
@@ -74,7 +49,7 @@ const blockUser = (userId) => {
 
 // Function to handle unblocking user
 const unblockUser = (userId) => {
-    
+
     Swal.fire({
         title: 'Are you sure?',
         text: 'Do you want to unblock this user?',
@@ -87,7 +62,7 @@ const unblockUser = (userId) => {
         if (result.isConfirmed) {
             axios.put(`/admin/unblock/${userId}`)
                 .then(res => {
-                   
+
                     // Check for 'status' property instead of 'success'
                     if (res.data && res.data.status) {
                         Swal.fire({
@@ -100,7 +75,7 @@ const unblockUser = (userId) => {
                             location.href = res.data.url;
                         });
                     } else {
-                        
+
                         // Adjust the error message handling as needed
                         Swal.fire({
                             icon: 'error',
@@ -125,7 +100,7 @@ const unblockUser = (userId) => {
 document.querySelectorAll('.block-btn').forEach(button => {
     button.addEventListener('click', () => {
         const userId = button.getAttribute('data-user-id');
-       
+
         blockUser(userId);
     });
 });
@@ -133,7 +108,7 @@ document.querySelectorAll('.block-btn').forEach(button => {
 document.querySelectorAll('.unblock-btn').forEach(button => {
     button.addEventListener('click', () => {
         const userId = button.getAttribute('data-user-id');
-        
+
         unblockUser(userId);
     });
 });

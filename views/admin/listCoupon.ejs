@@ -1,278 +1,297 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
-
-        <style>
-            /* main.css */
-            .table-responsive {
-                overflow-x: auto;
-                margin-top: 30px;
-                margin-left: 20px;
-                margin-right: 20px;
-
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th,
-            td {
-                padding: 20px;
-                border: 1px solid #ddd;
-                text-align: left;
-                text-align: center;
-            }
-
-            /* Media query for smaller screens */
-            @media screen and (max-width: 600px) {
-
-                table,
-                thead,
-                tbody,
-                th,
-                td,
-                tr {
-                    display: block;
-                }
-
-                thead tr {
-                    position: absolute;
-                    top: -9999px;
-                    left: -9999px;
-                }
-
-                tr {
-                    border: 1px solid #ddd;
-                }
-
-                td {
-                    border: none;
-                    border-bottom: 1px solid #ddd;
-                    position: relative;
-                    padding-left: 50%;
-                }
-
-                td:before {
-                    position: absolute;
-                    top: 6px;
-                    left: 6px;
-                    width: 45%;
-                    padding-right: 10px;
-                    white-space: nowrap;
-                }
-
-                /* Label the data */
-                td:nth-of-type(1):before {
-                    content: "#:";
-                }
-
-                td:nth-of-type(2):before {
-                    content: "Coupon Name:";
-                }
-
-                td:nth-of-type(3):before {
-                    content: "Coupon Code:";
-                }
-
-                td:nth-of-type(4):before {
-                    content: "Discount:";
-                }
-
-                td:nth-of-type(5):before {
-                    content: "Expiry Date:";
-                }
-
-                td:nth-of-type(6):before {
-                    content: "Criteria Amount:";
-                }
-
-                td:nth-of-type(7):before {
-                    content: "Action:";
-                }
-
-            }
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 
-
-            /* Modal colors */
-            .modal-content {
-                background-color: #ffffff;
-                color: #000000;
-
-            }
-
-            .modal-header {
-                background-color: #088178;
-            }
-
-            .text-danger {
-                color: #dc3545;
-                font-weight: bold;
-                margin-top: 5px;
-            }
-        </style>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <h2>Coupon Management</h2>
-        </div>
-        <div style="text-align: end; margin-right: 20px;">
-            <a href="/admin/coupon/addCoupon" class="btn btn-primary ">Add Coupon</a>
-        </div>
-        <div class="table-responsive">
-            <% if (coupons.length===0) { %>
-                <div class="alert alert-info" role="alert">
-                    No coupon found.Please add coupon.
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header">
+                    <h2 class="content-title card-title">Coupon Management</h2>
+                    <a href="/admin/coupon/addCoupon" class="btn btn-primary "><i class="fas fa-plus me-2"></i>Add
+                        Coupon</a>
                 </div>
+                <div class="card mb-4 shadow-sm">
 
-                <% } else { %>
+                    <header class="card-header">
+                        <div class="row g-2 align-items-center">
+                            <!-- Search Form Column -->
+                            <div class="col-12 col-md-9 col-lg-9">
+                                <form
+                                    class="d-flex flex-column flex-sm-row gap-2 align-items-stretch justify-content-center"
+                                    action="/admin/coupon/listCoupon" method="get">
 
-                    <br>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Coupon Name</th>
-                                <th>Coupon Code</th>
-                                <th>Discount Amount</th>
-                                <th>Expiry Date</th>
-                                <th>Criteria Amount</th>
-                                <th>Action</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% coupons.forEach((coupon,index)=> { %>
-                                <tr>
-                                    <td>
-                                        <%= index+1%>
-                                    </td>
-                                    <td>
-                                        <%= coupon.couponName %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.couponCode %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.discountAmount %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.expiryDate.toDateString() %>
-                                    </td>
-                                    <td>
-                                        <%= coupon.criteriaAmount %>
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal"
-                                            data-target="#editCouponModal-<%= coupon._id %>">
-                                            Edit Coupon
-                                        </button>
-
-
-                                        <a href="#" class="btn btn-sm btn-danger"
-                                            onclick="deleteCoupon('<%= coupon.id %>')">Delete</a>
-
-                                    </td>
-                                </tr>
-                                <% }); %>
-                        </tbody>
-                    </table>
-                    <% } %>
-                        <!-- Edit Coupon Modal -->
-                        <% coupons.forEach((coupon,index)=> { %>
-                            <div class="modal fade" id="editCouponModal-<%= coupon._id %>" tabindex="-1" role="dialog"
-                                aria-labelledby="editCouponModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="editCouponForm-<%= coupon._id %>" novalidate>
-
-                                                <div class="form-group">
-                                                    <label for="editCouponName">Coupon Name</label>
-                                                    <input type="text" class="form-control" id="editCouponName"
-                                                        name="couponName" value="<%=  coupon.couponName %>">
-                                                    <small id="editCouponName-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editCouponCode">Coupon Code</label>
-                                                    <input type="text" class="form-control" id="editCouponCode"
-                                                        name="couponCode" value="<%=  coupon.couponCode %>">
-                                                    <small id="editCouponCode-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editDiscountAmount">Discount Amount</label>
-                                                    <input type="number" class="form-control" id="editDiscountAmount"
-                                                        name="discount" value="<%=  coupon.discountAmount %>">
-                                                    <small id="editDiscountAmount-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editExpiryDate">Expiry Date</label>
-                                                    <input type="date" class="form-control" id="editExpiryDate"
-                                                        name="expiryDate"
-                                                        value="<%= coupon.expiryDate.toISOString().split('T')[0] %>">
-                                                    <small id="editExpiryDate-error" class="text-danger"></small>
-                                                </div>
-
-                                                <div class="form-group">
-                                                    <label for="editCriteriaAmount">Criteria Amount</label>
-                                                    <input type="number" class="form-control" id="editCriteriaAmount"
-                                                        name="criteriaAmount" value="<%= coupon.criteriaAmount %>">
-                                                    <small id="editCriteriaAmount-error" class="text-danger"></small>
-                                                </div>
-                                                <br>
-                                                <button type="submit" class="btn btn-primary"
-                                                    style="display: block; margin: 0 auto;" id="updateCoupon">Save
-                                                    changes</button>
-                                                <br>
-                                                <div class="error-message" id="form-errors" style="text-align: center;">
-                                                </div>
-
-                                            </form>
-                                        </div>
+                                    <!-- Search Input -->
+                                    <div class="flex-grow-1">
+                                        <input type="text" class="form-control w-100 mb-0" id="searchInput"
+                                            name="search" value="<%= search || '' %>" placeholder="Search coupon">
                                     </div>
+
+                                    <!-- Status Select -->
+                                    <div class="flex-grow-1 flex-sm-grow-0">
+                                        <select name="status" class="form-select w-100">
+                                            <option value="">All</option>
+                                            <option value="true" <%=orderStatus==='true' ? 'selected' : '' %>>Active
+                                            </option>
+                                            <option value="false" <%=orderStatus==='false' ? 'selected' : '' %>>Expired
+                                            </option>
+                                        </select>
+                                    </div>
+
+
+                                    <!-- Submit Button -->
+                                    <div>
+                                        <button class="btn btn-light w-100" type="submit">
+                                            <i class="material-icons md-search"></i>
+                                            <span class="d-none d-sm-inline">Search</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Limit Select Column -->
+                            <div class="col-12 col-md-3 col-lg-3">
+                                <div class="d-flex justify-content-center justify-content-md-end">
+                                    <select id="productLimit" class="form-select w-auto"
+                                        onchange="location = this.value;">
+                                        <% const limits=[1,5, 10, 20, 50, 100]; %>
+                                            <% limits.forEach(lim=> { %>
+                                                <option
+                                                    value="?page=1&limit=<%= lim %>&status=<%= orderStatus %>&search=<%= search %>&sortField=<%= sortField %>&sortOrder=<%= sortOrder %>"
+                                                    <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
+                                                </option>
+                                                <% }) %>
+                                    </select>
                                 </div>
                             </div>
-                            <% }); %>
-                                <!-- Pagination -->
-                                <div class="pagination-area mt-30 mb-50">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <% if (currentPage> 1) { %>
-                                                <li class="page-item"><a class="page-link" href="?page=1"><i
-                                                            class="material-icons md-chevron_left"></i></a></li>
-                                                <% } %>
-                                                    <% for (let i=1; i <=totalPages; i++) { %>
-                                                        <% if (i===currentPage) { %>
-                                                            <li class="page-item active"><a class="page-link" href="#">
-                                                                    <%= i %>
-                                                                </a></li>
-                                                            <% } else { %>
-                                                                <li class="page-item"><a class="page-link"
-                                                                        href="?page=<%= i %>">
-                                                                        <%= i %>
-                                                                    </a></li>
-                                                                <% } %>
-                                                                    <% } %>
-                                                                        <% if (currentPage < totalPages) { %>
-                                                                            <li class="page-item"><a class="page-link"
-                                                                                    href="?page=<%= totalPages %>"><i
-                                                                                        class="material-icons md-chevron_right"></i></a>
-                                                                            </li>
-                                                                            <% } %>
-                                        </ul>
-                                    </nav>
-                                </div>
-        </div>
+                        </div>
+                    </header>
 
-        <br>
-        <br>
-        <br>
+
+                    <div class="card mb-0">
+                        <% if (coupons.length===0) { %>
+                            <div class="alert alert-info text-center p-4 rounded shadow-sm" role="alert">
+                                No coupon found.Please add coupon.
+                            </div>
+                            <% } else { %>
+                                <div class="card-body p-0 table-responsive shadow-sm rounded">
+                                    <table class="table table-hover text-center align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>
+                                                    <a href="?sort=couponName&order=<%= sortField === 'couponName' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Coupon Name
+                                                        <% if (sortField==='couponName' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=couponCode&order=<%= sortField === 'couponCode' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Coupon Code
+                                                        <% if (sortField==='couponCode' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=discountAmount&order=<%= sortField === 'discountAmount' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Discount Amount
+                                                        <% if (sortField==='discountAmount' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=expiryDate&order=<%= sortField === 'expiryDate' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Expiry Date
+                                                        <% if (sortField==='expiryDate' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=criteriaAmount&order=<%= sortField === 'criteriaAmount' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Criteria Amount
+                                                        <% if (sortField==='criteriaAmount' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-light">
+                                            <% coupons.forEach((coupon, index)=> { %>
+                                                <tr class="border-bottom">
+                                                    <td>
+                                                        <%= (currentPage - 1) * selectedLimit + index + 1 %>
+                                                    </td>
+                                                    <td class="fw-bold">
+                                                        <%= coupon.couponName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= coupon.couponCode %>
+                                                    </td>
+                                                    <td>
+                                                        <%= coupon.discountAmount %>
+                                                    </td>
+                                                    <td>
+                                                        <%= coupon.expiryDate.toDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= coupon.criteriaAmount %>
+                                                    </td>
+                                                    <td class="d-flex gap-2 justify-content-center">
+                                                        <!-- Edit Button -->
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-info d-flex align-items-center"
+                                                            data-toggle="modal"
+                                                            data-target="#editCouponModal-<%= coupon._id %>">
+                                                            <i class="fas fa-edit me-2"></i> Edit
+                                                        </button>
+
+                                                        <!-- Delete Button -->
+                                                        <a href="#"
+                                                            class="btn btn-sm btn-danger d-flex align-items-center"
+                                                            onclick="deleteCoupon('<%= coupon.id %>')">
+                                                            <i class="fas fa-trash-alt me-2"></i> Delete
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+                    </div>
+                </div>
+
+                <!-- Edit Coupon Modal -->
+                <% coupons.forEach((coupon,index)=> { %>
+                    <div class="modal fade" id="editCouponModal-<%= coupon._id %>" tabindex="-1" role="dialog"
+                        aria-labelledby="editCouponModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content bg-light">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editCouponModalLabel">Edit Coupon
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editCouponForm-<%= coupon._id %>" novalidate>
+
+                                        <div class="form-group">
+                                            <label for="editCouponName">Coupon Name</label>
+                                            <input type="text" class="form-control" id="editCouponName"
+                                                name="couponName" value="<%=  coupon.couponName %>">
+                                            <small id="editCouponName-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editCouponCode">Coupon Code</label>
+                                            <input type="text" class="form-control" id="editCouponCode"
+                                                name="couponCode" value="<%=  coupon.couponCode %>">
+                                            <small id="editCouponCode-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editDiscountAmount">Discount Amount</label>
+                                            <input type="number" class="form-control" id="editDiscountAmount"
+                                                name="discount" value="<%=  coupon.discountAmount %>">
+                                            <small id="editDiscountAmount-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editExpiryDate">Expiry Date</label>
+                                            <input type="date" class="form-control" id="editExpiryDate"
+                                                name="expiryDate"
+                                                value="<%= coupon.expiryDate.toISOString().split('T')[0] %>">
+                                            <small id="editExpiryDate-error" class="text-danger"></small>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="editCriteriaAmount">Criteria Amount</label>
+                                            <input type="number" class="form-control" id="editCriteriaAmount"
+                                                name="criteriaAmount" value="<%= coupon.criteriaAmount %>">
+                                            <small id="editCriteriaAmount-error" class="text-danger"></small>
+                                        </div>
+
+                                        <div class="error-message" id="form-errors" style="text-align: center;">
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        aria-label="Close">
+                                        close
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="updateCoupon">Save
+                                        changes</button>
+                                </div>
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+                        <!-- Pagination -->
+                        <div class="pagination-area mt-30 mb-50">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <% if (currentPage> 1) { %>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                <i class="material-icons md-chevron_left"></i>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <% for (let i=1; i <=totalPages; i++) { %>
+                                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                    <a class="page-link"
+                                                        href="?page=<%= i %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link"
+                                                                href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                                <i class="material-icons md-chevron_right"></i>
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                                </ul>
+                            </nav>
+                        </div>
+
+
+            </div>
+        </section>
+
+
 
         <%- include('../adminLayouts/footer.ejs') %>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

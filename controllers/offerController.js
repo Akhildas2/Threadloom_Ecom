@@ -64,14 +64,47 @@ const insertOffer = async (req, res, next) => {
 //for listing offers
 const listOffer = async (req, res, next) => {
     try {
-        const page = (req.query.page || 1);
-        const limit = 5;
-        const offersCount = await Offer.find().countDocuments();
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+        let { sort = 'createdAt', order = 'desc' } = req.query;
+        const sortOrder = order === 'asc' ? 1 : -1;
+
+        let query = {};
+        const orderStatus = req.query.status || '';
+        const search = req.query.search ? req.query.search.trim() : "";
+
+        // Search across multiple fields
+        if (search) {
+            query.$or = [
+                { offerName: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        // Filter by expiry date
+        const currentDate = new Date();
+
+        if (orderStatus === 'true') {
+            query.endingDate = { $gte: currentDate };
+        } else if (orderStatus === 'false') {
+            query.endingDate = { $lt: currentDate };
+        }
+
+        // Sort options
+        const sortOptions = {
+            'offerName': { offerName: sortOrder },
+            'startingDate': { startingDate: sortOrder },
+            'endingDate': { endingDate: sortOrder },
+            'discount': { discount: sortOrder },
+            'createdAt': { createdAt: -1 }
+        };
+
+
+        const offersCount = await Offer.countDocuments(query);
         const totalPages = Math.ceil(offersCount / limit);
+        const offers = await Offer.find(query).sort(sortOptions[sort] || sortOptions['createdAt']).skip(skip).limit(limit);
 
-        const offers = await Offer.find().skip((page - 1) * limit).limit(limit);
-
-        res.render("listOffer", { offers, currentPage: page, totalPages })
+        res.render("listOffer", { offers, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus })
 
     } catch (error) {
         next(error);

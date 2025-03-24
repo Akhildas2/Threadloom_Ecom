@@ -260,17 +260,31 @@ const userList = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-
+        let { sort = 'name', order = 'asc' } = req.query;
+        const sortOrder = order === 'asc' ? 1 : -1;
         const searchQuery = req.query.search ? req.query.search.trim() : '';
         let query = { isVerified: true };
-        if (req.query.category) {
-            query.isBlocked = req.query.category === 'blocked';
-        }
-        if (searchQuery) {
-            query.name = { $regex: searchQuery, $options: 'i' };
+
+        // Filter by status
+        if (req.query.status) {
+            query.isBlocked = req.query.status === 'blocked';
         }
 
-        const users = await User.find(query).skip(skip).limit(limit);
+        // Search
+        if (searchQuery) {
+            query.$or = [
+                { name: { $regex: searchQuery, $options: 'i' } },
+                { email: { $regex: searchQuery, $options: 'i' } },
+                { mobile: { $regex: searchQuery, $options: 'i' } }
+            ];
+        }
+
+        // Define sorting options
+        const sortField = ['name', 'email', 'mobile'];
+        const sortOptions = sortField.includes(sort) ? { [sort]: sortOrder } : {};
+
+
+        const users = await User.find(query).sort(sortOptions).skip(skip).limit(limit);
         const totalCount = await User.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
 
@@ -278,9 +292,11 @@ const userList = async (req, res, next) => {
             users,
             currentPage: page,
             totalPages,
-            selectedStatus: req.query.category || '',
+            selectedStatus: req.query.status || '',
             selectedLimit: limit,
-            searchQuery
+            searchQuery,
+            sortField: sort,
+            sortOrder: order,
         });
 
     } catch (error) {

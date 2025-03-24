@@ -1,268 +1,279 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
 
-        <style>
-            /* main.css */
-            .table-responsive {
-                overflow-x: auto;
-                margin-top: 30px;
-                margin-left: 20px;
-                margin-right: 20px;
-
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-            th,
-            td {
-                padding: 20px;
-                border: 1px solid #ddd;
-                text-align: left;
-                text-align: center;
-            }
-
-            /* Media query for smaller screens */
-            @media screen and (max-width: 600px) {
-
-                table,
-                thead,
-                tbody,
-                th,
-                td,
-                tr {
-                    display: block;
-                }
-
-                thead tr {
-                    position: absolute;
-                    top: -9999px;
-                    left: -9999px;
-                }
-
-                tr {
-                    border: 1px solid #ddd;
-                }
-
-                td {
-                    border: none;
-                    border-bottom: 1px solid #ddd;
-                    position: relative;
-                    padding-left: 50%;
-                }
-
-                td:before {
-                    position: absolute;
-                    top: 6px;
-                    left: 6px;
-                    width: 45%;
-                    padding-right: 10px;
-                    white-space: nowrap;
-                }
-
-                /* Label the data */
-                td:nth-of-type(1):before {
-                    content: "#:";
-                }
-
-                td:nth-of-type(2):before {
-                    content: "Offer Name:";
-                }
-
-                td:nth-of-type(3):before {
-                    content: "Starting Date:";
-                }
-
-                td:nth-of-type(4):before {
-                    content: "Ending Date:";
-                }
-
-                td:nth-of-type(5):before {
-                    content: "Discount:";
-                }
-
-                td:nth-of-type(6):before {
-                    content: "Action:";
-                }
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 
-            }
-
-            /* Modal colors */
-            .modal-content {
-                background-color: #ffffff;
-                color: #000000;
-
-            }
-
-            .modal-header {
-                background-color: #088178;
-            }
-
-            .text-danger {
-                color: #dc3545;
-                font-weight: bold;
-                margin-top: 5px;
-            }
-        </style>
-
-        <div style="text-align: center; margin-top: 30px;">
-            <h2>Offer Management</h2>
-        </div>
-        <div style="text-align: end; margin-right: 20px;">
-            <a href="/admin/offer/addOffer" class="btn btn-primary ">Add Offer</a>
-        </div>
-        <div class="table-responsive">
-            <% if (offers.length===0) { %>
-                <div class="alert alert-info" role="alert">
-                    No offer found.Please add offer.
+        <section class="content-main">
+            <div class="container">
+                <div class="content-header">
+                    <h2 class="content-title card-title">Offer Management</h2>
+                    <a href="/admin/offer/addOffer" class="btn btn-primary "> <i class="fas fa-plus me-2"></i>Add
+                        Coupon</a>
                 </div>
+                <div class="card mb-4 shadow-sm">
 
-                <% } else { %>
+                    <header class="card-header">
+                        <div class="row g-2 align-items-center">
+                            <!-- Search Form Column -->
+                            <div class="col-12 col-md-9 col-lg-9">
+                                <form
+                                    class="d-flex flex-column flex-sm-row gap-2 align-items-stretch justify-content-center"
+                                    action="/admin/offer/listOffer" method="get">
 
-                    <br>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Offer Name</th>
-                                <th>Starting Date</th>
-                                <th>Ending Date</th>
-                                <th>Discount (%)</th>
-                                <th>Action</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% offers.forEach((offer,index)=> { %>
-                                <tr>
-                                    <td>
-                                        <%= index+1%>
-                                    </td>
-                                    <td>
-                                        <%= offer.offerName %>
-                                    </td>
-                                    <td>
-                                        <%= offer.startingDate.toDateString() %>
-                                    </td>
-                                    <td>
-                                        <%= offer.endingDate.toDateString() %>
-
-                                    </td>
-                                    <td>
-                                        <%= offer.discount %> %
-
-                                    </td>
-
-                                    <td>
-                                        <button type="button" class="btn btn-sm btn-info" data-toggle="modal"
-                                            data-target="#editOfferModal-<%= offer._id %>">
-                                            Edit Offer
-                                        </button>
-
-
-                                        <a href="#" class="btn btn-sm btn-danger"
-                                            onclick="deleteoffer('<%= offer._id %>')">Delete</a>
-
-                                    </td>
-                                </tr>
-                                <% }); %>
-                        </tbody>
-                    </table>
-                    <% } %>
-                        <!-- Edit offer Modal -->
-                        <% offers.forEach((offer,index)=> { %>
-                            <div class="modal fade" id="editOfferModal-<%= offer._id %>" tabindex="-1" role="dialog"
-                                aria-labelledby="editOfferModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editOfferModalLabel">Edit offer</h5>
-                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                <span aria-hidden="true">&times;</span>
-                                            </button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <form id="editOfferForm-<%= offer._id %>" novalidate>
-
-                                                <div class="form-group">
-                                                    <label for="editofferName">offer Name</label>
-                                                    <input type="text" class="form-control" id="editofferName"
-                                                        name="offerName" value="<%=  offer.offerName %>">
-                                                    <small id="editofferName-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editStartingDate">Starting Date</label>
-                                                    <input type="date" class="form-control" id="editStartingDate"
-                                                        name="startingDate"
-                                                        value="<%= offer.startingDate.toISOString().split('T')[0] %>">
-                                                    <small id="editStartingDate-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editEndingDate">Ending Date</label>
-                                                    <input type="date" class="form-control" id="editEndingDate"
-                                                        name="endingDate"
-                                                        value="<%= offer.endingDate.toISOString().split('T')[0] %>">
-                                                    <small id="editEndingDate-error" class="text-danger"></small>
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="editDiscount">Discount</label>
-                                                    <input type="number" class="form-control" id="editDiscount"
-                                                        name="discount" value="<%=  offer.discount %>">
-                                                    <small id="editDiscount-error" class="text-danger"></small>
-                                                </div>
-
-                                                <br>
-                                                <button type="submit" class="btn btn-primary"
-                                                    style="display: block; margin: 0 auto;" id="updateoffer">Save
-                                                    changes</button>
-                                                <br>
-                                                <div class="error-message" id="form-errors" style="text-align: center;">
-                                                </div>
-
-
-                                            </form>
-                                        </div>
+                                    <!-- Search Input -->
+                                    <div class="flex-grow-1">
+                                        <input type="text" class="form-control w-100 mb-0" id="searchInput"
+                                            name="search" value="<%= search || '' %>" placeholder="Search offer">
                                     </div>
+
+                                    <!-- Status Select -->
+                                    <div class="flex-grow-1 flex-sm-grow-0">
+                                        <select name="status" class="form-select w-100">
+                                            <option value="">All</option>
+                                            <option value="true" <%=orderStatus==='true' ? 'selected' : '' %>>Active
+                                            </option>
+                                            <option value="false" <%=orderStatus==='false' ? 'selected' : '' %>>Expired
+                                            </option>
+                                        </select>
+                                    </div>
+
+
+                                    <!-- Submit Button -->
+                                    <div>
+                                        <button class="btn btn-light w-100" type="submit">
+                                            <i class="material-icons md-search"></i>
+                                            <span class="d-none d-sm-inline">Search</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!-- Limit Select Column -->
+                            <div class="col-12 col-md-3 col-lg-3">
+                                <div class="d-flex justify-content-center justify-content-md-end">
+                                    <select id="productLimit" class="form-select w-auto"
+                                        onchange="location = this.value;">
+                                        <% const limits=[1,5, 10, 20, 50, 100]; %>
+                                            <% limits.forEach(lim=> { %>
+                                                <option
+                                                    value="?page=1&limit=<%= lim %>&status=<%= orderStatus %>&search=<%= search %>&sortField=<%= sortField %>&sortOrder=<%= sortOrder %>"
+                                                    <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
+                                                </option>
+                                                <% }) %>
+                                    </select>
                                 </div>
                             </div>
-                            <% }); %>
-                                <!-- Pagination -->
-                                <div class="pagination-area mt-30 mb-50">
-                                    <nav aria-label="Page navigation example">
-                                        <ul class="pagination justify-content-end">
-                                            <% if (currentPage> 1) { %>
-                                                <li class="page-item"><a class="page-link" href="?page=1"><i
-                                                            class="material-icons md-chevron_left"></i></a></li>
-                                                <% } %>
-                                                    <% for (let i=1; i <=totalPages; i++) { %>
-                                                        <% if (i===currentPage) { %>
-                                                            <li class="page-item active"><a class="page-link" href="#">
-                                                                    <%= i %>
-                                                                </a></li>
-                                                            <% } else { %>
-                                                                <li class="page-item"><a class="page-link"
-                                                                        href="?page=<%= i %>">
-                                                                        <%= i %>
-                                                                    </a></li>
-                                                                <% } %>
-                                                                    <% } %>
-                                                                        <% if (currentPage < totalPages) { %>
-                                                                            <li class="page-item"><a class="page-link"
-                                                                                    href="?page=<%= totalPages %>"><i
-                                                                                        class="material-icons md-chevron_right"></i></a>
-                                                                            </li>
-                                                                            <% } %>
-                                        </ul>
-                                    </nav>
-                                </div>
-        </div>
+                        </div>
+                    </header>
 
-        <br>
-        <br>
-        <br>
+
+                    <div class="card mb-0">
+                        <% if (offers.length===0) { %>
+                            <div class="alert alert-info text-center p-4 rounded shadow-sm" role="alert">
+                                No offer found.Please add offer.
+                            </div>
+                            <% } else { %>
+                                <div class="card-body p-0 table-responsive shadow-sm rounded">
+                                    <table class="table table-hover text-center align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>
+                                                    <a href="?sort=offerName&order=<%= sortField === 'offerName' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Offer Name
+                                                        <% if (sortField==='offerName' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=startingDate&order=<%= sortField === 'startingDate' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Starting Date
+                                                        <% if (sortField==='startingDate' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=endingDate&order=<%= sortField === 'endingDate' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Ending Date
+                                                        <% if (sortField==='endingDate' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+                                                <th>
+                                                    <a href="?sort=discount&order=<%= sortField === 'discount' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                        class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                        Discount (%)
+                                                        <% if (sortField==='discount' ) { %>
+                                                            <i
+                                                                class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                            <% } else { %>
+                                                                <i class="fas fa-sort ms-2 text-muted"></i>
+                                                                <% } %>
+                                                    </a>
+                                                </th>
+
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-light">
+                                            <% offers.forEach((offer, index)=> { %>
+                                                <tr class="border-bottom">
+                                                    <td>
+                                                        <%= (currentPage - 1) * selectedLimit + index + 1 %>
+                                                    </td>
+                                                    <td class="fw-bold">
+                                                        <%= offer.offerName %>
+                                                    </td>
+                                                    <td>
+                                                        <%= offer.startingDate.toDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= offer.endingDate.toDateString() %>
+                                                    </td>
+                                                    <td>
+                                                        <%= offer.discount %> %
+                                                    </td>
+
+                                                    <td class="d-flex gap-2 justify-content-center">
+                                                        <!-- Edit Button -->
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-info d-flex align-items-center"
+                                                            data-toggle="modal"
+                                                            data-target="#editOfferModal-<%= offer._id %>">
+                                                            <i class="fas fa-edit me-2"></i> Edit
+                                                        </button>
+
+                                                        <!-- Delete Button -->
+                                                        <a href="#"
+                                                            class="btn btn-sm btn-danger d-flex align-items-center"
+                                                            onclick="deleteCoupon('<%= offer.id %>')">
+                                                            <i class="fas fa-trash-alt me-2"></i> Delete
+                                                        </a>
+                                                    </td>
+
+                                                </tr>
+                                                <% }); %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <% } %>
+                    </div>
+                </div>
+
+                <!-- Edit Coupon Modal -->
+                <% offers.forEach((offer,index)=> { %>
+                    <div class="modal fade" id="editOfferModal-<%= offer._id %>" tabindex="-1" role="dialog"
+                        aria-labelledby="editCouponModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-md" role="document">
+                            <div class="modal-content bg-light">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editCouponModalLabel">Edit offer
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="editOfferForm-<%= offer._id %>" novalidate>
+
+                                        <div class="form-group">
+                                            <label for="editofferName">offer Name</label>
+                                            <input type="text" class="form-control" id="editofferName" name="offerName"
+                                                value="<%=  offer.offerName %>">
+                                            <small id="editofferName-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editStartingDate">Starting Date</label>
+                                            <input type="date" class="form-control" id="editStartingDate"
+                                                name="startingDate"
+                                                value="<%= offer.startingDate.toISOString().split('T')[0] %>">
+                                            <small id="editStartingDate-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editEndingDate">Ending Date</label>
+                                            <input type="date" class="form-control" id="editEndingDate"
+                                                name="endingDate"
+                                                value="<%= offer.endingDate.toISOString().split('T')[0] %>">
+                                            <small id="editEndingDate-error" class="text-danger"></small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="editDiscount">Discount</label>
+                                            <input type="number" class="form-control" id="editDiscount" name="discount"
+                                                value="<%=  offer.discount %>">
+                                            <small id="editDiscount-error" class="text-danger"></small>
+                                        </div>
+
+
+                                        <div class="error-message" id="form-errors" style="text-align: center;">
+                                        </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                                        aria-label="Close">
+                                        close
+                                    </button>
+                                    <button type="submit" class="btn btn-primary" id="updateoffer">Save
+                                        changes</button>
+                                </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+
+                        <!-- Pagination -->
+                        <div class="pagination-area mt-30 mb-50">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-end">
+                                    <% if (currentPage> 1) { %>
+                                        <li class="page-item">
+                                            <a class="page-link"
+                                                href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                <i class="material-icons md-chevron_left"></i>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <% for (let i=1; i <=totalPages; i++) { %>
+                                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                    <a class="page-link"
+                                                        href="?page=<%= i %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+
+                                                    <% if (currentPage < totalPages) { %>
+                                                        <li class="page-item">
+                                                            <a class="page-link"
+                                                                href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&status=<%= orderStatus %>&search=<%= search %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                                <i class="material-icons md-chevron_right"></i>
+                                                            </a>
+                                                        </li>
+                                                        <% } %>
+                                </ul>
+                            </nav>
+                        </div>
+
+
+            </div>
+        </section>
+
 
         <%- include('../adminLayouts/footer.ejs') %>
             <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

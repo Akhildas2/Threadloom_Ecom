@@ -99,33 +99,71 @@
         <section class="content-main">
             <div class="container">
                 <div class="category-header">
-                    <h2 class="mb-0">Manage Categories</h2>
-
+                    <h3 class="mb-0">Manage Categories</h3>
                     <a href="/admin/category/addcategory" class="btn btn-primary">
-                        <i class="fas fa-plus mr-2"></i> Add New Category
+                        <i class="fas fa-plus mr-2"></i> Add Category
                     </a>
                 </div>
-                <div class="d-flex justify-content-center align-items-center mt-3">
-                    <!-- Search Form -->
-                    <form class="searchform d-flex align-items-center gap-1 mt-0"
-                        action="/admin/category/listCategories" method="get">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search name"
-                            style="width: 200px;">
-                        <select name="categoryStatus" class="form-select" style="width: 150px;">
-                            <option value="all">All</option>
-                            <option value="list">Listed</option>
-                            <option value="unlist">Unlisted</option>
-                        </select>
-                        <button class="btn btn-light bg" type="submit">
-                            <i class="material-icons md-search"></i>
-                        </button>
-                    </form>
-                </div>
+
+                <header class="card-header mt-40">
+                    <div class="row g-2 align-items-center">
+                        <!-- Search Form Column -->
+                        <div class="col-12 col-md-9 col-lg-9">
+                            <form
+                                class="d-flex flex-column flex-sm-row gap-2 align-items-stretch justify-content-center"
+                                action="/admin/category/listCategories" method="get">
+
+                                <!-- Search Input -->
+                                <div class="flex-grow-1">
+                                    <input type="text" class="form-control w-100 mb-0" id="searchInput" name="search"
+                                        value="<%= search || '' %>" placeholder="Search category">
+                                </div>
+
+                                <!-- Status Select -->
+                                <div class="flex-grow-1 flex-sm-grow-0">
+                                    <select name="categoryStatus" class="form-select w-100">
+                                        <option value="all" <%=categoryStatus==="all" ? "selected" : "" %>>All</option>
+                                        <option value="list" <%=categoryStatus==="list" ? "selected" : "" %>>Listed
+                                        </option>
+                                        <option value="unlist" <%=categoryStatus==="unlist" ? "selected" : "" %>
+                                            >Unlisted</option>
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <button class="btn btn-light w-100" type="submit">
+                                        <i class="material-icons md-search"></i>
+                                        <span class="d-none d-sm-inline">Search</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Limit Select Column -->
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="d-flex justify-content-center justify-content-md-end">
+                                <select id="categorieLimit" class="form-select w-auto"
+                                    onchange="location = this.value;">
+                                    <% const limits=[1,6, 10, 20, 50, 100]; %>
+                                        <% limits.forEach(lim=> { %>
+                                            <option
+                                                value="?page=1&limit=<%= lim %>&categoryStatus=<%= categoryStatus %>&search=<%= search %>"
+                                                <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
+                                            </option>
+                                            <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+
+
 
                 <% if (categories.length> 0) { %>
                     <div class="category-container py-3">
                         <% categories.forEach((category, i)=> { %>
-
                             <div class="category-card">
                                 <div class="category-actions">
                                     <a herf="#" class="action-btn text-primary edit-category"
@@ -184,16 +222,6 @@
                         <% } %>
             </div>
 
-            <div class="justify-content-center align-items-center">
-                <select id="userLimit" class="form-select w-auto" onchange="location = this.value;">
-                    <% const limits=[6, 10, 20, 50, 100]; %>
-                        <% limits.forEach(lim=> { %>
-                            <option value="?page=1&limit=<%= lim %>&categoryStatus=<%= categoryStatus %>"
-                                <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
-                            </option>
-                            <% }) %>
-                </select>
-            </div>
 
             <!-- Pagination -->
             <div class="pagination-area mt-30 mb-50">
@@ -202,7 +230,7 @@
                         <% if (currentPage> 1) { %>
                             <li class="page-item">
                                 <a class="page-link"
-                                    href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>">
+                                    href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>&search=<%= search %>">
                                     <i class="material-icons md-chevron_left"></i>
                                 </a>
                             </li>
@@ -216,7 +244,7 @@
                                         <% } else { %>
                                             <li class="page-item">
                                                 <a class="page-link"
-                                                    href="?page=<%= i %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>">
+                                                    href="?page=<%= i %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>&search=<%= search %>">
                                                     <%= i %>
                                                 </a>
                                             </li>
@@ -226,7 +254,7 @@
                                                     <% if (currentPage < totalPages) { %>
                                                         <li class="page-item">
                                                             <a class="page-link"
-                                                                href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>">
+                                                                href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&categoryStatus=<%= categoryStatus %>&search=<%= search %>">
                                                                 <i class="material-icons md-chevron_right"></i>
                                                             </a>
                                                         </li>
@@ -310,23 +338,6 @@
         <!-- Add Axios -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const searchInput = document.getElementById('searchInput');
-                const categoryCards = document.querySelectorAll('.category-card');
-
-                searchInput.addEventListener('input', function () {
-                    const searchTerm = searchInput.value.toLowerCase().trim();
-
-                    categoryCards.forEach(card => {
-                        const categoryName = card.querySelector('.category-details h5').textContent.toLowerCase();
-                        if (categoryName.includes(searchTerm)) {
-                            card.style.display = 'block';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
 
             document.addEventListener('DOMContentLoaded', function () {
                 const editButtons = document.querySelectorAll('.edit-category');

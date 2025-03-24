@@ -70,12 +70,17 @@ const loadListCategory = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         let query = {};
-        const categoryStatus = req.query.categoryStatus || "all";
+        const categoryStatus = req.query.categoryStatus || "";
+        const search = req.query.search ? req.query.search.trim() : "";
 
         if (categoryStatus === "list") {
             query.isUnlisted = false;
         } else if (categoryStatus === "unlist") {
             query.isUnlisted = true;
+        }
+
+        if (search) {
+            query.categoryName = { $regex: search, $options: "i" };
         }
 
         const categories = await Category.find(query).skip(skip).limit(limit);
@@ -84,7 +89,7 @@ const loadListCategory = async (req, res, next) => {
         const offers = await Offer.find();
 
 
-        res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit });
+        res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit, search });
 
     } catch (error) {
         next(error);

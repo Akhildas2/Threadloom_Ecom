@@ -4,14 +4,48 @@ const Coupon = require('../models/couponModel')
 
 const listCoupon = async (req, res, next) => {
     try {
-        const page = (req.query.page || 1);
-        const limit = 5;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 5;
+        const skip = (page - 1) * limit;
+        let { sort = 'createdAt', order = 'desc' } = req.query;
+        const sortOrder = order === 'asc' ? 1 : -1;
 
-        const couponsCount = await Coupon.find({}).countDocuments();
+        let query = {};
+        const orderStatus = req.query.status || '';
+        const search = req.query.search ? req.query.search.trim() : "";
+
+        // Search across multiple fields
+        if (search) {
+            query.$or = [
+                { couponName: { $regex: search, $options: "i" } },
+                { couponCode: { $regex: search, $options: "i" } },
+            ];
+        }
+
+        // Filter by expiry date
+        const currentDate = new Date();
+
+        if (orderStatus === 'true') {
+            query.expiryDate = { $gte: currentDate };
+        } else if (orderStatus === 'false') {
+            query.expiryDate = { $lt: currentDate };
+        }
+
+        // Sort options
+        const sortOptions = {
+            'couponName': { couponName: sortOrder },
+            'couponCode': { couponCode: sortOrder },
+            'discountAmount': { discountAmount: sortOrder },
+            'expiryDate': { expiryDate: sortOrder },
+            'criteriaAmount': { criteriaAmount: sortOrder },
+            'createdAt': { createdAt: -1 }
+        };
+
+        const couponsCount = await Coupon.countDocuments(query);
         const totalPages = Math.ceil(couponsCount / limit);
-        const coupons = await Coupon.find({}).skip((page - 1) * limit).limit(limit);
+        const coupons = await Coupon.find(query).sort(sortOptions[sort] || sortOptions['createdAt']).skip(skip).limit(limit);
 
-        res.render('listCoupon', { coupons, currentPage: page, totalPages })
+        res.render('listCoupon', { coupons, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus })
 
     } catch (error) {
         next(error);

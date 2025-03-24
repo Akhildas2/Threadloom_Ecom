@@ -1,130 +1,248 @@
 <%- include('../adminLayouts/header.ejs') %>
     <%- include('../adminLayouts/navbar.ejs') %>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
         <style>
-            .image-cell {
-                text-align: center;
+            .cursor-pointer {
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .cursor-pointer:hover {
+                transform: translateY(-2px);
+            }
+
+            .dropdown-menu {
+                min-width: 180px;
+                border-radius: 12px;
+                border: 1px solid rgba(0, 0, 0, 0.1);
             }
         </style>
+
         <section class="content-main">
             <div class="content-header">
-                <div>
-                    <h2 class="content-title card-title">Order List</h2>
-                </div>
-                <div class="col-search">
-                    <form class="searchform" action="/admin/orderList/" method="GET">
-                        <div class="input-group">
-                            <input type="text" name="orderId" placeholder="Search orderId" class="form-control" />
-                            <button class="btn btn-light bg" type="submit"><i
-                                    class="material-icons md-search"></i></button>
-                        </div>
-                    </form>
-                </div>
+                <h2 class="content-title card-title">Order List</h2>
             </div>
             <div class="card mb-4">
-                <!-- <header class="card-header">
-            <div class="row gx-3">
-                <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" placeholder="Search..." class="form-control" />
-                </div>
-                <div class="col-lg-2 col-6 col-md-3">
-                    <select class="form-select">
-                        <option>Status</option>
-                        <option>Active</option>
-                        <option>Disabled</option>
-                        <option>Show all</option>
-                    </select>
-                </div>
-                <div class="col-lg-2 col-6 col-md-3">
-                    <select class="form-select">
-                        <option>Show 20</option>
-                        <option>Show 30</option>
-                        <option>Show 40</option>
-                    </select>
-                </div>
-            </div>
-        </header> -->
-                <div class="card-body">
-                    <% if (orders.length===0) { %>
-                        <div class="alert alert-info" role="alert">
-                            No orders found.Please order products.
+
+                <header class="card-header ">
+                    <div class="row g-2 align-items-center">
+                        <!-- Search Form Column -->
+                        <div class="col-12 col-md-9 col-lg-9">
+                            <form
+                                class="d-flex flex-column flex-sm-row gap-2 align-items-stretch justify-content-center"
+                                action="/admin/orderList" method="get">
+
+                                <!-- Search Input -->
+                                <div class="flex-grow-1">
+                                    <input type="text" class="form-control w-100 mb-0" id="searchInput" name="search"
+                                        value="<%= search || '' %>" placeholder="Search order">
+                                </div>
+
+                                <!-- Status Select -->
+                                <div class="flex-grow-1 flex-sm-grow-0">
+                                    <select name="status" class="form-select w-100">
+                                        <option value="">All</option>
+                                        <% const statuses=['pending', 'confirmed' , 'processing' , 'shipped'
+                                            , 'out for delivery' , 'delivered' , 'awaiting cancellation approval'
+                                            , 'cancelled' , 'rejected' , 'returned' , 'refund initiated' , 'refunded'
+                                            , 'failed' ]; %>
+                                            <% statuses.forEach(st=> { %>
+                                                <option value="<%= st %>" <%=orderStatus===st ? 'selected' : '' %>><%=
+                                                        st %>
+                                                </option>
+                                                <% }) %>
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <button class="btn btn-light w-100" type="submit">
+                                        <i class="material-icons md-search"></i>
+                                        <span class="d-none d-sm-inline">Search</span>
+                                    </button>
+                                </div>
+                            </form>
                         </div>
 
+                        <!-- Limit Select Column -->
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="d-flex justify-content-center justify-content-md-end">
+                                <select id="orderLimit" class="form-select w-auto" onchange="location = this.value;">
+                                    <% const limits=[1,5, 10, 20, 50, 100]; %>
+                                        <% limits.forEach(lim=> { %>
+                                            <option
+                                                value="?page=1&limit=<%= lim %>&search=<%= search %>&orderStatus=<%= orderStatus %>&sort=<%= sortField %>&order=<%= sortOrder %>"
+                                                <%=selectedLimit==lim ? 'selected' : '' %>>Show <%= lim %>
+                                            </option>
+                                            <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+
+                <div class="card-body p-0">
+                    <% if (orders.length===0) { %>
+                        <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                            <div class="mb-3">
+                                <i class="fas fa-shopping-cart text-muted fa-4x"></i>
+                            </div>
+                            <h5 class="text-muted mb-2">No Orders Found</h5>
+                        </div>
                         <% } else { %>
-                            <div class="table-responsive">
-                                <table class="table table-hover">
+                            <div class="table-responsive rounded-3">
+                                <table class="table table-hover align-middle mb-0">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th scope="col" class="text-center">Order ID</th>
-                                            <th scope="col" class="text-center">Order Image & Name</th>
-                                            <th scope="col" class="text-center">Total</th>
-                                            <th scope="col" class="text-center">Payment Method</th>
-                                            <th scope="col">Payment Status</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col" class="text-end">Action</th>
+                                            <th class="ps-4">
+                                                <a href="?sort=ordersId&order=<%= sortField === 'ordersId' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                    class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                    # Order ID
+                                                    <% if (sortField==='ordersId' ) { %>
+                                                        <i
+                                                            class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                        <% } else { %>
+                                                            <i class="fas fa-sort ms-2 text-muted"></i>
+                                                            <% } %>
+                                                </a>
+                                            </th>
+                                            <th>Product</th>
+                                            <th class="text-center">
+                                                <a href="?sort=totalAmount&order=<%= sortField === 'totalAmount' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                    class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                    Total
+                                                    <% if (sortField==='totalAmount' ) { %>
+                                                        <i
+                                                            class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                        <% } else { %>
+                                                            <i class="fas fa-sort ms-2 text-muted"></i>
+                                                            <% } %>
+                                                </a>
+                                            </th>
+                                            <th class="text-center">
+                                                <a href="?sort=paymentMethod&order=<%= sortField === 'paymentMethod' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                    class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                    Payment
+                                                    <% if (sortField==='paymentMethod' ) { %>
+                                                        <i
+                                                            class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                        <% } else { %>
+                                                            <i class="fas fa-sort ms-2 text-muted"></i>
+                                                            <% } %>
+                                                </a>
+                                            </th>
+                                            <th>Status</th>
+                                            <th>
+                                                <a href="?sort=date&order=<%= sortField === 'date' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                                    class="text-reset text-decoration-none d-inline-flex align-items-center">
+                                                    Date
+                                                    <% if (sortField==='date' ) { %>
+                                                        <i
+                                                            class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
+                                                        <% } else { %>
+                                                            <i class="fas fa-sort ms-2 text-muted"></i>
+                                                            <% } %>
+                                                </a>
+                                            </th>
+                                            <th class="pe-4 text-end">Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <% orders.forEach(function(order,index) { %>
-                                            <tr>
-                                                <td>
-                                                    <%= index + 1 %>
-                                                </td>
-                                                <td class="text-center">
-                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>">
-                                                        <%= order.ordersId%>
+                                    <tbody class="border-top-0 ">
+                                        <% orders.forEach(function(order, index) { %>
+                                            <tr class="cursor-pointer border-bottom">
+                                                <td class="ps-4 fw-semibold">
+                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>"
+                                                        class="text-reset text-decoration-none">
+                                                        #<%= index+1 %>
+                                                            <%= order.ordersId %>
                                                     </a>
                                                 </td>
-                                                <td class="image-cell">
-                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>">
-                                                        <img src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
-                                                            alt="<%= order.items[0].productId.name %> Image"
-                                                            style="width: 80px;">
-
-                                                        <p class="">
-                                                            <%= order.items[0].productId.name %>
-
-                                                        </p>
-                                                    </a>
-
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <a href="/admin/orderList/orderDetails/<%= order._id %>"> <img
+                                                                src="/uploads/product/resized/<%= order.items[0].productId.productImage[0] %>"
+                                                                alt="Product" class="rounded-2"
+                                                                style="width: 60px; height: 60px; object-fit: cover;">
+                                                        </a>
+                                                        <div>
+                                                            <p class="mb-0 fw-semibold">
+                                                                <%= order.items[0].productId.name %>
+                                                            </p>
+                                                            <small class="text-muted">
+                                                                <%= order.items.length %> items
+                                                            </small>
+                                                        </div>
+                                                    </div>
                                                 </td>
-
-                                                <td class="text-center">₹<%= order.totalAmount.toFixed(2) %>
+                                                <td class="text-center fw-semibold">
+                                                    ₹<%= order.totalAmount.toFixed(2) %>
                                                 </td>
                                                 <td class="text-center">
-                                                    <%= order.paymentMethod %>
-                                                </td>
-
-                                                <td>
-                                                    <span class="badge rounded-pill 
-                                    <% if (order.status === 'pending') { %> alert-warning text-warning 
-                                    <% } else if (order.status === 'paid') { %> alert-success text-success 
-                                    <% } else if (order.status=== 'retry') { %> alert-success text-info
-                                    <% } else { %> alert-secondary text-secondary <% } %>">
-                                                        <%= order.status %>
+                                                    <span class="badge bg-light text-white border">
+                                                        <% if (order.paymentMethod==='cod' ) { %>
+                                                            <i class="fas fa-credit-card text-primary me-2"></i>
+                                                            <% } else if (order.paymentMethod==='paypal' ) { %>
+                                                                <i class="fab fa-paypal text-info me-2"></i>
+                                                                <% } else { %>
+                                                                    <i class="fas fa-wallet text-success me-2"></i>
+                                                                    <% } %>
+                                                                        <%= order.paymentMethod %>
                                                     </span>
                                                 </td>
-
-
-
                                                 <td>
-                                                    <%= order.date.toDateString() %>
+                                                    <span class="badge rounded-pill fw-bold py-2 px-3 
+                                                        <% if (order.status === 'pending') { %> 
+                                                            bg-warning-subtle text-warning
+                                                        <% } else if (order.status === 'paid') { %> 
+                                                            bg-success-subtle text-success
+                                                        <% } else if (order.status === 'partially paid') { %> 
+                                                            bg-primary-subtle text-primary
+                                                        <% } else if (order.status === 'retry') { %> 
+                                                            bg-info-subtle text-info
+                                                        <% } else { %> 
+                                                            bg-secondary-subtle text-secondary
+                                                        <% } %>">
+                                                        <% if (order.status==='pending' ) { %>
+                                                            <i class="fas fa-clock me-1"></i>
+                                                            <% } else if (order.status==='paid' ) { %>
+                                                                <i class="fas fa-check-circle me-1"></i>
+                                                                <% } else if (order.status==='partially paid' ) { %>
+                                                                    <i class="fas fa-hourglass-half me-1"></i>
+                                                                    <% } %>
+                                                                        <%= order.status %>
+                                                    </span>
                                                 </td>
-                                                <td class="text-end">
-                                                    <a href="/admin/orderList/orderDetails/<%= order._id %>"
-                                                        class="btn btn-md rounded font-sm">Detail</a>
-                                                    <div class="dropdown">
-                                                        <a href="#" data-bs-toggle="dropdown"
-                                                            class="btn btn-light rounded btn-sm font-sm">
-                                                            <i class="material-icons md-more_horiz"></i>
+                                                <td>
+                                                    <div class="d-flex flex-column">
+                                                        <small class="text-muted">
+                                                            <%= order.date.toLocaleDateString() %>
+                                                        </small>
+                                                        <small class="text-muted">
+                                                            <%= order.date.toLocaleTimeString() %>
+                                                        </small>
+                                                    </div>
+                                                </td>
+                                                <td class="pe-4 text-end">
+                                                    <div class="d-flex gap-2 justify-content-end">
+                                                        <a href="/admin/orderList/orderDetails/<%= order._id %>"
+                                                            class="btn btn-sm btn-outline-dark rounded-3 px-3">
+                                                            View
                                                         </a>
-                                                        <div class="dropdown-menu">
-                                                            <a class="dropdown-item"
-                                                                href="/admin/orderList/orderDetails/<%= order._id %>">View
-                                                                detail</a>
-                                                            <!-- <a class="dropdown-item" href="#">Edit info</a>
-                                            <a class="dropdown-item text-danger" href="#">Delete</a> -->
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-sm btn-light rounded-3 px-2"
+                                                                type="button" data-bs-toggle="dropdown">
+                                                                <i class="fas fa-ellipsis-v"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                                                <li>
+                                                                    <a class="dropdown-item"
+                                                                        href="/admin/orderList/orderDetails/<%= order._id %>">
+                                                                        <i class="fas fa-eye me-2"></i>View Details
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -136,34 +254,49 @@
                             <% }; %>
                 </div>
             </div>
+
             <!-- Pagination -->
             <div class="pagination-area mt-30 mb-50">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-end">
                         <% if (currentPage> 1) { %>
-                            <li class="page-item"><a class="page-link" href="?page=1"><i
-                                        class="material-icons md-chevron_left"></i></a></li>
+                            <li class="page-item">
+                                <a class="page-link"
+                                    href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&search=<%= search %>&orderStatus=<%= orderStatus %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                    <i class="material-icons md-chevron_left"></i>
+                                </a>
+                            </li>
                             <% } %>
+
                                 <% for (let i=1; i <=totalPages; i++) { %>
                                     <% if (i===currentPage) { %>
-                                        <li class="page-item active"><a class="page-link" href="#">
+                                        <li class="page-item active">
+                                            <a class="page-link" href="#">
                                                 <%= i %>
-                                            </a></li>
+                                            </a>
+                                        </li>
                                         <% } else { %>
-                                            <li class="page-item"><a class="page-link" href="?page=<%= i %>">
+                                            <li class="page-item">
+                                                <a class="page-link"
+                                                    href="?page=<%= i %>&limit=<%= selectedLimit %>&search=<%= search %>&orderStatus=<%= orderStatus %>&sort=<%= sortField %>&order=<%= sortOrder %>">
                                                     <%= i %>
-                                                </a></li>
+                                                </a>
+                                            </li>
                                             <% } %>
                                                 <% } %>
+
                                                     <% if (currentPage < totalPages) { %>
-                                                        <li class="page-item"><a class="page-link"
-                                                                href="?page=<%= totalPages %>"><i
-                                                                    class="material-icons md-chevron_right"></i></a>
+                                                        <li class="page-item">
+                                                            <a class="page-link"
+                                                                href="?page=<%=  currentPage + 1  %>&limit=<%= selectedLimit %>&search=<%= search %>&orderStatus=<%= orderStatus %>&sort=<%= sortField %>&order=<%= sortOrder %>">
+                                                                <i class="material-icons md-chevron_right"></i>
+                                                            </a>
                                                         </li>
                                                         <% } %>
                     </ul>
                 </nav>
             </div>
+
         </section>
 
         <%- include('../adminLayouts/footer.ejs') %>
