@@ -3,30 +3,216 @@
 
         <style>
             .cart-container {
-                margin-top: 20px;
-                padding: 20px;
+                margin: 40px 0;
+                padding: 30px;
+                background: #ffffff;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             }
 
             .addToCart-img {
-                max-width: 100%;
+                max-width: 80%;
                 height: auto;
+                transition: transform 0.3s ease;
+            }
+
+            .addToCart-img:hover {
+                transform: scale(1.05);
             }
 
             .wishlist-message {
-                font-size: 1.5rem;
-                font-weight: 500;
-                text-align: center;
-                color: #333;
+                font-size: 1.8rem;
+                font-weight: 600;
+                color: #2d2d2d;
+                padding: 30px;
+                background: #f8f9fa;
+                border-radius: 12px;
+                border-left: 4px solid #088178;
             }
 
             .wishlist-message a {
-                font-weight: bold;
-                color: #007bff;
-                text-decoration: none;
+                color: #088178;
+                transition: all 0.3s ease;
+                position: relative;
             }
 
             .wishlist-message a:hover {
+                padding-left: 8px;
+                text-decoration: none;
+            }
+
+            .wishlist-message a:hover:after {
+                content: '→';
+                margin-left: 5px;
+            }
+
+            .shopping-summery {
+                border-collapse: separate;
+                border-spacing: 0 15px;
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+            }
+
+            .shopping-summery thead {
+                background: #f8f9fa;
+            }
+
+            .shopping-summery th {
+                padding: 20px 15px !important;
+                border: none !important;
+            }
+
+            .shopping-summery td {
+                vertical-align: middle;
+                padding: 20px !important;
+                background: #f8f9fa;
+                border: none !important;
+            }
+
+            .shopping-summery tr {
+                transition: all 0.3s ease;
+                border-radius: 8px;
+                overflow: hidden;
+            }
+
+            .shopping-summery tr:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            }
+
+            .product-thumbnail img {
+                width: 80px;
+                height: 80px;
+                object-fit: cover;
+                border-radius: 8px;
+                border: 2px solid #e9ecef;
+            }
+
+            .detail-qty {
+                width: 120px;
+                height: 40px;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 10px;
+                border-radius: 8px;
+            }
+
+            .detail-qty a {
+                color: #088178;
+                font-size: 18px;
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                transition: all 0.3s ease;
+            }
+
+            .detail-qty a:hover {
+                background: #088178;
+                color: white;
+                text-decoration: none;
+            }
+
+            .cart-totals {
+                background: #f8f9fa;
+                border-radius: 12px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .cart-totals table {
+                margin-bottom: 0;
+                border-spacing: 0 15px;
+            }
+
+            .cart-totals td {
+                border: none;
+                padding: 15px 0;
+            }
+
+            .cart-totals .text-brand {
+                color: #088178 !important;
+                font-size: 1.2em;
+            }
+
+            .btn-checkout {
+                background: #088178;
+                color: white;
+                padding: 15px 40px;
+                border-radius: 8px;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+            }
+
+            .btn-checkout:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+                color: white;
+            }
+
+
+            .alert-warning {
+                background: #fff3cd;
+                border-left: 4px solid #ffc107;
+                border-radius: 8px;
+                padding: 20px;
+                margin: 20px 0;
+            }
+
+            .action a {
+                color: red !important;
+                font-size: 1.2rem;
+                transition: 0.3s;
+            }
+
+            .action a:hover {
+                color: darkred !important;
+                transform: scale(1.1);
+            }
+
+            .text-end a {
+                color: #088178 !important;
+                font-weight: 600;
+                transition: color 0.3s ease-in-out;
+            }
+
+            .text-end a:hover {
+                color: #066c62 !important;
                 text-decoration: underline;
+            }
+
+            @media (max-width: 480px) {
+                .shopping-summery thead {
+                    display: none;
+                }
+
+                .shopping-summery tr {
+                    display: flex;
+                    flex-direction: column;
+                    margin-bottom: 20px;
+                    padding: 15px;
+                }
+
+                .shopping-summery td {
+                    display: block;
+                    text-align: right !important;
+                    padding: 10px !important;
+                }
+
+                .shopping-summery td:before {
+                    content: attr(data-title);
+                    float: left;
+                    font-weight: bold;
+                    color: #088178;
+                }
+
+            
             }
         </style>
 
@@ -70,10 +256,13 @@
                                     </div>
 
                                     <% } else { %>
-
-                                        <div class="row">
-
-                                            <div class="col-lg-8 col-md-8 ">
+                                        <h3 class="cart-title text-center">
+                                            <i class="fas fa-shopping-cart" style="color: #088178;"></i>
+                                            My Cart <span class="cart-count">(<%= totalCount %>)</span>
+                                            <%= console.log(totalCount) %>
+                                        </h3>
+                                        <div class="row mt-4">
+                                            <div class="col-lg-8 col-md-12">
                                                 <div class="table-responsive">
                                                     <table class="table shopping-summery text-center clean">
                                                         <thead>
@@ -104,8 +293,6 @@
                                                                                     <%= product.name %>
                                                                                 </a></h5>
                                                                         </td>
-
-
                                                                         <td class="price" data-title="Price"><span>₹<%=
                                                                                     product.price.toFixed(2) %></span>
                                                                         </td>
@@ -130,7 +317,7 @@
                                                                             <a href="#"
                                                                                 onclick="removeFromCart('<%= product._id %>')"
                                                                                 class="text-muted"><i
-                                                                                    class="fi-rs-trash"></i></a>
+                                                                                    class="fi-rs-trash "></i></a>
                                                                         </td>
                                                                     </tr>
                                                                     <% }); %>
@@ -157,7 +344,7 @@
                                             </div>
 
 
-                                            <div class="col-lg-4 col-md-4 col-md-4">
+                                            <div class="col-lg-4 col-md-12 pt-15">
                                                 <div class="border p-md-4 p-30 border-radius cart-totals">
                                                     <div class="heading_s1 mb-3">
                                                         <h4>Cart Totals</h4>
@@ -195,26 +382,32 @@
                                                                 </tr>
                                                             </tbody>
                                                         </table>
-
                                                     </div>
-
-                                                </div>
-
-                                            </div>
-
-                                        </div>
-
-                                        <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i>
-                                        </div>
-
-                                        <div class="row justify-content-center"> <!-- This row centers the button -->
-                                            <div class="col-12 text-center"> <!-- This column centers the button -->
-                                                <div class="cart-action">
-                                                    <a href="/order" class="btn mr-10 mb-sm-15"><i
-                                                            class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="divider center_icon mt-30 mb-50"><i class="fi-rs-fingerprint"></i>
+                                        </div>
+
+                                        <div class="checkout-container">
+                                            <div class="row justify-content-center mb-30">
+                                                <div class="col-12 text-center">
+                                                    <div class="cart-action">
+                                                        <a href="/order" class="btn btn-md">
+                                                            <i class="fi-rs-shopping-cart-check mr-10"></i> Checkout
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <style>
+                                            .checkout-container {
+                                                position: sticky;
+                                                bottom: 0;
+                                                z-index: 100;
+                                            }
+                                        </style>
                         </div>
                         <% } %>
 

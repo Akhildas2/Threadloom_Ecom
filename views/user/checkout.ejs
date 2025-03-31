@@ -1,6 +1,445 @@
 <%- include('../layouts/header.ejs', {address: address, cartItems: cartItems}) %>
     <%- include('../layouts/navbar.ejs', {address: address, cartItems: cartItems}) %>
+        <style>
+            .shipping-section {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                margin-bottom: 30px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
 
+            .shipping-toggle {
+                padding: 15px 20px;
+                border-bottom: 1px solid #e9ecef;
+            }
+
+            .form-check {
+                margin: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .form-check-input {
+                width: 18px;
+                height: 18px;
+                margin-right: 10px;
+                cursor: pointer;
+            }
+
+            .form-check-label {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                cursor: pointer;
+                font-weight: 500;
+                color: #333;
+            }
+
+            .toggle-title {
+                font-size: 16px;
+            }
+
+            .toggle-icon svg {
+                width: 18px;
+                height: 18px;
+                transition: transform 0.3s ease;
+            }
+
+            .collapse.show .toggle-icon svg {
+                transform: rotate(180deg);
+            }
+
+            .shipping-address-content {
+                background: #fff;
+                padding: 20px;
+                border: 1px solid #e9ecef;
+                border-top: none;
+                border-radius: 0 0 10px 10px;
+            }
+
+            .address-actions {
+                margin-bottom: 20px;
+            }
+
+            .btn-add-address {
+                display: inline-flex;
+                align-items: center;
+                padding: 10px 15px;
+                background: #088178;
+                color: white;
+                border: none;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.2s ease;
+            }
+
+            .btn-add-address:hover {
+                background: #046963;
+            }
+
+            .btn-add-address svg {
+                width: 16px;
+                height: 16px;
+                margin-right: 8px;
+            }
+
+            .select-title {
+                font-size: 15px;
+                color: #666;
+                margin-bottom: 15px;
+                font-weight: 500;
+            }
+
+            .address-list {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .address-card {
+                display: flex;
+                align-items: flex-start;
+                gap: 15px;
+                padding: 15px;
+                border: 1px solid #e9ecef;
+                border-radius: 8px;
+                transition: all 0.2s ease;
+                position: relative;
+            }
+
+            .address-card:hover {
+                border-color: #c1c5f0;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+            .address-radio {
+                margin-top: 3px;
+            }
+
+            .address-radio input[type="radio"] {
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+
+            .address-details {
+                flex: 1;
+            }
+
+            .address-header {
+                display: flex;
+                align-items: center;
+                margin-bottom: 8px;
+                gap: 10px;
+            }
+
+            .address-name {
+                font-size: 15px;
+                font-weight: 600;
+                margin: 0;
+                color: #333;
+            }
+
+            .address-badge {
+                font-size: 12px;
+                padding: 2px 8px;
+                border-radius: 12px;
+                font-weight: 500;
+            }
+
+            .address-badge.primary {
+                background: #e0e7ff;
+                color: #088178;
+            }
+
+            .address-text {
+                font-size: 14px;
+                color: #555;
+                margin: 0 0 10px 0;
+                line-height: 1.4;
+            }
+
+            .address-contact {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+
+            .contact-item {
+                display: flex;
+                align-items: center;
+                font-size: 13px;
+                color: #666;
+                gap: 5px;
+            }
+
+            .contact-item svg {
+                width: 14px;
+                height: 14px;
+                color: #666;
+            }
+
+            /* Selected address style */
+            .address-radio input[type="radio"]:checked+label+.address-details {
+                border-color: #088178;
+            }
+
+            .address-radio input[type="radio"]:checked~.address-details {
+                border-left: 3px solid #088178;
+                padding-left: 12px;
+            }
+
+            @media (max-width: 576px) {
+                .shipping-toggle {
+                    padding: 12px 15px;
+                }
+
+                .shipping-address-content {
+                    padding: 15px;
+                }
+
+                .address-card {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .address-radio {
+                    align-self: flex-start;
+                }
+            }
+
+            .payment_method {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 25px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .payment_header h5 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .payment_header p {
+                font-size: 14px;
+                color: #666;
+                margin-bottom: 20px;
+            }
+
+            .payment_options {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .payment_option {
+                position: relative;
+            }
+
+            .payment_input {
+                position: absolute;
+                opacity: 0;
+            }
+
+            .payment_label {
+                display: flex;
+                align-items: center;
+                padding: 15px 20px;
+                border-radius: 8px;
+                background: #f9f9f9;
+                border: 1px solid #e0e0e0;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .payment_input:checked+.payment_label {
+                border-color: #088178;
+                background-color: #f0f0ff;
+            }
+
+            .payment_input:focus+.payment_label {
+                box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+            }
+
+            .payment_icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 40px;
+                margin-right: 15px;
+                background: #fff;
+                border-radius: 50%;
+                color: #088178;
+            }
+
+            .payment_text {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .payment_title {
+                font-weight: 500;
+                color: #333;
+                margin-bottom: 3px;
+            }
+
+            .payment_desc {
+                font-size: 13px;
+                color: #666;
+            }
+
+            /* Hover effect */
+            .payment_label:hover {
+                background: #f0f0f0;
+            }
+
+            .coupon-section {
+                margin: 30px 0 50px;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+
+            .coupon-header {
+                margin-bottom: 20px;
+            }
+
+            .section-title {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 5px;
+            }
+
+            .section-subtitle {
+                font-size: 14px;
+                color: #666;
+                margin: 0;
+            }
+
+            .coupon-container {
+                background: #fff;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                padding: 15px;
+            }
+
+            .coupon-form {
+                width: 100%;
+            }
+
+            .coupon-input-group {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .coupon-display {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                border-radius: 8px;
+                background: #f8f9fa;
+                gap: 12px;
+            }
+
+            .coupon-display.success {
+                background: #e6f7ee;
+                border-left: 4px solid #28a745;
+            }
+
+            .coupon-displaceholder {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                padding: 12px 15px;
+                border-radius: 8px;
+                background: #f8f9fa;
+                color: #666;
+                gap: 12px;
+            }
+
+            .coupon-display svg,
+            .coupon-displaceholder svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .coupon-display.success svg {
+                color: #28a745;
+            }
+
+            .coupon-displaceholder svg {
+                color: #666;
+            }
+
+            .coupon-info {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .coupon-code {
+                font-weight: 600;
+                color: #333;
+                font-size: 15px;
+            }
+
+            .coupon-value {
+                color: #28a745;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .btn {
+                padding: 12px 20px;
+                border: none;
+                border-radius: 8px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                white-space: nowrap;
+            }
+
+            .btn-apply {
+                background: #4f46e5;
+                color: white;
+            }
+
+            .btn-apply:hover {
+                background: #4338ca;
+            }
+
+            .btn-remove {
+                background: #f8f9fa;
+                color: #dc3545;
+                border: 1px solid #dc3545;
+            }
+
+            .btn-remove:hover {
+                background: #dc3545;
+            }
+
+            @media (max-width: 576px) {
+                .coupon-input-group {
+                    flex-direction: column;
+                }
+
+                .coupon-display,
+                .coupon-displaceholder {
+                    width: 100%;
+                }
+
+                .btn {
+                    width: 100%;
+                }
+            }
+        </style>
         <main class="main">
             <div class="page-header breadcrumb-wrap">
                 <div class="container">
@@ -14,59 +453,86 @@
                 <div class="container">
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
                             <div class="mb-25">
                                 <h4>Billing Details</h4>
                             </div>
-                            <div class="ship_detail">
-                                <div class="form-group">
-                                    <div class="chek-form">
-                                        <div class="custome-checkbox">
-                                            <input class="form-check-input" type="checkbox" name="checkbox"
-                                                id="differentaddress" checked>
-                                            <label class="form-check-label label_info" data-bs-toggle="collapse"
-                                                data-target="#collapseAddress" href="#collapseAddress"
-                                                aria-controls="collapseAddress" for="differentaddress"><span>Shipping
-                                                    Address</span></label>
-                                        </div>
+                            <div class="shipping-section">
+                                <div class="shipping-toggle">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="checkbox"
+                                            id="differentaddress" checked>
+                                        <label class="form-check-label" for="differentaddress" data-bs-toggle="collapse"
+                                            data-target="#collapseAddress" aria-controls="collapseAddress">
+                                            <span class="toggle-title">Shipping Address</span>
+                                            <span class="toggle-icon">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                    fill="currentColor">
+                                                    <path d="M7 10l5 5 5-5z" />
+                                                </svg>
+                                            </span>
+                                        </label>
                                     </div>
                                 </div>
-                                <div id="collapseAddress" class="different_address collapse in">
-                                    <div class="form-group">
-                                        <a href="#" class="btn-md btn-primary" id="addAddressModalBtn"
-                                            data-toggle="modal" data-target="#addAddressModal">Add Address</a>
-                                        <br>
-                                        <br>
-                                        <label for="savedAddresses">Select Address:</label>
 
-                                        <% address.forEach((address, index)=> { %>
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-9">
-                                                            <div class="custome-radio">
-                                                                <input class="form-check-input" type="radio"
-                                                                    name="shippingAddress" id="address_<%= index %>"
-                                                                    value="<%= address._id %>" <% if (index===0) {
-                                                                    %>checked<% } %>>
-                                                                    <label class="form-check-label label_info"
-                                                                        for="address_<%= index %>">
-                                                                        <span>
-                                                                            <%= address.fullName %>, <%= address.houseNo
-                                                                                    %>, <%= address.area %>,
-                                                                                        <%= address.city %>, <%=
-                                                                                                address.state %> - <%=
-                                                                                                    address.pincode %>
-                                                                        </span>
-                                                                    </label>
-                                                            </div>
+                                <div id="collapseAddress" class="shipping-address-content collapse border">
+                                    <div class="address-actions">
+                                        <button type="button" class="btn-add-address" id="addAddressModalBtn"
+                                            data-toggle="modal" data-target="#addAddressModal">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                fill="currentColor">
+                                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                                            </svg>
+                                            Add New Address
+                                        </button>
+                                    </div>
+
+                                    <div class="address-selection">
+                                        <h5 class="select-title">Select Delivery Address</h5>
+
+                                        <div class="address-list">
+                                            <% address.forEach((address, index)=> { %>
+                                                <div class="address-card">
+                                                    <div class="address-radio">
+                                                        <input class="form-check-input" type="radio"
+                                                            name="shippingAddress" id="address_<%= index %>"
+                                                            value="<%= address._id %>" <% if (index===0) { %>checked<% }
+                                                            %>>
+                                                            <label class="form-check-label"
+                                                                for="address_<%= index %>"></label>
+                                                    </div>
+                                                    <div class="address-details">
+                                                        <div class="address-header">
+                                                            <h6 class="address-name">
+                                                                <%= address.fullName %>
+                                                            </h6>
+                                                            <% if(index===0) { %>
+                                                                <span class="address-badge primary">Default</span>
+                                                                <% } %>
+                                                        </div>
+                                                        <p class="address-text">
+                                                            <%= address.houseNo %>, <%= address.area %><br>
+                                                                    <%= address.city %>, <%= address.state %> - <%=
+                                                                                address.pincode %>
+                                                        </p>
+                                                        <div class="address-contact">
+                                                            <span class="contact-item">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path
+                                                                        d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z" />
+                                                                </svg>
+                                                                <%= address.mobileNumber || 'Phone not provided' %>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <% }); %>
+                                                <% }); %>
+                                        </div>
                                     </div>
                                 </div>
+
+
                                 <!-- Add Address Modal -->
                                 <div class="modal fade" id="addAddressModal" tabindex="-1" role="dialog"
                                     aria-labelledby="addAddressModalLabel" aria-hidden="true">
@@ -117,7 +583,7 @@
                                                         <input type="text" id="state" name="state">
                                                         <span class="error" id="stateError"></span>
                                                     </div>
-                                                    <button type="submit" class="btn btn-primary" id="addAddress">Add
+                                                    <button type="submit" class="btn btn-md " id="addAddress">Add
                                                         Address</button>
                                                 </form>
                                             </div>
@@ -127,58 +593,139 @@
                             </div>
 
 
-
-
-                            <div class="mb-30 mt-50">
-                                <div class="heading_s1 mb-3">
-                                    <h4>Apply Coupon</h4>
+                            <div class="payment_method border mt-20">
+                                <div class="payment_header">
+                                    <h5>Payment Method</h5>
+                                    <p>Select your preferred payment option</p>
                                 </div>
-                                <div class="total-amount">
-                                    <div class="left">
-                                        <div class="coupon">
-                                            <div class="form-group">
-                                                <div class="left">
-                                                    <div class="coupon">
-                                                        <form action="#" target="_blank">
-                                                            <div class="form-row row justify-content-center">
-                                                                <div class="form-group">
-                                                                    <% if (appliedCouponId) { %>
-                                                                        <input type="text" style="color: green;"
-                                                                            class="form-control"
-                                                                            value="<%= appliedCouponId.couponCode %> Coupon Applied -  ₹ <%= appliedCouponId.discountAmount %> Off"
-                                                                            readonly>
-                                                                        <% } else { %>
-                                                                            <input type="text" class="font-medium"
-                                                                                style="color: black;"
-                                                                                value="Select Your Coupon" readonly>
-                                                                            <% } %>
-                                                                </div>
 
+                                <form id="checkoutForm">
+                                    <input type="hidden" id="paymentMethod" name="paymentMethod" value="">
 
+                                    <div class="payment_options">
+                                        <!-- Cash on Delivery -->
+                                        <div class="payment_option">
+                                            <input class="payment_input" required type="radio" name="paymentMethod"
+                                                id="cod" checked value="cod">
+                                            <label class="payment_label" for="cod">
+                                                <span class="payment_icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="currentColor">
+                                                        <path
+                                                            d="M3 4H21C21.5523 4 22 4.44772 22 5V19C22 19.5523 21.5523 20 21 20H3C2.44772 20 2 19.5523 2 19V5C2 4.44772 2.44772 4 3 4ZM4 6V18H20V6H4ZM6 9H18V11H6V9ZM6 12H15V14H6V12Z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="payment_text">
+                                                    <span class="payment_title">Cash on Delivery</span>
+                                                    <span class="payment_desc">Pay with cash upon delivery</span>
+                                                </span>
+                                            </label>
+                                        </div>
 
+                                        <!-- Paypal -->
+                                        <div class="payment_option">
+                                            <input class="payment_input" required type="radio" name="paymentMethod"
+                                                id="paypal" value="paypal">
+                                            <label class="payment_label" for="paypal">
+                                                <span class="payment_icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="currentColor">
+                                                        <path
+                                                            d="M20.067 8.478c.492.88.556 2.014.3 3.327-.74 3.806-3.276 5.12-6.514 5.12h-.5a.805.805 0 0 0-.794.68l-.04.22-.63 3.993-.032.17a.804.804 0 0 1-.794.679H7.72a.483.483 0 0 1-.477-.558L7.418 21h1.518l.95-6.02h1.385c4.678 0 7.75-2.203 8.796-6.502zm-2.96-5.09c.762.868.983 1.81.752 3.285-.019.123-.04.24-.062.36-.735 3.773-3.089 5.446-6.956 5.446H8.957c-.63 0-1.174.414-1.354 1.002l-.014-.002-.93 5.894H3.121a.051.051 0 0 1-.05-.06l2.598-16.51A.95.95 0 0 1 6.607 2h5.976c2.183 0 3.716.469 4.523 1.388z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="payment_text">
+                                                    <span class="payment_title">PayPal</span>
+                                                    <span class="payment_desc">Pay securely with PayPal</span>
+                                                </span>
+                                            </label>
+                                        </div>
 
-                                                                <div class="form-group">
-                                                                    <% if (appliedCouponId) { %>
-                                                                        <button type="button" class="btn-lg btn-danger"
-                                                                            onclick="removeCoupon('<%= appliedCouponId.cartItemId || appliedCouponId._id %>')">Remove
-                                                                            Coupon</button>
-                                                                        <% } else { %>
-                                                                            <button type="button"
-                                                                                class="btn-lg btn-primary"
-                                                                                data-toggle="modal"
-                                                                                data-target="#couponModal">Select
-                                                                                Coupon</button>
-                                                                            <% } %>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <!-- Wallet -->
+                                        <div class="payment_option">
+                                            <input class="payment_input" required type="radio" name="paymentMethod"
+                                                id="wallet" value="wallet">
+                                            <label class="payment_label" for="wallet">
+                                                <span class="payment_icon">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="currentColor">
+                                                        <path
+                                                            d="M2 9h19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-8zm1-6h15v4H2V4a1 1 0 0 1 1-1zm12 11v2h3v-2h-3z">
+                                                        </path>
+                                                    </svg>
+                                                </span>
+                                                <span class="payment_text">
+                                                    <span class="payment_title">Wallet</span>
+                                                    <span class="payment_desc">Pay using your wallet balance</span>
+                                                </span>
+                                            </label>
+                                            <div id="walletErrorMessage"
+                                                style="color: red; font-size: 14px; margin-top: 5px;"></div>
                                         </div>
                                     </div>
+                                </form>
+                            </div>
+
+
+
+                            <div class="coupon-section">
+                                <div class="coupon-header">
+                                    <h4 class="section-title">Apply Coupon</h4>
+                                    <p class="section-subtitle">Save money with available coupons</p>
+                                </div>
+
+                                <div class="coupon-container border">
+                                    <form class="coupon-form">
+                                        <div class="coupon-input-group">
+                                            <% if (appliedCouponId) { %>
+                                                <div class="coupon-display success">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                        fill="currentColor">
+                                                        <path
+                                                            d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                                                    </svg>
+                                                    <div class="coupon-info">
+                                                        <span class="coupon-code">
+                                                            <%= appliedCouponId.couponCode %>
+                                                        </span>
+                                                        <span class="coupon-value">₹<%= appliedCouponId.discountAmount
+                                                                %> OFF</span>
+                                                    </div>
+                                                </div>
+                                                <% } else { %>
+                                                    <div class="coupon-displaceholder">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                                            fill="currentColor">
+                                                            <path
+                                                                d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM13 20.01L4 11V4h7v-.01l9 9-7 7.02z" />
+                                                            <circle cx="6.5" cy="6.5" r="1.5" />
+                                                        </svg>
+                                                        <span>Select a coupon</span>
+                                                    </div>
+                                                    <% } %>
+
+                                                        <div class="coupon-actions">
+                                                            <% if (appliedCouponId) { %>
+                                                                <button type="button" class="btn btn-remove"
+                                                                    onclick="removeCoupon('<%= appliedCouponId.cartItemId || appliedCouponId._id %>')">
+                                                                    Remove
+                                                                </button>
+                                                                <% } else { %>
+                                                                    <button type="button" class="btn btn-apply"
+                                                                        data-toggle="modal" data-target="#couponModal">
+                                                                        Select Coupon
+                                                                    </button>
+                                                                    <% } %>
+                                                        </div>
+                                        </div>
+                                    </form>
                                 </div>
                             </div>
+
+
+
                             <!-- Coupon Modal -->
                             <div class="modal fade" id="couponModal" tabindex="-1" role="dialog"
                                 aria-labelledby="couponModalLabel" aria-hidden="true">
@@ -246,10 +793,10 @@
                                         <div id="validationMessage" class="text-danger mt-2"
                                             style=" text-align: center;"></div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn-lg btn-secondary"
+                                            <button type="button" class="btn btn-md btn-secondary"
                                                 data-dismiss="modal">Close</button>
-                                            <button type="button" class="btn-lg btn-primary"
-                                                onclick="applyCoupon(event)">Apply Coupon</button>
+                                            <button type="button" class="btn btn-md" onclick="applyCoupon(event)">Apply
+                                                Coupon</button>
                                         </div>
                                     </div>
                                 </div>
@@ -258,7 +805,7 @@
 
 
 
-                        <div class="col-md-6">
+                        <div class="col-lg-6">
                             <div class="order_review">
                                 <div class="mb-20">
                                     <h4>Your Orders</h4>
@@ -286,7 +833,8 @@
                                                             <h5 class="product-name"> <a
                                                                     href="/productdetails/<%= product.productId._id %>">
                                                                     <%= product.name %>
-                                                            </h5> (<%= product.price.toFixed(2) %>) <span class="product-qty"> *
+                                                            </h5> (<%= product.price.toFixed(2) %>) <span
+                                                                    class="product-qty"> *
                                                                     <%= product.quantity %> </a>
                                                                 </span>
                                                         </td>
@@ -325,36 +873,16 @@
                                             </td>
                                         </tr>
                                     </table>
-                                <p style="color: green;">you have saved ₹<%= ( offerDiscount+couponDiscount ).toFixed(2) %></p>
+                                    <p style="color: green;">you have saved ₹<%= ( offerDiscount+couponDiscount
+                                            ).toFixed(2) %>
+                                    </p>
 
                                 </div>
                                 <div class="bt-1 border-color-1 mt-30 mb-30"></div>
-
-                                <div class="payment_method">
-                                    <div class="mb-25">
-                                        <h5>Payment</h5>
-                                    </div>
-                                    <form id="checkoutForm">
-                                        <input type="hidden" id="paymentMethod" name="paymentMethod" value="">
-                                        <div class="payment_option">
-
-                                            <div class="custome-radio">
-                                                <input class="form-check-input" required="" type="radio"
-                                                    name="paymentMethod" id="cod" checked="" value="cod">
-                                                <label class="form-check-label" for="cod">Cash on delivery</label>
-
-                                            </div>
-                                            <div class="custome-radio">
-                                                <input class="form-check-input" required="" type="radio"
-                                                    name="paymentMethod" id="paypal" value="paypal">
-                                                <label class="form-check-label" for="paypal">Paypal</label>
-
-                                            </div>
-                                        </div>
+                                <div class="text-center">
+                                    <a href="#" id="placeOrderBtn" class="btn btn-fill-out btn-block mt-30">Place
+                                        Order</a>
                                 </div>
-                                </form>
-                                <a href="#" id="placeOrderBtn" class="btn btn-fill-out btn-block mt-30">Place Order</a>
-
                             </div>
                         </div>
                     </div>
@@ -382,6 +910,65 @@
 
 
                     <script>
+
+                        document.getElementById('differentaddress').addEventListener('change', function () {
+                            const collapse = new bootstrap.Collapse(document.getElementById('collapseAddress'), {
+                                toggle: true
+                            });
+                        });
+
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const body = document.querySelector('tbody');
+                            const totalPrice = Number(body.getAttribute('data-total-price')); // Convert to number
+
+                            let walletBalance = 0;
+                            const errorMessageDiv = document.getElementById('walletErrorMessage');
+                            const walletOption = document.getElementById('wallet');
+                            const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+                            const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+                            async function fetchWalletBalance() {
+                                try {
+                                    const response = await axios.get('/order/checkBalance');
+                                    walletBalance = response.data.walletBalance;
+                                } catch (error) {
+                                    console.error('Error fetching wallet balance:', error);
+                                }
+                            }
+
+                            // Function to check if the Place Order button should be disabled
+                            function updatePlaceOrderButton() {
+                                if (walletOption.checked && walletBalance < totalPrice) {
+                                    placeOrderBtn.disabled = true;
+                                    placeOrderBtn.classList.add('disabled');
+                                } else {
+                                    placeOrderBtn.disabled = false;
+                                    placeOrderBtn.classList.remove('disabled');
+                                }
+                            }
+
+                            // Show error when Wallet is clicked & disable Place Order if insufficient balance
+                            walletOption.addEventListener('click', function () {
+                                if (walletBalance < totalPrice) {
+                                    errorMessageDiv.textContent = `❌ Insufficient balance! Your wallet balance is ₹${walletBalance.toFixed(2)}, but you need ₹${totalPrice.toFixed(2)}. Please choose another payment method.`;
+                                } else {
+                                    errorMessageDiv.textContent = ''; // Clear error if balance is sufficient
+                                }
+                                updatePlaceOrderButton();
+                            });
+
+                            // Remove error & enable Place Order when another payment method is selected
+                            paymentMethods.forEach(method => {
+                                method.addEventListener('change', function () {
+                                    if (this.id !== 'wallet') {
+                                        errorMessageDiv.textContent = ''; // Clear error
+                                    }
+                                    updatePlaceOrderButton();
+                                });
+                            });
+
+                            fetchWalletBalance(); // Fetch wallet balance on page load
+                        });
 
 
 
@@ -474,6 +1061,7 @@
                                         });
                                 });
                             });
+
                             let selectedPaymentMethod = 'cod';
                             const placeOrderBtn = document.getElementById('placeOrderBtn');
                             let isSubmitting = false;
@@ -509,14 +1097,21 @@
                             function isAddressNotSelected() {
                                 return !selectedAddressId;
                             }
+
                             // Function to update the "Place Order" button based on conditions
                             function updatePlaceOrderBtn() {
-                                if (isCartEmpty() || isAddressNotSelected()) {
+                                if (isCartEmpty()) {
                                     placeOrderBtn.disabled = true;
-                                    placeOrderBtn.textContent = 'Please add a product and select an address.';
+                                    placeOrderBtn.textContent = 'Add product';
+                                    placeOrderBtn.classList.add('disabled');
+                                } else if (isAddressNotSelected()) {
+                                    placeOrderBtn.disabled = true;
+                                    placeOrderBtn.textContent = 'Add address';
+                                    placeOrderBtn.classList.add('disabled');
                                 } else {
                                     placeOrderBtn.disabled = false;
                                     placeOrderBtn.textContent = 'Place Order';
+                                    placeOrderBtn.classList.remove('disabled');
                                 }
                             }
 
@@ -545,12 +1140,13 @@
                                 if (isSubmitting) {
                                     return;
                                 }
-                                placeOrderBtn.disabled = true;
                                 isSubmitting = true;
-                                await new Promise(resolve => setTimeout(resolve, 10000));
 
-                                placeOrderBtn.disabled = false;
-                                isSubmitting = false;
+
+
+                                // Show loader on the button
+                                placeOrderBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Placing Order...';
+                                placeOrderBtn.disabled = true;
 
                                 if (selectedPaymentMethod === 'cod' && totalPrice >= 1000) {
                                     Swal.fire({
@@ -559,69 +1155,72 @@
                                         text: 'Cash on delivery is only available for purchases below 1000.',
                                         confirmButtonText: 'Okay'
                                     });
-                                    return;
+                                    setTimeout(() => {
+                                    location.reload()
+                                    }, 1000);
 
+                                    return; // Prevent further execution
                                 }
 
-                                axios.post('/order/placeOrder', {
-                                    items: cartItems,
-                                    total: totalPrice,
-                                    addressId: selectedAddressId,
-                                    paymentMethod: selectedPaymentMethod,
-                                    couponDiscount: couponDiscount,
-                                    offerDiscount: offerDiscount,
-                                    shippingCharge: shippingCharge,
-                                })
-                                    .then(response => {
-                                        if (selectedPaymentMethod === 'paypal') {
-
-                                            if (response.data.approvalUrl) {
-                                                window.location.href = response.data.approvalUrl;
-                                            } else {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Oops...',
-                                                    text: 'PayPal payment initiation failed. Please try again.',
-                                                    confirmButtonText: 'Okay'
-                                                });
-                                            }
-                                        } else {
-
-                                            if (response.data.success)
-                                                Swal.fire({
-                                                    icon: 'success',
-                                                    title: 'Order Placed!',
-                                                    text: response.data.message,
-                                                    confirmButtonText: 'Okay'
-                                                });
-                                            setTimeout(() => {
-                                                const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
-
-                                                window.location.href = orderConfirmationUrl;
-                                            }, 2000);
-                                        }
-                                    })
-                                    .catch(error => {
-                                        if (error.response && error.response.data && error.response.data.message) {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Oops...',
-                                                text: error.response.data.message,
-                                                confirmButtonText: 'Okay'
-                                            });
-                                        } else {
-                                            Swal.fire({
-                                                icon: 'error',
-                                                title: 'Oops...',
-                                                text: 'Something went wrong. Please try again later.',
-                                                confirmButtonText: 'Okay'
-                                            });
-                                        }
-                                        console.error('Error placing order:', error);
+                                try {
+                                    const response = await axios.post('/order/placeOrder', {
+                                        items: cartItems,
+                                        total: totalPrice,
+                                        addressId: selectedAddressId,
+                                        paymentMethod: selectedPaymentMethod,
+                                        couponDiscount: couponDiscount,
+                                        offerDiscount: offerDiscount,
+                                        shippingCharge: shippingCharge,
                                     });
+                                    if (selectedPaymentMethod === 'paypal') {
 
+                                        if (response.data.approvalUrl) {
+                                            window.location.href = response.data.approvalUrl;
+                                        } else {
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Oops...',
+                                                text: 'PayPal payment initiation failed. Please try again.',
+                                                confirmButtonText: 'Okay'
+                                            });
+                                        }
+                                    } else {
+
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Order Placed!',
+                                            text: response.data.message,
+                                            confirmButtonText: 'Okay'
+                                        });
+                                        setTimeout(() => {
+                                            const orderConfirmationUrl = `/order/orderConfirmation/${response.data.orderId}`;
+
+                                            window.location.href = orderConfirmationUrl;
+                                        }, 2000);
+                                    }
+                                } catch (error) {
+                                    let errorMsg = 'Something went wrong. Please try again later.';
+                                    if (error.response?.data?.message) {
+                                        errorMsg = error.response.data.message;
+                                    }
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Oops...',
+                                        text: errorMsg,
+                                        confirmButtonText: 'Okay'
+                                    });
+                                    console.error('Error placing order:', error);
+                                } finally {
+                                    // Restore button state
+                                    isSubmitting = false;
+                                    placeOrderBtn.innerHTML = 'Place Order';
+                                    placeOrderBtn.disabled = false;
+                                }
                             });
+
+
                         });
+
 
 
 

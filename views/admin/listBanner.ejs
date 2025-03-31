@@ -223,7 +223,7 @@
                                         <option value="offer">Offer</option>
                                         <option value="shop">Shop</option>
                                         <option value="promotion">Promotion</option>
-                                        <option value="adds">Adds</option>
+                                        <option value="ads">Ads</option>
                                     </select>
                                     <small class="text-danger" id="bannerTypeError"></small>
                                 </div>
@@ -331,7 +331,7 @@
                 // Validate Image (if selected)
                 if (bannerImage) {
                     const allowedExtensions = ["jpg", "jpeg", "png"];
-                    const fileSizeLimit = 2 * 1024 * 1024; // 2MB
+                    const fileSizeLimit = 10 * 1024 * 1024; // 10MB
                     let fileExtension = bannerImage.name.split(".").pop().toLowerCase();
                     let imageErrorEl = document.getElementById("imageError");
 

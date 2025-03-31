@@ -20,6 +20,7 @@ orderRoute.post('/cancel/:orderId/:itemId', auth.isLogin, orderController.cancel
 orderRoute.post('/return/:orderId/:itemId', auth.isLogin, orderController.returnOrder);
 orderRoute.put('/retryPayment/:ordersId', auth.isLogin, orderController.retryPayment);
 orderRoute.get('/invoice/:orderId', auth.isLogin, orderController.downloadInvoice)
+orderRoute.get('/checkBalance', auth.isLogin, orderController.getCheckoutBalance)
 
 
 

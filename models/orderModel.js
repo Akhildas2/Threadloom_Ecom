@@ -83,6 +83,15 @@ const orderSchema = mongoose.Schema({
         cancellationReason: {
             type: String
         },
+        cancellationDate: {
+            type: Date,
+        },
+        delivery: {
+            type: Date,
+        },
+        refundDate: {
+            type: Date,
+        },
     }],
     status: {
         type: String,
@@ -100,7 +109,7 @@ const orderSchema = mongoose.Schema({
     couponDiscount: {
         type: Number,
         default: 0
-    }
+    },
 }, { timestamps: true })
 
 

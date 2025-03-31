@@ -6,8 +6,28 @@ const WishList = require('../models/wishListModel')
 const loadWishlist = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
-    const wishlist = await WishList.find({ user: userId }).populate('productId');
-    res.render('wishList', { req, wishlist })
+    const wishlistPage = parseInt(req.query.wishlistPage) || 1;
+    const pageSize = 5;
+
+    const wishlist = await WishList.find({ user: userId }).sort({ createdAt: -1 }).populate({
+      path: "productId",
+      match: { isUnlisted: false },
+      populate: [
+        { path: "offer" }, // Product-specific offer
+        { path: "category", populate: { path: "offer" } } // Category-specific offer
+      ]
+    });
+
+    // Filter out null products
+    const filteredWishlist = wishlist.filter(item => item.productId !== null);
+    const paginatedWishlist = filteredWishlist.slice((wishlistPage - 1) * pageSize, wishlistPage * pageSize);
+   
+    // Calculate pagination
+    const totalCount = filteredWishlist.length;
+    const totalPage = Math.ceil(totalCount / pageSize);
+
+
+    res.render('wishList', { req, wishlist: paginatedWishlist,wishlistCurrentPage: wishlistPage, wishlistTotalPages: totalPage , totalCount})
 
   } catch (error) {
     next(error);

@@ -9,16 +9,167 @@
 
             .wishlist-message {
                 font-size: 1.5rem;
-                font-weight: 500;
-                color: #333;
+                font-weight: 600;
                 text-align: center;
             }
 
             .wishlist-img {
-                max-width: 100%;
+                max-width: 80%;
                 height: auto;
+                opacity: 0.9;
             }
+
+            .table-responsive {
+                overflow: hidden;
+            }
+
+            .shopping-summery {
+                width: 100%;
+                background: #fff;
+                border-radius: 10px;
+            }
+
+            .shopping-summery th {
+                padding: 12px;
+                font-size: 1rem;
+            }
+
+            .shopping-summery td {
+                padding: 10px;
+                font-size: 0.95rem;
+            }
+
+            .shopping-summery tbody tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            .shopping-summery tbody tr:hover {
+                background: #eef7f6;
+            }
+
+            .money {
+                font-weight: 600;
+                color: #333;
+            }
+
+            .discounted-price {
+                color: green;
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+
+            .discounted-percentage {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+
+            button[aria-label="Add To Cart"] {
+                background-color: #088178;
+                border: none;
+                padding: 8px 12px;
+                border-radius: 8px;
+                transition: 0.3s ease-in-out;
+                color: white;
+                font-size: 1rem;
+            }
+
+            button[aria-label="Add To Cart"]:hover {
+                background-color: #066c62;
+            }
+
+            .action a {
+                color: red;
+                font-size: 1.2rem;
+                transition: 0.3s;
+            }
+
+            .action a:hover {
+                color: darkred;
+                transform: scale(1.1);
+            }
+
+            .text-end a {
+                color: #088178 !important;
+                font-weight: 600;
+                transition: color 0.3s ease-in-out;
+            }
+
+            .text-end a:hover {
+                color: #066c62 !important;
+                text-decoration: underline;
+            }
+
+            @media (max-width: 480px) {
+    .wishlist-container,
+    .table-responsive,
+    .wishlist-title,
+    .wishlist-message {
+        text-align: center;
+    }
+
+    .wishlist-container .row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .shopping-summery thead {
+        display: none;
+    }
+
+    .shopping-summery tbody,
+    .shopping-summery tr {
+        display: block;
+        width: 100%;
+    }
+
+    .shopping-summery tr {
+        margin-bottom: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .shopping-summery td {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px;
+        font-size: 1rem;
+        text-align: center;
+        border: none;
+    }
+
+    .shopping-summery td::before {
+        content: attr(data-title) "";
+        font-weight: 600;
+        flex: 1;
+        text-align: left;
+    }
+
+    .shopping-summery .image {
+        display: flex;
+        justify-content: center;
+    }
+
+    .shopping-summery .image img {
+        max-width: 80px;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    .shopping-summery .action,
+    .shopping-summery .text-end {
+        text-align: center;
+    }
+
+    .pagination-area {
+        display: flex;
+        justify-content: center;
+    }
+}
+
         </style>
+
         <main class="main">
             <div class="page-header breadcrumb-wrap">
                 <div class="container">
@@ -58,7 +209,11 @@
                                     </div>
 
                                     <% } else { %>
-                                        <div class="table-responsive">
+                                        <h3 class="wishlist-title text-center">
+                                            <i class="fi-rs-heart" style="color: #088178;"></i>
+                                            My Wishlist <span class="wishlist-count">(<%= totalCount %>)</span>
+                                        </h3>
+                                        <div class="table-responsive mt-30">
                                             <table class="table shopping-summery text-center">
                                                 <thead>
                                                     <tr class="main-heading">
@@ -86,22 +241,90 @@
                                                                     </h5>
                                                                 </a>
                                                             </td>
-                                                            <td class="price" data-title="Price"><span>₹<%=
-                                                                        items.productId.price%></span>
-                                                            </td>
-                                                            <% if (!items.productId.stockCount<=0) { %>
-                                                                <td class="text-center" data-title="Stock">
-                                                                    <span class="color3 font-weight-bold">In
-                                                                        Stock</span>
-                                                                </td>
+                                                            <td class="price" data-title="Price">
+                                                                <% let discountedPrice=items.productId.price; %>
+                                                                    <% let hasDiscount=false; %>
+                                                                        <% let discountPercentage=0; %>
 
+                                                                            <% if (items.productId.offer && new Date()
+                                                                                <=new
+                                                                                Date(items.productId.offer.endingDate))
+                                                                                { %>
+                                                                                <% discountPercentage=items.productId.offer.discount;
+                                                                                    %>
+                                                                                    <% hasDiscount=true; %>
+                                                                                        <% } %>
+
+                                                                                            <% if
+                                                                                                (items.productId.category.offer
+                                                                                                && new Date() <=new
+                                                                                                Date(items.productId.category.offer.endingDate))
+                                                                                                { %>
+                                                                                                <% if
+                                                                                                    (items.productId.category.offer.discount>
+                                                                                                    discountPercentage)
+                                                                                                    { %>
+                                                                                                    <% discountPercentage=items.productId.category.offer.discount;
+                                                                                                        %>
+                                                                                                        <% hasDiscount=true;
+                                                                                                            %>
+                                                                                                            <% } %>
+                                                                                                                <% } %>
+
+                                                                                                                    <% if
+                                                                                                                        (hasDiscount)
+                                                                                                                        {
+                                                                                                                        %>
+                                                                                                                        <% discountedPrice
+                                                                                                                            -=discountedPrice
+                                                                                                                            *
+                                                                                                                            (discountPercentage
+                                                                                                                            /
+                                                                                                                            100);
+                                                                                                                            %>
+                                                                                                                            <span
+                                                                                                                                class="money price">
+                                                                                                                                <del>₹
+                                                                                                                                    <%= items.productId.price.toFixed(2)
+                                                                                                                                        %>
+                                                                                                                                </del>
+                                                                                                                                &nbsp;<span
+                                                                                                                                    class="discounted-price"
+                                                                                                                                    style="color: green;">₹
+                                                                                                                                    <%= discountedPrice.toFixed(2)
+                                                                                                                                        %>
+                                                                                                                                </span>
+                                                                                                                                &nbsp;<span
+                                                                                                                                    class="discounted-percentage"
+                                                                                                                                    style="color: red;">(
+                                                                                                                                    <%= discountPercentage
+                                                                                                                                        %>
+                                                                                                                                        %
+                                                                                                                                        off)
+                                                                                                                                </span>
+                                                                                                                            </span>
+                                                                                                                            <% } else
+                                                                                                                                {
+                                                                                                                                %>
+                                                                                                                                <span
+                                                                                                                                    class="money price">₹
+                                                                                                                                    <%= items.productId.price.toFixed(2)
+                                                                                                                                        %>
+                                                                                                                                </span>
+                                                                                                                                <% }
+                                                                                                                                    %>
+                                                            </td>
+                                                            <% if (items.productId.stockCount> 0) { %>
+                                                                <td class="text-center" data-title="Stock">
+                                                                    <span class="badge bg-success p-2">In Stock</span>
+                                                                </td>
                                                                 <% } else { %>
                                                                     <td class="text-center" data-title="Stock">
-                                                                        <span class="font-weight-bold"
-                                                                            style="color: red;">Out Of Stock</span>
+                                                                        <span class="badge bg-danger p-2">Out Of
+                                                                            Stock</span>
                                                                     </td>
-
                                                                     <% } %>
+
                                                                         <td>
                                                                             <button aria-label="Add To Cart"
                                                                                 style="background-color:#088178 ;"
@@ -135,7 +358,47 @@
 
                     </div>
                 </div>
+
+                <!-- Pagination -->
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <% if (wishlistCurrentPage> 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?wishlistPage=<%= wishlistCurrentPage - 1 %>#wishlist">
+                                        <span aria-hidden="true">&lt;</span>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <% for (let i=1; i <=wishlistTotalPages; i++) { %>
+                                        <% if (i===wishlistCurrentPage) { %>
+                                            <li class="page-item active">
+                                                <a class="page-link" href="#wishlist">
+                                                    <%= i %>
+                                                </a>
+                                            </li>
+                                            <% } else { %>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="?wishlistPage=<%= i %>#wishlist">
+                                                        <%= i %>
+                                                    </a>
+                                                </li>
+                                                <% } %>
+                                                    <% } %>
+                                                        <% if (wishlistCurrentPage < wishlistTotalPages) { %>
+                                                            <li class="page-item">
+                                                                <a class="page-link"
+                                                                    href="?wishlistPage=<%= wishlistCurrentPage + 1 %>#wishlist">
+                                                                    <span aria-hidden="true">&gt;</span>
+                                                                </a>
+                                                            </li>
+                                                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+
             </section>
+
         </main>
 
         <%- include('../layouts/footer.ejs') %>
@@ -307,6 +570,9 @@
                                             title: 'Success!',
                                             text: data.message,
                                         });
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 3000);
                                     } else {
                                         // Handle errors
                                         Swal.fire({

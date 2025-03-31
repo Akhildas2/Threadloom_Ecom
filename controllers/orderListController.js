@@ -102,6 +102,7 @@ const updateStatus = async (req, res, next) => {
 
         item.orderStatus = newStatus;
         if (newStatus === 'delivered') {
+            item.delivery = new Date();
             item.paid = true;
         }
 
@@ -125,6 +126,7 @@ const updateStatus = async (req, res, next) => {
         }
 
         if (newStatus === 'refunded' && item.paid) {
+            item.refundDate = new Date();
             const userId = order.userId;
             const wallet = await Wallet.findOne({ userId });
 

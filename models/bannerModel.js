@@ -19,7 +19,7 @@ const bannerSchema = new mongoose.Schema({
     bannerType: {
         type: String,
         required: true,
-        enum: ["homepage", "category", "offer", "shop", "adds", "promotion"],
+        enum: ["homepage", "category", "offer", "shop", "ads", "promotion"],
         default: "homepage"
     },
     status: {

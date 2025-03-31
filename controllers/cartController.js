@@ -7,54 +7,62 @@ const Product = require('../models/productModel');
 const loadCart = async (req, res, next) => {
   try {
     const userId = req.session.user_id;
-    //for finding CartItem
-    const cartItems = await CartItem.find({ user: userId }).populate('products.productId');
     const today = new Date();
-
     let totalPrice = 0;
+    let totalCount = 0;
+
+    //for finding CartItem
+    const cartItems = await CartItem.find({ user: userId })
+      .populate({
+        path: "products.productId",
+        match: { isUnlisted: false }
+      });
+
+    // Filter out products that are null
+    cartItems.forEach(item => {
+      item.products = item.products.filter(product => product.productId);
+    });
+
     // products offer
     const productsWithOffers = await Product.find({ isUnlisted: false })
       .populate({ path: "category", populate: { path: "offer" } })
       .populate('offer');
 
-    // cart items
-    for (const item of cartItems) {
-      // products
-      for (const product of item.products) {
-
-        // Find  offer and category offer
+    // Calculate discounts and total price
+    cartItems.forEach(item => {
+      item.products.forEach(product => {
         const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
+        if (!productWithOffer) return;
 
-        if (!productWithOffer) {
-          console.error("Product not found in products:", product.productId._id);
-          continue;
-        }
-        let productTotal = 0;
-
-        let productPricePerUnit = product.price;
+        let originalPrice = product.price;
+        let productDiscount = 0;
+        let categoryDiscount = 0;
 
         // Check product offer
         if (productWithOffer.offer && productWithOffer.offer.endingDate >= today) {
-
-          // Apply product offer
-          productPricePerUnit -= (productPricePerUnit * productWithOffer.offer.discount) / 100;
+          productDiscount = productWithOffer.offer.discount;
         }
-        //check  category  offer
+
+        // Check category offer
         if (productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today) {
-
-          // Apply category offer
-          productPricePerUnit -= (productPricePerUnit * productWithOffer.category.offer.discount) / 100;
-
+          categoryDiscount = productWithOffer.category.offer.discount;
         }
-        productTotal = productPricePerUnit * product.quantity;
-        product.price = productPricePerUnit;
-        product.total = productTotal;
-        // Add the discounted price to the total
-        totalPrice += productTotal;
-      }
-    }
 
-    res.render('cart', { req: req, cartItems, totalPrice });
+        // Apply the maximum discount
+        let finalDiscount = Math.max(productDiscount, categoryDiscount);
+        let discountedPrice = originalPrice - (originalPrice * finalDiscount) / 100;
+
+        let productTotal = discountedPrice * product.quantity;
+        product.price = discountedPrice;
+        product.total = productTotal;
+        totalPrice += productTotal;
+
+        // Count total items in cart
+        totalCount += product.quantity;
+      });
+    });
+
+    res.render('cart', { req: req, cartItems, totalPrice, totalCount });
 
   } catch (error) {
     next(error);

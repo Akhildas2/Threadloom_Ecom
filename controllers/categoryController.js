@@ -1,7 +1,8 @@
 const Category = require('../models/categoryModel');
-const path = require('path');
+const Offer = require('../models/offerModel');
 const sharp = require('sharp');
-const Offer = require('../models/offerModel')
+const fs = require("fs");
+const path = require('path');
 
 
 
@@ -122,16 +123,22 @@ const editCategory = async (req, res, next) => {
         const categoryId = req.params.categoryId;
         const updateFields = {};
 
+        // Fetch the existing category 
+        const existingCategory = await Category.findById(categoryId);
+        if (!existingCategory) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
         if (req.body.categoryName) {
             const trimmedCategoryName = req.body.categoryName.trim();
             updateFields.categoryName = trimmedCategoryName;
 
             // Check if a category with the same name already exists
-            const existingCategory = await Category.findOne({
+            const duplicateCategory = await Category.findOne({
                 categoryName: { $regex: new RegExp('^' + trimmedCategoryName + '$', 'i') },
                 _id: { $ne: categoryId }
             });
-            if (existingCategory) {
+            if (duplicateCategory) {
                 return res.status(400).json({ success: false, message: "Category already exists" });
             }
         }
@@ -144,6 +151,25 @@ const editCategory = async (req, res, next) => {
                 .toFile(resizedImagePath);
 
             updateFields.categoryPhoto = path.basename(resizedImagePath);
+
+            // Delete the old image if it exists
+            if (existingCategory.categoryPhoto) {
+                // Assume existingCategory.categoryPhoto is the name used for the resized image
+                const resizedFileName = existingCategory.categoryPhoto;
+                // Remove the "resized_" prefix to get the original file name.
+                const originalFileName = resizedFileName.replace(/^resized_/, "");
+
+                const oldResizedImagePath = path.join(__dirname, "../uploads/category/resized", resizedFileName);
+                const oldOriginalImagePath = path.join(__dirname, "../uploads/category/original", originalFileName);
+
+                if (fs.existsSync(oldResizedImagePath)) {
+                    fs.unlinkSync(oldResizedImagePath);
+                }
+
+                if (fs.existsSync(oldOriginalImagePath)) {
+                    fs.unlinkSync(oldOriginalImagePath);
+                }
+            }
         }
 
         // Update the category

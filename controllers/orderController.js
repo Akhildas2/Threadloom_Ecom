@@ -24,73 +24,64 @@ const checkout = async (req, res, next) => {
             return res.redirect('/'); // Redirect to home if no products exist
         }
 
-
-        let appliedCouponId = null;
-        let totalCouponDiscount = 0;
-        for (const cartItem of cartItems) {
-            if (cartItem.coupondiscount) {
-                const coupon = await Coupon.findById(cartItem.coupondiscount);
-                appliedCouponId = coupon;
-                totalCouponDiscount += cartItem.coupondiscount.discountAmount;
-            }
-        }
-
         //for finding expiry
         const today = new Date();
         const coupons = await Coupon.find({ expiryDate: { $gte: today } });
+
         let totalPrice = 0;
         let originalTotalPrice = 0;
+        let offerDiscount = 0;
+        let couponDiscount = 0;
+        let appliedCouponId = null;
 
         // products offer
         const productsWithOffers = await Product.find({ isUnlisted: false })
             .populate({ path: "category", populate: { path: "offer" } })
             .populate('offer');
 
-        // cart items
-        for (const item of cartItems) {
-            // products
-            for (const product of item.products) {
-                // Find  offer and category offer
-                const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
-                if (!productWithOffer) {
-                    continue;
-                }
-
-                let productTotal = 0;
-                originalTotalPrice += (product.price * product.quantity);
-                let productPricePerUnit = product.price;
-
-                // Check product offer
-                if (productWithOffer.offer && productWithOffer.offer.endingDate >= today) {
-                    // Apply product offer
-                    productPricePerUnit -= (productPricePerUnit * productWithOffer.offer.discount) / 100;
-                }
-                //check  category  offer
-                if (productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today) {
-                    // Apply category offer
-                    productPricePerUnit -= (productPricePerUnit * productWithOffer.category.offer.discount) / 100;
-                }
-
-                productTotal = productPricePerUnit * product.quantity;
-                product.price = productPricePerUnit;
-                product.total = productTotal;
-                // Add the discounted price to the total
-                totalPrice += productTotal;
-            }
-        }
-
-        let offerDiscount = originalTotalPrice - totalPrice
-
-        // Iterate over each cart item
         for (const cartItem of cartItems) {
-            // Check if coupondiscount exists
-            if (cartItem.coupondiscount) {
-                // Access the discountAmount
-                const discountAmount = cartItem.coupondiscount.discountAmount;
-                totalPrice -= discountAmount
+            for (const product of cartItem.products) {
+                const productWithOffer = productsWithOffers.find(p => p._id.equals(product.productId._id));
+                if (!productWithOffer) continue;
+
+                originalTotalPrice += product.price * product.quantity;
+
+                let productPricePerUnit = product.price;
+                let productDiscount = productWithOffer.offer && productWithOffer.offer.endingDate >= today
+                    ? productWithOffer.offer.discount
+                    : 0;
+                let categoryDiscount = productWithOffer.category.offer && productWithOffer.category.offer.endingDate >= today
+                    ? productWithOffer.category.offer.discount
+                    : 0;
+
+                // Apply the higher of the product or category discount
+                let finalDiscount = Math.max(productDiscount, categoryDiscount);
+                let discountedPrice = productPricePerUnit - (productPricePerUnit * finalDiscount) / 100;
+
+                let productTotal = discountedPrice * product.quantity;
+                totalPrice += productTotal;
+
+                // Store applied offer discount
+                offerDiscount += (product.price * product.quantity) - productTotal;
+
+                product.price = discountedPrice;
+                product.total = productTotal;
             }
         }
-        let couponDiscount = totalCouponDiscount
+
+        // Apply coupon discount if available
+        for (const cartItem of cartItems) {
+            if (cartItem.coupondiscount) {
+                const coupon = await Coupon.findById(cartItem.coupondiscount);
+                if (coupon) {
+                    appliedCouponId = coupon;
+                    couponDiscount += cartItem.coupondiscount.discountAmount;
+                }
+            }
+        }
+        totalPrice -= couponDiscount;
+
+        // Fetch user address
         const address = await Address.find({ userId: userId });
 
         res.render('checkout', { req, cartItems, totalPrice, address, coupons, appliedCouponId, offerDiscount, couponDiscount });
@@ -125,7 +116,7 @@ const placeOrder = async (req, res, next) => {
         const randomOrderId = generateRandomString(5);
         const totalAmount = parseFloat(total) + shippingChargeAmount;
 
-        if (paymentMethod !== 'cod' && paymentMethod !== 'paypal') {
+        if (paymentMethod !== 'cod' && paymentMethod !== 'paypal' && paymentMethod !== 'wallet') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
 
@@ -133,13 +124,16 @@ const placeOrder = async (req, res, next) => {
             for (const productDetail of item.products) {
                 // Ensure productDetail.productId is defined before accessing its _id
                 if (!productDetail.productId) {
-                    return res.status(400).json({ message: `Product ID is undefined for item ${item._id}.` });
+                    return res.status(400).json({ message: `Product is undefined for item ${item._id}.` });
                 }
 
                 const productId = productDetail.productId._id;
                 const product = await Product.findById(productId);
                 if (!product) {
-                    return res.status(404).json({ message: `Product with ID ${productId} not found.` });
+                    return res.status(404).json({ message: `Product not found.` });
+                }
+                if (productDetail.quantity > 5) {
+                    return res.status(400).json({ message: `You can only buy a maximum of 5 quantities for product ${product.name}.` });
                 }
                 if (product.stockCount < productDetail.quantity) {
                     return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
@@ -151,6 +145,14 @@ const placeOrder = async (req, res, next) => {
         }
 
 
+        if (paymentMethod === 'wallet') {
+            const wallet = await Wallet.findOne({ userId });
+
+            if (!wallet || wallet.balance < totalAmount) {
+                return res.status(400).json({ message: 'Insufficient wallet balance.' });
+            }
+        }
+
         const orderItems = items.flatMap((item) => {
             return item.products.map(productDetail => ({
                 productId: productDetail.productId._id,
@@ -159,6 +161,7 @@ const placeOrder = async (req, res, next) => {
                 total: productDetail.price * productDetail.quantity
             }));
         });
+
 
         //create order
         const order = new Order({
@@ -192,6 +195,38 @@ const placeOrder = async (req, res, next) => {
                 message: 'Order placed successfully. Payment will be collected upon delivery.'
             });
         }
+
+
+        if (paymentMethod === 'wallet') {
+
+            const wallet = await Wallet.findOne({ userId });
+
+            wallet.balance -= totalAmount;
+            wallet.transactions.push({
+                type: 'debit',
+                amount: totalAmount,
+                description: `Payment for Order #${order.ordersId}`,
+                orderId: new mongoose.Types.ObjectId(order._id),
+                itemId: new mongoose.Types.ObjectId(orderItems._id)
+            })
+
+            await wallet.save();
+
+            const order = await Order.findById(order._id);
+            order.status = 'paid';
+            order.payerId = userId;
+            await order.save();
+
+            // Clear cart
+            await CartItems.deleteMany({ user: userId });
+
+            return res.status(200).json({
+                status: true,
+                orderId: order._id,
+                message: 'Order placed successfully using wallet payment.'
+            });
+        }
+
 
     } catch (error) {
         next(error);
@@ -358,8 +393,20 @@ const cancelOrder = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
 
+        const deliveryDate = new Date(order.expectedDelivery);
+        const currentDate = new Date();
+
+        if (currentDate > deliveryDate) {
+            return res.status(400).json({
+                success: false,
+                message: `Cancellation period expired. You can only cancel before ${deliveryDate.toDateString()}.`,
+                expectedDelivery: deliveryDate.toDateString()
+            });
+        }
+
         item.cancellationReason = cancellationReason;
         item.orderStatus = 'cancelled';
+        item.cancellationDate = new Date();
         await order.save();
 
         //for updating the product quantity
@@ -386,7 +433,7 @@ const cancelOrder = async (req, res, next) => {
                         date: new Date(),
                         orderId,
                         itemId,
-                        description: `Refund for order cancellation`
+                        description: `Refund for ${item.productId.name} order cancellation`
                     }]
                 });
                 await newWallet.save();
@@ -399,7 +446,7 @@ const cancelOrder = async (req, res, next) => {
                     date: new Date(),
                     orderId,
                     itemId,
-                    description: `Refund for order cancellation`
+                    description: `Refund for ${item.productId.name} order cancellation`
                 });
                 await wallet.save();
             }
@@ -429,9 +476,17 @@ const returnOrder = async (req, res, next) => {
         if (!item) {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
+        const purchaseDate = new Date(item.purchaseDate);
+        const currentDate = new Date();
+        const daysDifference = Math.floor((currentDate - purchaseDate) / (1000 * 60 * 60 * 24));
+
+        if (daysDifference > 14) {
+            return res.status(400).json({ success: false, message: 'Return period expired. You can only return within 14 days of purchase.' });
+        }
 
         item.cancellationReason = cancellationReason;
         item.orderStatus = 'awaiting cancellation approval';
+        item.cancellationDate = new Date();
         await order.save();
 
         res.json({ success: true, message: 'Product return is awaiting cancellation approval.' });
@@ -475,6 +530,21 @@ const downloadInvoice = async (req, res, next) => {
 
 
 
+const getCheckoutBalance = async (req, res, next) => {
+    try {
+        const userId = req.session.user_id;
+        const wallet = await Wallet.findOne({ userId });
+        const walletBalance = wallet ? wallet.balance : 0;
+
+        res.json({ walletBalance })
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 module.exports = {
     checkout,
     placeOrder,
@@ -485,5 +555,6 @@ module.exports = {
     paymentSuccess,
     paymentCancel,
     retryPayment,
-    downloadInvoice
+    downloadInvoice,
+    getCheckoutBalance
 }

@@ -4,6 +4,7 @@ async function getProductsWithReviews(filter) {
     return await Product.find(filter)
         .populate({ path: "category", populate: { path: "offer" } })
         .populate("offer")
+        .limit(8)
         .lean();
 }
 

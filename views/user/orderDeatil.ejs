@@ -194,18 +194,18 @@
                 <% const trackableStatuses=[ 'pending' , 'confirmed' , 'processing' , 'shipped' , 'out for delivery'
                   , 'delivered' , 'awaiting cancellation approval' , 'cancelled' , 'returned' , 'refund initiated'
                   , 'refunded' ]; if (trackableStatuses.includes(selectedItem.orderStatus.toLowerCase().trim())) { const
-                  currentStatus=selectedItem.orderStatus.toLowerCase().trim(); let orderSteps; // Define different flows
+                  currentStatus=selectedItem.orderStatus.toLowerCase().trim(); let orderSteps; 
                   if (['pending', 'confirmed' , 'processing' , 'shipped' , 'out for delivery' , 'delivered'
-                  ].includes(currentStatus)) { // Delivery Flow orderSteps=[ { status: "pending" ,
+                  ].includes(currentStatus)) {  orderSteps=[ { status: "pending" ,
                   icon: "fa-solid fa-hourglass-start" }, { status: "confirmed" , icon: "fa-solid fa-check" }, {
                   status: "processing" , icon: "fa-solid fa-cogs" }, { status: "shipped" , icon: "fa-solid fa-truck" },
                   { status: "out for delivery" , icon: "fa-solid fa-box-open" }, { status: "delivered" ,
                   icon: "fa-solid fa-check-circle" } ]; } else if (['awaiting cancellation approval', 'cancelled'
-                  ].includes(currentStatus)) { // Cancellation Flow orderSteps=[ { status: "pending" ,
+                  ].includes(currentStatus)) { orderSteps=[ { status: "pending" ,
                   icon: "fa-solid fa-hourglass-start" }, { status: "confirmed" , icon: "fa-solid fa-check" }, {
                   status: "processing" , icon: "fa-solid fa-cogs" }, { status: "awaiting cancellation approval" ,
                   icon: "fa-solid fa-user-clock" }, { status: "cancelled" , icon: "fa-solid fa-ban" } ]; } else if
-                  (['returned', 'refund initiated' , 'refunded' ].includes(currentStatus)) { // Return/Refund Flow
+                  (['returned', 'refund initiated' , 'refunded' ].includes(currentStatus)) { 
                   orderSteps=[ { status: "delivered" , icon: "fa-solid fa-check-circle" }, { status: "returned" ,
                   icon: "fa-solid fa-undo" }, { status: "refund initiated" , icon: "fa-solid fa-hand-holding-usd" }, {
                   status: "refunded" , icon: "fa-solid fa-check-double" } ]; } const
@@ -318,9 +318,21 @@
                 <p><strong><i class="far fa-calendar-alt me-2"></i> Order Date:</strong>
                   <%= order.date.toDateString() %>
                 </p>
-                <p><strong><i class="fas fa-truck  me-2"></i> Expected Delivery Date:</strong>
-                  <%= new Date(order.expectedDelivery).toDateString() %>
-                </p>
+
+                <span class="text-muted small">
+                  <% if (selectedItem.orderStatus === 'delivered') { %>
+                      <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.delivery).toDateString() %></p>
+                  <% } else if (selectedItem.orderStatus === 'cancelled') { %>
+                      <p><i class="fas fa-calendar-times me-2"></i> Cancelled on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
+                  <% } else if (selectedItem.orderStatus === 'returned') { %>
+                      <p><i class="fas fa-undo me-2"></i> Returned on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
+                  <% } else if (selectedItem.orderStatus === 'refunded') { %>
+                      <p><i class="fas fa-money-bill-wave me-2"></i> Refunded on: <%= new Date(selectedItem.refundDate).toDateString() %></p>
+                  <% } else { %>
+                      <p><i class="fas fa-truck me-2"></i> Expected Delivery: <%= new Date(order.expectedDelivery).toDateString() %></p>
+                  <% } %>
+              </span>
+
                 <p><strong><i class="fas fa-info-circle me-2"></i> Order Status:</strong>
                   <span class="badge rounded-pill 
                     <% if (selectedItem.orderStatus === 'delivered' || selectedItem.orderStatus === 'refunded') { %> bg-success 
@@ -415,9 +427,21 @@
                   <p><strong><i class="far fa-calendar-alt me-2"></i> Order Date:</strong>
                     <%= order.date.toDateString() %>
                   </p>
-                  <p><strong><i class="fas fa-truck me-2"></i> Expected Delivery Date:</strong>
-                    <%= new Date(order.expectedDelivery).toDateString() %>
-                  </p>
+
+                  <span class="text-muted small">
+                    <% if (selectedItem.orderStatus === 'delivered') { %>
+                        <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.delivery).toDateString() %></p>
+                    <% } else if (selectedItem.orderStatus === 'cancelled') { %>
+                        <p><i class="fas fa-calendar-times me-2"></i> Cancelled on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
+                    <% } else if (selectedItem.orderStatus === 'returned') { %>
+                        <p><i class="fas fa-undo me-2"></i> Returned on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
+                    <% } else if (selectedItem.orderStatus === 'refunded') { %>
+                        <p><i class="fas fa-money-bill-wave me-2"></i> Refunded on: <%= new Date(selectedItem.refundDate).toDateString() %></p>
+                    <% } else { %>
+                        <p><i class="fas fa-truck me-2"></i> Expected Delivery: <%= new Date(order.expectedDelivery).toDateString() %></p>
+                    <% } %>
+                </span>
+                
                   <p><strong><i class="fas fa-wallet me-2"></i> Payment Method:</strong>
                     <%= order.paymentMethod %>
                   </p>
@@ -638,7 +662,7 @@
                         Swal.fire({
                           icon: 'error',
                           title: 'Error',
-                          text: `Failed to ${actionType} product. Please try again.`,
+                          text: data.message,
                           confirmButtonText: 'OK'
                         });
                       }

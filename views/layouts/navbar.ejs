@@ -22,6 +22,10 @@
     .suggestions-list li:hover {
         background: #f0f0f0;
     }
+
+    .nav-link.active {
+        font-weight: bold;
+    }
 </style>
 
 <header class="header-area header-style-3 header-height-2">
@@ -121,43 +125,58 @@
                                         <%= cartTotalItem %>
                                     </span>
                                 </a>
-                                <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    <ul>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/imgs/shop/thumbnail-3.jpg"></a>
+                                <% if (NavbarCartItems && NavbarCartItems.length> 0) { %>
+                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                        <ul>
+                                            <% NavbarCartItems.forEach((item)=> { %>
+                                                <% if (item.productId) { %>
+                                                    <li>
+                                                        <div class="shopping-cart-img">
+                                                            <a href="/productdetails/<%= item.productId._id %>">
+                                                                <img alt="<%= item.productId.name %>"
+                                                                    src="/uploads/product/resized/<%= item.productId.productImage[0] %>">
+                                                            </a>
+                                                        </div>
+                                                        <div class="shopping-cart-title">
+                                                            <h4>
+                                                                <a href="/productdetails/<%= item.productId._id %>">
+                                                                    <%= item.productId.name.length> 15 ?
+                                                                        item.productId.name.slice(0, 15) + '...' :
+                                                                        item.productId.name %>
+                                                                </a>
+                                                            </h4>
+                                                            <h4>
+                                                                <span>
+                                                                    <%= item.quantity %> 
+                                                                </span>
+                                                            </h4>
+                                                        </div>
+                                                    </li>
+                                                    <% } else { %>
+                                                        <li class="text-center">
+                                                            <p>Product details not available</p>
+                                                        </li>
+                                                        <% } %>
+                                                            <% }); %>
+
+                                                                <% if (moreItemsCount && moreItemsCount> 0) { %>
+                                                                    <li class="text-center">
+                                                                        <p>+ <%= moreItemsCount %> more items in your
+                                                                                cart</p>
+                                                                    </li>
+                                                                    <% } %>
+                                        </ul>
+                                        <div class="shopping-cart-footer">
+                                            <div class="shopping-cart-button">
+                                                <a href="/cart" class="outline">View cart</a>
+                                                <a href="/order">Checkout</a>
                                             </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Daisy Casual Bag</a></h4>
-                                                <h4><span>1 × </span>$800.00</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/imgs/shop/thumbnail-2.jpg"></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Corduroy Shirts</a></h4>
-                                                <h4><span>1 × </span>$3200.00</h4>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span>$4000.00</span></h4>
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                            <a href="/cart" class="outline">View cart</a>
-                                            <a href="shop-checkout.html">Checkout</a>
                                         </div>
                                     </div>
-                                </div> -->
+                                    <% } %>
+
+
+
                             </div>
                         </div>
                     </div>
@@ -195,7 +214,7 @@
                                                                         Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
-                                                                            <li class="mega-menu-col col-lg-7">
+                                                                            <li class="mega-menu-col col-12">
                                                                                 <ul class="d-lg-flex">
                                                                                     <% categoryChunks.forEach(chunk=> {
                                                                                         %>
@@ -229,7 +248,7 @@
                                                                         Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
-                                                                            <li class="mega-menu-col col-lg-7">
+                                                                            <li class="mega-menu-col col-12">
                                                                                 <ul class="d-lg-flex">
                                                                                     <% categoryChunks.forEach(chunk=> {
                                                                                         %>
@@ -274,7 +293,7 @@
                                                                         Kid's Clothing</a>
                                                                     <div class="dropdown-menu">
                                                                         <ul class="mega-menu d-lg-flex">
-                                                                            <li class="mega-menu-col col-lg-7">
+                                                                            <li class="mega-menu-col col-12">
                                                                                 <ul class="d-lg-flex">
                                                                                     <% categoryChunks.forEach(chunk=> {
                                                                                         %>
@@ -349,17 +368,14 @@
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                         <nav>
                             <ul>
-                                <li><a class="active" href="/">Home</a>
-                                </li>
-
-
-                                <li class="position-static"><a href="/shop">Shop</i></a>
+                                <li><a href="/" class="nav-link">Home</a></li>
+                                <li class="position-static">
+                                    <a href="/shop" class="nav-link">Shop</a>
                                     <ul class="mega-menu">
                                         <li class="sub-mega-menu sub-mega-menu-width-22">
                                             <a class="menu-title" href="#">Women's Fashion</a>
                                             <ul>
-                                                <% categories.forEach(category=>
-                                                    { %>
+                                                <% categories.forEach(category=> { %>
                                                     <li>
                                                         <a class="nav-link nav_item"
                                                             href="/shop?category=<%= category.categoryName %>&gender=Women">
@@ -372,8 +388,7 @@
                                         <li class="sub-mega-menu sub-mega-menu-width-22">
                                             <a class="menu-title" href="#">Men's Fashion</a>
                                             <ul>
-                                                <% categories.forEach(category=>
-                                                    { %>
+                                                <% categories.forEach(category=> { %>
                                                     <li>
                                                         <a class="nav-link nav_item"
                                                             href="/shop?category=<%= category.categoryName %>&gender=Men">
@@ -386,8 +401,7 @@
                                         <li class="sub-mega-menu sub-mega-menu-width-22">
                                             <a class="menu-title" href="#">Kid's Fashion</a>
                                             <ul>
-                                                <% categories.forEach(category=>
-                                                    { %>
+                                                <% categories.forEach(category=> { %>
                                                     <li>
                                                         <a class="nav-link nav_item"
                                                             href="/shop?category=<%= category.categoryName %>&gender=Kids">
@@ -399,30 +413,52 @@
                                         </li>
                                         <li class="sub-mega-menu sub-mega-menu-width-34">
                                             <div class="menu-banner-wrap">
-                                                <a href="shop-product-right.html"><img
-                                                        src="/imgs/banner/menu-banner.jpg" alt="Evara"></a>
-                                                <div class="menu-banner-content">
-                                                    <h4>Hot deals</h4>
-                                                    <h3>Don't miss<br> Trending</h3>
-                                                    <div class="menu-banner-price">
-                                                        <span class="new-price text-success">Save to 50%</span>
+                                                <% if (topOfferCategory) { %>
+                                                    <a href="/shop?category=<%= topOfferCategory.categoryName %>">
+                                                        <img src="/uploads/category/resized/<%= topOfferCategory.categoryPhoto %>"
+                                                            alt="<%= topOfferCategory.categoryName %>">
+                                                    </a>
+                                                    <div class="menu-banner-content">
+                                                        <h4>Hot deals</h4>
+                                                        <h3>Don't miss<br> Trending in <%= topOfferCategory.categoryName
+                                                                %>
+                                                        </h3>
+                                                        <div class="menu-banner-price">
+                                                            <span class="new-price text-success">Save up to <%=
+                                                                    topOfferCategory.offer.discount %>%</span>
+                                                        </div>
+                                                        <div class="menu-banner-btn">
+                                                            <a
+                                                                href="/shop?category=<%= topOfferCategory.categoryName %>">Shop
+                                                                now</a>
+                                                        </div>
                                                     </div>
-                                                    <div class="menu-banner-btn">
-                                                        <a href="shop-product-right.html">Shop now</a>
+                                                    <div class="menu-banner-discount position-absolute"
+                                                        style="top: 10px; right: 10px; padding: 10px;">
+                                                        <h3><span>
+                                                                <%= topOfferCategory.offer.discount %>%
+                                                            </span> off</h3>
                                                     </div>
-                                                </div>
-                                                <div class="menu-banner-discount">
-                                                    <h3>
-                                                        <span>35%</span> off
-                                                    </h3>
-                                                </div>
+
+                                                    <% } else { %>
+                                                        <a href="/shop">
+                                                            <img src="/imgs/banner/menu-banner.jpg" alt="Deals">
+                                                        </a>
+                                                        <div class="menu-banner-content">
+                                                            <h4>Exclusive Offers</h4>
+                                                            <h3>Discover New Trends</h3>
+                                                            <div class="menu-banner-btn">
+                                                                <a href="/shop">Shop now</a>
+                                                            </div>
+                                                        </div>
+                                                        <% } %>
                                             </div>
                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="/about">About Us</a></li>
-                                <li><a href="/contact">Contact </a> </li>
-                                <li><a href="/help">Help </a> </li>
+                                <li><a href="/about" class="nav-link">About Us</a></li>
+                                <li><a href="/contact" class="nav-link">Contact</a></li>
+                                <li><a href="/help" class="nav-link">Help</a></li>
                             </ul>
                         </nav>
                     </div>
@@ -448,43 +484,58 @@
                                     <%= cartTotalItem %>
                                 </span>
                             </a>
-                            <!-- <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                <ul>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Evara" src="/imgs/shop/thumbnail-3.jpg"></a>
+
+                            <% if (NavbarCartItems && NavbarCartItems.length> 0) { %>
+                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    <ul>
+                                        <% NavbarCartItems.forEach((item)=> { %>
+                                            <% if (item.productId) { %>
+                                                <li>
+                                                    <div class="shopping-cart-img">
+                                                        <a href="/productdetails/<%= item.productId._id %>">
+                                                            <img alt="<%= item.productId.name %>"
+                                                                src="/uploads/product/resized/<%= item.productId.productImage[0] %>">
+                                                        </a>
+                                                    </div>
+                                                    <div class="shopping-cart-title">
+                                                        <h4>
+                                                            <a href="/productdetails/<%= item.productId._id %>">
+                                                                <%= item.productId.name.length> 15 ?
+                                                                    item.productId.name.slice(0, 15) + '...' :
+                                                                    item.productId.name %>
+                                                            </a>
+                                                        </h4>
+                                                        <h4>
+                                                            <span>
+                                                                <%= item.quantity %> 
+                                                            </span>
+                                                        </h4>
+                                                    </div>
+                                                </li>
+                                                <% } else { %>
+                                                    <li class="text-center">
+                                                        <p>Product details not available</p>
+                                                    </li>
+                                                    <% } %>
+                                                        <% }); %>
+
+                                                            <% if (moreItemsCount && moreItemsCount> 0) { %>
+                                                                <li class="text-center">
+                                                                    <p>+ <%= moreItemsCount %> more items in your cart
+                                                                    </p>
+                                                                </li>
+                                                                <% } %>
+                                    </ul>
+                                    <div class="shopping-cart-footer">
+                                        <div class="shopping-cart-button">
+                                            <a href="/cart" class="outline">View cart</a>
+                                            <a href="/order">Checkout</a>
                                         </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                            <h3><span>1 × </span>$800.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="shopping-cart-img">
-                                            <a href="shop-product-right.html"><img alt="Evara" src="/imgs/shop/thumbnail-4.jpg"></a>
-                                        </div>
-                                        <div class="shopping-cart-title">
-                                            <h4><a href="shop-product-right.html">Macbook Pro 2022</a></h4>
-                                            <h3><span>1 × </span>$3500.00</h3>
-                                        </div>
-                                        <div class="shopping-cart-delete">
-                                            <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <div class="shopping-cart-footer">
-                                    <div class="shopping-cart-total">
-                                        <h4>Total <span>$383.00</span></h4>
-                                    </div>
-                                    <div class="shopping-cart-button">
-                                        <a href="/cart">View cart</a>
-                                        <a href="shop-checkout.html">Checkout</a>
                                     </div>
                                 </div>
-                            </div> -->
+                                <% } %>
+
+
                         </div>
                         <div class="header-action-icon-2 d-block d-lg-none">
                             <div class="burger-icon burger-icon-white">
@@ -749,6 +800,17 @@
                     suggestionsList.style.display = 'none';
                 }
             });
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        navLinks.forEach(link => {
+            if (link.getAttribute("href") === currentPath) {
+                link.classList.add("active");
+            }
         });
     });
 </script>

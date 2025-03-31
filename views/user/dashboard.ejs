@@ -311,11 +311,20 @@
 
 
                                                                                         <span class="text-muted small">
-                                                                                            <i
-                                                                                                class="fas fa-truck-clock me-1"></i>
-                                                                                            <%= order.expectedDelivery.toDateString()
-                                                                                                %>
+                                                                                            <% if (item.orderStatus === 'delivered') { %>
+                                                                                                <p><i class="fas fa-box me-2"></i> <%= new Date(item.delivery).toDateString() %></p>
+                                                                                            <% } else if (item.orderStatus === 'cancelled') { %>
+                                                                                                <p><i class="fas fa-calendar-times me-2"></i><%= new Date(item.cancellationDate).toDateString() %></p>
+                                                                                            <% } else if (item.orderStatus === 'returned') { %>
+                                                                                                <p><i class="fas fa-undo me-2"></i>  <%= new Date(item.cancellationDate).toDateString() %></p>
+                                                                                            <% } else if (item.orderStatus === 'refunded') { %>
+                                                                                                <p><i class="fas fa-money-bill-wave me-2"></i><%= new Date(item.refundDate).toDateString() %></p>
+                                                                                            <% } else { %>
+                                                                                                <p><i class="fas fa-truck me-2"></i> <%= new Date(order.expectedDelivery).toDateString() %></p>
+                                                                                            <% } %>
                                                                                         </span>
+                                                                                        
+                                                                                            
                                                                                     </div>
 
                                                                                     <div

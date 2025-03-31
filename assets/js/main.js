@@ -159,19 +159,32 @@
     /*------ Timer Countdown ----*/
 
     $('[data-countdown]').each(function () {
-        var $this = $(this),
-            finalDate = $(this).data('countdown');
-        $this.countdown(finalDate, function (event) {
-            $(this).html(
-                event.strftime('' +
-                    '<span class="countdown-section"><span class="countdown-amount hover-up">%d</span><span class="countdown-period"> days </span></span>' +
-                    '<span class="countdown-section"><span class="countdown-amount hover-up">%H</span><span class="countdown-period"> hours </span></span>' +
-                    '<span class="countdown-section"><span class="countdown-amount hover-up">%M</span><span class="countdown-period"> mins </span></span>' +
-                    '<span class="countdown-section"><span class="countdown-amount hover-up">%S</span><span class="countdown-period"> sec </span></span>'
-                )
-            );
-        });
+        var $this = $(this);
+        var finalDate = $this.data('countdown');
+
+        if (finalDate) {
+            var endTime = new Date(finalDate.replace(/-/g, "/")).getTime();
+            var now = new Date().getTime();
+
+            if (now >= endTime) {
+                $this.html('<span style="color: red; font-weight: bold;">Offer Ended</span>');
+            } else {
+                $this.countdown(finalDate, function (event) {
+                    $(this).html(
+                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%D') + '</span><span class="countdown-period"> days </span></span>' +
+                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%H') + '</span><span class="countdown-period"> hours </span></span>' +
+                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%M') + '</span><span class="countdown-period"> mins </span></span>' +
+                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%S') + '</span><span class="countdown-period"> sec </span></span>'
+                    );
+                }).on('finish.countdown', function () {
+                    $this.html('<span style="color: red; font-weight: bold;">Offer Ended</span>');
+                });
+            }
+        } else {
+            $this.html('<span style="color: red; font-weight: bold;">No Offer</span>');
+        }
     });
+
 
     /*------ Product slider active 1 ----*/
     $('.product-slider-active-1').slick({

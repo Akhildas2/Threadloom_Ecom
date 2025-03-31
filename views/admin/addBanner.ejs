@@ -33,7 +33,7 @@
                                     <option value="offer">Offer</option>
                                     <option value="shop">Shop</option>
                                     <option value="promotion">Promotion</option>
-                                    <option value="adds">Adds</option>
+                                    <option value="ads">Ads</option>
                                 </select>
                                 <div class="error-message" id="bannerType-error"></div>
                             </div>
@@ -123,9 +123,16 @@
                     if (event.target.files.length > 0) {
                         const file = event.target.files[0];
                         const extension = file.name.split('.').pop().toLowerCase();
+                        const maxSize = 10 * 1024 * 1024;
 
                         if (!allowedExtensions.includes(extension)) {
                             toggleError('bannerImage', 'Please upload only image files (jpg, jpeg, png)');
+                            return;
+                        }
+
+                        // Check file size (less than 10MB)
+                        if (file.size > maxSize) {
+                            toggleError('bannerImage', 'File size must be less than 10MB');
                             return;
                         }
 

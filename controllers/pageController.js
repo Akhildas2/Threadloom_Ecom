@@ -4,7 +4,11 @@ const Wishlist = require("../models/wishListModel");
 const User = require('../models/userModel');
 const Otp = require('../models/otpModel');
 const Review = require('../models/reviewModel');
-const Orders = require('../models/orderModel');
+const Order = require('../models/reviewModel');
+const Banner = require('../models/bannerModel');
+const Offer = require('../models/offerModel');
+const Coupon = require('../models/couponModel');
+
 const { getProductsWithReviews } = require("../utils/productHelper");
 
 
@@ -19,8 +23,14 @@ const loadHome = async (req, res, next) => {
             getProductsWithReviews({ isUnlisted: false, isBestSeller: true })
         ]);
 
+        // for getting banners
+        const banners = await Banner.find({ status: "active", bannerType: "homepage" }).sort({ createdAt: -1 });
+        const sidebarBanners = await Banner.find({ status: "active", bannerType: "ads" }).sort({ createdAt: -1 }).limit(2);
         //for getting the categories
         const categories = await Category.find({ isUnlisted: false }).limit(8);
+        const topOfferCategories = await Category.find({ isUnlisted: false, offer: { $exists: true, $ne: null } }).populate("offer").sort({ "offer.discount": -1 }).limit(4);
+        const topDiscountedProducts = await Product.find({ isUnlisted: false, offer: { $exists: true, $ne: null } }).populate("offer").sort({ "offer.discount": -1 }).limit(2);
+
         const userId = req.session.user_id;
         let userWishlist = [];
         // If the user is logged in show the userWishlist
@@ -28,7 +38,7 @@ const loadHome = async (req, res, next) => {
             userWishlist = await Wishlist.find({ user: userId }).populate('productId');
         }
 
-        res.render('home', { req, featuredProducts, newProducts, bestSellerProducts, categories, userWishlist });
+        res.render('home', { req, featuredProducts, newProducts, bestSellerProducts, categories, userWishlist, banners, sidebarBanners, topOfferCategories, topDiscountedProducts });
 
     } catch (error) {
         next(error);
@@ -95,6 +105,9 @@ const loadShop = async (req, res, next) => {
         const currentPage = parseInt(page);
         const userId = req.session.user_id;
 
+        // Trim searchQuery if it exists
+        const trimmedSearchQuery = searchQuery ? searchQuery.trim() : '';
+
         // Initialize wishlist array
         let userWishlist = [];
         if (userId) { // If the user is logged in
@@ -102,12 +115,22 @@ const loadShop = async (req, res, next) => {
         }
 
         let query = { isUnlisted: false };
-        if (searchQuery) {
+        if (trimmedSearchQuery) {
             query.$or = [
-                { name: { $regex: searchQuery, $options: 'i' } },
-                { description: { $regex: searchQuery, $options: 'i' } }
+                { name: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { description: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { brand: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { gender: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { color: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { pattern: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { fit: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { fabric: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { sleeve: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { fabricCare: { $regex: trimmedSearchQuery, $options: 'i' } },
+                { origin: { $regex: trimmedSearchQuery, $options: 'i' } },
             ];
         }
+
         if (category) {
             const categoryId = await Category.findOne({ categoryName: category }).select('_id');
             if (categoryId) {
@@ -144,6 +167,9 @@ const loadShop = async (req, res, next) => {
             default: sortQuery = { createdAt: -1 };
         }
 
+        const newProducts = await Product.find().sort({ createdAt: -1 }) .populate({ path: "category", populate: { path: "offer" } }).populate('offer').limit(3);
+        const banner = await Banner.findOne({ status: "active", bannerType: "shop" }).sort({ createdAt: -1 });
+
         const products = await Product.find(query)
             .populate({ path: "category", populate: { path: "offer" } })
             .populate('offer')
@@ -170,7 +196,9 @@ const loadShop = async (req, res, next) => {
             maxPrice,
             size: size || '',
             gender,
-            selectedSizes: size || []
+            selectedSizes: size || [],
+            newProducts,
+            banner
         });
 
     } catch (error) {
@@ -189,7 +217,10 @@ const productDetails = async (req, res, next) => {
         // Fetch product from the  products
         const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
         // Fetch related products from the same category
-        const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } });
+        const relatedProducts = await Product.find({ category: productData.category._id, _id: { $ne: productId }, isUnlisted: false }).limit(8).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
+
+        // Fetch available coupons
+        const availableCoupons = await Coupon.find({ expiryDate: { $gte: new Date() } });
 
         // Fetch reviews for main product
         const reviews = await Review.find({ productId }).populate('userId', 'name');
@@ -205,7 +236,7 @@ const productDetails = async (req, res, next) => {
         let hasPurchased = false;
         let hasReviewed = false;
         if (userId) {
-            const orders = await Orders.find({ userId: userId, 'items.productId': productId, 'items.orderStatus': 'delivered' });
+            const orders = await Order.find({ userId: userId, 'items.productId': productId, 'items.orderStatus': 'delivered' });
             if (orders.length > 0) hasPurchased = true;
 
             // Check if user already reviewed the product
@@ -215,7 +246,7 @@ const productDetails = async (req, res, next) => {
             }
         }
 
-        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist, reviews, hasPurchased, hasReviewed });
+        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist, reviews, hasPurchased, hasReviewed, availableCoupons });
 
     } catch (error) {
         next(error);
