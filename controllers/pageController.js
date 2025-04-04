@@ -100,7 +100,7 @@ const loadAbout = async (req, res, next) => {
 //for shop showing product
 const loadShop = async (req, res, next) => {
     try {
-        const { sort = 'createdAt', page = '1', limit = '5', category, minPrice, maxPrice, size = '', gender = '', query: searchQuery } = req.query;
+        const { sort = 'createdAt', page = '1', limit = '12', category, minPrice, maxPrice, size = '', gender = '', query: searchQuery } = req.query;
 
         const currentPage = parseInt(page);
         const userId = req.session.user_id;
@@ -167,8 +167,8 @@ const loadShop = async (req, res, next) => {
             default: sortQuery = { createdAt: -1 };
         }
 
-        const newProducts = await Product.find().sort({ createdAt: -1 }) .populate({ path: "category", populate: { path: "offer" } }).populate('offer').limit(3);
-        const banner = await Banner.findOne({ status: "active", bannerType: "shop" }).sort({ createdAt: -1 });
+        const newProducts = await Product.find().sort({ createdAt: -1 }).populate({ path: "category", populate: { path: "offer" } }).populate('offer').limit(3);
+        const banner = await Banner.findOne({ status: "active", bannerType: "promotion" }).sort({ createdAt: -1 });
 
         const products = await Product.find(query)
             .populate({ path: "category", populate: { path: "offer" } })

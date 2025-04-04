@@ -76,6 +76,10 @@
                             errorMessage.textContent = `${key} is required`;
                             errorMessage.classList.add('error');
                             isValid = false;
+                        } else if (key === 'offerName' && value.trim().length >= 30) {
+                            errorMessage.textContent = 'Offer name must be less than 30 characters';
+                            errorMessage.classList.add('error');
+                            isValid = false;
                         } else if (key === 'discount') {
                             const discountValue = parseFloat(value);
                             if (discountValue < 1 || discountValue > 99) {

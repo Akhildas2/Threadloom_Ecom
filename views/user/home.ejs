@@ -24,7 +24,7 @@
                                                                 <%= banner.description %>
                                                             </p>
                                                             <a class="animated btn btn-sm  ml-20"
-                                                                href="shop?sort=newArrivals">Shop Now</a>
+                                                            href="<%= banner.link %>">Shop Now</a>
                                                         </div>
                                                         <div class="slider-img" style="position: absolute; 
                                                                width: 100%; 
@@ -186,9 +186,10 @@
                                                         </div>
                                                         <h2>
                                                             <a href="/productdetails/<%= featuredProducts[i]._id %>">
-                                                                <%= featuredProducts[i].name ?
-                                                                    featuredProducts[i].name.slice(0, 15) + '...' : ''
-                                                                    %>
+                                                                <%= featuredProducts[i].name &&
+                                                                    featuredProducts[i].name.length> 15 ?
+                                                                    featuredProducts[i].name.slice(0, 15) + '...' :
+                                                                    featuredProducts[i].name || '' %>
                                                             </a>
                                                         </h2>
                                                         <div class="rating-result"
@@ -198,34 +199,77 @@
                                                         </div>
 
                                                         <div class="product-card__price d-flex">
-                                                            <% let discountedPrice = featuredProducts[i].price; %>
-                                                            <% let hasDiscount = false; %>
-                                                            <% let discountPercentage = 0; %>
-                                                        
-                                                            <% if (featuredProducts[i].offer && new Date() <= new Date(featuredProducts[i].offer.endingDate)) { %>
-                                                                <% discountPercentage = featuredProducts[i].offer.discount; %>
-                                                                <% hasDiscount = true; %>
-                                                            <% } %>
-                                                        
-                                                            <% if (featuredProducts[i].category.offer && new Date() <= new Date(featuredProducts[i].category.offer.endingDate)) { %>
-                                                                <% if (featuredProducts[i].category.offer.discount > discountPercentage) { %>
-                                                                    <% discountPercentage = featuredProducts[i].category.offer.discount; %>
-                                                                    <% hasDiscount = true; %>
-                                                                <% } %>
-                                                            <% } %>
-                                                        
-                                                            <% if (hasDiscount) { %>
-                                                                <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
-                                                                <span class="money price">
-                                                                    <del>₹ <%= featuredProducts[i].price.toFixed(2) %></del>
-                                                                    &nbsp;<span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
-                                                                    &nbsp;<span class="discounted-percentage" style="color: red;">(<%= discountPercentage %>% off)</span>
-                                                                </span>
-                                                            <% } else { %>
-                                                                <span class="money price">₹ <%= featuredProducts[i].price.toFixed(2) %></span>
-                                                            <% } %>
+                                                            <% let discountedPrice=featuredProducts[i].price; %>
+                                                                <% let hasDiscount=false; %>
+                                                                    <% let discountPercentage=0; %>
+
+                                                                        <% if (featuredProducts[i].offer && new Date()
+                                                                            <=new
+                                                                            Date(featuredProducts[i].offer.endingDate))
+                                                                            { %>
+                                                                            <% discountPercentage=featuredProducts[i].offer.discount;
+                                                                                %>
+                                                                                <% hasDiscount=true; %>
+                                                                                    <% } %>
+
+                                                                                        <% if
+                                                                                            (featuredProducts[i].category.offer
+                                                                                            && new Date() <=new
+                                                                                            Date(featuredProducts[i].category.offer.endingDate))
+                                                                                            { %>
+                                                                                            <% if
+                                                                                                (featuredProducts[i].category.offer.discount>
+                                                                                                discountPercentage) { %>
+                                                                                                <% discountPercentage=featuredProducts[i].category.offer.discount;
+                                                                                                    %>
+                                                                                                    <% hasDiscount=true;
+                                                                                                        %>
+                                                                                                        <% } %>
+                                                                                                            <% } %>
+
+                                                                                                                <% if
+                                                                                                                    (hasDiscount)
+                                                                                                                    { %>
+                                                                                                                    <% discountedPrice
+                                                                                                                        -=discountedPrice
+                                                                                                                        *
+                                                                                                                        (discountPercentage
+                                                                                                                        /
+                                                                                                                        100);
+                                                                                                                        %>
+                                                                                                                        <span
+                                                                                                                            class="money price">
+                                                                                                                            <del><strong>₹
+                                                                                                                                <%= featuredProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </del>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-price"
+                                                                                                                                style="color: green;"><strong>₹
+                                                                                                                                <%= discountedPrice.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-percentage"
+                                                                                                                                style="color: red;"><strong>(
+                                                                                                                                <%= discountPercentage
+                                                                                                                                    %>
+                                                                                                                                    %
+                                                                                                                                    off)</strong>
+                                                                                                                            </span>
+                                                                                                                        </span>
+                                                                                                                        <% } else
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            <span
+                                                                                                                                 style="color: green;"><strong>₹
+                                                                                                                                <%= featuredProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            <% }
+                                                                                                                                %>
                                                         </div>
-                                                        
+
                                                         <div class="product-action-1 show">
                                                             <button aria-label="Add To Cart" class="action-btn hover-up"
                                                                 onclick="addToCart('<%= featuredProducts[i]._id %>', '<%= featuredProducts[i].name %>', '<%= featuredProducts[i].price %>')">
@@ -308,7 +352,11 @@
                                                             </a>
                                                         </div>
                                                         <h2><a href="/productdetails/<%= bestSellerProducts[i]._id %>">
-                                                                <%= bestSellerProducts[i].name %>
+                                                                <%= bestSellerProducts[i].name &&
+                                                                    bestSellerProducts[i].name.length> 15 ?
+                                                                    bestSellerProducts[i].name.slice(0, 15) + '...' :
+                                                                    bestSellerProducts[i].name || '' %>
+
                                                             </a></h2>
 
                                                         <div class="rating-result"
@@ -318,32 +366,75 @@
                                                         </div>
 
                                                         <div class="product-card__price d-flex">
-                                                            <% let discountedPrice = bestSellerProducts[i].price; %>
-                                                            <% let hasDiscount = false; %>
-                                                            <% let discountPercentage = 0; %>
-                                                        
-                                                            <% if (bestSellerProducts[i].offer && new Date() <= new Date(bestSellerProducts[i].offer.endingDate)) { %>
-                                                                <% discountPercentage = bestSellerProducts[i].offer.discount; %>
-                                                                <% hasDiscount = true; %>
-                                                            <% } %>
-                                                        
-                                                            <% if (bestSellerProducts[i].category.offer && new Date() <= new Date(bestSellerProducts[i].category.offer.endingDate)) { %>
-                                                                <% if (bestSellerProducts[i].category.offer.discount > discountPercentage) { %>
-                                                                    <% discountPercentage = bestSellerProducts[i].category.offer.discount; %>
-                                                                    <% hasDiscount = true; %>
-                                                                <% } %>
-                                                            <% } %>
-                                                        
-                                                            <% if (hasDiscount) { %>
-                                                                <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
-                                                                <span class="money price">
-                                                                    <del>₹ <%= bestSellerProducts[i].price.toFixed(2) %></del>
-                                                                    &nbsp;<span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
-                                                                    &nbsp;<span class="discounted-percentage" style="color: red;">(<%= discountPercentage %>% off)</span>
-                                                                </span>
-                                                            <% } else { %>
-                                                                <span class="money price">₹ <%= bestSellerProducts[i].price.toFixed(2) %></span>
-                                                            <% } %>
+                                                            <% let discountedPrice=bestSellerProducts[i].price; %>
+                                                                <% let hasDiscount=false; %>
+                                                                    <% let discountPercentage=0; %>
+
+                                                                        <% if (bestSellerProducts[i].offer && new Date()
+                                                                            <=new
+                                                                            Date(bestSellerProducts[i].offer.endingDate))
+                                                                            { %>
+                                                                            <% discountPercentage=bestSellerProducts[i].offer.discount;
+                                                                                %>
+                                                                                <% hasDiscount=true; %>
+                                                                                    <% } %>
+
+                                                                                        <% if
+                                                                                            (bestSellerProducts[i].category.offer
+                                                                                            && new Date() <=new
+                                                                                            Date(bestSellerProducts[i].category.offer.endingDate))
+                                                                                            { %>
+                                                                                            <% if
+                                                                                                (bestSellerProducts[i].category.offer.discount>
+                                                                                                discountPercentage) { %>
+                                                                                                <% discountPercentage=bestSellerProducts[i].category.offer.discount;
+                                                                                                    %>
+                                                                                                    <% hasDiscount=true;
+                                                                                                        %>
+                                                                                                        <% } %>
+                                                                                                            <% } %>
+
+                                                                                                                <% if
+                                                                                                                    (hasDiscount)
+                                                                                                                    { %>
+                                                                                                                    <% discountedPrice
+                                                                                                                        -=discountedPrice
+                                                                                                                        *
+                                                                                                                        (discountPercentage
+                                                                                                                        /
+                                                                                                                        100);
+                                                                                                                        %>
+                                                                                                                        <span
+                                                                                                                            class="money price">
+                                                                                                                            <del><strong>₹
+                                                                                                                                <%= bestSellerProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </del>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-price"
+                                                                                                                                style="color: green;"><strong>₹
+                                                                                                                                <%= discountedPrice.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-percentage"
+                                                                                                                                style="color: red;"><strong>(
+                                                                                                                                <%= discountPercentage
+                                                                                                                                    %>
+                                                                                                                                    %
+                                                                                                                                    off)</strong>
+                                                                                                                            </span>
+                                                                                                                        </span>
+                                                                                                                        <% } else
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            <span
+                                                                                                                            style="color: green;"><strong>₹
+                                                                                                                                <%= bestSellerProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            <% }
+                                                                                                                                %>
                                                         </div>
 
                                                         <div class="product-action-1 show">
@@ -419,7 +510,7 @@
                                                             <a href="/productdetails/<%= newProducts[i]._id %>">
                                                                 <% if (newProducts[i].category) { %>
                                                                     <p>
-                                                                        <%= featuredProducts[i].category.categoryName %>
+                                                                        <%= newProducts[i].category.categoryName %>
                                                                     </p>
                                                                     <% } else { %>
                                                                         <p>Category: Not specified</p>
@@ -427,7 +518,10 @@
                                                             </a>
                                                         </div>
                                                         <h2><a href="/productdetails/<%= newProducts[i]._id %>">
-                                                                <%= newProducts[i].name %>
+                                                                <%= newProducts[i].name && newProducts[i].name.length>
+                                                                    15 ?
+                                                                    newProducts[i].name.slice(0, 15) + '...' :
+                                                                    newProducts[i].name || '' %>
                                                             </a></h2>
 
                                                         <div class="rating-result"
@@ -437,32 +531,73 @@
                                                         </div>
 
                                                         <div class="product-card__price d-flex">
-                                                            <% let discountedPrice = newProducts[i].price; %>
-                                                            <% let hasDiscount = false; %>
-                                                            <% let discountPercentage = 0; %>
-                                                        
-                                                            <% if (newProducts[i].offer && new Date() <= new Date(newProducts[i].offer.endingDate)) { %>
-                                                                <% discountPercentage = newProducts[i].offer.discount; %>
-                                                                <% hasDiscount = true; %>
-                                                            <% } %>
-                                                        
-                                                            <% if (newProducts[i].category.offer && new Date() <= new Date(newProducts[i].category.offer.endingDate)) { %>
-                                                                <% if (newProducts[i].category.offer.discount > discountPercentage) { %>
-                                                                    <% discountPercentage = newProducts[i].category.offer.discount; %>
-                                                                    <% hasDiscount = true; %>
-                                                                <% } %>
-                                                            <% } %>
-                                                        
-                                                            <% if (hasDiscount) { %>
-                                                                <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
-                                                                <span class="money price">
-                                                                    <del>₹ <%= newProducts[i].price.toFixed(2) %></del>
-                                                                    &nbsp;<span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
-                                                                    &nbsp;<span class="discounted-percentage" style="color: red;">(<%= discountPercentage %>% off)</span>
-                                                                </span>
-                                                            <% } else { %>
-                                                                <span class="money price">₹ <%= newProducts[i].price.toFixed(2) %></span>
-                                                            <% } %>
+                                                            <% let discountedPrice=newProducts[i].price; %>
+                                                                <% let hasDiscount=false; %>
+                                                                    <% let discountPercentage=0; %>
+
+                                                                        <% if (newProducts[i].offer && new Date() <=new
+                                                                            Date(newProducts[i].offer.endingDate)) { %>
+                                                                            <% discountPercentage=newProducts[i].offer.discount;
+                                                                                %>
+                                                                                <% hasDiscount=true; %>
+                                                                                    <% } %>
+
+                                                                                        <% if
+                                                                                            (newProducts[i].category.offer
+                                                                                            && new Date() <=new
+                                                                                            Date(newProducts[i].category.offer.endingDate))
+                                                                                            { %>
+                                                                                            <% if
+                                                                                                (newProducts[i].category.offer.discount>
+                                                                                                discountPercentage) { %>
+                                                                                                <% discountPercentage=newProducts[i].category.offer.discount;
+                                                                                                    %>
+                                                                                                    <% hasDiscount=true;
+                                                                                                        %>
+                                                                                                        <% } %>
+                                                                                                            <% } %>
+
+                                                                                                                <% if
+                                                                                                                    (hasDiscount)
+                                                                                                                    { %>
+                                                                                                                    <% discountedPrice
+                                                                                                                        -=discountedPrice
+                                                                                                                        *
+                                                                                                                        (discountPercentage
+                                                                                                                        /
+                                                                                                                        100);
+                                                                                                                        %>
+                                                                                                                        <span
+                                                                                                                            class="money price">
+                                                                                                                            <del>₹
+                                                                                                                                <strong> <%= newProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </del>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-price"
+                                                                                                                                style="color: green;"><strong>₹
+                                                                                                                                <%= discountedPrice.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            &nbsp;<span
+                                                                                                                                class="discounted-percentage"
+                                                                                                                                style="color: red;"><strong>(
+                                                                                                                                     <%= discountPercentage
+                                                                                                                                    %>
+                                                                                                                                    %
+                                                                                                                                    off)</strong>
+                                                                                                                            </span>
+                                                                                                                        </span>
+                                                                                                                        <% } else
+                                                                                                                            {
+                                                                                                                            %>
+                                                                                                                            <span
+                                                                                                                            style="color: green;"><strong>₹
+                                                                                                                                <%= newProducts[i].price.toFixed(2)
+                                                                                                                                    %></strong>
+                                                                                                                            </span>
+                                                                                                                            <% }
+                                                                                                                                %>
                                                         </div>
 
                                                         <div class="product-action-1 show">
@@ -536,118 +671,148 @@
                         </div>
                     </section>
 
-                    <section class="pt-25 pb-20">
+                    <section class="pt-20">
                         <div class="container wow fadeIn animated">
-                            <h3 class="section-title"><span>New</span> Arrivals</h3>
+                            <h3 class="section-title mb-20"><span>New</span> Arrivals</h3>
                             <div class="carausel-6-columns-cover position-relative">
                                 <div class="slider-arrow slider-arrow-2 carausel-6-columns-arrow"
                                     id="carausel-6-columns-2-arrows"></div>
                                 <div class="carausel-6-columns carausel-arrow-center" id="carausel-6-columns-2">
                                     <% for(let i=0; i < newProducts.length; i++) { %>
-                                        <div class="col-lg-3 col-md-4 col-6 col-sm-6 mt-4">
-                                            <div class="product-cart-wrap small hover-up">
-                                                <div class="product-img-action-wrap">
-                                                    <div class="product-img product-img-zoom">
-                                                        <a href="/productdetails/<%= newProducts[i]._id %>">
-                                                            <img class="default-img"
-                                                                src="/uploads/product/resized/<%= newProducts[i].productImage[0] %>"
-                                                                alt="">
-                                                            <img class="hover-img"
-                                                                src="/uploads/product/resized/<%= newProducts[i].productImage[1] %>"
-                                                                alt="">
-                                                        </a>
-                                                    </div>
-                                                    <div class="product-action-1">
-                                                        <a aria-label="Quick view"
-                                                            class="action-btn hover-up quick-view-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#quickViewModal"
-                                                            data-product='<%= JSON.stringify(newProducts[i]) %>'>
-                                                            <i class="fi-rs-eye"></i>
-                                                        </a>
+                                        <div class="product-cart-wrap small hover-up border me-4">
+                                            <div class="product-img-action-wrap">
+                                                <div class="product-img product-img-zoom">
+                                                    <a href="/productdetails/<%= newProducts[i]._id %>">
+                                                        <img class="default-img"
+                                                            src="/uploads/product/resized/<%= newProducts[i].productImage[0] %>"
+                                                            alt="">
+                                                        <img class="hover-img"
+                                                            src="/uploads/product/resized/<%= newProducts[i].productImage[1] %>"
+                                                            alt="">
+                                                    </a>
+                                                </div>
+                                                <div class="product-action-1">
+                                                    <a aria-label="Quick view"
+                                                        class="action-btn hover-up quick-view-btn"
+                                                        data-bs-toggle="modal" data-bs-target="#quickViewModal"
+                                                        data-product='<%= JSON.stringify(newProducts[i]) %>'>
+                                                        <i class="fi-rs-eye"></i>
+                                                    </a>
 
-                                                        <% if (userWishlist.some(item=>
-                                                            item.productId.equals(newProducts[i]._id))) { %>
-                                                            <a aria-label="Add To Wishlist" class="action-btn"
-                                                                style="background-color: red;"
+                                                    <% if (userWishlist.some(item=>
+                                                        item.productId.equals(newProducts[i]._id))) { %>
+                                                        <a aria-label="Add To Wishlist" class="action-btn"
+                                                            style="background-color: red;"
+                                                            onclick="addToWishList('<%= newProducts[i]._id %>')"><i
+                                                                class="fi-rs-heart"></i></a>
+                                                        <% } else { %>
+                                                            <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                                 onclick="addToWishList('<%= newProducts[i]._id %>')"><i
                                                                     class="fi-rs-heart"></i></a>
-                                                            <% } else { %>
-                                                                <a aria-label="Add To Wishlist"
-                                                                    class="action-btn hover-up"
-                                                                    onclick="addToWishList('<%= newProducts[i]._id %>')"><i
-                                                                        class="fi-rs-heart"></i></a>
-                                                                <% } %>
-                                                    </div>
-                                                    <div
-                                                        class="product-badges product-badges-position product-badges-mrg">
-                                                        <% if(newProducts[i].isNewArrival) { %><span
-                                                                class="new">New</span>
                                                             <% } %>
-                                                                <% if(newProducts[i].isHot) { %><span
-                                                                        class="hot">Hot</span>
-                                                                    <% } %>
-                                                                        <% if(newProducts[i].isBestSeller) { %>
-                                                                            <span class="best">Best Sell</span>
-                                                                            <% } %>
-                                                    </div>
                                                 </div>
-                                                <div class="product-content-wrap">
-                                                    <div class="product-category">
-                                                        <a href="/productdetails/<%= newProducts[i]._id %>">
-                                                            <% if (newProducts[i].category) { %>
-                                                                <p>
-                                                                    <%= featuredProducts[i].category.categoryName %>
-                                                                </p>
-                                                                <% } else { %>
-                                                                    <p>Category: Not specified</p>
-                                                                    <% } %>
-                                                        </a>
-                                                    </div>
-                                                    <h2><a href="/productdetails/<%= newProducts[i]._id %>">
-                                                            <%= newProducts[i].name %>
-                                                        </a></h2>
+                                                <div class="product-badges product-badges-position product-badges-mrg">
+                                                    <% if(newProducts[i].isNewArrival) { %><span class="new">New</span>
+                                                        <% } %>
+                                                            <% if(newProducts[i].isHot) { %><span class="hot">Hot</span>
+                                                                <% } %>
+                                                                    <% if(newProducts[i].isBestSeller) { %>
+                                                                        <span class="best">Best Sell</span>
+                                                                        <% } %>
+                                                </div>
+                                            </div>
+                                            <div class="product-content-wrap">
+                                                <div class="product-category">
+                                                    <a href="/productdetails/<%= newProducts[i]._id %>">
+                                                        <% if (newProducts[i].category) { %>
+                                                            <p>
+                                                                <%= newProducts[i].category.categoryName %>
+                                                            </p>
+                                                            <% } else { %>
+                                                                <p>Category: Not specified</p>
+                                                                <% } %>
+                                                    </a>
+                                                </div>
+                                                <h2><a href="/productdetails/<%= newProducts[i]._id %>">
+                                                        <%= newProducts[i].name && newProducts[i].name.length> 15 ?
+                                                            newProducts[i].name.slice(0, 15) + '...' :
+                                                            newProducts[i].name || '' %>
+                                                    </a></h2>
 
-                                                    <div class="rating-result"
-                                                        data-rating="<%= newProducts[i].avgRating %>">
-                                                        <span class="stars"></span>
-                                                        <span class="percentage"></span>
-                                                    </div>
+                                                <div class="rating-result"
+                                                    data-rating="<%= newProducts[i].avgRating %>">
+                                                    <span class="stars"></span>
+                                                    <span class="percentage"></span>
+                                                </div>
 
-                                                    <div class="product-card__price d-flex">
-                                                        <% let discountedPrice = newProducts[i].price; %>
-                                                        <% let hasDiscount = false; %>
-                                                        <% let discountPercentage = 0; %>
-                                                    
-                                                        <% if (newProducts[i].offer && new Date() <= new Date(newProducts[i].offer.endingDate)) { %>
-                                                            <% discountPercentage = newProducts[i].offer.discount; %>
-                                                            <% hasDiscount = true; %>
-                                                        <% } %>
-                                                    
-                                                        <% if (newProducts[i].category.offer && new Date() <= new Date(newProducts[i].category.offer.endingDate)) { %>
-                                                            <% if (newProducts[i].category.offer.discount > discountPercentage) { %>
-                                                                <% discountPercentage = newProducts[i].category.offer.discount; %>
-                                                                <% hasDiscount = true; %>
-                                                            <% } %>
-                                                        <% } %>
-                                                    
-                                                        <% if (hasDiscount) { %>
-                                                            <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
-                                                            <span class="money price">
-                                                                <del>₹ <%= newProducts[i].price.toFixed(2) %></del>
-                                                                &nbsp;<span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
-                                                                &nbsp;<span class="discounted-percentage" style="color: red;">(<%= discountPercentage %>% off)</span>
-                                                            </span>
-                                                        <% } else { %>
-                                                            <span class="money price">₹ <%= newProducts[i].price.toFixed(2) %></span>
-                                                        <% } %>
-                                                    </div>
-                                                    
-                                                    <div class="product-action-1 show">
-                                                        <button aria-label="Add To Cart" class="action-btn hover-up"
-                                                            onclick="addToCart('<%= newProducts[i]._id %>', '<%= newProducts[i].name %>', '<%= newProducts[i].price %>')">
-                                                            <i class="fi-rs-shopping-bag-add"></i>
-                                                        </button>
-                                                    </div>
+                                                <div class="product-card__price d-flex fw-bold fs-6">
+                                                    <% let discountedPrice=newProducts[i].price; %>
+                                                        <% let hasDiscount=false; %>
+                                                            <% let discountPercentage=0; %>
+
+                                                                <% if (newProducts[i].offer && new Date() <=new
+                                                                    Date(newProducts[i].offer.endingDate)) { %>
+                                                                    <% discountPercentage=newProducts[i].offer.discount;
+                                                                        %>
+                                                                        <% hasDiscount=true; %>
+                                                                            <% } %>
+
+                                                                                <% if (newProducts[i].category.offer &&
+                                                                                    new Date() <=new
+                                                                                    Date(newProducts[i].category.offer.endingDate))
+                                                                                    { %>
+                                                                                    <% if
+                                                                                        (newProducts[i].category.offer.discount>
+                                                                                        discountPercentage) { %>
+                                                                                        <% discountPercentage=newProducts[i].category.offer.discount;
+                                                                                            %>
+                                                                                            <% hasDiscount=true; %>
+                                                                                                <% } %>
+                                                                                                    <% } %>
+
+                                                                                                        <% if
+                                                                                                            (hasDiscount)
+                                                                                                            { %>
+                                                                                                            <% discountedPrice
+                                                                                                                -=discountedPrice
+                                                                                                                *
+                                                                                                                (discountPercentage
+                                                                                                                / 100);
+                                                                                                                %>
+                                                                                                                <span
+                                                                                                                    class="money price">
+                                                                                                                    <del>₹
+                                                                                                                        <%= newProducts[i].price.toFixed(2)
+                                                                                                                            %>
+                                                                                                                    </del>
+                                                                                                                    &nbsp;<span
+                                                                                                                        class="discounted-price"
+                                                                                                                        style="color: green;">₹
+                                                                                                                        <%= discountedPrice.toFixed(2)
+                                                                                                                            %>
+                                                                                                                    </span> <br>
+                                                                                                                    &nbsp;<span
+                                                                                                                        class="discounted-percentage"
+                                                                                                                        style="color: red;">(
+                                                                                                                        <%= discountPercentage
+                                                                                                                            %>
+                                                                                                                            %
+                                                                                                                            off)
+                                                                                                                    </span>
+                                                                                                                </span>
+                                                                                                                <% } else
+                                                                                                                    { %>
+                                                                                                                        <span class="d-flex justify-content-center align-items-center w-100 text-center" style="color: green;">₹
+                                                                                                                            <%= newProducts[i].price.toFixed(2) %>
+                                                                                                                        </span>                                                                                                                        
+                                                                                                                    <% }
+                                                                                                                        %>
+                                                </div>
+                                                <div class="product-action-1 show">
+                                                    <button aria-label="Add To Cart" class="action-btn hover-up"
+                                                        onclick="addToCart('<%= newProducts[i]._id %>', '<%= newProducts[i].name %>', '<%= newProducts[i].price %>')">
+                                                        <i class="fi-rs-shopping-bag-add"></i>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -677,7 +842,7 @@
                                                     </a>
                                                 </h6>
 
-                                                <div class="product-price">
+                                                <div class="product-card__price d-flex">
                                                     <span class="new-price text-success">
                                                         ₹<%= product.price - (product.price * (product.offer ?
                                                             product.offer.discount : 0) / 100) %>
@@ -690,9 +855,8 @@
                                                 <div class="deals-countdown"
                                                     data-countdown="<%= product.offer ? product.offer.endingDate.toISOString().split('T')[0] + ' 00:00:00' : '' %>">
                                                 </div>
-                                                    <a href="/productdetails/<%= product._id %>"
-                                                        class="btn hover-up">Shop
-                                                        Now <i class="fi-rs-arrow-right"></i></a>
+                                                <a href="/productdetails/<%= product._id %>" class="btn hover-up">Shop
+                                                    Now <i class="fi-rs-arrow-right"></i></a>
                                             </div>
                                         </div>
                                     </div>
@@ -701,7 +865,7 @@
                         </div>
                     </section>
 
-                    <section class="section-padding mt-40 ">
+                    <section class="section-padding mt-40">
                         <div class="container">
                             <h3 class="section-title mb-20 wow fadeIn animated"><span>Our</span> Brand Partners</h3>
                             <div class="carausel-6-columns-cover position-relative wow fadeIn animated">
@@ -709,7 +873,7 @@
                                     id="carausel-6-columns-3-arrows"></div>
                                 <div class="carausel-6-columns text-center" id="carausel-6-columns-3">
                                     <div class="brand-logo">
-                                        <a href="/shop?query=retro">
+                                        <a href="/shop?query=the retro">
                                             <img class="img-grey-hover" src="/imgs/banner/brand-1.png" alt="brand1">
                                         </a>
                                     </div>
@@ -730,7 +894,7 @@
                                         </a>
                                     </div>
                                     <div class="brand-logo">
-                                        <a href="/shop?query=backyard">
+                                        <a href="/shop?query=the backyard">
                                             <img class="img-grey-hover" src="/imgs/banner/brand-5.png" alt="brand5">
                                         </a>
                                     </div>
@@ -754,14 +918,14 @@
                         </div>
                     </section>
 
-                    <section class="section-padding  mb-40">
+                    <section class="section-padding  pt-60 pb-40">
                         <div class="container">
                             <div class="row">
-                                <!-- Deals & Outlet -->
+                                <!-- Deals -->
                                 <div class="col-lg-4 col-md-6 mb-sm-5 mb-md-0">
                                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Deals</h4>
                                     <div class="product-list-small wow fadeIn animated">
-                                        <% featuredProducts.forEach(product=> { %>
+                                        <% featuredProducts.slice(0,4).forEach(product=> { %>
                                             <article class="row align-items-center">
                                                 <figure class="col-md-4 mb-0">
                                                     <a href="/productdetails/<%= product._id %>">
@@ -772,7 +936,9 @@
                                                 <div class="col-md-8 mb-0">
                                                     <h4 class="title-small">
                                                         <a href="/productdetails/<%= product._id %>">
-                                                            <%= product.name %>
+                                                            <%= product.name && product.name.length> 20 ?
+                                                                product.name.slice(0, 20) + '...' :
+                                                                product.name || '' %>
                                                         </a>
                                                     </h4>
                                                 </div>
@@ -785,7 +951,7 @@
                                 <div class="col-lg-4 col-md-6 mb-sm-5 mb-md-0">
                                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Top Selling</h4>
                                     <div class="product-list-small wow fadeIn animated">
-                                        <% bestSellerProducts.forEach(product=> { %>
+                                        <% bestSellerProducts.slice(0,4).forEach(product=> { %>
                                             <article class="row align-items-center">
                                                 <figure class="col-md-4 mb-0">
                                                     <a href="/productdetails/<%= product._id %>">
@@ -796,7 +962,9 @@
                                                 <div class="col-md-8 mb-0">
                                                     <h4 class="title-small">
                                                         <a href="/productdetails/<%= product._id %>">
-                                                            <%= product.name %>
+                                                            <%= product.name && product.name.length> 20 ?
+                                                                product.name.slice(0, 20) + '...' :
+                                                                product.name || '' %>
                                                         </a>
                                                     </h4>
                                                 </div>
@@ -809,7 +977,7 @@
                                 <div class="col-lg-4 col-md-6">
                                     <h4 class="section-title style-1 mb-30 wow fadeIn animated">Hot Releases</h4>
                                     <div class="product-list-small wow fadeIn animated">
-                                        <% newProducts.forEach(product=> { %>
+                                        <% newProducts.slice(0,4).forEach(product=> { %>
                                             <article class="row align-items-center">
                                                 <figure class="col-md-4 mb-0">
                                                     <a href="/productdetails/<%= product._id %>">
@@ -820,7 +988,9 @@
                                                 <div class="col-md-8 mb-0">
                                                     <h4 class="title-small">
                                                         <a href="/productdetails/<%= product._id %>">
-                                                            <%= product.name %>
+                                                            <%= product.name && product.name.length> 20 ?
+                                                                product.name.slice(0, 20) + '...' :
+                                                                product.name || '' %>
                                                         </a>
                                                     </h4>
                                                 </div>
@@ -832,22 +1002,29 @@
                         </div>
                     </section>
 
-                    <section class="banner-2 section-padding mb-60">
+                    <section class="banner-2 section-padding mb-60 mt-60">
                         <div class="container">
                             <div class="row">
-                                <% sidebarBanners.forEach(ad => { %> 
-                                    <div class="col-md-6"> 
-                                        <div class="banner-img banner-big wow fadeIn animated f-none">
-                                            <a href="/shop?<%= ad.title %>">
-                                                <img src="/uploads/banner/<%= ad.bannerImage %>" alt="<%= ad.title %>">
+                                <% sidebarBanners.forEach(ad=> { %>
+                                    <div class="col-md-6">
+                                        <div class="banner-img position-relative overflow-hidden wow fadeIn animated">
+                                            <a href="<%= ad.link %>">
+                                                <img src="/uploads/banner/<%= ad.bannerImage %>" alt="<%= ad.title %>" class="w-100 img-fluid">
                                             </a>
+                                            <div class="banner-text position-absolute bottom-0 start-50 translate-middle-x text-center p-3 bg-opacity-50 text-white w-100">
+                                                <h4 class="mb-1 fs-4 text-white fw-bold"><%= ad.title %></h4>
+                                                <p class="mb-2 fs-6 text-white fw-semibold"><%= ad.description %></p>
+                                                <a href="<%= ad.link %>" class="text-white fw-bold">
+                                                    Shop Now <i class="fi-rs-arrow-right"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
-                                <% }) %>
+                                    <% }) %>
                             </div>
                         </div>
                     </section>
-                    
+
 
 
                 </main>
@@ -1021,35 +1198,35 @@
                                             document.getElementById("quickViewSize").innerText = product.size;
                                             document.getElementById("description").innerText = product.description;
 
-                                           
-                                        let discountedPrice = product.price;
-                                        let hasDiscount = false;
-                                        let discountPercentage = 0;
 
-                                        if (product.offer && new Date() <= new Date(product.offer.endingDate)) {
-                                            discountPercentage = product.offer.discount;
-                                            hasDiscount = true;
-                                        }
+                                            let discountedPrice = product.price;
+                                            let hasDiscount = false;
+                                            let discountPercentage = 0;
 
-                                        if (product.category.offer && new Date() <= new Date(product.category.offer.endingDate)) {
-                                            if (product.category.offer.discount > discountPercentage) {
-                                                discountPercentage = product.category.offer.discount;
+                                            if (product.offer && new Date() <= new Date(product.offer.endingDate)) {
+                                                discountPercentage = product.offer.discount;
                                                 hasDiscount = true;
                                             }
-                                        }
 
-                                        if (hasDiscount) {
-                                            discountedPrice -= discountedPrice * (discountPercentage / 100);
-                                        }
+                                            if (product.category.offer && new Date() <= new Date(product.category.offer.endingDate)) {
+                                                if (product.category.offer.discount > discountPercentage) {
+                                                    discountPercentage = product.category.offer.discount;
+                                                    hasDiscount = true;
+                                                }
+                                            }
 
-                                        const priceElement = document.getElementById("quickViewPrice");
-                                        priceElement.innerHTML = hasDiscount
-                                            ? `<span class="money price">
+                                            if (hasDiscount) {
+                                                discountedPrice -= discountedPrice * (discountPercentage / 100);
+                                            }
+
+                                            const priceElement = document.getElementById("quickViewPrice");
+                                            priceElement.innerHTML = hasDiscount
+                                                ? `<span class="money price">
                                                     <del>₹ ${product.price.toFixed(2)}</del>
                                                     &nbsp;<span class="discounted-price" style="color: green;">₹ ${discountedPrice.toFixed(2)}</span>
                                                     &nbsp;<span class="discounted-percentage" style="color: red;">(${discountPercentage}% off)</span>
                                                 </span>`
-                                            : `<span class="money price">₹ ${product.price.toFixed(2)}</span>`;
+                                                : `<span class="money price">₹ ${product.price.toFixed(2)}</span>`;
 
                                             // Stock status
                                             let stockDiv = document.getElementById("quickViewStock");

@@ -90,7 +90,7 @@ const loadListCategory = async (req, res, next) => {
         const offers = await Offer.find();
 
 
-        res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit, search });
+        res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit, search, categoriesCount });
 
     } catch (error) {
         next(error);

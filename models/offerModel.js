@@ -20,7 +20,7 @@ const offerSchema = new mongoose.Schema({
         required: true,
     },
 
-});
+}, { timestamps: true });
 
 
 

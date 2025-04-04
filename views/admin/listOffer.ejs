@@ -7,7 +7,7 @@
         <section class="content-main">
             <div class="container">
                 <div class="content-header">
-                    <h2 class="content-title card-title">Offer Management</h2>
+                    <h2 class="content-title card-title">Offer Management (<%= offersCount %>)</h2>
                     <a href="/admin/offer/addOffer" class="btn btn-primary "> <i class="fas fa-plus me-2"></i>Add
                         Coupon</a>
                 </div>
@@ -350,6 +350,11 @@
 
                         if (editofferName === '') {
                             $(this).find('#editofferName-error').text('Please enter the offer name.');
+                            isValid = false;
+                        }
+
+                        if (editofferName.trim().length >= 30) {
+                            $(this).find('#editofferName-error').text('Offer name must be less than 30 characters.');
                             isValid = false;
                         }
 

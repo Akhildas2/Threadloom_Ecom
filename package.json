@@ -32,6 +32,6 @@
     "passport-google-oauth20": "^2.0.0",
     "paypal-rest-sdk": "^1.8.1",
     "pdfkit": "^0.15.0",
-    "sharp": "^0.33.4"
+    "sharp": "^0.33.5"
   }
 }

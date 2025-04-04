@@ -30,12 +30,27 @@ const storage = multer.diskStorage({
         cb(null, folder);
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname));
+        // Preserve the original file name and add a unique suffix (timestamp + random number) to avoid conflict
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9); 
+        const newFilename = file.originalname.split('.').slice(0, -1).join('.') + '-' + uniqueSuffix + path.extname(file.originalname);
+        cb(null, newFilename);  // Generate a unique filename based on the original name
     }
 });
 
 
 
-// Multer upload middleware
-const upload = multer({ storage: storage });
+const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+const upload = multer({
+    storage: storage,
+    fileFilter: function (req, file, cb) {
+        if (allowedMimes.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only images are allowed.'), false);
+        }
+    }
+});
+
+
+
 module.exports = upload;

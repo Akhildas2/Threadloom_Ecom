@@ -186,7 +186,7 @@
                                             
                                                         <% if (hasDiscount) { %>
                                                             <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
-                                                            <span class="money price">
+                                                            <span class="product-card__price d-flex">
                                                                 <ins><del>₹ <%= product.price.toFixed(2) %></del></ins>
                                                                 <ins style="margin-left: 20px;">
                                                                     <span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
@@ -196,7 +196,7 @@
                                                                 </ins>
                                                             </span>
                                                         <% } else { %>
-                                                            <ins><span class="money price">₹ <%= product.price.toFixed(2) %></span></ins>
+                                                            <ins><span  style="color: green;">₹ <%= product.price.toFixed(2) %></span></ins>
                                                         <% } %>
                                                     </div>
                                                 </div>
@@ -223,7 +223,6 @@
                                                 </h4>
                                                 <ul class="pl-3">
                                                     <% 
-                                                        // Combine all offers with proper ordering
                                                         const allOffers = [];
                                                         if (product.offer) allOffers.push({ type: 'product', data: product.offer });
                                                         if (product.category?.offer) allOffers.push({ type: 'category', data: product.category.offer });
@@ -716,12 +715,12 @@
                                                             <% if (hasDiscount) { %>
                                                                 <% discountedPrice -= discountedPrice * (discountPercentage / 100); %>
                                                                 <span class="money price">
-                                                                    <del>₹ <%= product.price.toFixed(2) %></del>
-                                                                    &nbsp;<span class="discounted-price" style="color: green;">₹ <%= discountedPrice.toFixed(2) %></span>
-                                                                    &nbsp;<span class="discounted-percentage" style="color: red;">(<%= discountPercentage %>% off)</span>
+                                                                    <del><strong>₹ <%= product.price.toFixed(2) %></strong></del>
+                                                                    &nbsp;<span class="discounted-price" style="color: green;"><strong>₹ <%= discountedPrice.toFixed(2) %></strong></span>
+                                                                    &nbsp;<span class="discounted-percentage" style="color: red;"><strong>(<%= discountPercentage %>% off)</strong></span>
                                                                 </span>
                                                             <% } else { %>
-                                                                <span class="money price">₹ <%= product.price.toFixed(2) %></span>
+                                                                <span  style="color: green;"><strong>₹ <%= product.price.toFixed(2) %></strong></span>
                                                             <% } %>
                                                         </div>
                                                         

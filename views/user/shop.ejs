@@ -317,32 +317,32 @@
                                                                                                                     %>
                                                                                                                     <span
                                                                                                                         class="money price">
-                                                                                                                        <del>₹
+                                                                                                                        <del><strong>₹
                                                                                                                             <%= product.price.toFixed(2)
-                                                                                                                                %>
+                                                                                                                                %></strong>
                                                                                                                         </del>
                                                                                                                         &nbsp;<span
                                                                                                                             class="discounted-price"
-                                                                                                                            style="color: green;">₹
+                                                                                                                            style="color: green;"><strong>₹
                                                                                                                             <%= discountedPrice.toFixed(2)
-                                                                                                                                %>
+                                                                                                                                %></strong>
                                                                                                                         </span>
                                                                                                                         &nbsp;<span
                                                                                                                             class="discounted-percentage"
-                                                                                                                            style="color: red;">(
+                                                                                                                            style="color: red;"><strong>(
                                                                                                                             <%= discountPercentage
                                                                                                                                 %>
                                                                                                                                 %
-                                                                                                                                off)
+                                                                                                                                off)</strong>
                                                                                                                         </span>
                                                                                                                     </span>
                                                                                                                     <% } else
                                                                                                                         {
                                                                                                                         %>
                                                                                                                         <span
-                                                                                                                            class="money price">₹
+                                                                                                                        style="color: green;"><strong>₹
                                                                                                                             <%= product.price.toFixed(2)
-                                                                                                                                %>
+                                                                                                                                %></strong>
                                                                                                                         </span>
                                                                                                                         <% }
                                                                                                                             %>
@@ -363,15 +363,15 @@
                                             style="position: relative;">
                                             <img src="/uploads/banner/<%= banner.bannerImage %>" alt=""
                                                 style="width: 100%;">
-                                            <div class="banner-text text-black" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                                            <div class="banner-text text-black" style="position: absolute; top: 20%; left: 50%; transform: translate(-50%, -50%);
                                                      padding: 15px 20px; border-radius: 5px;
                                                        text-align: center; color: black; font-weight: bold;">
-                                                <span class="text-success">
+                                                <span style="color: black;">
                                                     <%= banner.title %>
                                                 </span>
                                                 <br>
-                                                <a href="/shop?sort=newArrivals"
-                                                    style="color: black; font-weight: bold;">Shop Now <i
+                                                <a href="<%= banner.link %>"
+                                                    style="font-weight: bold;">Shop Now <i
                                                         class="fi-rs-arrow-right"></i></a>
                                             </div>
                                         </div>
@@ -503,32 +503,31 @@
                                                                                                                             %>
                                                                                                                             <span
                                                                                                                                 class="money price">
-                                                                                                                                <del>₹
+                                                                                                                                <del><strong>₹
                                                                                                                                     <%= products[i].price.toFixed(2)
-                                                                                                                                        %>
+                                                                                                                                        %></strong>
                                                                                                                                 </del>
                                                                                                                                 &nbsp;<span
                                                                                                                                     class="discounted-price"
-                                                                                                                                    style="color: green;">₹
+                                                                                                                                    style="color: green;"><strong>₹
                                                                                                                                     <%= discountedPrice.toFixed(2)
-                                                                                                                                        %>
+                                                                                                                                        %></strong>
                                                                                                                                 </span>
                                                                                                                                 &nbsp;<span
                                                                                                                                     class="discounted-percentage"
-                                                                                                                                    style="color: red;">(
+                                                                                                                                    style="color: red;"><strong>(
                                                                                                                                     <%= discountPercentage
                                                                                                                                         %>
                                                                                                                                         %
-                                                                                                                                        off)
+                                                                                                                                        off)</strong>
                                                                                                                                 </span>
                                                                                                                             </span>
                                                                                                                             <% } else
                                                                                                                                 {
                                                                                                                                 %>
-                                                                                                                                <span
-                                                                                                                                    class="money price">₹
+                                                                                                                                <span style="color: green;"><strong>₹
                                                                                                                                     <%= products[i].price.toFixed(2)
-                                                                                                                                        %>
+                                                                                                                                        %></strong>
                                                                                                                                 </span>
                                                                                                                                 <% }
                                                                                                                                     %>

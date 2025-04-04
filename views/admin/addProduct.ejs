@@ -25,7 +25,17 @@
                             </div>
                             <div class="form-group">
                                 <label for="brand">Brand</label>
-                                <input type="text" class="form-control" id="brand" name="brand">
+                                <select class="form-control" id="brand" name="brand">
+                                    <option value="">-----Choose Brand-----</option>
+                                    <option value="The Retro">The Retro</option>
+                                    <option value="Design Hub">Design Hub</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Mockup">Mockup</option>
+                                    <option value="The Backyard">The Backyard</option>
+                                    <option value="Shutter Speed">Shutter Speed</option>
+                                    <option value="Hipster">Hipster</option>
+                                    <option value="New Wave">New Wave</option>
+                                </select>
                                 <div class="error-message" id="brand-error"></div>
                             </div>
                             <div class="form-group">
@@ -202,7 +212,6 @@
                 color: "Color is required",
                 fabricCare: "Fabric Care is required",
                 origin: "Origin is required",
-                productStatus: "Product status is required"
             };
 
 
@@ -246,7 +255,6 @@
 
                             // Store the file along with its index
                             addedFiles.push({ file: event.target.files[i], index: i });
-                            // console.log(`Added file: ${event.target.files[i].name}, Index: ${i}`);
                         }
 
                         $('.upload-info-value').text(filesAmount);
@@ -257,21 +265,20 @@
                 $(document).on('click', '.remove-btn', function () {
                     let index = $(this).data('index');
                     if (index !== undefined) {
-                        // console.log(`Removing file at index: ${index}`);
                         // Find the file object by its index and remove it from the addedFiles array
                         addedFiles = addedFiles.filter(fileObj => fileObj.index !== index);
 
                         $(this).parent().remove();
                         $('.upload-info-value').text(addedFiles.length);
-
+                        if (addedFiles.length === 0) {
+                            $('#productImages').val('');
+                        }
                         // Check if the number of images is less than 3
                         if (addedFiles.length < 3) {
                             toggleError('productImages', errorMessages.productImages);
                         } else {
                             toggleError('productImages', '');
                         }
-                    } else {
-                        console.error('Index is undefined');
                     }
                 });
             });
@@ -369,10 +376,6 @@
                     errors = true;
                 }
 
-                if (formData.get('productStatus') === '') {
-                    toggleError('productStatus', errorMessages.productStatus);
-                    errors = true;
-                }
 
                 if (formData.getAll('productImages').length < 3) {
                     toggleError('productImages', errorMessages.productImages);
@@ -406,8 +409,6 @@
                             setTimeout(() => {
                                 location.href = res.data.url;
                             }, 2000);
-                        } else {
-                            console.error(res.data);
                         }
                     })
                     .catch(err => {
@@ -417,8 +418,6 @@
                                 title: 'Error',
                                 text: err.response.data.message,
                             });
-                        } else {
-                            console.error(err);
                         }
                     });
             });

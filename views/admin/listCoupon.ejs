@@ -6,7 +6,7 @@
         <section class="content-main">
             <div class="container">
                 <div class="content-header">
-                    <h2 class="content-title card-title">Coupon Management</h2>
+                    <h2 class="content-title card-title">Coupon Management (<%= couponsCount %>)</h2>
                     <a href="/admin/coupon/addCoupon" class="btn btn-primary "><i class="fas fa-plus me-2"></i>Add
                         Coupon</a>
                 </div>
@@ -153,13 +153,13 @@
                                                         <%= coupon.couponCode %>
                                                     </td>
                                                     <td>
-                                                        <%= coupon.discountAmount %>
+                                                        ₹<%= coupon.discountAmount %> off
                                                     </td>
                                                     <td>
                                                         <%= coupon.expiryDate.toDateString() %>
                                                     </td>
                                                     <td>
-                                                        <%= coupon.criteriaAmount %>
+                                                        Min purchase ₹<%= coupon.criteriaAmount %>
                                                     </td>
                                                     <td class="d-flex gap-2 justify-content-center">
                                                         <!-- Edit Button -->
@@ -370,12 +370,14 @@
                             $(this).find('#editCouponName-error').text('Please enter the coupon name.');
                             isValid = false;
                         }
-
+                        if (editCouponName.trim().length >= 20) {
+                            $(this).find('#editCouponName-error').text('Coupon name must be less than 20 characters.');
+                            isValid = false;
+                        }
                         if (editDiscountAmount === '') {
                             $(this).find('#editDiscountAmount-error').text('Please enter the coupon discount amount.');
                             isValid = false;
                         }
-
                         if (editExpiryDate === '') {
                             $(this).find('#editExpiryDate-error').text('Please enter the coupon expiry date.');
                             isValid = false;
@@ -384,10 +386,11 @@
                             $(this).find('#editCriteriaAmount-error').text('Please enter the coupon criteria amount.');
                             isValid = false;
                         }
-                        if (!/^\w{6}$/.test(editCouponCode)) {
-                            $(this).find('#editCouponCode-error').text('Please enter a valid 6-character coupon code.');
+                        if (!/^[a-zA-Z0-9_]{1,10}$/.test(editCouponCode)) {
+                            $(this).find('#editCouponCode-error').text('Coupon code must be between 1 and 10 characters');
                             isValid = false;
                         }
+
                         if (parseFloat(editDiscountAmount) < 1) {
                             $(this).find('#editDiscountAmount-error').text('Discount amount must be greater than or equal to 1.');
                             isValid = false;

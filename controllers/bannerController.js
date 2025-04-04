@@ -8,17 +8,33 @@ const path = require("path");
 const loadBanner = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 6;
+        const limit = parseInt(req.query.limit) || 6;
         const skip = (page - 1) * limit;
 
+       let query = {};
+        const bannerStatus   = req.query.bannerStatus || "";
+        const search = req.query.search ? req.query.search.trim() : "";
+        
+        if (["active", "inactive", "archived"].includes(bannerStatus)) {
+            query.status = bannerStatus;
+        }
+
+        if (search) {
+            query.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+                { bannerType: { $regex: search, $options: "i" } },
+            ];
+        }
+
         const [banners, totalCount] = await Promise.all([
-            Banner.find().skip(skip).limit(limit),
-            Banner.countDocuments(),
+            Banner.find(query).skip(skip).limit(limit),
+            Banner.countDocuments(query), 
         ]);
 
         const totalPages = Math.ceil(totalCount / limit);
 
-        res.render("listBanner", { banners, currentPage: page, totalPages });
+        res.render("listBanner", { banners, currentPage: page, totalPages, totalCount, selectedLimit: limit, search, bannerStatus  });
     } catch (error) {
         next(error);
     }
@@ -62,9 +78,15 @@ const loadUpdateBanner = async (req, res, next) => {
 //For add new banner
 const addBanner = async (req, res, next) => {
     try {
-        const { title, description, bannerType, status } = req.body;
+        const { title, description, bannerType, status, link } = req.body;
 
         if (!req.file) return res.status(400).json({ message: "Image is required." });
+
+        const maxSize = 10 * 1024 * 1024; // 10MB
+        if (req.file.size > maxSize) {
+            return res.status(400).json({ message: "File size must be less than 10MB." });
+        }
+
         if (!title || !bannerType) {
             return res.status(400).json({ message: "Title and Banner Type are required." });
         }
@@ -79,7 +101,8 @@ const addBanner = async (req, res, next) => {
             description,
             bannerImage: req.file.filename,
             bannerType,
-            status: status || "inactive"
+            status: status || "inactive",
+            link
         });
         await newBanner.save();
 
@@ -99,7 +122,7 @@ const addBanner = async (req, res, next) => {
 const updateBanner = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { title, description, bannerType, status } = req.body;
+        const { title, description, bannerType, status, link } = req.body;
 
         // Find the existing banner
         const existingBanner = await Banner.findById(id);
@@ -108,7 +131,12 @@ const updateBanner = async (req, res, next) => {
         }
 
         // If a new image is uploaded, delete the old image
-        if (req.file?.filename) {
+        if (req.file) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (req.file.size > maxSize) {
+                return res.status(400).json({ message: "File size must be less than 10MB." });
+            }
+
             const oldImagePath = path.join(__dirname, "../uploads/banner", existingBanner.bannerImage);
             if (fs.existsSync(oldImagePath)) {
                 await fs.unlinkSync(oldImagePath);
@@ -122,7 +150,8 @@ const updateBanner = async (req, res, next) => {
                 description,
                 bannerImage: req.file?.filename || existingBanner.bannerImage,
                 bannerType,
-                status
+                status,
+                link
             },
             { new: true, runValidators: true }
         );

@@ -1,9 +1,9 @@
-const Product = require('../models/productModel')
-const Category = require('../models/categoryModel')
-const Offer = require('../models/offerModel')
-const fs = require('fs')
-const path = require('path');
-const sharp = require('sharp');
+const Product = require('../models/productModel');
+const Category = require('../models/categoryModel');
+const Offer = require('../models/offerModel');
+const path = require("path");
+const fs = require("fs");
+const sharp = require("sharp");
 
 
 
@@ -23,16 +23,19 @@ const loadAddProduct = async (req, res, next) => {
 //for adding the product
 const addProduct = async (req, res, next) => {
     try {
-        const { name, description, price, brand, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
+        let { name, description, price, brand, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
+        // Trim name and description
+        name = name.trim();
+        description = description.trim();
 
         const unique = await Product.findOne({ name: { $regex: new RegExp('^' + name + '$', 'i') } });
         if (unique) {
             return res.status(400).json({ success: false, message: 'Name already exists. Please use a different name.' });
         }
 
-        const existingProduct = await Product.findOne({ category, size, gender });
+        const existingProduct = await Product.findOne({ name, category, size, gender });
         if (existingProduct) {
-            return res.status(400).json({ success: false, message: 'Product with the same category, size, and gender already exists.' });
+            return res.status(400).json({ success: false, message: 'Product with the same name,category, size, and gender already exists.' });
         }
         if (!req.files || req.files.length < 3) {
             return res.status(400).json({ success: false, message: 'At least 3 photos are required.' });
@@ -43,19 +46,24 @@ const addProduct = async (req, res, next) => {
 
         const productImages = []; // Array to store resized image filenames
 
-        // Loop through uploaded files to resize and save images
-        for (const file of req.files) {
-            const uniqueFilename = `${Date.now()}_${file.filename}`;
+        // Resize images and generate filenames
+        const resizePromises = req.files.map(async (file, index) => {
+            const ext = path.extname(file.originalname).toLowerCase();
+            const uniqueFilename = `${Date.now()}_${index}_${Math.round(Math.random() * 1000)}${ext}`;
             const resizedImagePath = `uploads/product/resized/resized_${uniqueFilename}`;
+
+            // Resize the image
             await sharp(file.path)
                 .resize({ width: 1000, height: 1000, fit: 'fill' })
                 .toFile(resizedImagePath);
 
-            // Extract the filename from the resized image path
+            // Add resized filename to array
             const resizedImageFilename = path.basename(resizedImagePath);
-            // Push the filename to the array
             productImages.push(resizedImageFilename);
-        }
+        });
+
+        // Wait for all image processing to finish
+        await Promise.all(resizePromises);
 
         const isHot = productStatus === 'isHot';
         const isNewArrival = productStatus === 'isNewArrival';
@@ -78,7 +86,6 @@ const addProduct = async (req, res, next) => {
             color,
             fabricCare,
             origin,
-            productStatus,
             isHot,
             isNewArrival,
             isBestSeller,
@@ -126,6 +133,7 @@ const productListPage = async (req, res, next) => {
 
         const products = await Product.find(query)
             .populate('category')
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 
@@ -134,7 +142,7 @@ const productListPage = async (req, res, next) => {
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();
 
-        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers, selectedLimit: limit, search });
+        res.render('listProduct', { products, categories, currentPage: page, totalPages, selectedCategory, offers, selectedLimit: limit, search, totalCount });
 
     } catch (error) {
         next(error);
@@ -166,18 +174,28 @@ const loadEditProduct = async (req, res, next) => {
 const editProduct = async (req, res, next) => {
     try {
         const productId = req.params.productId;
-        const { name, description, brand, price, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
+        let { name, description, brand, price, gender, category, stockCount, size, fit, fabric, sleeve, pattern, color, fabricCare, origin, productStatus } = req.body;
+        // Trim name and description
+        name = name.trim();
+        description = description.trim();
+
         const updateFields = {};
         const existingProduct = await Product.findById(productId);
         if (!existingProduct) {
             return res.status(404).json({ error: 'Product not found' });
         }
 
-        const allowedExtensions = ['.jpg', '.jpeg', '.png'];
-        for (const file of req.files) {
-            const extension = path.extname(file.originalname).toLowerCase();
-            if (!allowedExtensions.includes(extension)) {
-                return res.status(400).json({ success: false, message: 'Invalid file type. Please upload only JPG, JPEG, or PNG files.' });
+        // Validate file extensions if new files are uploaded
+        if (req.files && req.files.length > 0) {
+            const allowedExtensions = ['.jpg', '.jpeg', '.png'];
+            for (const file of req.files) {
+                const extension = path.extname(file.originalname).toLowerCase();
+                if (!allowedExtensions.includes(extension)) {
+                    return res.status(400).json({
+                        success: false,
+                        message: 'Invalid file type. Please upload only JPG, JPEG, or PNG files.'
+                    });
+                }
             }
         }
 
@@ -201,26 +219,40 @@ const editProduct = async (req, res, next) => {
         updateFields.isBestSeller = productStatus === 'isBestSeller';
 
 
-        // Check if new images are uploaded
-        if (req.files && req.files.length > 0) {
+        // Updated image processing section
+        if (req.files?.length > 0) {
             const productImages = [];
 
-            for (const file of req.files) {
-                const uniqueFilename = `${Date.now()}_${file.filename}`;
-                const resizedImagePath = `uploads/product/resized/resized_${uniqueFilename}`;
-                await sharp(file.path)
-                    .resize({ width: 1000, height: 1000, fit: 'fill' })
-                    .toFile(resizedImagePath);
+            try {
+                for (const file of req.files) {
+                    const ext = path.extname(file.originalname).toLowerCase();
+                    const uniqueFilename = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}${ext}`;
+                    const resizedImagePath = `uploads/product/resized/resized_${uniqueFilename}`;
 
-                const resizedImageFilename = path.basename(resizedImagePath);
-                productImages.push(resizedImageFilename);
+                    // Process image with Sharp and await completion
+                    await sharp(file.path)
+                        .resize({ width: 1000, height: 1000, fit: 'fill' })
+                        .toFile(resizedImagePath);
+
+                    productImages.push(path.basename(resizedImagePath));
+                }
+            } catch (sharpError) {
+                // Handle Sharp processing errors (e.g., corrupt files)
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid image file. Please upload valid JPG, JPEG, or PNG images.'
+                });
             }
+
+            // Append new images to existing ones (or replace if intended)
             updateFields.productImage = [...existingProduct.productImage, ...productImages];
-        } else {
-            updateFields.productImage = existingProduct.productImage;
         }
 
-        const updatedProduct = await Product.findByIdAndUpdate(productId, updateFields, { new: true });
+        const updatedProduct = await Product.findByIdAndUpdate(
+            productId,
+            { $set: updateFields },
+            { new: true, runValidators: true }
+        );
         if (!updatedProduct) {
             return res.status(404).json({ error: 'Product not found' });
         }
@@ -230,7 +262,7 @@ const editProduct = async (req, res, next) => {
             url: '/admin/product/listProduct'
         });
 
-    } catch (err) {
+    } catch (error) {
         next(error);
     }
 };
@@ -364,6 +396,22 @@ const removeOffer = async (req, res, next) => {
 
 
 
+const updateImageOrder = async (req, res, next) => {
+    try {
+        const { productId, newOrder } = req.body;
+        const imageOrderArray = newOrder.split(',');
+
+        await Product.findByIdAndUpdate(productId, { productImage: imageOrderArray });
+
+        res.status(200).json({ status: true });
+
+    } catch (error) {
+        next(error);
+    }
+}
+
+
+
 module.exports = {
     loadAddProduct,
     addProduct,
@@ -374,5 +422,6 @@ module.exports = {
     listProduct,
     deletePhoto,
     addOffer,
-    removeOffer
+    removeOffer,
+    updateImageOrder
 };

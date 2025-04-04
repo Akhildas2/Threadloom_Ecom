@@ -25,8 +25,24 @@
                             </div>
                             <div class="form-group">
                                 <label for="brand">Brand</label>
-                                <input type="text" class="form-control" id="brand" name="brand"
-                                    value="<%= product.brand %>">
+                                <select class="form-control" id="brand" name="brand">
+                                    <option value="The Retro" <%=product.brand==='The Retro' ? 'selected' : '' %>>The
+                                        Retro</option>
+                                    <option value="Design Hub" <%=product.brand==='Design Hub' ? 'selected' : '' %>
+                                        >Design Hub</option>
+                                    <option value="Travel" <%=product.brand==='Travel' ? 'selected' : '' %>>Travel
+                                    </option>
+                                    <option value="Mockup" <%=product.brand==='Mockup' ? 'selected' : '' %>>Mockup
+                                    </option>
+                                    <option value="The Backyard" <%=product.brand==='The Backyard' ? 'selected' : '' %>
+                                        >The Backyard</option>
+                                    <option value="Shutter Speed" <%=product.brand==='Shutter Speed' ? 'selected' : ''
+                                        %>>Shutter Speed</option>
+                                    <option value="Hipster" <%=product.brand==='Hipster' ? 'selected' : '' %>>Hipster
+                                    </option>
+                                    <option value="New Wave" <%=product.brand==='New Wave' ? 'selected' : '' %>>New Wave
+                                    </option>
+                                </select>
                                 <div class="error-message" id="brand-error"></div>
                             </div>
                             <div class="form-group">
@@ -135,6 +151,9 @@
                             <div class="form-group">
                                 <label for="product-status">Product Status</label>
                                 <select class="form-control" id="productStatus" name="productStatus">
+                                    <option value="" <%=(!product.isHot && !product.isNewArrival &&
+                                        !product.isBestSeller) ? 'selected' : '' %>>-----Choose Product Status-----
+                                    </option>
                                     <option value="isHot" <%=product.isHot ? 'selected' : '' %>>Featured</option>
                                     <option value="isNewArrival" <%=product.isNewArrival ? 'selected' : '' %>>New
                                         Arrival</option>
@@ -181,37 +200,42 @@
                     </div>
                 </div>
             </div>
+            <input type="hidden" name="imageOrder" id="imageOrder" value="<%= product.productImage.join(',') %>">
             <div class="card mt-4">
                 <div class="card-body">
-                    <div class="row">
+                    <div class="d-flex justify-content-end">
+                        <button id="changeOrderBtn" class="btn btn-md btn-primary">Change Order</button>
+                    </div>
+                    <div class="row mt-4" id="imageSortable">
                         <% for (let i=0; i < product.productImage.length; i++) { %>
-                            <div class="col-lg-3 col-md-3 col-sm-6 col-6 mb-4">
-                                <div class="card" style="border-color: white;" id="productImages">
+                            <div class="col-lg-3 col-md-3 col-sm-6 col-6">
+                                <div class="card">
                                     <img src="/uploads/product/resized/<%= product.productImage[i] %>"
-                                        id="currentPhoto<%= i %>" alt="Current Photo <%= i + 1 %>"
-                                        class="card-img-top img-fluid"
+                                        data-filename="<%= product.productImage[i] %>" class="card-img-top img-fluid"
                                         style="cursor: pointer; width:100%; height:200px; object-fit:fill;">
+                                    <span class="badge rounded-pill ">
+                                        <button onclick="moveImageUp(this)" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-up"></i>
+                                        </button>
+                                        <button onclick="moveImageDown(this)" class="btn btn-secondary">
+                                            <i class="fas fa-arrow-down"></i>
+                                        </button>
+                                    </span>
                                     <div class="card-body text-center">
                                         <button
                                             onclick="deleteImage('<%= product._id %>', '<%= product.productImage[i] %>', '<%= product.productImage.length %>')"
                                             class="btn btn-danger"
                                             aria-label="Delete Image <%= i + 1 %>">Delete</button>
+
                                     </div>
                                 </div>
                             </div>
                             <% } %>
                     </div>
-                    <div class="error-message" id="productImages-error" style="display: block; text-align: center;">
-                    </div>
                 </div>
             </div>
 
         </section>
-
-
-
-        <br>
-        <br>
 
         <%- include('../adminLayouts/footer.ejs') %>
 
@@ -228,6 +252,69 @@
                 const priceRegex = /^\d+(\.\d{1,2})?$/;
 
                 let addedFiles = [];
+
+
+                function moveImageUp(button) {
+                    const column = button.closest('.col-lg-3');
+                    const row = document.getElementById('imageSortable');
+                    const currentIndex = Array.from(row.children).indexOf(column);
+                    if (currentIndex > 0) {
+                        row.insertBefore(column, row.children[currentIndex - 1]);
+                        updateImageOrder();
+                    }
+                }
+
+                function moveImageDown(button) {
+                    const column = button.closest('.col-lg-3');
+                    const row = document.getElementById('imageSortable');
+                    const currentIndex = Array.from(row.children).indexOf(column);
+                    if (currentIndex < row.children.length - 1) {
+                        row.insertBefore(column.nextElementSibling, column);
+                        updateImageOrder();
+                    }
+                }
+
+                function updateImageOrder() {
+                    const row = document.getElementById('imageSortable');
+                    const images = row.querySelectorAll('img[data-filename]');
+                    const order = Array.from(images).map(img => img.dataset.filename);
+                    document.getElementById('imageOrder').value = order.join(',');
+                }
+
+                document.getElementById('changeOrderBtn').addEventListener('click', function () {
+                    const productId = "<%= product._id %>";
+                    const newOrder = document.getElementById('imageOrder').value;
+
+                    axios.put('/admin/product/updateImageOrder', { productId, newOrder })
+                        .then(res => {
+                            if (res.data.status) {
+                                Swal.fire({
+                                    icon: "success",
+                                    title: "Image order updated successfully!",
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                });
+                                setTimeout(() => {
+                                    location.reload()
+                                }, 2000);
+                            }
+                        })
+                        .catch(err => {
+                            if (err.response && err.response.data && !err.response.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: err.response.data.message,
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Something went wrong!',
+                                });
+                            }
+                        });
+                });
 
 
                 $(document).ready(function () {
@@ -256,7 +343,6 @@
                                 reader.readAsDataURL(event.target.files[i]);
 
                                 addedFiles.push({ file: event.target.files[i], index: i });
-                                // console.log(`Added file: ${event.target.files[i].name}, Index: ${i}`);
                             }
 
                             $('.upload-info-value').text(filesAmount);
@@ -266,15 +352,11 @@
                     $(document).on('click', '.remove-btn', function () {
                         let index = $(this).data('index');
                         if (index !== undefined) {
-                            // console.log(`Removing file at index: ${index}`);
                             // Find the file object by its index and remove it from the addedFiles array
                             addedFiles = addedFiles.filter(fileObj => fileObj.index !== index);
 
                             $(this).parent().remove();
                             $('.upload-info-value').text(addedFiles.length);
-
-                        } else {
-                            console.error('Index is undefined');
                         }
                     });
 
@@ -307,7 +389,6 @@
                         color: "Color is required",
                         fabricCare: "Fabric Care is required",
                         origin: "Origin is required",
-                        productStatus: "Product status is required"
 
                     };
 
@@ -382,10 +463,6 @@
                         errors = true;
                     }
 
-                    if (formData.get('productStatus') === '') {
-                        toggleError('productStatus', errorMessages.productStatus);
-                        errors = true;
-                    }
 
                     if (errors) {
                         return false; // Prevent form submission if there are errors
@@ -405,8 +482,6 @@
                                 setTimeout(() => {
                                     location.href = res.data.url;
                                 }, 2000);
-                            } else {
-                                console.error(res.data);
                             }
                         })
                         .catch(err => {
@@ -416,8 +491,6 @@
                                     title: 'Error',
                                     text: err.response.data.message,
                                 });
-                            } else {
-                                console.error(err);
                             }
                         });
                 });
@@ -452,7 +525,6 @@
                             axios.delete(`/admin/product/deletephoto/${productId}/${photoName}`)
                                 .then(res => {
                                     if (res.data.success) {
-                                        console.log('Photo deleted successfully');
                                         Swal.fire({
                                             icon: 'success',
                                             title: 'Success',
@@ -461,7 +533,6 @@
                                             window.location.reload();
                                         });
                                     } else {
-                                        console.error(res.data.message);
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
@@ -470,7 +541,6 @@
                                     }
                                 })
                                 .catch(err => {
-                                    console.error('Error deleting photo:', err);
                                     // Show error alert
                                     Swal.fire({
                                         icon: 'error',

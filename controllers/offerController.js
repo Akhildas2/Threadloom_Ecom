@@ -17,7 +17,10 @@ const addOffer = async (req, res, next) => {
 // for insert offer
 const insertOffer = async (req, res, next) => {
     try {
-        const { offerName, startingDate, endingDate, discount } = req.body;
+        const { startingDate, endingDate, discount } = req.body;
+        let { offerName } = req.body;
+        offerName = offerName.trim();
+
         // Check if starting date is greater than or equal to today
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -104,7 +107,7 @@ const listOffer = async (req, res, next) => {
         const totalPages = Math.ceil(offersCount / limit);
         const offers = await Offer.find(query).sort(sortOptions[sort] || sortOptions['createdAt']).skip(skip).limit(limit);
 
-        res.render("listOffer", { offers, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus })
+        res.render("listOffer", { offers, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus, offersCount })
 
     } catch (error) {
         next(error);
@@ -135,7 +138,9 @@ const deleteOffer = async (req, res, next) => {
 const editOffer = async (req, res, next) => {
     try {
         const { offerId } = req.params;
-        const { offerName, startingDate, endingDate, discount } = req.body;
+        const { startingDate, endingDate, discount } = req.body;
+        let { offerName } = req.body
+        offerName = offerName.trim();
 
         // Check if an offer with the same name already exists, excluding the current offer
         const existingOffer = await Offer.findOne({

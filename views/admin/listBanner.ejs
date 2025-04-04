@@ -89,15 +89,72 @@
                 background: #e5e7eb;
                 color: #4b5563;
             }
+
+
         </style>
         <section class="content-main">
             <div class="container">
                 <div class="banner-header ">
-                    <h2 class="mb-0">Manage Banners</h2>
+                    <h2 class="mb-0">Manage Banners (<%= totalCount %>)</h2>
                     <a href="/admin/banner/addBanner" class="btn btn-primary">
                         <i class="fas fa-plus mr-2"></i> Add New Banner
                     </a>
                 </div>
+
+                <header class="card-header mt-40">
+                    <div class="row g-2 align-items-center">
+                        <!-- Search Form Column -->
+                        <div class="col-12 col-md-9 col-lg-9">
+                            <form
+                                class="d-flex flex-column flex-sm-row gap-2 align-items-stretch justify-content-center"
+                                action="/admin/banner/listBanner" method="get">
+
+                                <!-- Search Input -->
+                                <div class="flex-grow-1">
+                                    <input type="text" class="form-control w-100 mb-0" id="searchInput" name="search"
+                                        value="<%= search || '' %>" placeholder="Search Banner">
+                                </div>
+
+                                <!-- Status Select -->
+                                <div class="flex-grow-1 flex-sm-grow-0">
+                                    <select name="bannerStatus" class="form-select w-100">
+                                        <option value="all" <%=bannerStatus==="all" ? "selected" : "" %>>All</option>
+                                        <option value="active" <%=bannerStatus==="active" ? "selected" : "" %>>Active
+                                        </option>
+                                        <option value="inactive" <%=bannerStatus==="inactive" ? "selected" : "" %>
+                                            >Inactive</option>
+                                        <option value="archived" <%=bannerStatus==="archived" ? "selected" : "" %>
+                                            >Archived</option>
+                                    </select>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div>
+                                    <button class="btn btn-light w-100" type="submit">
+                                        <i class="material-icons md-search"></i>
+                                        <span class="d-none d-sm-inline">Search</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Limit Select Column -->
+                        <div class="col-12 col-md-3 col-lg-3">
+                            <div class="d-flex justify-content-center justify-content-md-end">
+                                <select id="categorieLimit" class="form-select w-auto"
+                                    onchange="location = this.value;">
+                                    <% const limits=[1,6, 10, 20, 50, 100]; %>
+                                        <% limits.forEach(lim=> { %>
+                                            <option
+                                                value="?page=1&limit=<%= lim %>&bannerStatus=<%= bannerStatus %>&search=<%= search %>"
+                                                <%=selectedLimit===lim ? 'selected' : '' %>>Show <%= lim %>
+                                            </option>
+                                            <% }) %>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
                 <% if (banners.length> 0) { %>
                     <div class="banner-container">
@@ -156,7 +213,8 @@
                     <ul class="pagination justify-content-end">
                         <% if (currentPage> 1) { %>
                             <li class="page-item">
-                                <a class="page-link" href="?page=<%= currentPage - 1 %>">
+                                <a class="page-link"
+                                    href="?page=<%= currentPage - 1 %>&limit=<%= selectedLimit %>&bannerStatus=<%= bannerStatus %>&search=<%= search %>">
                                     <i class="material-icons md-chevron_left"></i>
                                 </a>
                             </li>
@@ -164,7 +222,8 @@
 
                                 <% for (let i=1; i <=totalPages; i++) { %>
                                     <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                        <a class="page-link" href="?page=<%= i %>">
+                                        <a class="page-link"
+                                            href="?page=<%= i %>&limit=<%= selectedLimit %>&bannerStatus=<%= bannerStatus %>&search=<%= search %>">
                                             <%= i %>
                                         </a>
                                     </li>
@@ -172,7 +231,8 @@
 
                                         <% if (currentPage < totalPages) { %>
                                             <li class="page-item">
-                                                <a class="page-link" href="?page=<%= currentPage + 1 %>">
+                                                <a class="page-link"
+                                                    href="?page=<%= currentPage + 1 %>&limit=<%= selectedLimit %>&bannerStatus=<%= bannerStatus %>&search=<%= search %>">
                                                     <i class="material-icons md-chevron_right"></i>
                                                 </a>
                                             </li>
@@ -219,8 +279,6 @@
                                     <label class="form-label">Banner Type</label>
                                     <select class="form-control" id="editBannerType" name="bannerType" required>
                                         <option value="homepage">Home page</option>
-                                        <option value="category">Category</option>
-                                        <option value="offer">Offer</option>
                                         <option value="shop">Shop</option>
                                         <option value="promotion">Promotion</option>
                                         <option value="ads">Ads</option>
@@ -236,6 +294,11 @@
                                         <option value="archived">Archived</option>
                                     </select>
                                     <small class="text-danger" id="statusError"></small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Banner Link (optional)</label>
+                                    <input type="string" class="form-control" id="editLink" name="link"
+                                        placeholder="Enter URL">
                                 </div>
                             </div>
 
@@ -277,6 +340,7 @@
                         document.getElementById("bannerImagePreview").src = imagePath;
                         document.getElementById("editBannerType").value = banner.bannerType;
                         document.getElementById("editStatus").value = banner.status;
+                        document.getElementById("editLink").value = banner.link;
 
                         new bootstrap.Modal(document.getElementById("editBannerModal")).show();
                     })
@@ -294,6 +358,7 @@
                 let description = document.getElementById("editDescription").value.trim();
                 let bannerType = document.getElementById("editBannerType").value;
                 let status = document.getElementById("editStatus").value;
+                let link = document.getElementById("editLink").value;
                 let bannerImage = document.getElementById("editBannerImage").files[0];
 
                 let hasError = false;
@@ -304,14 +369,19 @@
                     hasError = true;
                 }
 
+                if (title.length >= 40) {
+                    document.getElementById("titleError").innerText = "Title  must be less than 40 characters";
+                    hasError = true;
+                }
+
                 // Validate Description
                 if (description.length < 10) {
                     document.getElementById("descriptionError").innerText = "Description must be at least 10 characters long.";
                     hasError = true;
                 }
 
-                if (description.length > 100) {
-                    document.getElementById("descriptionError").innerText = "Description should not be more than 100 words.";
+                if (description.length > 200) {
+                    document.getElementById("descriptionError").innerText = "Description should not be more than 200 words.";
                     hasError = true;
                 }
 
@@ -366,6 +436,7 @@
                 formData.append("description", description);
                 formData.append("bannerType", bannerType);
                 formData.append("status", status);
+                formData.append("link", link);
                 if (bannerImage) {
                     formData.append("bannerImage", bannerImage);
                 }

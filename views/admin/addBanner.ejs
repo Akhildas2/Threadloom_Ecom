@@ -29,8 +29,6 @@
                                 <select class="form-control" id="bannerType" name="bannerType">
                                     <option value="">-----Choose Banner Type-----</option>
                                     <option value="homepage">Home page</option>
-                                    <option value="category">Category</option>
-                                    <option value="offer">Offer</option>
                                     <option value="shop">Shop</option>
                                     <option value="promotion">Promotion</option>
                                     <option value="ads">Ads</option>
@@ -38,6 +36,11 @@
                                 <div class="error-message" id="bannerType-error"></div>
                             </div>
 
+                            <div class="form-group">
+                                <label for="link">Banner Link (optional)</label>
+                                <input type="string" class="form-control" id="link" name="link" placeholder="Enter URL">
+                            </div>
+                            
                             <div class="form-group">
                                 <label for="status">Status</label>
                                 <select class="form-control" id="status" name="status">
@@ -96,7 +99,7 @@
 
             const errorMessages = {
                 title: "Title is required",
-                description: "Description is required and should not be more than 200 words",
+                description: "Description is required.",
                 status: "Status is required",
                 bannerType: "Please select a banner type",
                 bannerImage: "Please upload an image",
@@ -123,16 +126,9 @@
                     if (event.target.files.length > 0) {
                         const file = event.target.files[0];
                         const extension = file.name.split('.').pop().toLowerCase();
-                        const maxSize = 10 * 1024 * 1024;
 
                         if (!allowedExtensions.includes(extension)) {
                             toggleError('bannerImage', 'Please upload only image files (jpg, jpeg, png)');
-                            return;
-                        }
-
-                        // Check file size (less than 10MB)
-                        if (file.size > maxSize) {
-                            toggleError('bannerImage', 'File size must be less than 10MB');
                             return;
                         }
 
@@ -188,14 +184,17 @@
                     } else if (formData.get('title').length < 3) {
                         toggleError('title', "Title must be at least 3 characters long.");
                         errors = true;
+                    } else if (formData.get('title').length >= 40) {
+                        toggleError('title', "Title  must be less than 40 characters");
+                        errors = true;
                     }
 
                     const description = formData.get('description')?.trim() || "";
                     if (!description) {
                         toggleError('description', "Description is required.");
                         errors = true;
-                    } else if (description.length > 100) {
-                        toggleError('description', "Description should not be more than 100 words.");
+                    } else if (description.length > 200) {
+                        toggleError('description', "Description should not be more than 200 words.");
                         errors = true;
                     } else if (description.length < 10) {
                         toggleError('description', "Description must be at least 10 characters long.");
@@ -216,6 +215,15 @@
                         toggleError('bannerImage', errorMessages.bannerImage);
                         errors = true;
                     }
+
+                    // Check file size (less than 10MB)
+                    const maxSize = 10 * 1024 * 1024;
+                    // Check file size (less than 10MB)
+                    if (addedFiles[0] && addedFiles[0].size > maxSize) {
+                        toggleError('bannerImage', 'File size must be less than 10MB');
+                        return;
+                    }
+
 
                     if (errors) return false; // Prevent form submission if errors exist
 

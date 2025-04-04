@@ -45,7 +45,7 @@ const listCoupon = async (req, res, next) => {
         const totalPages = Math.ceil(couponsCount / limit);
         const coupons = await Coupon.find(query).sort(sortOptions[sort] || sortOptions['createdAt']).skip(skip).limit(limit);
 
-        res.render('listCoupon', { coupons, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus })
+        res.render('listCoupon', { coupons, currentPage: page, totalPages, selectedLimit: limit, sortField: sort, sortOrder: order, search, orderStatus, couponsCount })
 
     } catch (error) {
         next(error);
@@ -69,7 +69,10 @@ const addCoupon = async (req, res, next) => {
 //for adding coupon
 const insertCoupon = async (req, res, next) => {
     try {
-        const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
+        let { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
+        // Trim white spaces
+        couponName = couponName.trim();
+        couponCode = couponCode.trim();
 
         const existingCoupon = await Coupon.findOne({
             $or: [
@@ -130,7 +133,10 @@ const deleteCoupon = async (req, res, next) => {
 const editcoupon = async (req, res, next) => {
     try {
         const { couponId } = req.params;
-        const { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
+        let { couponName, couponCode, discountAmount, expiryDate, criteriaAmount } = req.body;
+        // Trim white spaces
+        couponName = couponName.trim();
+        couponCode = couponCode.trim();
 
         const existingCoupon = await Coupon.findOne({
             $and: [
