@@ -42,20 +42,14 @@ document.getElementById('adminLogin').addEventListener('submit', function (event
                 setTimeout(() => {
                     location.href = res.data.url;
                 }, 2000);
-            } else {
-                console.error(res.data);
-            }
+            } 
         })
         .catch(err => {
-            if (!err.response.data.success) {
                 Swal.fire({
                     icon: 'error',
-                    title: 'Error',
-                    text: err.response.data.message,
+                    title: 'Operation Failed',
+                    text: err.response?.data?.message || "Something went wrong.",
                 });
-            } else {
-                console.error(err);
-            }
         });
 });
 

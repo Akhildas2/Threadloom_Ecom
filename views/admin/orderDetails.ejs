@@ -339,8 +339,8 @@
                             // Show error message using SweetAlert
                             Swal.fire({
                                 icon: 'error',
-                                title: 'Oops...',
-                                text: 'Something went wrong! Please try again later.',
+                                title: 'Operation Failed',
+                                text:  error.response?.data?.message || "Something went wrong.",
                             });
                         });
                 });

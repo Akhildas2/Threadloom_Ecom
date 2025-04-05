@@ -25,22 +25,14 @@ const blockUser = (userId) => {
                         }).then(() => {
                             location.href = res.data.url;
                         });
-                    } else {
-
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: res.data.message
-                        });
                     }
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'An internal server error occurred. Please try again later.',
+                        title: 'Operation Failed',
+                        text: error.response?.data?.message || "Something went wrong.",
                     });
-                    console.error(error);
                 });
         }
     });
@@ -74,23 +66,14 @@ const unblockUser = (userId) => {
                         }).then(() => {
                             location.href = res.data.url;
                         });
-                    } else {
-
-                        // Adjust the error message handling as needed
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: res.data ? 'An unexpected error occurred.' : 'An unexpected error occurred.',
-                        });
-                    }
+                    } 
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'An internal server error occurred. Please try again later.',
+                        title: 'Operation Failed',
+                        text:  error.response?.data?.message || "Something went wrong.",
                     });
-                    console.error('Request error:', error);
                 });
         }
     });

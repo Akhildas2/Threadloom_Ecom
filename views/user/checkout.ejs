@@ -1043,21 +1043,14 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 2000);
-                                            } else {
-                                                console.error(response.data);
                                             }
                                         })
                                         .catch(err => {
-                                            console.error('Error:', err);
-                                            if (!err.response.data.success) {
-                                                Swal.fire({
-                                                    icon: 'error',
-                                                    title: 'Error',
-                                                    text: err.response.data.message,
-                                                });
-                                            } else {
-                                                console.error(err);
-                                            }
+                                            Swal.fire({
+                                                icon: 'error',
+                                                title: 'Failed',
+                                                text: err.response.data.message || "Something went wrong.",
+                                            });
                                         });
                                 });
                             });
@@ -1156,7 +1149,7 @@
                                         confirmButtonText: 'Okay'
                                     });
                                     setTimeout(() => {
-                                    location.reload()
+                                        location.reload()
                                     }, 1000);
 
                                     return; // Prevent further execution
@@ -1257,20 +1250,13 @@
                                         setTimeout(() => {
                                             location.reload()
                                         }, 2000);
-                                    } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error!',
-                                            text: 'Failed to apply the coupon.',
-                                        });
                                     }
                                 })
                                 .catch(error => {
-                                    console.error(error);
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Error!',
-                                        text: 'An error occurred while applying the coupon.',
+                                        title: 'Failed!',
+                                        text: error.response?.data?.message || "Something went wrong.",
                                     });
                                 });
                         }
@@ -1311,20 +1297,12 @@
                                                 setTimeout(() => {
                                                     location.reload()
                                                 }, 2000);
-                                            } else {
-                                                // Handle the error
-                                                Swal.fire(
-                                                    'Error!',
-                                                    'Failed to remove the coupon.',
-                                                    'error'
-                                                );
-                                            }
+                                            } 
                                         })
                                         .catch(error => {
-                                            console.error('Error:', error);
                                             Swal.fire(
-                                                'Error!',
-                                                'An error occurred while removing the coupon.',
+                                                'Failed!',
+                                                error.response?.data?.message || "Something went wrong.",
                                                 'error'
                                             );
                                         });

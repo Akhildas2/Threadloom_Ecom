@@ -458,18 +458,12 @@
                         }).then(() => {
                             location.reload(); // Refresh the page to reflect changes
                         });
-                    } else {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error!",
-                            text: "Failed to update banner."
-                        });
-                    }
+                    } 
                 } catch (error) {
                     let errorMessage = error.response?.data?.message || "An error occurred.";
                     Swal.fire({
                         icon: "error",
-                        title: "Oops!",
+                        title: "Operation Failed",
                         text: errorMessage
                     });
                 }

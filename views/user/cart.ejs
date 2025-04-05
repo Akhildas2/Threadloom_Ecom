@@ -212,7 +212,7 @@
                     color: #088178;
                 }
 
-            
+
             }
         </style>
 
@@ -467,16 +467,9 @@
                                             setTimeout(() => {
                                                 location.reload();
                                             }, 3000);
-                                        } else {
-                                            Swal.fire(
-                                                'Failed!',
-                                                'Failed to remove item from cart.',
-                                                'error'
-                                            );
                                         }
                                     })
                                     .catch(error => {
-                                        console.error('Error:', error);
                                         Swal.fire(
                                             'Failed!',
                                             'Failed to remove item from cart.',
@@ -521,16 +514,9 @@
                                             setTimeout(() => {
                                                 location.reload();
                                             }, 3000);
-                                        } else {
-                                            Swal.fire(
-                                                'Failed!',
-                                                'Failed to clear the cart.',
-                                                'error'
-                                            );
                                         }
                                     })
                                     .catch(error => {
-                                        console.error('Error:', error);
                                         Swal.fire(
                                             'Failed!',
                                             'Failed to clear the cart.',
@@ -598,11 +584,10 @@
                                 updateCartTotals(newSubtotal);
                             })
                             .catch(error => {
-                                console.error('Error:', error);
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error!',
-                                    text: error.message
+                                    title: 'Failed!',
+                                    text: error.message || "Something went wrong."
                                 })
                                 setTimeout(() => {
                                     location.reload()

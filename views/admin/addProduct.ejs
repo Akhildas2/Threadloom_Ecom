@@ -412,13 +412,11 @@
                         }
                     })
                     .catch(err => {
-                        if (!err.response.data.success) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: err.response.data.message,
-                            });
-                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Operation Failed',
+                            text: err.response?.data?.message || "Something went wrong.",
+                        });
                     });
             });
         </script>

@@ -172,9 +172,7 @@
                             const errorMessageContainer = document.getElementById('form-errors');
                             errorMessageContainer.textContent = err.response.data.message;
                             errorMessageContainer.classList.add('error');
-                        } else {
-                            console.error(err);
-                        }
+                        } 
                     });
 
             });

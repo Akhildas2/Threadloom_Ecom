@@ -88,7 +88,7 @@ function resendOtp() {
       if (!err.response.data.success) {
         Swal.fire({
           icon: 'error',
-          title: 'Error',
+          title: 'Failed',
           text: err.response.data.message,
           toast: true,
           position: 'center',
@@ -96,8 +96,6 @@ function resendOtp() {
           timer: 3000,
           timerProgressBar: true,
         });
-      } else {
-        console.error(err);
       }
     });
 }
@@ -188,7 +186,7 @@ form.addEventListener('submit', function (event) {
       if (!err.response.data.success) {
         Swal.fire({
           icon: 'error',
-          title: 'Error',
+          title: 'Failed',
           text: err.response.data.message,
           toast: true,
           position: 'center',
@@ -196,9 +194,7 @@ form.addEventListener('submit', function (event) {
           timer: 3000,
           timerProgressBar: true,
         });
-      } else {
-        console.error(err);
-      }
+      } 
     });
 });
 

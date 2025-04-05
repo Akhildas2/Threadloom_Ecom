@@ -154,21 +154,14 @@
                             setTimeout(() => {
                                 location.href = res.data.url;
                             }, 3000);
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: res.data.message || "Something went wrong.",
-                            });
                         }
                     })
                     .catch(err => {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
+                            title: 'Operation Failed',
                             text: err.response?.data?.message || "Something went wrong.",
                         });
-                        console.error(err);
                     });
             });
         </script>

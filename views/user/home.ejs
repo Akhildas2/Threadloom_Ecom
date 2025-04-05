@@ -1087,25 +1087,15 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } else {
-                                                // Handle errors
-                                                Swal.fire({
-                                                    title: 'Error!',
-                                                    text: data.message,
-                                                    icon: 'error',
-                                                });
-                                            }
+                                            } 
                                         })
                                         .catch(err => {
-                                            if (!err.data.success) {
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Error',
-                                                    text: err.response.data.message,
+                                                    title: 'Failed',
+                                                    text: err.response?.data?.message || "Something went wrong.",
                                                 });
-                                            } else {
-                                                console.error(err);
-                                            }
+                                           
                                         });
                                 }
 
@@ -1163,25 +1153,15 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } else {
-                                                // Handle errors
-                                                Swal.fire({
-                                                    title: 'Error!',
-                                                    text: data.message,
-                                                    icon: 'error',
-                                                });
-                                            }
+                                            } 
                                         })
                                         .catch(err => {
-                                            if (!err.data.success) {
                                                 Swal.fire({
                                                     icon: 'error',
-                                                    title: 'Error',
-                                                    text: err.response.data.message,
+                                                    title: 'Failed',
+                                                    text:err.response?.data?.message || "Something went wrong.",
                                                 });
-                                            } else {
-                                                console.error(err);
-                                            }
+                                          
                                         });
                                 }
 

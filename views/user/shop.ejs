@@ -275,7 +275,7 @@
                                                         alt="<%= product.name %>">
                                                 </div>
                                                 <div class="content pt-10">
-                                                    <h6><a href="/shop-product-detail/<%= product._id %>">
+                                                    <h6><a href="/productdetails/<%= product._id %>">
                                                             <%= product.name.length> 20 ? product.name.slice(0, 20) +
                                                                 '...' : product.name %>
                                                         </a></h6>
@@ -670,25 +670,14 @@
                                             setTimeout(() => {
                                                 location.reload();
                                             }, 3000);
-                                        } else {
-                                            // Handle errors
-                                            Swal.fire({
-                                                title: 'Error!',
-                                                text: data.message,
-                                                icon: 'error',
-                                            });
-                                        }
+                                        } 
                                     })
-                                    .catch(err => {
-                                        if (!err.data.success) {
+                                    .catch(err => {    
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: 'Error',
-                                                text: err.response.data.message,
+                                                title: 'Failed',
+                                                text: err.response?.data?.message || "Something went wrong.",
                                             });
-                                        } else {
-                                            console.error(err);
-                                        }
                                     });
                             }
 
@@ -746,25 +735,14 @@
                                                 location.reload();
                                             }, 3000);
 
-                                        } else {
-                                            // Handle errors
-                                            Swal.fire({
-                                                title: 'Error!',
-                                                text: data.message,
-                                                icon: 'error',
-                                            });
-                                        }
+                                        } 
                                     })
                                     .catch(err => {
-                                        if (!err.data.success) {
                                             Swal.fire({
                                                 icon: 'error',
-                                                title: 'Error',
-                                                text: err.response.data.message,
+                                                title: 'Failed',
+                                                text: err.response?.data?.message || "Something went wrong.",
                                             });
-                                        } else {
-                                            console.error(err);
-                                        }
                                     });
                             }
 

@@ -657,23 +657,14 @@
                           $('#cancellationModal').modal('hide'); // Close the modal
                           location.reload(); // Reload the page to reflect the changes
                         });
-                      } else {
-                        // Use SweetAlert for error message
-                        Swal.fire({
-                          icon: 'error',
-                          title: 'Error',
-                          text: data.message,
-                          confirmButtonText: 'OK'
-                        });
-                      }
+                      } 
                     })
                     .catch(error => {
-                      console.error('Error:', error);
                       // Use SweetAlert for generic error message
                       Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred. Please try again.',
+                        title: 'Failed',
+                        text: error.response?.data?.message || "Something went wrong.",
                         confirmButtonText: 'OK'
                       });
                     });
@@ -718,10 +709,9 @@
                             });
                           }
                         })
-                        .catch(error => {
-                          console.error('Error retrying payment:', error.response ? error.response.data : error.message);
+                        .catch(error => {                       
                           Swal.fire(
-                            'Error!',
+                            'Failed!',
                             'An error occurred while retrying the payment. Please try again.',
                             'error'
                           );

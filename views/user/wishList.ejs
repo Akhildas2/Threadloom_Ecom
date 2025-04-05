@@ -444,16 +444,9 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } else {
-                                                Swal.fire(
-                                                    'Failed!',
-                                                    'Failed to remove item from wishlist.',
-                                                    'error'
-                                                );
-                                            }
+                                            } 
                                         })
                                         .catch(error => {
-                                            console.error('Error:', error);
                                             Swal.fire(
                                                 'Failed!',
                                                 'Failed to remove item from wishlist.',
@@ -500,16 +493,9 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } else {
-                                                Swal.fire(
-                                                    'Failed!',
-                                                    'Failed to clear the wishlist.',
-                                                    'error'
-                                                );
-                                            }
+                                            } 
                                         })
-                                        .catch(error => {
-                                            console.error('Error:', error);
+                                        .catch(error => {                                         
                                             Swal.fire(
                                                 'Failed!',
                                                 'Failed to clear the wishlist.',
@@ -573,25 +559,14 @@
                                         setTimeout(() => {
                                             location.reload();
                                         }, 3000);
-                                    } else {
-                                        // Handle errors
-                                        Swal.fire({
-                                            title: 'Error!',
-                                            text: data.message,
-                                            icon: 'error',
-                                        });
-                                    }
+                                    } 
                                 })
                                 .catch(err => {
-                                    if (!err.data.success) {
                                         Swal.fire({
                                             icon: 'error',
-                                            title: 'Error',
-                                            text: err.response.data.message,
-                                        });
-                                    } else {
-                                        console.error(err);
-                                    }
+                                            title: 'Failed',
+                                            text: err.response?.data?.message || "Something went wrong.",
+                                        });                                 
                                 });
                         }
 

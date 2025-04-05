@@ -52,9 +52,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
                 setTimeout(() => {
                     location.href = res.data.url;
                 }, 3000);
-            } else {
-                console.error(res.data);
-            }
+            } 
         })
         .catch(err => {
             if (!err.response.data.success) {
@@ -74,9 +72,7 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
                     text: err.response.data.message,
                 });
 
-            } else {
-                console.error(err);
-            }
+            } 
         });
 
 });

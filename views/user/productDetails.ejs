@@ -832,25 +832,14 @@
                                 }).then(() => {
                                     location.reload();
                                 });
-                            } else {
-                                // Handle errors
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: data.message,
-                                    icon: 'error',
-                                });
-                            }
+                            } 
                         })
                         .catch(err => {
-                            if (!err.data.success) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
-                                });
-                            } else {
-                                console.error(err);
-                            }
+                                    title: 'Failed',
+                                    text:err.response?.data?.message || "Something went wrong.",
+                                });                           
                         });
                 });
 
@@ -908,25 +897,14 @@
                                 setTimeout(() => {
                                     location.reload();
                                 }, 3000);
-                            } else {
-                                // Handle errors
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: data.message,
-                                    icon: 'error',
-                                });
-                            }
+                            } 
                         })
                         .catch(err => {
-                            if (!err.data.success) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
+                                    title: 'Failed',
+                                    text: err.response?.data?.message || "Something went wrong.",
                                 });
-                            } else {
-                                console.error(err);
-                            }
                         });
                 }
 
@@ -984,25 +962,14 @@
                                     location.reload();
                                 });
 
-                            } else {
-                                // Handle errors
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: data.message,
-                                    icon: 'error',
-                                });
-                            }
+                            } 
                         })
                         .catch(err => {
-                            if (!err.data.success) {
                                 Swal.fire({
                                     icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
+                                    title: 'Failed',
+                                    text: err.response?.data?.message || "Something went wrong.",
                                 });
-                            } else {
-                                console.error(err);
-                            }
                         });
                 }
 
@@ -1282,7 +1249,6 @@
                                     icon.classList.toggle('fa-solid', data.liked);
                                 })
                                 .catch(error => {
-                                    console.error('Error:', error);
                                     // Show error feedback
                                     this.style.backgroundColor = '#ffe6e6';
                                     setTimeout(() => this.style.backgroundColor = '', 1000);
@@ -1340,7 +1306,6 @@
                             errorElement.textContent = data.message || "Failed to update review.";
                         }
                     } catch (error) {
-                        console.error("Error updating review:", error);
                         errorElement.textContent = "An error occurred while updating the review.";
                     }
                 }

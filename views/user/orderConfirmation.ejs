@@ -287,7 +287,7 @@
                                                     }, 3000);
                                                 } else {
                                                     Swal.fire({
-                                                        icon: 'error',
+                                                        icon: 'Failed',
                                                         title: 'Oops...',
                                                         text: 'PayPal payment initiation failed. Please try again.',
                                                         confirmButtonText: 'Okay'
@@ -295,9 +295,8 @@
                                                 }
                                             })
                                             .catch(error => {
-                                                console.error('Error retrying payment:', error.response ? error.response.data : error.message);
                                                 Swal.fire(
-                                                    'Error!',
+                                                    'Failed!',
                                                     'An error occurred while retrying the payment. Please try again.',
                                                     'error'
                                                 );

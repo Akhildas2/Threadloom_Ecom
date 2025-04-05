@@ -104,8 +104,6 @@ const loadShop = async (req, res, next) => {
 
         const currentPage = parseInt(page);
         const userId = req.session.user_id;
-
-        // Trim searchQuery if it exists
         const trimmedSearchQuery = searchQuery ? searchQuery.trim() : '';
 
         // Initialize wishlist array
@@ -153,30 +151,89 @@ const loadShop = async (req, res, next) => {
             query.size = { $in: sizeArray };
         }
 
-
-        let sortQuery = {};
-        switch (sort) {
-            case 'popularity': sortQuery = { isHot: -1 }; break;
-            case 'featured': sortQuery = { isHot: 1 }; break;
-            case 'newArrivals': sortQuery = { isNewArrival: -1 }; break;
-            case 'bestSeller': sortQuery = { isBestSeller: -1 }; break;
-            case 'priceInc': sortQuery = { price: 1 }; break;
-            case 'priceDesc': sortQuery = { price: -1 }; break;
-            case 'az': sortQuery = { name: 1 }; break;
-            case 'za': sortQuery = { name: -1 }; break;
-            default: sortQuery = { createdAt: -1 };
+        let products;
+        if (sort === 'priceInc' || sort === 'priceDesc') {
+            const sortOrder = sort === 'priceInc' ? 1 : -1;
+            // Use an aggregation pipeline
+            products = await Product.aggregate([
+                { $match: query },
+                // Join with the Category collection to get the category offer.
+                {
+                    $lookup: {
+                        from: "categories",
+                        localField: "category",
+                        foreignField: "_id",
+                        as: "category"
+                    }
+                },
+                { $unwind: "$category" },
+                // Join with the Offer collection for the category (if any)
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "category.offer",
+                        foreignField: "_id",
+                        as: "category.offer"
+                    }
+                },
+                { $unwind: { path: "$category.offer", preserveNullAndEmptyArrays: true } },
+                // Join with the Offer collection for the product’s own offer (if any)
+                {
+                    $lookup: {
+                        from: "offers",
+                        localField: "offer",
+                        foreignField: "_id",
+                        as: "offer"
+                    }
+                },
+                { $unwind: { path: "$offer", preserveNullAndEmptyArrays: true } },
+                // Compute the effective discount (choose the higher discount between product offer and category offer)
+                {
+                    $addFields: {
+                        effectiveDiscount: {
+                            $max: [
+                                { $ifNull: ["$offer.discount", 0] },
+                                { $ifNull: ["$category.offer.discount", 0] }
+                            ]
+                        }
+                    }
+                },
+                // Compute the effective price
+                {
+                    $addFields: {
+                        effectivePrice: {
+                            $subtract: [
+                                "$price",
+                                { $multiply: ["$price", { $divide: ["$effectiveDiscount", 100] }] }
+                            ]
+                        }
+                    }
+                },
+                { $sort: { effectivePrice: sortOrder } },
+                { $skip: (currentPage - 1) * parseInt(limit) },
+                { $limit: parseInt(limit) }
+            ]);
+        } else {
+            let sortQuery = {};
+            switch (sort) {
+                case 'popularity': sortQuery = { isHot: -1 }; break;
+                case 'featured': sortQuery = { isHot: 1 }; break;
+                case 'newArrivals': sortQuery = { isNewArrival: -1 }; break;
+                case 'bestSeller': sortQuery = { isBestSeller: -1 }; break;
+                case 'az': sortQuery = { name: 1 }; break;
+                case 'za': sortQuery = { name: -1 }; break;
+                default: sortQuery = { createdAt: -1 };
+            }
+            products = await Product.find(query)
+                .populate({ path: "category", populate: { path: "offer" } })
+                .populate('offer')
+                .sort(sortQuery)
+                .skip((currentPage - 1) * limit)
+                .limit(parseInt(limit));
         }
 
         const newProducts = await Product.find().sort({ createdAt: -1 }).populate({ path: "category", populate: { path: "offer" } }).populate('offer').limit(3);
         const banner = await Banner.findOne({ status: "active", bannerType: "promotion" }).sort({ createdAt: -1 });
-
-        const products = await Product.find(query)
-            .populate({ path: "category", populate: { path: "offer" } })
-            .populate('offer')
-            .sort(sortQuery)
-            .skip((currentPage - 1) * limit)
-            .limit(parseInt(limit));
-
         const categories = await Category.find({ isUnlisted: false });
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);

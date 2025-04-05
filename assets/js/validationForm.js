@@ -84,8 +84,6 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                 setTimeout(() => {
                     location.href = res.data.url;
                 }, 3000);
-            } else {
-                console.error(res.data);
             }
         })
         .catch(err => {
@@ -106,8 +104,6 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
                     text: err.response.data.message,
                 });
 
-            } else {
-                console.error(err);
             }
         });
 });

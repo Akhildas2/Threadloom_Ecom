@@ -307,9 +307,8 @@
                                     }, 1000);
                                 })
                                 .catch(error => {
-                                    console.error('Error deleting offer:', error);
                                     Swal.fire(
-                                        'Error!',
+                                        'Operation Failed',
                                         'An error occurred while deleting the offer.',
                                         'error'
                                     );
@@ -434,9 +433,7 @@
                                     var modalButton = $(`#editOfferModal-${offerId} .btn-primary`);
                                     var errorMessage = $('#form-errors').text(err.response.data.message);
                                     modalButton.after(errorMessage);
-                                } else {
-                                    console.error(err);
-                                }
+                                } 
                             });
 
                     });

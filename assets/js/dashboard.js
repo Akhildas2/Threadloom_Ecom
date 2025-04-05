@@ -116,13 +116,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             })
             .catch(err => {
-                if (err.response && !err.response.data.success) {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error',
-                        text: err.response.data.message,
+                        title: 'Failed',
+                        text:err.response?.data?.message || "Something went wrong.",
                     });
-                }
             });
     });
 
@@ -193,13 +191,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 })
                 .catch(err => {
-                    if (err.response && !err.response.data.success) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: err.response.data.message,
+                            title: 'Failed',
+                            text: err.response?.data?.message || "Something went wrong."
                         });
-                    }
                 });
         });
 
@@ -280,13 +276,11 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 })
                 .catch(err => {
-                    if (err.response && !err.response.data.success) {
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error',
-                            text: err.response.data.message,
+                            title: 'Failed',
+                            text: err.response?.data?.message || "Something went wrong.",
                         });
-                    }
                 });
         });
 
@@ -328,8 +322,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
                         .catch(error => {
                             Swal.fire(
-                                'Error!',
-                                'An error occurred while deleting the address.',
+                                'Failed!',
+                                error.response?.data?.message || "Something went wrong.",
                                 'error'
                             );
                         });

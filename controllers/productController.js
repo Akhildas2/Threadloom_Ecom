@@ -185,6 +185,17 @@ const editProduct = async (req, res, next) => {
             return res.status(404).json({ error: 'Product not found' });
         }
 
+        // Check if the updated name already exists in another product
+        if (name && name !== existingProduct.name) {
+            const nameExists = await Product.findOne({ name: name, _id: { $ne: productId } });
+            if (nameExists) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'A product with this name already exists. Please use a different name.'
+                });
+            }
+        }
+
         // Validate file extensions if new files are uploaded
         if (req.files && req.files.length > 0) {
             const allowedExtensions = ['.jpg', '.jpeg', '.png'];
@@ -351,14 +362,28 @@ const addOffer = async (req, res, next) => {
     try {
         const productId = req.params.productId;
         const offerId = req.body.offerId;
+
         // Find the product by productId
         const product = await Product.findById(productId);
         // Check if the product exists
         if (!product) {
             return res.status(404).json({ success: false, message: 'Product not found' });
         }
+
+        // Find the offer by offerId
+        const offer = await Offer.findById(offerId);
+        if (!offer) {
+            return res.status(404).json({ success: false, message: 'Offer not found' });
+        }
+
+        // Offer's valid date range
+        const now = new Date();
+        if (now < offer.startingDate || now > offer.endingDate) {
+            return res.status(400).json({ success: false, message: 'Offer is not active at this time' });
+        }
+
+        // Add the offer to the product and save it
         product.offer = offerId;
-        // Save the updated product
         await product.save();
 
         return res.status(200).json({

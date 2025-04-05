@@ -300,19 +300,11 @@
                             }
                         })
                         .catch(err => {
-                            if (err.response && err.response.data && !err.response.data.success) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Something went wrong!',
-                                });
-                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Operation Failed',
+                                text: err.response?.data?.message || "Something went wrong.",
+                            });
                         });
                 });
 
@@ -485,13 +477,11 @@
                             }
                         })
                         .catch(err => {
-                            if (!err.response.data.success) {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: err.response.data.message,
-                                });
-                            }
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Operation Failed',
+                                text: err.response?.data?.message || "Something went wrong.",
+                            });
                         });
                 });
 
@@ -532,20 +522,14 @@
                                         }).then(() => {
                                             window.location.reload();
                                         });
-                                    } else {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Error',
-                                            text: res.data.message
-                                        });
                                     }
                                 })
                                 .catch(err => {
                                     // Show error alert
                                     Swal.fire({
                                         icon: 'error',
-                                        title: 'Error',
-                                        text: 'Failed to delete photo. Please try again later.'
+                                        title: 'Operation Failed',
+                                        text:  err.response?.data?.message || "Something went wrong."
                                     });
                                 });
                         }

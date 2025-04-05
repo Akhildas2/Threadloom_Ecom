@@ -386,11 +386,10 @@
                                     })
                                     .catch(error => {
                                         Swal.fire({
-                                            title: 'Error',
-                                            text: 'An error occurred while unlisting the category.',
+                                            title: 'Operation Failed',
+                                            text:  error.response?.data?.message || "Something went wrong.",
                                             icon: 'error'
                                         });
-                                        console.error('Error:', error);
                                     });
                             }
                         });
@@ -424,11 +423,10 @@
                                     })
                                     .catch(error => {
                                         Swal.fire({
-                                            title: 'Error',
-                                            text: 'An error occurred while listing the category.',
+                                            title: 'Operation Failed',
+                                            text:  error.response?.data?.message || "Something went wrong.",
                                             icon: 'error'
                                         });
-                                        console.error('Error:', error);
                                     });
                             }
                         });
@@ -482,11 +480,10 @@
                             })
                             .catch(error => {
                                 Swal.fire({
-                                    title: 'Error',
-                                    text: 'An error occurred while adding the offer.',
+                                    title: 'Operation Failed',
+                                    text: error.response?.data?.message || "Something went wrong.",
                                     icon: 'error'
                                 });
-                                console.error('Error:', error);
                             });
 
                     }
@@ -524,11 +521,10 @@
                                     .catch(error => {
                                         // Handle error
                                         Swal.fire({
-                                            title: 'Error',
-                                            text: 'An error occurred while removing the offer.',
+                                            title: 'Operation Failed',
+                                            text:  error.response?.data?.message || "Something went wrong.",
                                             icon: 'error'
                                         });
-                                        console.error('Error:', error);
                                     });
                             }
                         });
