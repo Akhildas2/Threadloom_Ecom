@@ -285,8 +285,10 @@
                                                                                             href="/order/orderDeatil/<%= order._id %>?productId=<%=  item.productId._id %>">
                                                                                             <h5
                                                                                                 class="card-title mb-0 text-truncate">
-                                                                                                <%= item.productId.name
-                                                                                                    %>
+                                                                                                <%= item.productId.name &&
+                                                                                                item.productId.name.length> 20 ?
+                                                                                                item.productId.name.slice(0, 20) + '...' :
+                                                                                                item.productId.name || '' %>
                                                                                             </h5>
                                                                                         </a>
                                                                                     </div>
@@ -817,7 +819,7 @@
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-secondary"
                                                         data-dismiss="modal">Close</button>
-                                                    <button type="button" class="btn btn-primary"
+                                                    <button type="button" class="btn  btn-fill-out"
                                                         id="changePasswordBtn">Change
                                                         Password</button>
                                                 </div>

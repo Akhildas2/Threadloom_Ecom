@@ -137,7 +137,14 @@ const productListPage = async (req, res, next) => {
             .skip(skip)
             .limit(limit);
 
-        const offers = await Offer.find({});
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const offers = await Offer.find({
+            startingDate: { $lte: today },
+            endingDate: { $gte: today }
+        }).sort({ createdAt: -1 })
+
         const totalCount = await Product.countDocuments(query);
         const totalPages = Math.ceil(totalCount / limit);
         const categories = await Category.find();

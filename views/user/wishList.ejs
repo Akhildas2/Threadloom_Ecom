@@ -3,20 +3,42 @@
 
         <style>
             .wishlist-container {
-                margin-top: 20px;
-                padding: 20px;
+                margin: 40px 0;
+                padding: 30px;
+                background: #ffffff;
+                border-radius: 15px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
             }
 
             .wishlist-message {
                 font-size: 1.5rem;
                 font-weight: 600;
-                text-align: center;
+                color: #2d2d2d;
+                padding: 30px;
+                background: #f8f9fa;
+                border-radius: 12px;
+                border-left: 4px solid #088178;
+            }
+
+            .wishlist-message a {
+                color: #088178;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+
+            .wishlist-message a:hover:after {
+                content: '→';
+                margin-left: 5px;
             }
 
             .wishlist-img {
                 max-width: 80%;
                 height: auto;
-                opacity: 0.9;
+                transition: transform 0.3s ease;
+            }
+
+            .wishlist-img:hover {
+                transform: scale(1.05);
             }
 
             .table-responsive {
@@ -100,74 +122,74 @@
             }
 
             @media (max-width: 480px) {
-    .wishlist-container,
-    .table-responsive,
-    .wishlist-title,
-    .wishlist-message {
-        text-align: center;
-    }
 
-    .wishlist-container .row {
-        flex-direction: column;
-        align-items: center;
-    }
+                .wishlist-container,
+                .table-responsive,
+                .wishlist-title,
+                .wishlist-message {
+                    text-align: center;
+                }
 
-    .shopping-summery thead {
-        display: none;
-    }
+                .wishlist-container .row {
+                    flex-direction: column;
+                    align-items: center;
+                }
 
-    .shopping-summery tbody,
-    .shopping-summery tr {
-        display: block;
-        width: 100%;
-    }
+                .shopping-summery thead {
+                    display: none;
+                }
 
-    .shopping-summery tr {
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 10px;
-        background: #fff;
-    }
+                .shopping-summery tbody,
+                .shopping-summery tr {
+                    display: block;
+                    width: 100%;
+                }
 
-    .shopping-summery td {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px;
-        font-size: 1rem;
-        text-align: center;
-        border: none;
-    }
+                .shopping-summery tr {
+                    margin-bottom: 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                    padding: 10px;
+                    background: #fff;
+                }
 
-    .shopping-summery td::before {
-        content: attr(data-title) "";
-        font-weight: 600;
-        flex: 1;
-        text-align: left;
-    }
+                .shopping-summery td {
+                    display: flex;
+                    justify-content: space-between;
+                    padding: 8px;
+                    font-size: 1rem;
+                    text-align: center;
+                    border: none;
+                }
 
-    .shopping-summery .image {
-        display: flex;
-        justify-content: center;
-    }
+                .shopping-summery td::before {
+                    content: attr(data-title) "";
+                    font-weight: 600;
+                    flex: 1;
+                    text-align: left;
+                }
 
-    .shopping-summery .image img {
-        max-width: 80px;
-        height: auto;
-        border-radius: 5px;
-    }
+                .shopping-summery .image {
+                    display: flex;
+                    justify-content: center;
+                }
 
-    .shopping-summery .action,
-    .shopping-summery .text-end {
-        text-align: center;
-    }
+                .shopping-summery .image img {
+                    max-width: 80px;
+                    height: auto;
+                    border-radius: 5px;
+                }
 
-    .pagination-area {
-        display: flex;
-        justify-content: center;
-    }
-}
+                .shopping-summery .action,
+                .shopping-summery .text-end {
+                    text-align: center;
+                }
 
+                .pagination-area {
+                    display: flex;
+                    justify-content: center;
+                }
+            }
         </style>
 
         <main class="main">
@@ -200,8 +222,7 @@
                                                 <div
                                                     class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
                                                     <div class="alert alert-info wishlist-message" role="alert">
-                                                        Hi buddy, your wishlist is empty. Please add some items to your
-                                                        wishlist.
+                                                        Hey buddy, your wishlist is currently empty. Start adding your favorite items by visiting the <a href='/shop'>shopping page</a>.
                                                     </div>
                                                 </div>
                                             </div>
@@ -444,7 +465,7 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } 
+                                            }
                                         })
                                         .catch(error => {
                                             Swal.fire(
@@ -493,9 +514,9 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } 
+                                            }
                                         })
-                                        .catch(error => {                                         
+                                        .catch(error => {
                                             Swal.fire(
                                                 'Failed!',
                                                 'Failed to clear the wishlist.',
@@ -559,14 +580,14 @@
                                         setTimeout(() => {
                                             location.reload();
                                         }, 3000);
-                                    } 
+                                    }
                                 })
                                 .catch(err => {
-                                        Swal.fire({
-                                            icon: 'error',
-                                            title: 'Failed',
-                                            text: err.response?.data?.message || "Something went wrong.",
-                                        });                                 
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Failed',
+                                        text: err.response?.data?.message || "Something went wrong.",
+                                    });
                                 });
                         }
 

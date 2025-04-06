@@ -85,9 +85,16 @@ const loadListCategory = async (req, res, next) => {
         }
 
         const categories = await Category.find(query).skip(skip).limit(limit);
-        const categoriesCount = await Category.countDocuments(query)
-        const totalPages = Math.ceil(categoriesCount / limit)
-        const offers = await Offer.find();
+        const categoriesCount = await Category.countDocuments(query);
+        const totalPages = Math.ceil(categoriesCount / limit);
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const offers = await Offer.find({
+            startingDate: { $lte: today },
+            endingDate: { $gte: today }
+        }).sort({ createdAt: -1 });
 
 
         res.render('listCategories', { categories, offers, currentPage: page, totalPages, categoryStatus, selectedLimit: limit, search, categoriesCount });

@@ -132,8 +132,8 @@ const placeOrder = async (req, res, next) => {
                 if (!product) {
                     return res.status(404).json({ message: `Product not found.` });
                 }
-                if (productDetail.quantity > 5) {
-                    return res.status(400).json({ message: `You can only buy a maximum of 5 quantities for product ${product.name}.` });
+                if (productDetail.quantity > 3) {
+                    return res.status(400).json({ message: `You can only buy a maximum of 3 quantities for product ${product.name}.` });
                 }
                 if (product.stockCount < productDetail.quantity) {
                     return res.status(400).json({ message: `Insufficient stock for product ${product.name}.` });
@@ -162,6 +162,7 @@ const placeOrder = async (req, res, next) => {
             }));
         });
 
+        if (orderItems.length > 5) { return res.status(400).json({ message: 'You can only place up to 5 products per order.' }); }
 
         //create order
         const order = new Order({

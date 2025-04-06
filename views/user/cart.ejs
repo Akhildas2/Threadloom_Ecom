@@ -20,8 +20,8 @@
                 transform: scale(1.05);
             }
 
-            .wishlist-message {
-                font-size: 1.8rem;
+            .cart-message {
+                font-size: 1.5rem;
                 font-weight: 600;
                 color: #2d2d2d;
                 padding: 30px;
@@ -30,18 +30,13 @@
                 border-left: 4px solid #088178;
             }
 
-            .wishlist-message a {
+            .cart-message a {
                 color: #088178;
                 transition: all 0.3s ease;
                 position: relative;
             }
 
-            .wishlist-message a:hover {
-                padding-left: 8px;
-                text-decoration: none;
-            }
-
-            .wishlist-message a:hover:after {
+            .cart-message a:hover:after {
                 content: '→';
                 margin-left: 5px;
             }
@@ -246,7 +241,7 @@
                                                 </div>
                                                 <div
                                                     class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
-                                                    <div class="alert alert-info wishlist-message" role="alert">
+                                                    <div class="alert alert-info cart-message" role="alert">
                                                         Hai buddy, your cart is empty. Please add some items to continue
                                                         <a href="/shop">shopping</a>.
                                                     </div>
@@ -259,7 +254,6 @@
                                         <h3 class="cart-title text-center">
                                             <i class="fas fa-shopping-cart" style="color: #088178;"></i>
                                             My Cart <span class="cart-count">(<%= totalCount %>)</span>
-                                            <%= console.log(totalCount) %>
                                         </h3>
                                         <div class="row mt-4">
                                             <div class="col-lg-8 col-md-12">
@@ -530,7 +524,6 @@
                     function incrementQuantity(itemId) {
                         const currentQuantityElement = document.querySelector(`span[data-item-id="${itemId}"]`);
                         if (!currentQuantityElement) {
-                            console.error(`Element with data-item-id="${itemId}" not found.`);
                             return;
                         }
                         const currentQuantity = parseInt(currentQuantityElement.textContent);
@@ -541,7 +534,6 @@
                     function decrementQuantity(itemId) {
                         const currentQuantityElement = document.querySelector(`span[data-item-id="${itemId}"]`);
                         if (!currentQuantityElement) {
-                            console.error(`Element with data-item-id="${itemId}" not found.`);
                             return;
                         }
                         const currentQuantity = parseInt(currentQuantityElement.textContent);
@@ -554,7 +546,6 @@
                     function updateCartItemQuantity(itemId, newQuantity, quantityElement) {
                         const subtotalElement = quantityElement.closest('tr').querySelector('.text-right');
                         if (!subtotalElement) {
-                            console.error(`Subtotal element for itemId="${itemId}" not found.`);
                             return;
                         }
 
