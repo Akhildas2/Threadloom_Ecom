@@ -84,7 +84,7 @@ const loadListCategory = async (req, res, next) => {
             query.categoryName = { $regex: search, $options: "i" };
         }
 
-        const categories = await Category.find(query).skip(skip).limit(limit);
+        const categories = await Category.find(query).sort({ createdAt: -1 }).skip(skip).limit(limit);
         const categoriesCount = await Category.countDocuments(query);
         const totalPages = Math.ceil(categoriesCount / limit);
 

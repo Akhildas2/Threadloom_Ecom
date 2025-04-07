@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-
+require("dotenv").config();
 
 
 const sendResetPasswordEmail = async (name, email, token) => {
@@ -16,7 +16,7 @@ const sendResetPasswordEmail = async (name, email, token) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "For Password Reset",
-      html: `<p>Hello ${name},<br><br>You have requested a password reset. Please click the following link to reset your password: <a href="http://localhost:3434/resetPassword?token=${token}">here</a>.</p>
+      html: `<p>Hello ${name},<br><br>You have requested a password reset. Please click the following link to reset your password: <a href="${process.env.BASE_URL}/resetPassword?token=${token}">here</a>.</p>
         `,
     };
 

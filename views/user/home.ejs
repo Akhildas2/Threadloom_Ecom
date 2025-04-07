@@ -822,7 +822,7 @@
                         </div>
                     </section>
 
-                    <section class="deals section-padding">
+                    <section class="deals section-padding mt-60">
                         <div class="container">
                             <div class="row">
                                 <% topDiscountedProducts.forEach((product, index)=> { %>
@@ -837,24 +837,22 @@
                                             </div>
                                             <div class="deal-content">
                                                 <h6 class="product-title">
-                                                    <a href="/product/<%= product._id %>">
+                                                    <a href="/productdetails/<%= product._id %>">
                                                         <%= product.name %>
                                                     </a>
                                                 </h6>
 
-                                                <div class="product-card__price d-flex">
-                                                    <span class="new-price text-success">
-                                                        ₹<%= product.price - (product.price * (product.offer ?
+                                                <div class="product-card__price d-flex fs-4">
+                                                    <span class="old-price text-danger"><del>₹ <%= product.price %></del></span>
+                                                    <span class="new-price text-success ms-2">
+                                                        ₹ <%= product.price - (product.price * (product.offer ?
                                                             product.offer.discount : 0) / 100) %>
                                                     </span>
-                                                    <span class="old-price text-danger">₹<%= product.price %></span>
                                                 </div>
                                             </div>
                                             <div class="deal-bottom">
                                                 <p>Hurry Up! Offer Ends In:</p>
-                                                <div class="deals-countdown"
-                                                    data-countdown="<%= product.offer ? product.offer.endingDate.toISOString().split('T')[0] + ' 00:00:00' : '' %>">
-                                                </div>
+                                                <div class="deals-countdown" data-countdown="<%= product.offer ? new Date(product.offer.endingDate).toISOString() : '' %>"></div>
                                                 <a href="/productdetails/<%= product._id %>" class="btn hover-up">Shop
                                                     Now <i class="fi-rs-arrow-right"></i></a>
                                             </div>

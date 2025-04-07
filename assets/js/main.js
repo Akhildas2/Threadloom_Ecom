@@ -158,32 +158,43 @@
 
     /*------ Timer Countdown ----*/
 
-    $('[data-countdown]').each(function () {
-        var $this = $(this);
-        var finalDate = $this.data('countdown');
-
-        if (finalDate) {
-            var endTime = new Date(finalDate.replace(/-/g, "/")).getTime();
-            var now = new Date().getTime();
-
-            if (now >= endTime) {
-                $this.html('<span style="color: red; font-weight: bold;">Offer Ended</span>');
-            } else {
-                $this.countdown(finalDate, function (event) {
-                    $(this).html(
-                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%D') + '</span><span class="countdown-period"> days </span></span>' +
-                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%H') + '</span><span class="countdown-period"> hours </span></span>' +
-                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%M') + '</span><span class="countdown-period"> mins </span></span>' +
-                        '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%S') + '</span><span class="countdown-period"> sec </span></span>'
-                    );
-                }).on('finish.countdown', function () {
+    $(document).ready(function () {
+        $('[data-countdown]').each(function () {
+            var $this = $(this);
+            var finalDateStr = $this.data('countdown');
+    
+            if (finalDateStr) {
+                // Convert ISO date string (T, Z) to a format jquery.countdown understands
+                let formatted = finalDateStr.replace('T', ' ').replace('Z', '');
+    
+                let endTime = Date.parse(formatted);
+                if (isNaN(endTime)) {
+                    $this.html('<span style="color: red; font-weight: bold;">Invalid Offer Date</span>');
+                    return;
+                }
+    
+                let now = new Date().getTime();
+    
+                if (now >= endTime) {
                     $this.html('<span style="color: red; font-weight: bold;">Offer Ended</span>');
-                });
+                } else {
+                    $this.countdown(formatted, function (event) {
+                        $(this).html(
+                            '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%D') + '</span><span class="countdown-period"> days </span></span>' +
+                            '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%H') + '</span><span class="countdown-period"> hours </span></span>' +
+                            '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%M') + '</span><span class="countdown-period"> mins </span></span>' +
+                            '<span class="countdown-section"><span class="countdown-amount hover-up">' + event.strftime('%S') + '</span><span class="countdown-period"> sec </span></span>'
+                        );
+                    }).on('finish.countdown', function () {
+                        $this.html('<span style="color: red; font-weight: bold;">Offer Ended</span>');
+                    });
+                }
+            } else {
+                $this.html('<span style="color: red; font-weight: bold;">No Offer</span>');
             }
-        } else {
-            $this.html('<span style="color: red; font-weight: bold;">No Offer</span>');
-        }
+        });
     });
+    
 
 
     /*------ Product slider active 1 ----*/
