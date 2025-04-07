@@ -297,6 +297,7 @@ const userList = async (req, res, next) => {
             searchQuery,
             sortField: sort,
             sortOrder: order,
+            totalCount
         });
 
     } catch (error) {

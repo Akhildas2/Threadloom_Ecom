@@ -16,6 +16,7 @@ userRoute.use((req, res, next) => {
   });
 
 
+  
 userRoute.get('/', pageController.loadHome);
 userRoute.get('/contact', pageController.loadContact);
 userRoute.get('/about', pageController.loadAbout);

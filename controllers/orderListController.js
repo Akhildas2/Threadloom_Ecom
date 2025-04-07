@@ -64,6 +64,7 @@ const loadOrderList = async (req, res, next) => {
             orderStatus,
             sortField: sort,
             sortOrder: order,
+            ordersCount
         });
 
     } catch (error) {
@@ -290,6 +291,7 @@ const loadSalesReport = async (req, res, next) => {
             sortOrder: order,
             search,
             orderStatus,
+            totalOrders
         });
 
     } catch (error) {
