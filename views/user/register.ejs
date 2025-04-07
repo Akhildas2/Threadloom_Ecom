@@ -35,7 +35,7 @@
                                     <div class="heading_s1">
                                         <h3 class="mb-20 text-center">Create an Account</h3>
                                     </div>
-                                    <form id="registerForm" action="/register" method="post" novalidate>
+                                    <form id="registerForm" action="/signup" method="post" novalidate>
                                         <div class="form-group">
                                             <input type="text" name="name" id="name" placeholder="Name">
                                         </div>
@@ -91,11 +91,17 @@
                                     </div>
                                     <ul class="btn-login list_none text-center mb-10 mt-10">
                                         <li>
-                                            <a href="/google" class="btn btn-google hover-up rounded-pill">
+                                            <a href="/auth/google/signup" class="btn btn-google hover-up rounded-pill">
                                                 Sign Up With <i class="fab fa-google"></i>
                                             </a>
                                         </li>
                                     </ul>
+                                    <% if (error) { %>
+                                        <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                          <%= error %>
+                                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        </div>
+                                      <% } %>
                                     <div class="text-center">Already have an account? <a href="/login">Sign
                                             in now</a></div>
                                 </div>

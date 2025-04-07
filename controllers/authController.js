@@ -33,8 +33,6 @@ const findOrCreateGoogleUser = async (id, displayName, email, req) => {
             await referral.save();
         }
 
-        // Set session for the user
-        req.session.user_id = user._id;
 
         return user;
 

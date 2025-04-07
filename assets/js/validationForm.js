@@ -62,7 +62,7 @@ document.querySelector('#registerForm').addEventListener('submit', async functio
     }
 
     // Post form data
-    axios.post('/register', data)
+    axios.post('/signup', data)
         .then(res => {
             if (res.data.status) {
                 // Display success toast

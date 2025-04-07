@@ -1148,9 +1148,7 @@
                                         text: 'Cash on delivery is only available for purchases below 1000.',
                                         confirmButtonText: 'Okay'
                                     });
-                                    setTimeout(() => {
                                         location.reload()
-                                    }, 1000);
 
                                     return; // Prevent further execution
                                 }
@@ -1202,7 +1200,6 @@
                                         text: errorMsg,
                                         confirmButtonText: 'Okay'
                                     });
-                                    console.error('Error placing order:', error);
                                 } finally {
                                     // Restore button state
                                     isSubmitting = false;

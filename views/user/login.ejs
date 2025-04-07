@@ -76,12 +76,18 @@
                                         </div>
                                         <ul class="btn-login list_none text-center mb-15 mt-15">
                                             <li>
-                                                <a href="/google" class="btn btn-google hover-up rounded-pill">
+                                                <a href="/auth/google/login" class="btn btn-google hover-up rounded-pill">
                                                     Sign in With <i class="fab fa-google"></i>
                                                 </a>
                                             </li>
                                         </ul>
-                                        <div class="text-center"><b>Create account?</b> <a href="/Register">Sign
+                                        <% if (error) { %>
+                                            <div class="alert alert-danger alert-dismissible fade show mt-4" role="alert">
+                                              <%= error %>
+                                              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                          <% } %>
+                                        <div class="text-center"><b>Create account?</b> <a href="/signup">Sign
                                                 up now</a></div>
                                     </div>
                                 </div>
