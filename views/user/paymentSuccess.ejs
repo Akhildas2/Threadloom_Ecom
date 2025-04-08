@@ -2,74 +2,253 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Payment Successful</title>
-    <!-- Link Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
     <style>
-        .container1 {
-            text-align: center;
-            background-color: #f0f8ff;
-            padding: 200px;
-            border-radius: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        :root {
+            --primary-color: #088178;
+            --secondary-color: #046963;
+            --background: #f8fafc;
         }
 
-        h1 {
-            color: #4CAF50;
-            font-size: 2.5em;
-            margin-top: 40px;
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--background);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
 
+        .container {
+            text-align: center;
+            background: white;
+            padding: 4rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 2rem;
+            z-index: 10;
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out forwards;
         }
 
         .success-icon {
-            color: #4CAF50;
-            font-size: 100px;
+            color: var(--primary-color);
+            font-size: 6rem;
+            margin-bottom: 1.5rem;
+            animation: scaleUp 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55) both;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin: 1rem 0;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.3s forwards;
         }
 
         p {
-            color: #333;
-            font-size: 1.2em;
-            margin-top: 20px;
+            color: #64748b;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 1.5rem 0;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.4s forwards;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.5s forwards;
         }
 
         .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            margin-top: 30px;
-
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
             text-decoration: none;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .btn:hover {
-            background-color: #45a049;
+        .primary-btn {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
         }
 
-        @media only screen and (max-width: 600px) {
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(16, 185, 129, 0.3);
+            background: var(--secondary-color);
+        }
+
+        .secondary-btn {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.6s forwards;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--primary-color);
+        }
+
+        .step-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        @keyframes fadeUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0);
+            }
+
+            to {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .confetti {
+            position: fixed;
+            top: -10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.8;
+            z-index: 1;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(720deg);
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 640px) {
             .container {
-                width: 50%;
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn {
+                justify-content: center;
             }
         }
     </style>
-
 </head>
 
 <body>
-    <div class="container1">
-        <div>
-          
-            <i class="fas fa-check-circle success-icon"></i>
-            <h1>Payment Successful!</h1>
-            <p>Thank you for your payment. Your transaction was successful.</p>
-        
-            <a href="/order/orderConfirmation/<%= orderId %>" class="btn">View Order</a>
+    <div class="container">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h1>Payment Successful!</h1>
+        <p>
+            🎉 Thank you for your purchase! Your order # <%= orderId %> has been confirmed.
+        </p>
+        <div class="progress-steps">
+            <div class="step">
+                <i class="fas fa-check-circle step-icon"></i>
+                <span>Payment Verified</span>
+            </div>
+            <div class="step">
+                <i class="fas fa-box-open step-icon"></i>
+                <span>Preparing Order</span>
+            </div>
+            <div class="step">
+                <i class="fas fa-shipping-fast step-icon"></i>
+                <span>Shipping Soon</span>
+            </div>
+        </div>
+        <div class="btn-group">
+            <a href="/order/orderConfirmation/<%= orderId %>" class="btn primary-btn">
+                <i class="fas fa-receipt"></i>
+                View Order Details
+            </a>
+            <a href="/" class="btn secondary-btn">
+                <i class="fas fa-arrow-left"></i>
+                Continue Shopping
+            </a>
+        </div>
+        <div class="additional-info" style="margin-top: 2rem; opacity: 0; animation: fadeIn 0.6s ease-out 0.7s forwards;">
+            <p style="font-size: 0.9rem; color: #808c9d;">
+                <i class="fas fa-lock"></i> Secure Payment Processed • 
+                <i class="fas fa-clock"></i> 24/7 Support Available
+            </p>
         </div>
     </div>
+
+    <script>
+        const confettiCount = 100;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement("div");
+            confetti.classList.add("confetti");
+
+            const size = Math.random() * 6 + 4;
+            confetti.style.width = `${size}px`;
+            confetti.style.height = `${size}px`;
+
+            confetti.style.left = Math.random() * 100 + "vw";
+            confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+
+            const duration = 5 + Math.random() * 5;
+            const delay = Math.random() * 5;
+
+            confetti.style.animationDuration = `${duration}s`;
+            confetti.style.animationDelay = `${delay}s`;
+
+            document.body.appendChild(confetti);
+        }
+    </script>
 </body>
 
 </html>

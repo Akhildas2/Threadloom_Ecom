@@ -2,73 +2,140 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payment Cancelled</title>
-    <!-- Link Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        .container1 {
-            text-align: center;
-            background-color: #f0f8ff;
-            padding: 200px;
-            border-radius: 25px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Cancelled</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    :root {
+      --primary-color: #FF4C4C;
+      --hover-color: #e53935;
+      --background: #fff5f5;
+    }
 
-        h1 {
-            color: #FF5733; /* Changed color to indicate cancellation */
-            font-size: 2.5em;
-            margin-top: 40px;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-        }
+    .container {
+      text-align: center;
+      background: #ffffff;
+      padding: 3rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+      max-width: 600px;
+      margin: 1rem;
+      animation: fadeIn 0.6s ease-out;
+    }
 
-        .cancel-icon { /* Changed icon to indicate cancellation */
-            color: #FF5733;
-            font-size: 100px;
-        }
+    .cancel-icon {
+      font-size: 5rem;
+      color: var(--primary-color);
+      animation: shake 0.6s ease-in-out;
+    }
 
-        p {
-            color: #333;
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
+    h1 {
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin: 1rem 0;
+    }
 
-        .btn {
-            display: inline-block;
-            background-color: #FF5733; /* Changed color to indicate cancellation */
-            margin-top: 30px;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
+    p {
+      font-size: 1.1rem;
+      color: #444;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
 
-        .btn:hover {
-            background-color: #FF4500; /* Changed hover color to match the cancellation theme */
-        }
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
 
-        @media only screen and (max-width: 600px) {
-            .container {
-                width: 50%;
-            }
-        }
-    </style>
+    .btn:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
 
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes shake {
+      0%, 100% {
+        transform: translateX(0);
+      }
+      20%, 60% {
+        transform: translateX(-8px);
+      }
+      40%, 80% {
+        transform: translateX(8px);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 2rem;
+      }
+
+      .cancel-icon {
+        font-size: 4rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 0.8rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
-    <div class="container1">
-        <div>
-            
-            <i class="fas fa-times-circle cancel-icon"></i> 
-            <h1>Payment Cancelled</h1> 
-            <p>Your payment has been cancelled. If you have any questions, please contact support.</p> 
-            <a href="/order/orderConfirmation/<%= orderId %>" class="btn">View Order</a>
+  <div class="container">
+    <i class="fas fa-times-circle cancel-icon"></i>
+    <h1>Payment Cancelled</h1>
+    <p>Your payment was not completed. If you have any questions, please contact our support team.</p>
 
-        </div>
+    <a href="/order/orderConfirmation/<%= orderId %>" class="btn">
+      View Order
+    </a>
+
+    <div class="additional-info" style="margin-top: 2rem; opacity: 0; animation: fadeIn 0.6s ease-out 0.7s forwards;">
+      <p style="font-size: 0.9rem; color: #808c9d;">
+        <i class="fas fa-info-circle" style="margin-right: 6px;"></i>
+        Please visit your order page to retry the payment.
+      </p>
     </div>
+  </div>
 </body>
 
 </html>

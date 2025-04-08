@@ -210,7 +210,7 @@
                                                                                     Order #<%= order.ordersId %> - <%=
                                                                                             order.date.toDateString() %>
                                                                                             <strong>₹ <%=
-                                                                                                    order.totalAmount %>
+                                                                                                    order.totalAmount.toFixed(2) %>
                                                                                             </strong>
                                                                                 </li>
                                                                                 <% }); %>

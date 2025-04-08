@@ -23,8 +23,6 @@ const sendResetPasswordEmail = async (name, email, token) => {
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
-      } else {
-        console.log("Email has been sent:", info.response);
       }
     });
   } catch (error) {
