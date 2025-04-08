@@ -825,43 +825,50 @@
                     <section class="deals section-padding mt-60">
                         <div class="container">
                             <div class="row">
-                                <% topDiscountedProducts.forEach((product, index)=> { %>
-                                    <div class="col-lg-6 deal-co">
-                                        <div class="deal wow fadeIn animated mb-md-4 mb-sm-4 mb-lg-0"
-                                            style="background-image: url('/uploads/product/resized/<%= product.productImage[0] %>'); height: 300px;">
-                                            <div class="deal-top">
-                                                <h2 class="text-brand">
-                                                    <%= index===0 ? 'Deal of the Day' : 'Limited Time Offer' %>
-                                                </h2>
-                                                <h5>Limited quantities.</h5>
-                                            </div>
-                                            <div class="deal-content">
-                                                <h6 class="product-title">
-                                                    <a href="/productdetails/<%= product._id %>">
-                                                        <%= product.name %>
-                                                    </a>
-                                                </h6>
-
-                                                <div class="product-card__price d-flex fs-4">
-                                                    <span class="old-price text-danger"><del>₹ <%= product.price %></del></span>
-                                                    <span class="new-price text-success ms-2">
-                                                        ₹ <%= product.price - (product.price * (product.offer ?
-                                                            product.offer.discount : 0) / 100) %>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="deal-bottom">
-                                                <p>Hurry Up! Offer Ends In:</p>
-                                                <div class="deals-countdown" data-countdown="<%= product.offer ? new Date(product.offer.endingDate).toISOString() : '' %>"></div>
-                                                <a href="/productdetails/<%= product._id %>" class="btn hover-up">Shop
-                                                    Now <i class="fi-rs-arrow-right"></i></a>
+                                <% topDiscountedProducts.forEach((product, index)=> { 
+                                    const discountedPrice = product.price - (product.price * (product.offer ? product.offer.discount : 0) / 100);
+                                %>
+                                <div class="col-lg-6 deal-co">
+                                    <div class="deal wow fadeIn animated position-relative overflow-hidden text-white"
+                                        style="background-image: url('/uploads/product/resized/<%= product.productImage[0] %>'); background-size: cover; background-position: center; height: 300px; border-radius: 15px;">
+                    
+                                        <!-- Dark overlay -->
+                                        <div class="overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 1;"></div>
+                    
+                                        <!-- Content -->
+                                        <div class="deal-top position-relative" style="z-index: 2;">
+                                            <h2 class="text-brand">
+                                                <%= index===0 ? 'Deal of the Day' : 'Limited Time Offer' %>
+                                            </h2>
+                                            <h5 class="text-light">Limited quantities.</h5>
+                                        </div>
+                    
+                                        <div class="deal-content position-relative" style="z-index: 2;">
+                                            <h6 class="product-title mb-2 text-truncate" style="max-width: 100%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;">
+                                                <a href="/productdetails/<%= product._id %>" class="text-white text-decoration-none d-inline-block w-100">
+                                                    <%= product.name %>
+                                                </a>
+                                            </h6>
+                                            
+                                            <div class="product-card__price d-flex fs-5 align-items-center">
+                                                <span class="old-price text-danger me-2"><del>₹ <%= product.price %></del></span>
+                                                <span class="new-price text-success fw-bold">₹ <%= discountedPrice %></span>
                                             </div>
                                         </div>
+                    
+                                        <div class="deal-bottom position-relative  d-flex flex-column gap-2" style="z-index: 2;">
+                                            <p class="mb-1 text-danger fw-bold">Hurry Up! Offer Ends In:</p>
+                                            <div class="deals-countdown text-warning fw-bold" data-countdown="<%= product.offer ? new Date(product.offer.endingDate).toISOString() : '' %>"></div>
+                                            <a href="/productdetails/<%= product._id %>" class="btn mt-2 align-self-start">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                                        </div>
+                    
                                     </div>
-                                    <% }) %>
+                                </div>
+                                <% }) %>
                             </div>
                         </div>
                     </section>
+                    
 
                     <section class="section-padding mt-40">
                         <div class="container">
@@ -1159,7 +1166,14 @@
                                                 setTimeout(() => {
                                                     location.reload();
                                                 }, 3000);
-                                            } 
+                                            } else {
+                                                 // Handle errors
+                                                 Swal.fire({
+                                                     title: 'Failed!',
+                                                     text: data.message,
+                                                     icon: 'error',
+                                                 });
+                                             } 
                                         })
                                         .catch(err => {
                                                 Swal.fire({

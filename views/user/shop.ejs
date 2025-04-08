@@ -744,7 +744,14 @@
                                                 location.reload();
                                             }, 3000);
 
-                                        } 
+                                        } else {
+                                                 // Handle errors
+                                                 Swal.fire({
+                                                     title: 'Failed!',
+                                                     text: data.message,
+                                                     icon: 'error',
+                                                 });
+                                             } 
                                     })
                                     .catch(err => {
                                             Swal.fire({

@@ -208,7 +208,7 @@
                                                                                                                             <ins><del>₹
                                                                                                                                     <%= product.price.toFixed(2)
                                                                                                                                         %>
-                                                                                                                                        </del></ins>
+                                                                                                                                </del></ins>
                                                                                                                             <ins
                                                                                                                                 style="margin-left: 20px;">
                                                                                                                                 <span
@@ -216,7 +216,7 @@
                                                                                                                                     style="color: green;">₹
                                                                                                                                     <%= discountedPrice.toFixed(2)
                                                                                                                                         %>
-                                                                                                                                        </span>
+                                                                                                                                </span>
                                                                                                                             </ins>
                                                                                                                             <ins
                                                                                                                                 style="margin-left: 20px;">
@@ -226,7 +226,8 @@
                                                                                                                                     <%= discountPercentage
                                                                                                                                         %>
                                                                                                                                         %
-                                                                                                                                        off)</span>
+                                                                                                                                        off)
+                                                                                                                                </span>
                                                                                                                             </ins>
                                                                                                                         </span>
                                                                                                                         <% } else
@@ -236,7 +237,7 @@
                                                                                                                                     style="color: green;">₹
                                                                                                                                     <%= product.price.toFixed(2)
                                                                                                                                         %>
-                                                                                                                                        </span></ins>
+                                                                                                                                </span></ins>
                                                                                                                             <% }
                                                                                                                                 %>
                                                     </div>
@@ -807,20 +808,21 @@
                                                                                                                                 <del><strong>₹
                                                                                                                                         <%= product.price.toFixed(2)
                                                                                                                                             %>
-                                                                                                                                            </strong></del>
+                                                                                                                                    </strong></del>
                                                                                                                                 &nbsp;<span
                                                                                                                                     class="discounted-price"
                                                                                                                                     style="color: green;"><strong>₹
                                                                                                                                         <%= discountedPrice.toFixed(2)
                                                                                                                                             %>
-                                                                                                                                            </strong></span>
+                                                                                                                                    </strong></span>
                                                                                                                                 &nbsp;<span
                                                                                                                                     class="discounted-percentage"
                                                                                                                                     style="color: red;"><strong>(
                                                                                                                                         <%= discountPercentage
                                                                                                                                             %>
                                                                                                                                             %
-                                                                                                                                            off)</strong></span>
+                                                                                                                                            off)
+                                                                                                                                    </strong></span>
                                                                                                                             </span>
                                                                                                                             <% } else
                                                                                                                                 {
@@ -829,7 +831,7 @@
                                                                                                                                     style="color: green;"><strong>₹
                                                                                                                                         <%= product.price.toFixed(2)
                                                                                                                                             %>
-                                                                                                                                            </strong></span>
+                                                                                                                                    </strong></span>
                                                                                                                                 <% }
                                                                                                                                     %>
                                                         </div>
@@ -952,13 +954,13 @@
                             }
                         })
                         .catch(err => {
-                            if (!err.data.success) {   
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed',
-                                text: err.response?.data?.message || "Something went wrong.",
-                            });
-                        }
+                            if (!err.data.success) {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed',
+                                    text: err.response?.data?.message || "Something went wrong.",
+                                });
+                            }
                         });
                 });
 
@@ -1081,6 +1083,13 @@
                                     location.reload();
                                 });
 
+                            } else {
+                                // Handle errors
+                                Swal.fire({
+                                    title: 'Failed!',
+                                    text: data.message,
+                                    icon: 'error',
+                                });
                             }
                         })
                         .catch(err => {

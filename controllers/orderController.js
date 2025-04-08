@@ -116,8 +116,8 @@ const placeOrder = async (req, res, next) => {
         const randomOrderId = generateRandomString(5);
         const totalAmount = parseFloat(total) + shippingChargeAmount;
 
-        if (parseFloat(totalAmount) !== 10000) {
-            return res.status(400).json({ message: 'Orders can only be placed for a total amount of exactly ₹10,000.' });
+        if (parseFloat(totalAmount) >= 10000) {
+            return res.status(400).json({ message: 'Orders can only be placed for a total amount below ₹10,000.' });
         }
         
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal' && paymentMethod !== 'wallet') {

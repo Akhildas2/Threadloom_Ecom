@@ -158,7 +158,8 @@
                                             aria-labelledby="dashboard-tab">
                                             <div class="card shadow-sm">
                                                 <div class="card-header text-white">
-                                                    <h5 class="mb-0">Hello, <%= userData.name %> 👋</h5>
+                                                    <h5 class="mb-0">Hello, <%= userData.name.charAt(0).toUpperCase() + userData.name.slice(1).toLowerCase() %>
+                                                        👋</h5>
                                                 </div>
                                                 <div class="card-body">
                                                     <p class="mt-2">Welcome to your account dashboard. Here you can
@@ -833,14 +834,14 @@
                                         <div class="card" style="padding: 30px;">
                                             <div class="card-body">
                                                 <h5 style="text-align: center;">
-                                                    Earn ₹150 for every referral
+                                                    Earn ₹ 100 for every referral
                                                     <a href="#" data-toggle="modal" data-target="#shareModal">
                                                         <i class="fas fa-share-alt"></i>
                                                     </a>
                                                 </h5>
                                                 <br>
-                                                <p>Introduce your friends to shopping on Threadloom and get ₹150 in
-                                                    rewards every time they join. Your friend also gets ₹50!</p>
+                                                <p>Introduce your friends to shopping on Threadloom and get ₹ 100 in
+                                                    rewards every time they join. Your friend also gets ₹ 50!</p>
                                                 <div class="referral-code-container">
                                                     <div class="referral-code-box">
                                                         <%= referral.referralCode %>
@@ -907,7 +908,7 @@
                                     <div class="tab-pane fade" id="wallet" role="tabpanel" aria-labelledby="wallet-tab">
                                         <div class="card">
                                             <div class="card-header">
-                                                <h5 class="mb-0">Hello ,<%= userData.name %>
+                                                <h5 class="mb-0">Hello ,<%= userData.name.charAt(0).toUpperCase() + userData.name.slice(1).toLowerCase() %>
                                                 </h5>
                                             </div>
 

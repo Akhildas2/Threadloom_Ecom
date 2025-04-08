@@ -359,9 +359,9 @@
                   <%= order.paymentMethod %>
                 </p>
                 <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
-                  <% if (order.status==='retry' ) { %>
-                    <button id="retryButton" class="btn-sm btn-primary">
-                      <i class="fas fa-redo"></i> Retry Payment
+                  <% if (order.status==='retry' || order.status==='pending' ) { %>
+                    <button id="retryButton" class="btn btn-sm rounded-pill">
+                      <i class="fas fa-redo me-2"></i> Retry Payment
                     </button>
                     <% } else { %>
                       <span class="badge rounded-pill 

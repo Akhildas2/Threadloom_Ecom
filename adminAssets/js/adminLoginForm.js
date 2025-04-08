@@ -8,9 +8,9 @@ document.getElementById('adminLogin').addEventListener('submit', function (event
 
     const email = data.email;
     const password = data.password;
-    const emailRegex = /^[^\s@]+@gmail\.com$/i;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/i;
     if (!emailRegex.test(email)) {
-        errors.push("Invalid email. Please enter a valid Gmail address. eg:example@gmail.com");
+        errors.push("Invalid email. Please enter a valid email address. eg:example@gmail.com");
         $('#emailError').text(errors[errors.length - 1]); // Update error message for email
     } else {
         $('#emailError').text(""); // Clear error message for email if valid

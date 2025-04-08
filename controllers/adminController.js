@@ -260,7 +260,7 @@ const userList = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
-        let { sort = 'name', order = 'asc' } = req.query;
+        let { sort = 'createdAt', order = 'desc' } = req.query;
         const sortOrder = order === 'asc' ? 1 : -1;
         const searchQuery = req.query.search ? req.query.search.trim() : '';
         let query = { isVerified: true };
@@ -280,7 +280,7 @@ const userList = async (req, res, next) => {
         }
 
         // Define sorting options
-        const sortField = ['name', 'email', 'mobile'];
+        const sortField = ['name', 'email', 'mobile', 'createdAt'];
         const sortOptions = sortField.includes(sort) ? { [sort]: sortOrder } : {};
 
 
