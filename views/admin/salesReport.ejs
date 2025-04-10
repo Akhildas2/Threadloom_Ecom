@@ -108,6 +108,7 @@
                         </div>
                         </form>
                     </div>
+                    <div id="dateError" style="color: red; font-size: 14px; margin-top: 5px;"></div>
                 </header>
                 <header class="card-header">
                     <div class="row g-2 align-items-center">
@@ -183,12 +184,11 @@
                                                             <% } %>
                                                 </a>
                                             </th>
-
-                                            <th class="py-3 border-0">
-                                                <a href="?sort=expectedDelivery&order=<%= sortField === 'expectedDelivery' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                            <th class="text-center py-3 border-0">
+                                                <a href="?sort=customer&order=<%= sortField === 'customer' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
                                                     class="text-reset text-decoration-none d-inline-flex align-items-center">
-                                                    Delivery Date
-                                                    <% if (sortField==='expectedDelivery' ) { %>
+                                                    Customer
+                                                    <% if (sortField==='customer' ) { %>
                                                         <i
                                                             class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
                                                         <% } else { %>
@@ -196,11 +196,11 @@
                                                             <% } %>
                                                 </a>
                                             </th>
-                                            <th class="text-center py-3 border-0">
-                                                <a href="?sort=customer&order=<%= sortField === 'customer' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
+                                            <th class="py-3 border-0">
+                                                <a href="?sort=deliveryDate&order=<%= sortField === 'deliveryDate' ? (sortOrder === 'asc' ? 'desc' : 'asc') : 'asc' %>"
                                                     class="text-reset text-decoration-none d-inline-flex align-items-center">
-                                                    Customer
-                                                    <% if (sortField==='customer' ) { %>
+                                                    Delivery Date
+                                                    <% if (sortField==='deliveryDate' ) { %>
                                                         <i
                                                             class="fas fa-sort-<%= sortOrder === 'asc' ? 'up' : 'down' %> ms-2"></i>
                                                         <% } else { %>
@@ -236,137 +236,186 @@
                                                 </a>
                                             </th>
                                         </tr>
-
-
                                     </thead>
+
                                     <tbody>
                                         <% let index=1; %>
                                             <% orders.forEach(order=> { %>
                                                 <% let isFirstProduct=true; %>
-                                                    <% order.items.forEach((item)=> { %>
-                                                        <tr
-                                                            class="position-relative <%= item === order.items[order.items.length - 1] ? 'border-bottom' : '' %>">
-                                                            <% if (isFirstProduct) { %>
-                                                                <td class="text-center align-middle"
-                                                                    rowspan="<%= order.items.length %>">
-                                                                    <span class="badge badge-light">
-                                                                        <%= index %>
-                                                                    </span>
-                                                                </td>
-                                                                <td class="align-middle"
-                                                                    rowspan="<%= order.items.length %>">
-                                                                    <%= order.ordersId %>
-                                                                </td>
-                                                                <td class="align-middle"
-                                                                    rowspan="<%= order.items.length %>">
-                                                                    <span class="text-nowrap">
-                                                                        <%= new
-                                                                            Date(order.expectedDelivery).toLocaleDateString('en-IN',
-                                                                            { day: '2-digit' , month: 'short' ,
-                                                                            year: 'numeric' }) %>
-                                                                    </span>
-                                                                </td>
-                                                                <td class="align-middle"
-                                                                    rowspan="<%= order.items.length %>">
-                                                                    <div
-                                                                        class="d-flex align-items-center justify-content-center">
-                                                                        <div class="ml-2">
-                                                                            <div>
-                                                                                <%=
-                                                                                    order.deliveryAddress.fullName.length>
-                                                                                    10
-                                                                                    ?
-                                                                                    order.deliveryAddress.fullName.slice(0,15)
-                                                                                    + '...' :
-                                                                                    order.deliveryAddress.fullName
-                                                                                    %>
-                                                                            </div>
-                                                                            <small class="text-muted">
-                                                                                <%= order.deliveryAddress.city &&
-                                                                                    order.deliveryAddress.city.length>
-                                                                                    15
-                                                                                    ?
-                                                                                    order.deliveryAddress.city.slice(0,
-                                                                                    15) + '...'
-                                                                                    : order.deliveryAddress.city %>
+                                                    <% const firstDate=new
+                                                        Date(order.items[0].deliveryDate).toDateString(); const
+                                                        allSameDate=order.items.every(i=> new
+                                                        Date(i.deliveryDate).toDateString() === firstDate);
+                                                        %>
 
-                                                                            </small>
-                                                                        </div>
-                                                                    </div>
-                                                                </td>
-                                                                <% } %>
-                                                                    <td class="align-middle">
+                                                        <% order.items.forEach((item,itemIndex)=> { %>
+                                                            <tr
+                                                                class="position-relative <%= item === order.items[order.items.length - 1] ? 'border-bottom' : '' %>">
+                                                                <% if (isFirstProduct) { %>
+                                                                    <td class="text-center align-middle"
+                                                                        rowspan="<%= order.items.length %>">
+                                                                        <span class="badge badge-light">
+                                                                            <%= index %>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="align-middle"
+                                                                        rowspan="<%= order.items.length %>">
+                                                                        <%= order.ordersId %>
+                                                                    </td>
+
+                                                                    <td class="align-middle"
+                                                                        rowspan="<%= order.items.length %>">
                                                                         <div
-                                                                            class="d-flex align-items-center justify-content-center text-center">
-                                                                            <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
-                                                                                class="img-thumbnail border rounded"
-                                                                                style="width: 60px; height: 60px; object-fit: cover;">
-                                                                            <div class="ms-2">
+                                                                            class="d-flex align-items-center justify-content-center">
+                                                                            <div class="ml-2">
                                                                                 <div>
-                                                                                    <%= item.productId.name.length> 20
-                                                                                        ? item.productId.name.slice(0,
-                                                                                        20) + '...'
-                                                                                        : item.productId.name %>
-
+                                                                                    <%=
+                                                                                        order.deliveryAddress.fullName.length>
+                                                                                        15
+                                                                                        ?
+                                                                                        order.deliveryAddress.fullName.slice(0,12)
+                                                                                        + '...' :
+                                                                                        order.deliveryAddress.fullName
+                                                                                        %>
                                                                                 </div>
-                                                                                <small class="text-muted">Quantity: <%=
-                                                                                        item.quantity %></small>
+                                                                                <small class="text-muted">
+                                                                                    <%= order.deliveryAddress.city &&
+                                                                                        order.deliveryAddress.city.length>
+                                                                                        15
+                                                                                        ?
+                                                                                        order.deliveryAddress.city.slice(0,
+                                                                                        12) + '...'
+                                                                                        : order.deliveryAddress.city %>
+
+                                                                                </small>
                                                                             </div>
                                                                         </div>
                                                                     </td>
-                                                                    <td class="text-right align-middle">₹<%=
-                                                                            item.price.toLocaleString('en-IN') %>
-                                                                    </td>
-                                                                    <% if (isFirstProduct) { %>
-                                                                        <td class="text-right align-middle text-success"
-                                                                            rowspan="<%= order.items.length %>">
-                                                                            <% let fullDiscount=(order.offerDiscount ||
-                                                                                0) + (order.couponDiscount || 0) %>
-                                                                                <% if(fullDiscount> 0) { %>
-                                                                                    -₹<%=
-                                                                                        fullDiscount.toLocaleString('en-IN')
-                                                                                        %>
-                                                                                        <% } else { %>
+                                                                    <% } %>
+
+                                                                        <% if (allSameDate) { %>
+                                                                            <% if (itemIndex===0) { %>
+                                                                                <!-- Show delivery date once -->
+                                                                                <td class="align-middle"
+                                                                                    rowspan="<%= order.items.length %>">
+                                                                                    <span class="text-nowrap ms-2">
+                                                                                        <%= new
+                                                                                            Date(item.deliveryDate).toLocaleDateString('en-IN',
+                                                                                            { day: '2-digit' ,
+                                                                                            month: 'short' ,
+                                                                                            year: 'numeric' }) %>
+                                                                                    </span>
+                                                                                </td>
+                                                                                <% } %>
+                                                                                    <% } else { %>
+                                                                                        <!-- Show each delivery date -->
+                                                                                        <td class="align-middle">
                                                                                             <span
-                                                                                                class="text-muted">0</span>
-                                                                                            <% } %>
-                                                                        </td>
-                                                                        <td class="align-middle"
-                                                                            rowspan="<%= order.items.length %>">
-                                                                            <span
-                                                                                class="badge bg-light text-white border">
-                                                                                <% if (order.paymentMethod==='cod' ) {
-                                                                                    %>
-                                                                                    <i
-                                                                                        class="fas fa-credit-card text-primary me-2"></i>
-                                                                                    <% } else if
-                                                                                        (order.paymentMethod==='paypal'
-                                                                                        ) { %>
-                                                                                        <i
-                                                                                            class="fab fa-paypal text-info me-2"></i>
-                                                                                        <% } else { %>
-                                                                                            <i
-                                                                                                class="fas fa-wallet text-success me-2"></i>
-                                                                                            <% } %>
-                                                                                                <%= order.paymentMethod
+                                                                                                class="text-nowrap ms-2">
+                                                                                                <%= new
+                                                                                                    Date(item.deliveryDate).toLocaleDateString('en-IN',
+                                                                                                    { day: '2-digit' ,
+                                                                                                    month: 'short' ,
+                                                                                                    year: 'numeric' })
                                                                                                     %>
-                                                                            </span>
+                                                                                            </span>
+                                                                                        </td>
+                                                                                        <% } %>
 
-                                                                        </td>
-                                                                        <td class="text-right align-middle font-weight-bold"
-                                                                            rowspan="<%= order.items.length %>">
-                                                                            ₹<%= order.totalAmount.toLocaleString('en-IN')
-                                                                                %>
-                                                                        </td>
-                                                                        <% } %>
+                                                                                            <td class="align-middle">
+                                                                                                <div
+                                                                                                    class="d-flex align-items-center justify-content-center text-center">
+                                                                                                    <img src="/uploads/product/resized/<%= item.productId.productImage[0] %>"
+                                                                                                        class="img-thumbnail border rounded"
+                                                                                                        style="width: 60px; height: 60px; object-fit: cover;">
+                                                                                                    <div class="ms-2">
+                                                                                                        <div>
+                                                                                                            <%=
+                                                                                                                item.productId.name.length>
+                                                                                                                20
+                                                                                                                ?
+                                                                                                                item.productId.name.slice(0,
+                                                                                                                17) +
+                                                                                                                '...'
+                                                                                                                :
+                                                                                                                item.productId.name
+                                                                                                                %>
 
-                                                        </tr>
+                                                                                                        </div>
+                                                                                                        <small
+                                                                                                            class="text-muted">Quantity:
+                                                                                                            <%= item.quantity
+                                                                                                                %>
+                                                                                                                </small>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </td>
+                                                                                            <td
+                                                                                                class="text-right align-middle">
+                                                                                                ₹<%= item.price.toLocaleString('en-IN')
+                                                                                                    %>
+                                                                                            </td>
+                                                                                            <% if (isFirstProduct) { %>
+                                                                                                <td class="text-right align-middle text-success"
+                                                                                                    rowspan="<%= order.items.length %>">
+                                                                                                    <% let
+                                                                                                        fullDiscount=(order.offerDiscount
+                                                                                                        || 0) +
+                                                                                                        (order.couponDiscount
+                                                                                                        || 0) %>
+                                                                                                        <%
+                                                                                                            if(fullDiscount>
+                                                                                                            0) { %>
+                                                                                                            -₹<%=
+                                                                                                                fullDiscount.toLocaleString('en-IN')
+                                                                                                                %>
+                                                                                                                <% } else
+                                                                                                                    { %>
+                                                                                                                    <span
+                                                                                                                        class="text-muted">0</span>
+                                                                                                                    <% }
+                                                                                                                        %>
+                                                                                                </td>
+                                                                                                <td class="align-middle"
+                                                                                                    rowspan="<%= order.items.length %>">
+                                                                                                    <span
+                                                                                                        class="badge bg-light text-white border">
+                                                                                                        <% if
+                                                                                                            (order.paymentMethod==='cod'
+                                                                                                            ) { %>
+                                                                                                            <i
+                                                                                                                class="fas fa-credit-card text-primary me-2"></i>
+                                                                                                            <% } else if
+                                                                                                                (order.paymentMethod==='paypal'
+                                                                                                                ) { %>
+                                                                                                                <i
+                                                                                                                    class="fab fa-paypal text-info me-2"></i>
+                                                                                                                <% } else
+                                                                                                                    { %>
+                                                                                                                    <i
+                                                                                                                        class="fas fa-wallet text-success me-2"></i>
+                                                                                                                    <% }
+                                                                                                                        %>
+                                                                                                                        <%= order.paymentMethod
+                                                                                                                            %>
+                                                                                                    </span>
 
-                                                        <% isFirstProduct=false; %>
-                                                            <% }) %>
-                                                                <% index++; %>
-                                                                    <% }) %>
+                                                                                                </td>
+                                                                                                <td class="text-right align-middle font-weight-bold"
+                                                                                                    rowspan="<%= order.items.length %>">
+                                                                                                    ₹<%= order.totalAmount.toLocaleString('en-IN')
+                                                                                                        %>
+                                                                                                </td>
+                                                                                                <% } %>
+
+                                                            </tr>
+
+                                                            <% isFirstProduct=false; %>
+                                                                <% }) %>
+                                                                    <% index++; %>
+                                                                        <% }) %>
                                     </tbody>
+
                                 </table>
                             </div>
                         </div>
@@ -416,10 +465,10 @@
                 </nav>
             </div>
         </section>
+
         <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
         <script>
-
             document.addEventListener("DOMContentLoaded", function () {
                 const startDateInput = document.getElementById('startDate');
                 const endDateInput = document.getElementById('endDate');
@@ -427,19 +476,54 @@
 
                 startDateInput.addEventListener('change', updatePeriodBasedOnDates);
                 endDateInput.addEventListener('change', updatePeriodBasedOnDates);
-                periodSelect.addEventListener('change', resetDateRange);
+                periodSelect.addEventListener('change', updateDateRangeBasedOnPeriod);
 
                 function updatePeriodBasedOnDates() {
                     const startDate = new Date(startDateInput.value);
                     const endDate = new Date(endDateInput.value);
-                    const diffDays = calculateDiffInDays(startDate, endDate);
 
-                    periodSelect.value = getPeriodBasedOnDays(diffDays);
+                    if (isValidDate(startDate) && isValidDate(endDate)) {
+                        const diffDays = calculateDiffInDays(startDate, endDate);
+                        periodSelect.value = getPeriodBasedOnDays(diffDays);
+                    }
                 }
 
-                function resetDateRange() {
-                    startDateInput.value = '';
-                    endDateInput.value = '';
+                function updateDateRangeBasedOnPeriod() {
+                    const today = new Date();
+                    let startDate, endDate;
+
+                    switch (periodSelect.value) {
+                        case 'daily':
+                            startDate = new Date(today);
+                            endDate = new Date(today);
+                            break;
+                        case 'weekly':
+                            endDate = new Date(today);
+                            startDate = new Date(today);
+                            startDate.setDate(endDate.getDate() - 6); // 7 days total
+                            break;
+                        case 'monthly':
+                            endDate = new Date(today);
+                            startDate = new Date(today);
+                            startDate.setDate(endDate.getDate() - 30); // approx. 1 month
+                            break;
+                        case 'yearly':
+                            endDate = new Date(today);
+                            startDate = new Date(today);
+                            startDate.setDate(endDate.getDate() - 364); // approx. 1 year
+                            break;
+                        default:
+                            startDate = '';
+                            endDate = '';
+                    }
+
+                    if (startDate && endDate) {
+                        startDateInput.valueAsDate = startDate;
+                        endDateInput.valueAsDate = endDate;
+                    } else {
+                        startDateInput.value = '';
+                        endDateInput.value = '';
+                    }
                 }
 
                 function calculateDiffInDays(dateFrom, dateTo) {
@@ -449,13 +533,40 @@
 
                 function getPeriodBasedOnDays(days) {
                     if (days === 0) return 'daily';
-                    if (days === 7) return 'weekly';
-                    if (days === 31) return 'monthly';
-                    if (days === 365) return 'yearly';
+                    if (days === 6) return 'weekly'; // 7-day range (start to end is 6 days apart)
+                    if (days >= 27 && days <= 31) return 'monthly';
+                    if (days >= 364 && days <= 366) return 'yearly';
                     return 'custom';
                 }
+
+                function isValidDate(d) {
+                    return d instanceof Date && !isNaN(d);
+                }
+
+                function updatePeriodBasedOnDates() {
+                    const startDate = new Date(startDateInput.value);
+                    const endDate = new Date(endDateInput.value);
+                    const errorDiv = document.getElementById('dateError');
+
+                    // Clear previous error
+                    errorDiv.textContent = '';
+
+                    if (startDateInput.value && endDateInput.value) {
+                        if (startDate > endDate) {
+                            errorDiv.textContent = 'Start date cannot be after end date.';
+                            startDateInput.value = '';
+                            endDateInput.value = '';
+                            periodSelect.value = 'custom';
+                            return;
+                        }
+
+                        const diffDays = calculateDiffInDays(startDate, endDate);
+                        periodSelect.value = getPeriodBasedOnDays(diffDays);
+                    }
+                }
+
             });
-
-
         </script>
+
+
         <%- include('../adminLayouts/footer.ejs') %>

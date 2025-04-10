@@ -103,7 +103,7 @@ const updateStatus = async (req, res, next) => {
 
         item.orderStatus = newStatus;
         if (newStatus === 'delivered') {
-            item.delivery = new Date();
+            item.deliveryDate = new Date();
             item.paid = true;
         }
 
@@ -176,7 +176,7 @@ const updateStatus = async (req, res, next) => {
 //for loading sales report
 const loadSalesReport = async (req, res, next) => {
     try {
-        let { startDate, endDate, period, format, sort = 'expectedDelivery', order = 'desc' } = req.query;
+        let { startDate, endDate, period, format, sort = 'createdAt', order = 'desc' } = req.query;
         const sortOrder = order === 'asc' ? 1 : -1;
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 5;
@@ -190,16 +190,16 @@ const loadSalesReport = async (req, res, next) => {
         }
 
         // search across multiple fields
+        let productIds = [];
         if (search) {
             const products = await Product.find(
                 { name: { $regex: search, $options: "i" } },
                 { _id: 1 }
             );
-            const productIds = products.map(p => p._id);
+            productIds = products.map(p => p._id);
             query.$or = [
                 { ordersId: { $regex: search, $options: "i" } },
                 { paymentMethod: { $regex: search, $options: "i" } },
-                { status: { $regex: search, $options: "i" } },
                 { 'items.productId': { $in: productIds } }
             ];
         }
@@ -211,73 +211,117 @@ const loadSalesReport = async (req, res, next) => {
             endDate.setHours(23, 59, 59, 999);
         }
 
-        if (period != undefined) {
-            query['items.orderStatus'] = 'delivered';
-            if (startDate && endDate) {
-                query.expectedDelivery = {
-                    $gte: startDate,
-                    $lt: endDate
-                }
-            }
-        } else {
-            query['items.orderStatus'] = 'delivered';
+        // Main order filter: only delivered
+        query['items.orderStatus'] = 'delivered';
+
+        if (period !== undefined && startDate && endDate) {
+            query['items.deliveryDate'] = {
+                $gte: startDate,
+                $lt: endDate
+            };
         }
 
         const sortOptions = {
             'ordersId': { ordersId: sortOrder },
-            'expectedDelivery': { expectedDelivery: sortOrder },
+            'deliveryDate': { 'items.deliveryDate': sortOrder },
             'customer': { 'deliveryAddress.fullName': sortOrder },
             'paymentMethod': { paymentMethod: sortOrder },
-            'totalAmount': { totalAmount: sortOrder }
+            'totalAmount': { totalAmount: sortOrder },
+            'createdAt': { createdAt: sortOrder }
         };
 
-        const orders = await Order.find(query)
-            .sort(sortOptions[sort] || { expectedDelivery: -1 })
+        let orders = await Order.find(query)
+            .sort(sortOptions[sort])
             .skip((page - 1) * limit)
             .limit(limit)
             .populate('items.productId')
             .populate('userId');
 
-        const totalOrders = await Order.countDocuments(query);
-        const totalPages = Math.ceil(totalOrders / limit);
+        // Filter items inside each order based on date, status, and product name
+        orders.forEach(order => {
+            order.items = order.items.filter(item => {
+                const matchStatus = item.orderStatus === 'delivered';
+                const matchDate = (!startDate || !endDate) || (
+                    item.deliveryDate >= startDate && item.deliveryDate <= endDate
+                );
+                const matchProduct = !search || productIds.includes(item.productId._id);
+                return matchStatus && matchDate && matchProduct;
+            });
 
+            // Recalculate 
+            let total = 0;
+            let offerDiscount = 0;
+            let couponDiscount = order.couponDiscount || 0;
+
+            order.items.forEach(item => {
+                total += item.total;
+                offerDiscount += item.offerDiscount || 0;
+            });
+
+            order.totalAmount = total;
+            order.offerDiscount = offerDiscount;
+            order.couponDiscount = couponDiscount;
+        });
+
+
+        // Remove orders with no matching items
+        const filteredOrders = orders.filter(order => order.items.length > 0);
+        const totalOrders = filteredOrders.length;
+        const totalPages = Math.ceil(totalOrders / limit);
 
 
         let totalSalesCount = 0;
         let totalSalesAmount = 0;
         let totalDiscountAmount = 0;
 
-        orders.forEach(order => {
+        filteredOrders.forEach(order => {
             totalSalesCount += order.items.length;
             totalSalesAmount += order.totalAmount;
             const offerDiscount = order.offerDiscount || 0;
             const couponDiscount = order.couponDiscount || 0;
             totalDiscountAmount += offerDiscount + couponDiscount;
         });
-        if (format === 'pdf' || format === 'excel') {
-            // Add conditions specific to PDF and Excel formats
-            if (endDate && startDate) {
-                query['items.orderStatus'] = 'delivered';
-                query.expectedDelivery = {
-                    $gte: startDate,
-                    $lt: endDate
-                };
-            } else {
-                query['items.orderStatus'] = 'delivered';
-            }
-            const fullOrders = await Order.find(query)
-                .populate('items.productId')
-                .populate('userId');
-            if (format === 'pdf') {
-                return generateSalesReportPDF(fullOrders, page, limit, res);
 
-            } else if (format === 'excel') {
+        // PDF/Excel export
+        if (format === 'pdf' || format === 'excel') {
+            let fullOrders = await Order.find(query)
+            .populate('items.productId')
+            .populate('userId');
+
+            fullOrders.forEach(order => {
+                order.items = order.items.filter(item => {
+                    const matchStatus = item.orderStatus === 'delivered';
+                    const matchDate = (!startDate || !endDate) || (
+                        item.deliveryDate >= startDate && item.deliveryDate <= endDate
+                    );
+                    const matchProduct = !search || productIds.includes(item.productId._id);
+                    return matchStatus && matchDate && matchProduct;
+                });
+            
+                //  Recalculate based on filtered items
+                let total = 0;
+                let offerDiscount = 0;
+                let couponDiscount = order.couponDiscount || 0;
+            
+                order.items.forEach(item => {
+                    total += item.total;
+                    offerDiscount += item.offerDiscount || 0;
+                });
+            
+                order.totalAmount = total;
+                order.offerDiscount = offerDiscount;
+                order.couponDiscount = couponDiscount;
+            });
+            
+           if (format === 'pdf') {
+                return generateSalesReportPDF(fullOrders, startDate, endDate, res);
+            } else {
                 return generateSalesReportExcel(fullOrders, res);
             }
         }
 
         res.render('salesReport', {
-            orders,
+            orders: filteredOrders,
             totalSalesCount,
             totalSalesAmount,
             totalDiscountAmount,

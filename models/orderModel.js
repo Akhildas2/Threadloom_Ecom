@@ -86,7 +86,7 @@ const orderSchema = mongoose.Schema({
         cancellationDate: {
             type: Date,
         },
-        delivery: {
+        deliveryDate: {
             type: Date,
         },
         refundDate: {

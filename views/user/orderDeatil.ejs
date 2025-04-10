@@ -321,7 +321,7 @@
 
                 <span class="text-muted small">
                   <% if (selectedItem.orderStatus === 'delivered') { %>
-                      <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.delivery).toDateString() %></p>
+                      <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.deliveryDate).toDateString() %></p>
                   <% } else if (selectedItem.orderStatus === 'cancelled') { %>
                       <p><i class="fas fa-calendar-times me-2"></i> Cancelled on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
                   <% } else if (selectedItem.orderStatus === 'returned') { %>
@@ -358,20 +358,24 @@
                 <p><strong><i class="fas fa-wallet  me-2"></i> Payment Method:</strong>
                   <%= order.paymentMethod %>
                 </p>
-                <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
-                  <% if (order.status==='retry' || order.status==='pending' ) { %>
-                    <button id="retryButton" class="btn btn-sm rounded-pill">
-                      <i class="fas fa-redo me-2"></i> Retry Payment
-                    </button>
-                    <% } else { %>
-                      <span class="badge rounded-pill 
-                      <% if (selectedItem.paid) { %> bg-success 
-                      <% } else { %> bg-danger <% } %>">
-                        <% if (selectedItem.paid) { %> Paid <% } else { %> Not Paid <% } %>
-                      </span>
-                      <% } %>
-                </p>
-
+                <p>
+                  <strong>
+                    <i class="fas fa-money-check-alt me-2"></i> Payment Status:
+                  </strong>
+                  <span class="badge rounded-pill 
+                    <%= selectedItem.paid || order.status === 'paid' ? 'bg-success' : 'bg-danger' %>">
+                    <%= selectedItem.paid || order.status === 'paid' ? 'Paid' : 'Not Paid' %>
+                  </span>
+                
+                  <% if (!(selectedItem.paid || order.status === 'paid')) { %>
+                    <div class="mt-2">
+                      <button id="retryButton" class="btn btn-sm rounded-pill">
+                        <i class="fas <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'fa-sync-alt' : 'fab fa-paypal' %> me-2"></i>
+                        <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'Retry Payment' : 'Pay Now' %>
+                      </button>
+                    </div>
+                  <% } %>
+                </p>                             
 
                 <h3><i class="fas fa-tags me-2 mt-10"></i> Charges & Discount</h3>
                 <hr>
@@ -430,7 +434,7 @@
 
                   <span class="text-muted small">
                     <% if (selectedItem.orderStatus === 'delivered') { %>
-                        <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.delivery).toDateString() %></p>
+                        <p><i class="fas fa-box me-2"></i> Delivered on: <%= new Date(selectedItem.deliveryDate).toDateString() %></p>
                     <% } else if (selectedItem.orderStatus === 'cancelled') { %>
                         <p><i class="fas fa-calendar-times me-2"></i> Cancelled on: <%= new Date(selectedItem.cancellationDate).toDateString() %></p>
                     <% } else if (selectedItem.orderStatus === 'returned') { %>
@@ -445,19 +449,24 @@
                   <p><strong><i class="fas fa-wallet me-2"></i> Payment Method:</strong>
                     <%= order.paymentMethod %>
                   </p>
-                  <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
-                    <% if (order.status==='retry' ) { %>
-                      <button id="retryButton" class="btn-sm btn-primary">
-                        <i class="fas fa-redo"></i> Retry Payment
-                      </button>
-                      <% } else { %>
-                        <span class="badge rounded-pill 
-                        <% if (selectedItem.paid) { %> bg-success 
-                        <% } else { %> bg-danger <% } %>">
-                          <% if (selectedItem.paid) { %> Paid <% } else { %> Not Paid <% } %>
-                        </span>
-                        <% } %>
-                  </p>
+                  <p>
+                    <strong>
+                      <i class="fas fa-money-check-alt me-2"></i> Payment Status:
+                    </strong>
+                    <span class="badge rounded-pill 
+                      <%= selectedItem.paid || order.status === 'paid' ? 'bg-success' : 'bg-danger' %>">
+                      <%= selectedItem.paid || order.status === 'paid' ? 'Paid' : 'Not Paid' %>
+                    </span>
+                  
+                    <% if (!(selectedItem.paid || order.status === 'paid')) { %>
+                      <div class="mt-2">
+                        <button id="retryButton" class="btn btn-sm rounded-pill">
+                          <i class="fas <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'fa-sync-alt' : 'fab fa-paypal' %> me-2"></i>
+                          <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'Retry Payment' : 'Pay Now' %>
+                        </button>
+                      </div>
+                    <% } %>
+                  </p>                  
 
                   <p><strong><i class="fas fa-info-circle me-2"></i> Order Status:</strong>
                     <span class="badge rounded-pill 

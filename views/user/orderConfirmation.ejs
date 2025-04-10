@@ -101,22 +101,24 @@
                                     <p><strong><i class="fas fa-wallet  me-2"></i> Payment Method:</strong>
                                         <%= order.paymentMethod %>
                                     </p>
-                                    <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
-                                        <% if (order.status==='retry' && order.items[0].orderStatus !=='cancelled' ) {
-                                            %>
-                                            <button id="retryButton" class="btn-sm btn-primary">
-                                                <i class="fas fa-redo"></i> Retry Payment
+                                    <p>
+                                        <strong>
+                                          <i class="fas fa-money-check-alt me-2"></i> Payment Status:
+                                        </strong>
+                                        <span class="badge rounded-pill 
+                                          <%= order.items[0].paid || order.status === 'paid' ? 'bg-success' : 'bg-danger' %>">
+                                          <%= order.items[0].paid || order.status === 'paid' ? 'Paid' : 'Not Paid' %>
+                                        </span>
+                                      
+                                        <% if (!(order.items[0].paid || order.status === 'paid')) { %>
+                                          <div class="mt-2">
+                                            <button id="retryButton" class="btn btn-sm rounded-pill">
+                                              <i class="fas <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'fa-sync-alt' : 'fab fa-paypal' %> me-2"></i>
+                                              <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'Retry Payment' : 'Pay Now' %>
                                             </button>
-                                            <% } else { %>
-                                                <span class="badge rounded-pill 
-                                        <% if (order.items[0].paid) { %> bg-success 
-                                        <% } else { %> bg-danger <% } %>">
-                                                    <% if (order.items[0].paid) { %> Paid <% } else { %> Not Paid <% }
-                                                                %>
-                                                </span>
-                                                <% } %>
-                                    </p>
-
+                                          </div>
+                                        <% } %>
+                                      </p>                                      
 
                                     <h3><i class="fas fa-tags me-2 mt-10"></i> Charges & Discount</h3>
                                     <hr>
@@ -178,21 +180,25 @@
                                         <p><strong><i class="fas fa-wallet me-2"></i> Payment Method:</strong>
                                             <%= order.paymentMethod %>
                                         </p>
-                                        <p><strong><i class="fas fa-money-check-alt me-2"></i> Payment Status:</strong>
-                                            <% if (order.status==='retry' ) { %>
-                                                <button id="retryButton" class="btn-sm btn-primary">
-                                                    <i class="fas fa-redo"></i> Retry Payment
+                                        <p>
+                                            <strong>
+                                              <i class="fas fa-money-check-alt me-2"></i> Payment Status:
+                                            </strong>
+                                            <span class="badge rounded-pill 
+                                              <%= order.items[0].paid || order.status === 'paid' ? 'bg-success' : 'bg-danger' %>">
+                                              <%= order.items[0].paid || order.status === 'paid' ? 'Paid' : 'Not Paid' %>
+                                            </span>
+                                          
+                                            <% if (!(order.items[0].paid || order.status === 'paid')) { %>
+                                              <div class="mt-2">
+                                                <button id="retryButton" class="btn btn-sm rounded-pill">
+                                                  <i class="fas <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'fa-sync-alt' : 'fab fa-paypal' %> me-2"></i>
+                                                  <%= order.status === 'retry' && order.paymentMethod === 'paypal' ? 'Retry Payment' : 'Pay Now' %>
                                                 </button>
-                                                <% } else { %>
-                                                    <span class="badge rounded-pill 
-                                            <% if (order.items[0].paid) { %> bg-success 
-                                            <% } else { %> bg-danger <% } %>">
-                                                        <% if (order.items[0].paid) { %> Paid <% } else { %> Not Paid <%
-                                                                    } %>
-                                                    </span>
-                                                    <% } %>
-                                        </p>
-
+                                              </div>
+                                            <% } %>
+                                          </p>
+                                          
                                         <p><strong><i class="fas fa-info-circle me-2"></i> Order Status:</strong>
                                             <span class="badge rounded-pill 
                                           <% if (order.items[0].orderStatus === 'delivered' || order.items[0].orderStatus === 'refunded') { %> bg-success 

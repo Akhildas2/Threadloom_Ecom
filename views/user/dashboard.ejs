@@ -204,16 +204,14 @@
                                                                             Orders
                                                                         </h6>
                                                                         <ul class="list-group mt-2">
-                                                                            <% lastOrders.forEach(order=> { %>
-                                                                                <li
-                                                                                    class="list-group-item d-flex justify-content-between">
-                                                                                    Order #<%= order.ordersId %> - <%=
-                                                                                            order.date.toDateString() %>
-                                                                                            <strong>₹ <%=
-                                                                                                    order.totalAmount.toFixed(2) %>
-                                                                                            </strong>
+                                                                            <% lastOrders.forEach(order => { %>
+                                                                                <li class="list-group-item d-flex justify-content-between">
+                                                                                  <a href="/order/orderDeatil/<%= order._id %>?productId=<%= order.items[0].productId._id %>">
+                                                                                    Order # <%= order.ordersId %> - <%= order.date.toDateString() %>
+                                                                                  </a>
+                                                                                  <strong>₹ <%= order.totalAmount.toFixed(2) %></strong>
                                                                                 </li>
-                                                                                <% }); %>
+                                                                              <% }); %>                                                                              
                                                                         </ul>
                                                                     </div>
                                                                 </div>
@@ -315,7 +313,7 @@
 
                                                                                         <span class="text-muted small">
                                                                                             <% if (item.orderStatus === 'delivered') { %>
-                                                                                                <p><i class="fas fa-box me-2"></i> <%= new Date(item.delivery).toDateString() %></p>
+                                                                                                <p><i class="fas fa-box me-2"></i> <%= new Date(item.deliveryDate).toDateString() %></p>
                                                                                             <% } else if (item.orderStatus === 'cancelled') { %>
                                                                                                 <p><i class="fas fa-calendar-times me-2"></i><%= new Date(item.cancellationDate).toDateString() %></p>
                                                                                             <% } else if (item.orderStatus === 'returned') { %>

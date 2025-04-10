@@ -398,14 +398,13 @@ const cancelOrder = async (req, res, next) => {
             return res.status(404).json({ success: false, message: 'Item not found.' });
         }
 
-        const deliveryDate = new Date(order.expectedDelivery);
+        const deliveryDate = new Date(item.deliveryDate);
         const currentDate = new Date();
 
         if (currentDate > deliveryDate) {
             return res.status(400).json({
                 success: false,
                 message: `Cancellation period expired. You can only cancel before ${deliveryDate.toDateString()}.`,
-                expectedDelivery: deliveryDate.toDateString()
             });
         }
 
