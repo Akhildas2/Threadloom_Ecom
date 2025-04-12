@@ -2,7 +2,7 @@
     <%- include('../layouts/navbar.ejs') %>
 
         <section class="section-padding">
-            <div class="container pt-150 pb-50">
+            <div class="container pt-100 pb-50">
                 <div class="row">
                     <!-- Image Column -->
                     <div class="col-lg-6 col-md-6 col-sm-12 d-flex align-items-center justify-content-center">
@@ -59,8 +59,8 @@
         </section>
 
         <section class="section-padding">
-               <!-- Google Maps Section -->
-               <div class="container pb-100" id="mapSection">
+            <!-- Google Maps Section -->
+            <div class="container pb-100" id="mapSection">
                 <div class="col-12">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3946.303716674149!2d76.02225747448892!3d11.157189187498215!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba6445f3b3cb7d1%3A0x2c4b5f5c0dc3f439!2sKondotty%2C%20Kerala!5e0!3m2!1sen!2sin!4v1707748843456!5m2!1sen!2sin"
@@ -73,10 +73,16 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
         <script>
-            document.querySelector('a[href="#mapSection"]').addEventListener("click", function (e) {
-                e.preventDefault();
-                document.querySelector("#mapSection").scrollIntoView({ behavior: "smooth" });
+            document.addEventListener("DOMContentLoaded", function () {
+                const mapLink = document.querySelector('a[href="#mapSection"]');
+                if (mapLink) {
+                    mapLink.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        document.querySelector("#mapSection").scrollIntoView({ behavior: "smooth" });
+                    });
+                }
             });
+
 
             document.getElementById("contactForm").addEventListener("submit", async function (event) {
                 event.preventDefault(); // Prevent normal form submission
@@ -92,7 +98,6 @@
                 let name = document.getElementById("name").value.trim();
                 let email = document.getElementById("email").value.trim();
                 let message = document.getElementById("message").value.trim();
-
                 // Validate Name
                 if (name === "") {
                     document.getElementById("nameError").innerText = "Name is required.";
@@ -157,6 +162,7 @@
             });
         </script>
 
-        <%- include('../layouts/footer.ejs') %>
-            <%- include('../layouts/preloader.ejs') %>
+        <%- include('../layouts/preloader.ejs') %>
+            <%- include('../layouts/footer.ejs') %>
+
                 <%- include('../layouts/script.ejs') %>

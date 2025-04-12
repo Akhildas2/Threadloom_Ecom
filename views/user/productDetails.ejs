@@ -494,11 +494,36 @@
                                     </div>
 
                                     <div onmouseover="toggleSection('reviews')">
-                                        <h3 class="section-title style-1 mb-30 mt-30">Ratings (<%= product.totalRatings
-                                                %>) &
-                                                Reviews (<%= product.totalReviews %>)</h3>
+                                        <h3 class="section-title style-1">
+                                            Product Rating & Reviews
+                                          </h3>
 
                                         <div class="section-content reviews">
+                                            <div class="rating-summary mt-4 text-center">
+                                                <div class="mb-2 fs-3">
+                                                  <span class="fw-bold">
+                                                    Average Rating:
+                                                  </span>
+                                                  <span class="font-small m-2" <% if (product.avgRating>= 3) { %>
+                                                    style="background-color: #4CAF50; color: white; padding:
+                                                    3px 6px; border-radius: 4px;"
+                                                    <% } else { %>
+                                                        style="background-color: #F44336; color: white;
+                                                        padding: 3px 6px; border-radius: 4px;"
+                                                        <% } %>>
+                                                            <%= product.avgRating.toFixed(1) %> ★
+                                                </span>
+                                                </div>
+                                                <div class="d-flex justify-content-center gap-4 text-muted mt-3 fs-5">
+                                                  <span class="fw-bold total-ratings">
+                                                    Ratings: <%= product.totalRatings %>
+                                                  </span>
+                                                  <span class="fw-bold total-reviews">
+                                                    Reviews: <%= product.totalReviews %>
+                                                  </span>
+                                                </div>
+                                              </div>
+                                              
                                             <div class="text-end">
                                                 <% if (hasPurchased && !hasReviewed) { %>
                                                     <button class="btn btn-fill-out btn-sm hover-up rounded-pill"
@@ -506,10 +531,10 @@
                                                         Add Review <i class="fas fa-plus-circle"></i>
                                                     </button>
                                                     <% } else if (hasReviewed) { %>
-                                                        <p>You have already reviewed this product.</p>
+                                                        <p class="text-success">You have already reviewed this product.
+                                                        </p>
                                                         <% } %>
                                             </div>
-
                                             <% if (hasPurchased && !hasReviewed) { %>
                                                 <div id="reviewForm" class="card mt-20 mb-20 p-4 shadow-sm rounded-lg"
                                                     style="border: 1px solid #e0e0e0;">
@@ -540,7 +565,7 @@
                                                                 <div
                                                                     class="review-item card-hover bg-white rounded-4 p-4 mb-3 border-0 shadow-sm">
                                                                     <div class="d-flex align-items-center mb-3">
-                                                                        <!-- Enhanced Avatar with Status Indicator -->
+                                                                   
                                                                         <div class="avatar-hover position-relative text-white rounded-circle d-flex justify-content-center align-items-center me-3"
                                                                             style="width: 48px; height: 48px; background: linear-gradient(135deg, #088178, #0caa9f); transition: all 0.3s ease;">
                                                                             <span class="avatar-initial fs-5 fw-bold">
@@ -552,7 +577,7 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <!-- User Info with Enhanced Rating -->
+                                                                        <!-- User Info -->
                                                                         <div class="flex-grow-1">
                                                                             <div
                                                                                 class="d-flex align-items-center justify-content-between mb-1">
@@ -580,87 +605,87 @@
                                                                         </div>
                                                                     </div>
 
-                                                                    <!-- Review Content with Enhanced Interaction -->
-                                                                    <% if (review.comment && review.comment.trim() !==""
-                                                                        ) { %>
-                                                                        <div class="review-content ms-2">
-                                                                            <p class="mb-3 text-dark fs-5"
-                                                                                style="line-height: 1.6;">
-                                                                                “<%= review.comment %>”
-                                                                            </p>
-                                                                            <!-- Interactive Actions with Improved Layout -->
-                                                                            <div
-                                                                                class="d-flex align-items-center justify-content-between">
-                                                                                <div
-                                                                                    class="d-flex align-items-center gap-3">
-                                                                                    <button
-                                                                                        class="btn-like d-flex align-items-center gap-2"
-                                                                                        data-review-id="<%= review._id %>"
-                                                                                        aria-label="Like this review">
-                                                                                        <i
-                                                                                            class="far fa-thumbs-up fs-5 transition-all"></i>
-                                                                                        <span class="count fw-semibold">
-                                                                                            <%= review.likes.length || 0
-                                                                                                %>
-                                                                                        </span>
-                                                                                    </button>
-
-                                                                                    <% if
-                                                                                        (req.session.user_id===review.userId._id.toString())
-                                                                                        { %>
-                                                                                        <button
-                                                                                            class="btn-edit d-flex align-items-center gap-2"
-                                                                                            aria-label="Edit this review"
-                                                                                            onclick="editReview('<%= review._id %>',`<%= review.comment %>`)">
-                                                                                            <span class="fw-semibold">
-                                                                                                <i
-                                                                                                    class="fas fa-edit me-2"></i>
-                                                                                                Edit
-                                                                                            </span>
-                                                                                        </button>
-                                                                                        <% } %>
-                                                                                </div>
-
-                                                                            </div>
-
-                                                                            <!-- Hidden Edit Review Form -->
-                                                                            <div id="editReviewForm_<%= review._id %>"
-                                                                                class="mt-3 p-2 d-none">
-                                                                                <div
-                                                                                    class="card p-3 shadow-sm border rounded">
-                                                                                    <h6
-                                                                                        class="fw-bold text-secondary mb-2">
-                                                                                        Edit Your Review</h6>
-                                                                                    <textarea
-                                                                                        id="editComment_<%= review._id %>"
-                                                                                        class="form-control mb-2"
-                                                                                        rows="5"><%= review.comment %></textarea>
-                                                                                    <span
-                                                                                        id="editCommentError_<%= review._id %>"
-                                                                                        class="text-danger small"></span>
+                                                                    <div class="review-content ms-2">
+                                                                        <% const comment=review.comment?.trim(); %>
+                                                                            <% if (comment) { %>
+                                                                                <p class="mb-3 text-dark fs-5"
+                                                                                    style="line-height: 1.6;">
+                                                                                    “<%= comment %>”
+                                                                                </p>
+                                                                                <% } %>
 
                                                                                     <div
-                                                                                        class="d-flex justify-content-end mt-2 gap-2">
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-success px-3"
-                                                                                            onclick="submitEditReview('<%= review._id %>')">
-                                                                                            <i
-                                                                                                class="fas fa-check me-1"></i>
-                                                                                            Save
-                                                                                        </button>
-                                                                                        <button
-                                                                                            class="btn btn-sm btn-outline-secondary px-3"
-                                                                                            onclick="cancelEditReview('<%= review._id %>')">
-                                                                                            <i
-                                                                                                class="fas fa-times me-1"></i>
-                                                                                            Cancel
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
+                                                                                        class="d-flex align-items-center justify-content-between">
+                                                                                        <div
+                                                                                            class="d-flex align-items-center gap-3">
+                                                                                            <button
+                                                                                                class="btn-like d-flex align-items-center gap-2"
+                                                                                                data-review-id="<%= review._id %>"
+                                                                                                aria-label="Like this review">
+                                                                                                <i
+                                                                                                    class="far fa-thumbs-up fs-5 transition-all <%= review.likes.includes(req.session.user_id) ? 'text-success' : '' %>"></i>
+                                                                                                <span
+                                                                                                    class="count fw-semibold">
+                                                                                                    <%= (review.likes && Array.isArray(review.likes)) ? review.likes.length : 0 %>
+                                                                                                </span>
+                                                                                            </button>
 
-                                                                        </div>
-                                                                        <% } %>
+                                                                                            <% if
+                                                                                                (req.session.user_id===review.userId._id.toString()
+                                                                                                && comment) { %>
+                                                                                                <button
+                                                                                                    class="btn-edit d-flex align-items-center gap-2"
+                                                                                                    aria-label="Edit this review"
+                                                                                                    onclick="editReview('<%= review._id %>',`<%= review.comment %>`)">
+                                                                                                    <span
+                                                                                                        class="fw-semibold">
+                                                                                                        <i
+                                                                                                            class="fas fa-edit me-2"></i>
+                                                                                                        Edit
+                                                                                                    </span>
+                                                                                                </button>
+                                                                                                <% } %>
+                                                                                        </div>
+
+                                                                                    </div>
+
+                                                                                    <!-- Hidden Edit Review Form -->
+                                                                                    <div id="editReviewForm_<%= review._id %>"
+                                                                                        class="mt-3 p-2 d-none">
+                                                                                        <div
+                                                                                            class="card p-3 shadow-sm border rounded">
+                                                                                            <h6
+                                                                                                class="fw-bold text-secondary mb-2">
+                                                                                                Edit Your Review</h6>
+                                                                                            <textarea
+                                                                                                id="editComment_<%= review._id %>"
+                                                                                                class="form-control mb-2"
+                                                                                                rows="5"><%= review.comment %></textarea>
+                                                                                            <span
+                                                                                                id="editCommentError_<%= review._id %>"
+                                                                                                class="text-danger small"></span>
+
+                                                                                            <div
+                                                                                                class="d-flex justify-content-end mt-2 gap-2">
+                                                                                                <button
+                                                                                                    class="btn btn-sm btn-success px-3"
+                                                                                                    onclick="submitEditReview('<%= review._id %>')">
+                                                                                                    <i
+                                                                                                        class="fas fa-check me-1"></i>
+                                                                                                    Save
+                                                                                                </button>
+                                                                                                <button
+                                                                                                    class="btn btn-sm btn-outline-secondary px-3"
+                                                                                                    onclick="cancelEditReview('<%= review._id %>')">
+                                                                                                    <i
+                                                                                                        class="fas fa-times me-1"></i>
+                                                                                                    Cancel
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                    </div>
 
                                                                 </div>
 
@@ -669,6 +694,53 @@
                                                                         <p class="text-muted">No reviews yet. Be the
                                                                             first to review!</p>
                                                                         <% } %>
+
+                                                                            <!-- Pagination -->
+                                                                            <div class="pagination-area mt-30 mb-50">
+                                                                                <nav
+                                                                                    aria-label="Page navigation example">
+                                                                                    <ul
+                                                                                        class="pagination justify-content-end">
+                                                                                        <% if (currentPage> 1) { %>
+                                                                                            <li class="page-item">
+                                                                                                <a class="page-link"
+                                                                                                    href="?page=<%= currentPage - 1 %>">
+                                                                                                    <i
+                                                                                                        class="material-icons md-chevron_left"></i>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                            <% } %>
+
+                                                                                                <% for (let i=1; i
+                                                                                                    <=totalPages; i++) {
+                                                                                                    %>
+                                                                                                    <li
+                                                                                                        class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                                                                                        <a class="page-link"
+                                                                                                            href="?page=<%= i %>">
+                                                                                                            <%= i %>
+                                                                                                        </a>
+                                                                                                    </li>
+                                                                                                    <% } %>
+
+                                                                                                        <% if
+                                                                                                            (currentPage
+                                                                                                            <
+                                                                                                            totalPages)
+                                                                                                            { %>
+                                                                                                            <li
+                                                                                                                class="page-item">
+                                                                                                                <a class="page-link"
+                                                                                                                    href="?page=<%= currentPage + 1 %>">
+                                                                                                                    <i
+                                                                                                                        class="material-icons md-chevron_right"></i>
+                                                                                                                </a>
+                                                                                                            </li>
+                                                                                                            <% } %>
+                                                                                    </ul>
+                                                                                </nav>
+                                                                            </div>
+
                                                     </div>
                                         </div>
                                     </div>

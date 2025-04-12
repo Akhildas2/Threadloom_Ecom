@@ -4,11 +4,10 @@ const Wishlist = require("../models/wishListModel");
 const User = require('../models/userModel');
 const Otp = require('../models/otpModel');
 const Review = require('../models/reviewModel');
-const Order = require('../models/reviewModel');
+const Order = require('../models/orderModel');
 const Banner = require('../models/bannerModel');
-const Offer = require('../models/offerModel');
 const Coupon = require('../models/couponModel');
-
+const mongoose = require("mongoose");
 const { getProductsWithReviews } = require("../utils/productHelper");
 
 
@@ -270,6 +269,9 @@ const productDetails = async (req, res, next) => {
     try {
         const productId = req.params.productId;
         const userId = req.session.user_id;
+        const reviewsPerPage = 10;
+        let currentPage = parseInt(req.query.page) || 1;
+        if (currentPage < 1) currentPage = 1;
 
         // Fetch product from the  products
         const productData = await Product.findById(productId).populate({ path: "category", populate: { path: "offer" } }).populate('offer');
@@ -279,8 +281,15 @@ const productDetails = async (req, res, next) => {
         // Fetch available coupons
         const availableCoupons = await Coupon.find({ expiryDate: { $gte: new Date() } });
 
+        const totalReviewsCount = await Review.countDocuments({ productId });
+        const totalPages = Math.ceil(totalReviewsCount / reviewsPerPage);
         // Fetch reviews for main product
-        const reviews = await Review.find({ productId }).populate('userId', 'name');
+        const reviews = await Review.find({ productId })
+            .populate('userId', 'name')
+            .skip((currentPage - 1) * reviewsPerPage)
+            .limit(reviewsPerPage)
+            .sort({ createdAt: -1 });
+
 
         let userWishlist = [];
         // If the user is logged in
@@ -293,17 +302,25 @@ const productDetails = async (req, res, next) => {
         let hasPurchased = false;
         let hasReviewed = false;
         if (userId) {
-            const orders = await Order.find({ userId: userId, 'items.productId': productId, 'items.orderStatus': 'delivered' });
-            if (orders.length > 0) hasPurchased = true;
+            const orders = await Order.find({
+                userId: new mongoose.Types.ObjectId(userId),
+                items: {
+                    $elemMatch: {
+                        productId: new mongoose.Types.ObjectId(productId),
+                        orderStatus: "delivered"
+                    }
+                }
+            });
+            hasPurchased = orders.length > 0;
 
             // Check if user already reviewed the product
-            const existingReview = await Review.findOne({ userId, productId });
+            let existingReview = await Review.findOne({ userId, productId });
             if (existingReview) {
                 hasReviewed = existingReview.comment ? true : false;
             }
         }
 
-        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist, reviews, hasPurchased, hasReviewed, availableCoupons });
+        res.render('productDetails', { product: productData, relatedProducts, req, userWishlist, reviews, hasPurchased, hasReviewed, availableCoupons, currentPage, totalPages, totalReviewsCount });
 
     } catch (error) {
         next(error);

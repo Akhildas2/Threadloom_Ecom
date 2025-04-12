@@ -85,22 +85,18 @@ const addRating = async (req, res, next) => {
 
 
 // Function to calculate and update product rating
-const updateProductRating = async (productId) => {
+const updateProductRating = async (productId, next) => {
     try {
         const reviews = await Review.find({ productId });
 
-        let totalReviews = 0;
+        let totalWrittenReviews = 0;
         let ratingCount = 0;
         let totalRatingValue = 0;
 
         reviews.forEach(review => {
-            let hasRating = review.orders.some(order => order.rating);
-            let hasComment = review.comment && review.comment.trim().length > 0;
-
-            if (hasComment || hasRating) {
-                totalReviews++;
+            if (review.comment && review.comment.trim().length > 0) {
+                totalWrittenReviews++;
             }
-
             // Sum up ratings
             review.orders.forEach(order => {
                 if (order.rating) {
@@ -117,14 +113,14 @@ const updateProductRating = async (productId) => {
             productId,
             {
                 avgRating: parseFloat(avgRating),
-                totalReviews,
+                totalReviews: totalWrittenReviews,
                 totalRatings: ratingCount,
             },
             { new: true }
         );
 
     } catch (error) {
-        console.error(`Error updating product rating:`, error);
+        next(error);
     }
 };
 

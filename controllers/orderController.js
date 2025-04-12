@@ -5,7 +5,6 @@ const Product = require('../models/productModel')
 const mongoose = require('mongoose')
 const Wallet = require('../models/walletModel')
 const Coupon = require("../models/couponModel")
-const fs = require('fs');
 const invoicePdfService = require('../services/invoicePdfService');
 const { fetchExchangeRate, generateRandomString } = require('../utils/orderHelper');
 const { createPayPalPayment } = require('../services/paymentService');
@@ -119,7 +118,7 @@ const placeOrder = async (req, res, next) => {
         if (parseFloat(totalAmount) >= 10000) {
             return res.status(400).json({ message: 'Orders can only be placed for a total amount below ₹10,000.' });
         }
-        
+
         if (paymentMethod !== 'cod' && paymentMethod !== 'paypal' && paymentMethod !== 'wallet') {
             return res.status(400).json({ message: 'Invalid payment method.' });
         }
@@ -513,19 +512,7 @@ const downloadInvoice = async (req, res, next) => {
         }
 
         // Generate the PDF using the PDF service
-        const invoicePath = await invoicePdfService.generateInvoicePDF(order);
-        // Send the PDF file to the client
-        res.download(invoicePath, `invoice-${order.ordersId}.pdf`, (err) => {
-            if (err) {
-                next(error);
-            }
-            // Optionally delete the file after sending it
-            fs.unlink(invoicePath, (unlinkErr) => {
-                if (unlinkErr) {
-                    next(error);
-                }
-            });
-        });
+        await invoicePdfService.generateInvoicePDF(order, res);
 
     } catch (error) {
         next(error);
