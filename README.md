@@ -24,21 +24,58 @@ Threadloom Ecom is designed to deliver a seamless shopping experience while prov
 
 ---
 
-## Features
+## 🚀 Features
 
-- **Add to Cart:** Simple and efficient product selection and cart management.
-- **Wishlist:** Save products for future purchase.
-- **Payment Integration:** Offers both wallet-based payments and PayPal integration ensuring secure transactions.
-- **Product Ratings & Reviews:** Enable users to share feedback and rate their purchased products.
-- **Email OTP Verification:** Enhances security with One-Time Password (OTP) via email.
-- **Reporting:** Generate PDF and Excel reports for order tracking, sales analysis, and more.
-- **Sales Graphs:** Visual representation of sales trends to support data-driven decisions.
-- **Quick View:** Allows users to preview product details without navigating away from the current page.
-- **Additional Functionalities:** Check the repository for more features and improvements in development.
+### 🛍️ User Features
+
+- **Add to Cart & Wishlist:** Easily manage selected and favorite products.
+- **Quick View:** Instantly preview product details without leaving the page.
+- **Secure Authentication:** Login and register with Email OTP verification for added security.
+- **User Dashboard:**
+  - Update password and profile info
+  - View order history
+  - Manage shipping addresses
+  - Access wallet and referral system
+- **Payment Integration:**
+  - Wallet-based payments
+  - PayPal support for secure and seamless checkout
+- **Product Ratings & Reviews:** Share feedback and rate purchased items.
+- **Shop with Filters:** Refine product listings using category, price, etc.
+
+### 🛠️ Admin Features
+
+- **Dashboard with Graphs:** Get insights into sales trends via visual charts.
+- **Product Management:**
+  - Add, edit, and hide products
+- **Category Management:**
+  - Add, edit, and hide product categories
+- **User Management:**
+  - Block or unblock users
+- **Order Management:**
+  - View orders and update delivery status
+- **Sales Reporting:**
+  - Export reports as PDF and Excel for analysis
+- **Coupon Management:**
+  - Add, edit, and delete discount coupons
+- **Offer Management:**
+  - Add, edit, and delete special offers
+- **Banner Management:**
+  - Add, edit, and delete homepage banners
 
 ---
 
 ## Demo
+
+_Example: [Live Demo](https://threadloom.store/)_
+
+### Demo Credentials
+
+| Role  | Email                   | Password    |
+| ----- | ----------------------- | ----------- |
+| Admin | admin2akhil@gmail.com   | Admin@123   |
+| User  | bireca5522@lesotica.com | Bireca5522@ |
+
+> ⚠️ These credentials are for demo purposes only. Please do not use them for real transactions.
 
 ## Screenshots
 
@@ -78,18 +115,7 @@ Threadloom Ecom is designed to deliver a seamless shopping experience while prov
 
 ### 🎁 Offer List (Admin)
 
-![Offer List Admin](./assets/readme/offer%20list.png)
-
-_Example: [Live Demo](https://threadloom.store/)_
-
-### Demo Credentials
-
-| Role  | Email                   | Password    |
-| ----- | ----------------------- | ----------- |
-| Admin | admin2akhil@gmail.com   | Admin@123   |
-| User  | bireca5522@lesotica.com | Bireca5522@ |
-
-> ⚠️ These credentials are for demo purposes only. Please do not use them for real transactions.
+![Offer List Admin](./assets/readme/offerlist.png)
 
 ## Installation
 
