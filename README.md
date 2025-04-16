@@ -40,14 +40,61 @@ Threadloom Ecom is designed to deliver a seamless shopping experience while prov
 
 ## Demo
 
-If available, insert a link or embed a short GIF/video demonstrating key features of the application.  
-*Example: [Live Demo](#)*
+## Screenshots
+
+### 🏠 Home Page
+
+![Home Page](./assets/readme/home.png)
+
+### 🔐 Login Page
+
+![Login Page](./assets/readme/login.png)
+
+### 🛍️ Product Listing (Shop)
+
+![Shop Page](./assets/readme/shop.png)
+
+### 🛒 Cart Page
+
+![Cart Page](./assets/readme/cart.png)
+
+### 💳 Checkout Page
+
+![Checkout Page](./assets/readme/checkout.png)
 
 ---
+
+### 🛠️ Admin Dashboard
+
+![Admin Dashboard](./assets/readme/dashboard.png)
+
+### 🧾 Order List (Admin)
+
+![Order List Admin](./assets/readme/orderlist.png)
+
+### 🛒 Product Management (Admin)
+
+![Product Admin](./assets/readme/products.png)
+
+### 🎁 Offer List (Admin)
+
+![Offer List Admin](./assets/readme/offer%20list.png)
+
+_Example: [Live Demo](https://threadloom.store/)_
+
+### Demo Credentials
+
+| Role  | Email                   | Password    |
+| ----- | ----------------------- | ----------- |
+| Admin | admin2akhil@gmail.com   | Admin@123   |
+| User  | bireca5522@lesotica.com | Bireca5522@ |
+
+> ⚠️ These credentials are for demo purposes only. Please do not use them for real transactions.
 
 ## Installation
 
 ### Prerequisites
+
 - [Node.js](https://nodejs.org/) installed on your machine
 - MongoDB installation or access to a MongoDB Atlas instance for the database
 
@@ -57,3 +104,108 @@ If available, insert a link or embed a short GIF/video demonstrating key feature
 
    ```bash
    git clone https://github.com/Akhildas2/Threadloom_Ecom.git
+   ```
+
+2. **Navigate to the project directory:**
+
+   ```bash
+   cd Threadloom_Ecom
+   ```
+
+3. **Install dependencies:**
+
+   ```bash
+   npm install
+   ```
+
+4. **Set up the environment variables (see Configuration(#configuration)).**
+
+5. **Run the Application:**
+
+   ```bash
+   npm start
+   ```
+
+> ⚠️ The application typically runs at `http://localhost:3000` unless configured otherwise.
+
+## Configuration
+
+To ensure that the application runs smoothly, you must configure several environment variables. Create a .env file in the root of your project directory and add the following:
+
+```bash
+PORT=your_port
+MONGO_URI=your_mongodb_uri
+SESSION_SECRET=your_session_secret
+SESSION_NAME=your_session_name
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_SIGNUP_CALLBACK_URL=your_callback_url
+GOOGLE_LOGIN_CALLBACK_URL=your_callback_url
+EMAIL_USER=your_email@domain.com
+EMAIL_PASSWORD=your_email_password
+PAYPAL_MODE=your_paypal_mode
+PAYPAL_CLIENT_ID=your_paypal_id
+PAYPAL_CLIENT_SECRET=your_paypal_secret
+BASE_URL=your_base_url
+MONGODB_URL=your_mongodb_url
+```
+
+## Usage
+
+Once the installation is complete, you can start the application and explore:
+
+- **For Users:** Browse products, add items to your cart or wishlist, and complete purchases through secure payment gateways.
+
+- **For Administrators:** Manage products, track orders, and generate insightful reports using the integrated dashboard.
+
+## Technologies Used
+
+- **Backend:** Node.js, Express.js
+- **Frontend:** EJS, HTML, CSS, JavaScript
+- **Database:** MongoDB
+- **Authentication:**Passport (including Google OAuth2 integration)
+- **Payment Integration:** Paypal REST SDK and custom wallet integration
+
+- **Other Dependencies**
+
+`axios`, `bcrypt`, `body-parser`, `cookie-parser`, `dotenv`, `exceljs`, `multer`, `nodemailer`, `pdfkit`, `sharp`, and more as detailed in the package.json. [package.json](./package.json)
+
+## Contributing
+
+Contributions are welcome! Follow these steps to contribute to **Threadloom Ecom**:
+
+1. **Fork the Repository** on GitHub.
+
+2. **Create a Feature Branch:**
+
+   ```bash
+   git checkout -b feature/my-new-feature
+   ```
+
+3. **Commit Your Changes:**
+   ```bash
+   git commit -am 'Add new feature'
+   ```
+4. **Push Your Branch:**
+
+   ```bash
+   git push origin feature/my-new-feature
+   ```
+
+5. **Submit a Pull Request explaining your changes**
+
+> ⚠️ Please ensure your code follows the project's style guidelines and includes tests where appropriate.
+
+## License
+
+This project is licensed under the ISC License. See the [LICENSE](./LICENSE.txt) file for details.
+
+## Contact
+
+For questions, suggestions, or feedback, please reach out:
+
+**Author:** akhildas.p
+**GitHub:** [Akhildas2](https://github.com/Akhildas2)
+**Email:** akhildasaki12@gmail.com
+
+Happy coding and thank you for exploring Threadloom Ecom!
