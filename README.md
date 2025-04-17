@@ -24,7 +24,7 @@ Threadloom Ecom is designed to deliver a seamless shopping experience while prov
 
 ---
 
-## 🚀 Features
+## Features
 
 ### 🛍️ User Features
 
@@ -230,8 +230,8 @@ This project is licensed under the ISC License. See the [LICENSE](./LICENSE.txt)
 
 For questions, suggestions, or feedback, please reach out:
 
-**Author:** akhildas.p
-**GitHub:** [Akhildas2](https://github.com/Akhildas2)
-**Email:** akhildasaki12@gmail.com
+- **Author:** akhildas.p
+- **GitHub:** [Akhildas2](https://github.com/Akhildas2)
+- **Email:** akhildasaki12@gmail.com
 
 Happy coding and thank you for exploring Threadloom Ecom!
