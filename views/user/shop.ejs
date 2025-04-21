@@ -691,8 +691,6 @@
                             }
 
                             function addToWishList(productId) {
-
-
                                 fetch('/wishList/addTowishList/' + productId, {
                                     method: 'POST',
                                     headers: {
@@ -754,11 +752,13 @@
                                              } 
                                     })
                                     .catch(err => {
+                                        if (!err.data.success) {   
                                             Swal.fire({
                                                 icon: 'error',
                                                 title: 'Failed',
                                                 text: err.response?.data?.message || "Something went wrong.",
                                             });
+                                        }
                                     });
                             }
 

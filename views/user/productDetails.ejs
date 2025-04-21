@@ -1090,21 +1090,28 @@
                                 setTimeout(() => {
                                     location.reload();
                                 }, 3000);
+                            }else {
+                                // Handle errors
+                                Swal.fire({
+                                    title: 'Failed!',
+                                    text: data.message,
+                                    icon: 'error',
+                                });
                             }
                         })
                         .catch(err => {
+                            if (!err.data.success) {   
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Failed',
                                 text: err.response?.data?.message || "Something went wrong.",
                             });
+                        }
                         });
                 }
 
 
                 function addToWishList(productId) {
-
-
                     fetch('/wishList/addTowishList/' + productId, {
                         method: 'POST',
                         headers: {
@@ -1165,11 +1172,13 @@
                             }
                         })
                         .catch(err => {
+                            if (!err.data.success) {   
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Failed',
                                 text: err.response?.data?.message || "Something went wrong.",
                             });
+                        }
                         });
                 }
 

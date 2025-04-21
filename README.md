@@ -129,13 +129,13 @@ _Example: [Live Demo](https://threadloom.store/)_
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/Akhildas2/Threadloom_Ecom.git
+   https://github.com/Akhildas2/threadloom-ecom.git
    ```
 
 2. **Navigate to the project directory:**
 
    ```bash
-   cd Threadloom_Ecom
+   cd threadloom-ecom
    ```
 
 3. **Install dependencies:**
