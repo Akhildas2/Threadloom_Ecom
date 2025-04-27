@@ -138,6 +138,9 @@ const editCategory = async (req, res, next) => {
 
         if (req.body.categoryName) {
             const trimmedCategoryName = req.body.categoryName.trim();
+            if (!trimmedCategoryName) {
+                return res.status(400).json({ success: false, message: "Category name cannot be empty" });
+            }
             updateFields.categoryName = trimmedCategoryName;
 
             // Check if a category with the same name already exists
@@ -161,9 +164,7 @@ const editCategory = async (req, res, next) => {
 
             // Delete the old image if it exists
             if (existingCategory.categoryPhoto) {
-                // Assume existingCategory.categoryPhoto is the name used for the resized image
                 const resizedFileName = existingCategory.categoryPhoto;
-                // Remove the "resized_" prefix to get the original file name.
                 const originalFileName = resizedFileName.replace(/^resized_/, "");
 
                 const oldResizedImagePath = path.join(__dirname, "../uploads/category/resized", resizedFileName);

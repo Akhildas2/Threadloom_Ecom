@@ -89,8 +89,6 @@
                 background: #e5e7eb;
                 color: #4b5563;
             }
-
-
         </style>
         <section class="content-main">
             <div class="container">
@@ -256,14 +254,14 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Title</label>
-                                    <input type="text" class="form-control" id="editTitle" name="title" required>
+                                    <input type="text" class="form-control" id="editTitle" name="title">
                                     <small class="text-danger" id="titleError"></small>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Description</label>
-                                    <textarea class="form-control" id="editDescription" name="description" rows="3"
-                                        required></textarea>
+                                    <textarea class="form-control" id="editDescription" name="description"
+                                        rows="3"></textarea>
                                     <small class="text-danger" id="descriptionError"></small>
                                 </div>
                                 <div class="mb-3">
@@ -277,7 +275,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Banner Type</label>
-                                    <select class="form-control" id="editBannerType" name="bannerType" required>
+                                    <select class="form-control" id="editBannerType" name="bannerType">
                                         <option value="homepage">Home page</option>
                                         <option value="shop">Shop</option>
                                         <option value="promotion">Promotion</option>
@@ -288,7 +286,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Status</label>
-                                    <select class="form-control" id="editStatus" name="status" required>
+                                    <select class="form-control" id="editStatus" name="status">
                                         <option value="active">Active</option>
                                         <option value="inactive">Inactive</option>
                                         <option value="archived">Archived</option>
@@ -364,6 +362,11 @@
                 let hasError = false;
 
                 // Validate Title
+                if (title.trim().length === 0) {
+                    document.getElementById("titleError").innerText = "Please enter a valid Title";
+                    hasError = true;
+                }
+
                 if (title.length < 3) {
                     document.getElementById("titleError").innerText = "Title must be at least 3 characters long.";
                     hasError = true;
@@ -458,7 +461,7 @@
                         }).then(() => {
                             location.reload(); // Refresh the page to reflect changes
                         });
-                    } 
+                    }
                 } catch (error) {
                     let errorMessage = error.response?.data?.message || "An error occurred.";
                     Swal.fire({

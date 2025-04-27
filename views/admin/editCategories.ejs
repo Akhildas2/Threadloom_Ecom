@@ -77,9 +77,9 @@
                     document.getElementById('categoryNameError').textContent = '';
                     document.getElementById('categoryPhotoError').textContent = '';
 
-                    if (!categoryName) {
-                        errors.push("Please enter a category name.");
-                        document.getElementById('categoryNameError').textContent = "Please enter a category name.";
+                    if (!categoryName || categoryName.trim().length === 0) {
+                        errors.push("Please enter a valid category name.");
+                        document.getElementById('categoryNameError').textContent = "Please enter a valid category name.";
                     }
 
                     // If there's a new photo selected, validate its extension
@@ -110,12 +110,12 @@
                             }
                         })
                         .catch(err => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Operation Failed',
-                                    text:err.response?.data?.message || "Something went wrong.",
-                                });
-                          
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Operation Failed',
+                                text: err.response?.data?.message || "Something went wrong.",
+                            });
+
                         });
                 });
 
